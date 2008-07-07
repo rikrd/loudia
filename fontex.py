@@ -21,7 +21,7 @@ class CharDirection(dict):
         self.update(dict([(getattr(QChar, key), key.split('_')) for key in dir(QChar) if type(getattr(QChar, key)) == type(QChar.DirAL)]))
 
 class Font:
-    def __init__(self, filename):
+    def __init__(self, filename, firstChar = 10, lastChar = 100):
         self.features = {}
         
         self.filename = filename
@@ -36,10 +36,11 @@ class Font:
         
         self.font = QFont( self.family )
         self.chars = {}
-        self.numChars = 10
+        self.firstChar = firstChar
+        self.lastChar = lastChar
         
     def analyze(self):
-        for code in range(self.numChars):
+        for code in range(self.firstChar, self.lastChar):
             char = Character(code)
             
             glyph = Glyph(char, self.font)
@@ -48,33 +49,45 @@ class Font:
             self.chars[char] = glyph.features
 
 class Glyph:
-    def __init__(self, char, font):
+    def __init__(self, char, font, numPoints = 2):
         self.font = font
         self.char = char
         self.features = {}
+        self.numPoints = numPoints
 
     def analyze(self):
         self.analyze_metrics()
         self.analyze_shape()
         
     def analyze_metrics(self):
+        # Create the metrics object
         self.metrics = QFontMetricsF( self.font )
-        
+
+        # Extract features
         self.features['height'] = self.metrics.height()
         self.features['width'] = self.metrics.width(self.char)
         self.features['leading'] = self.metrics.leading()
         return
 
     def analyze_shape(self):
+        # Create the shape object
         self.shape = QPainterPath()
         self.shape.addText(0.0, 0.0, self.font, QString(self.char))
-        print self.shape.angleAtPercent(0.5)
+        
+        # Extract features
+        self.features['angles'] = [self.shape.angleAtPercent(t/float(self.numPoints)) for t in range(self.numPoints)]
         return
 
         
 class Character(QChar):
     def __init__(self, code):
         QChar.__init__( self, code )
+
+    def direction(self):
+        return CharDirection()[QChar.direction(self)]
+
+    def category(self):
+        return CharCategory()[QChar.category(self)]        
         
 if __name__ == '__main__':    
     app = QApplication( sys.argv )
@@ -83,15 +96,8 @@ if __name__ == '__main__':
     charDirections = CharDirection()
     print charCategories
     print charDirections
-
-    '''
-    for i in range( 1000 ):
-        ch = Character( i )
-        print charCategories[ch.category()]
-        print charDirections[ch.direction()]
-    '''
     
     fe = Font( sys.argv[1] )
     fe.analyze()
-    print [(str(key.char.toLatin1()), value) for key, value in fe.chars.iteritems()]
+    print [(str(char.toLatin1()), char.direction(), char.category(), value) for char, value in fe.chars.iteritems()]
     #app.exec_()
