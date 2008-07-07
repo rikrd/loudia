@@ -73,9 +73,12 @@ class Glyph:
         # Create the shape object
         self.shape = QPainterPath()
         self.shape.addText(0.0, 0.0, self.font, QString(self.char))
+        self.shapeLength = self.shape.length()
         
         # Extract features
-        self.features['angles'] = [self.shape.angleAtPercent(t/float(self.numPoints)) for t in range(self.numPoints)]
+        percentages = [self.shape.percentAtLength(t/float(self.numPoints)*self.shapeLength) for t in range(self.numPoints)]
+        self.features['angles'] = [self.shape.angleAtPercent(t) for t in percentages]
+        self.features['slopes'] = [self.shape.slopeAtPercent(t) for t in percentages]
         return
 
         
