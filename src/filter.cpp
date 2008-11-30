@@ -29,15 +29,15 @@ using namespace std;
 // import most common Eigen types 
 USING_PART_OF_NAMESPACE_EIGEN
 
-Filter::Filter(Real* b, int b_rows,
-               Real* a, int a_rows,
+Filter::Filter(MatrixXR b,
+               MatrixXR a,
                Real samplerate,
                int channels) {
 
   DEBUG("FILTER: Constructor {samplerate:" << samplerate << ", channels:" << channels << "}")
   
   _channels = channels;
-  _length = max(b_rows, a_rows);
+  _length = max(b.rows(), a.rows());
   _samplerate = samplerate;
 
   _samples(1, _channels);
@@ -47,7 +47,7 @@ Filter::Filter(Real* b, int b_rows,
   // since a[0] must be 1.0
   // TODO: throw an exception when a[0] == 0
   _a = MatrixXR::Zero(_length, _channels);
-  _a.block(0, 0, a_rows, _channels) = Eigen::Map<MatrixXRscipy>(a, a_rows, _channels);
+  _a.block(0, 0, a.rows(), _channels) = a;
 
   for(int i = 0; i < _a.rows(); i++){
     _a.row(i) = _a.row(i).cwise() / _a.row(0);
@@ -57,7 +57,7 @@ Filter::Filter(Real* b, int b_rows,
 
   //cout << "built _a..."<<endl;  
   _b = MatrixXR::Zero(_length, _channels);
-  _b.block(0, 0, b_rows, _channels) = Eigen::Map<MatrixXRscipy>(b, b_rows, _channels);
+  _b.block(0, 0, b.rows(), _channels) = b;
 
   for(int i = 0; i < _b.rows(); i++){
     _b.row(i) = _b.row(i).cwise() / _a.row(0);
@@ -82,39 +82,36 @@ void Filter::setup(){
 }
 
 
-void Filter::process(Real* data, int rows, int cols, Real** out, int* outRows, int* outCols){
+void Filter::process(MatrixXR samples, MatrixXR* output){
   // Process will be called with a matrix where columns will be channels
   // and rows will be the time axis
   
-  _samples.resize(rows, _channels);
+  _samples.resize(samples.rows(), _channels);
   
   // If there is one single input channel then repeat it 
-  if (cols != _channels){
+  if (samples.cols() != _channels){
     for (int i= 0; i < _samples.cols(); i++) {
-      _samples.col(i) = Eigen::Map<MatrixXRscipy>(data, rows, cols).col(0);
+      _samples.col(i) = samples.col(0);
       
     }
   } else {
-    _samples = Eigen::Map<MatrixXRscipy>(data, rows, cols);
+    _samples = samples;
   }
 
-  *outRows = rows;
-  *outCols = _channels;
-
-  for ( int i = 0; i < rows; i++ ) {
+  for ( int i = 0; i < samples.rows(); i++ ) {
 
     if ( _length > 1 ) {
-      Eigen::Map<MatrixXRscipy>(*out, rows, _channels).row( i ) = _z.row( 0 ) + (_b.row( 0 ).cwise() * _samples.row( i ));
+      (*output).row( i ) = _z.row( 0 ) + (_b.row( 0 ).cwise() * _samples.row( i ));
       
       // Fill in middle delays
       for ( int j = 0; j < _length - 1; j++ ) {
-        _z.row( j ) = _z.row( j + 1 ) + (_samples.row( i ).cwise() * _b.row( j + 1 )) - (Eigen::Map<MatrixXRscipy>(*out, rows, _channels).row( i ).cwise() * _a.row( j + 1 ));
+        _z.row( j ) = _z.row( j + 1 ) + (_samples.row( i ).cwise() * _b.row( j + 1 )) - ((*output).row( i ).cwise() * _a.row( j + 1 ));
       }
 
       // Calculate the last delay
-      _z.row( _length - 2 ) = (_samples.row( i ).cwise() * _b.row( _length - 1 )) - (Eigen::Map<MatrixXRscipy>(*out, rows, _channels).row( i ).cwise() * _a.row( _length - 1 ));
+      _z.row( _length - 2 ) = (_samples.row( i ).cwise() * _b.row( _length - 1 )) - ((*output).row( i ).cwise() * _a.row( _length - 1 ));
     } else {
-      Eigen::Map<MatrixXRscipy>(*out, rows, _channels).row( i ) = _samples.row( i ) * _b.row( 0 );
+      (*output).row( i ) = _samples.row( i ) * _b.row( 0 );
     }
   }  
 }

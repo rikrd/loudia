@@ -16,12 +16,15 @@
 ** Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */                                                                          
 
-#include "pyfilter.h"
+#include "Eigen/Core"
+#include "Eigen/Array"
 
 #define NO_IMPORT_ARRAY
 #include "ndarrayobject.h"
 
 #include "typedefs.h"
+
+#include "pyfilter.h"
 
 using namespace std;
 
@@ -108,17 +111,24 @@ int PyFilter::init(PyObject* self, PyObject* args, PyObject* kwds) {
     return -1;
   }
 
-  int a_size = coeffsA->dimensions[0];
+  int a_rows = coeffsA->dimensions[0];
+  int a_cols = coeffsA->dimensions[1];  
   Real* a_data = (Real*)PyArray_DATA(coeffsA);
 
-  int b_size = coeffsB->dimensions[0];
+  MatrixXR a = Eigen::Map<MatrixXRscipy>(a_data, a_cols, a_rows);
+
+  int b_rows = coeffsB->dimensions[0];
+  int b_cols = coeffsB->dimensions[1];
   Real* b_data = (Real*)PyArray_DATA(coeffsB);
+
+  MatrixXR b = Eigen::Map<MatrixXRscipy>(b_data, b_cols, b_rows);
+
 
   if(((PyFilter*)self)->base != NULL)
     delete ((PyFilter*)self)->base;
-
+  
   // Create the filter and set it up
-  ((PyFilter*)self)->base = new Filter::Filter(a_data, a_size, b_data, b_size, samplerate, channels);
+  ((PyFilter*)self)->base = new Filter::Filter(b, a, samplerate, channels);
   ((PyFilter*)self)->base->setup();
   
   return 0;
@@ -179,9 +189,20 @@ PyObject* PyFilter::process(PyObject* self, PyObject* args){
     return NULL;
 
   // call the process method
+  int in_rows = in_array->dimensions[0];
+  int in_cols = in_array->dimensions[1];
   Real* in_data = (Real*)PyArray_DATA(in_array);
+
+  MatrixXR in_matrix = Eigen::Map<MatrixXRscipy>(in_data, in_rows, in_cols);
+
+  ((PyFilter*)self)->base->process(in_matrix, &out_matrix);
+
+
+  int out_rows = out_array->dimensions[0];
+  int out_cols = out_array->dimensions[1];
   Real* out_data = (Real*)PyArray_DATA(out_array);
-  ((PyFilter*)self)->base->process(in_data, in_samples, in_channels, &out_data, &out_samples, &out_channels);
+
+  Eigen::Map<MatrixXRscipy>(*out_data, out_rows, out_cols) = out_matrix;
   
   return out_array;
 }

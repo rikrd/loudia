@@ -45,13 +45,13 @@ protected:
   MatrixXR _samples;
 
 public:
-  Filter(Real* b, int b_rows, Real* a, int a_rows, Real samplerate, int channels);
+  Filter(MatrixXR b, MatrixXR a, Real samplerate, int channels);
 
   ~Filter();
 
   void setup();
 
-  void process(Real* data, int rows, int cols, Real** out, int* outRows, int* outCols);
+  void process(MatrixXR samples, MatrixXR* output);
 
   void reset();
 

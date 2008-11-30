@@ -71,7 +71,7 @@ public:
 
   void setup();
 
-  void process(Real* data, int rows, int cols, Real** out, int* outRows, int* outCols);
+  void process(MatrixXR data, MatrixXR* output);
 
   int channels() const;
 

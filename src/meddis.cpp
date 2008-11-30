@@ -78,11 +78,9 @@ void Meddis::setup(){
   reset();
 }
 
-void Meddis::process(Real* data, int rows, int cols, Real** out, int* outRows, int* outCols){
+void Meddis::process(MatrixXR samples, MatrixXR* output){
   // Process will be called with a matrix where columns will be channels
   // and rows will be the time axis
-
-  MatrixXR samples = Eigen::Map<MatrixXRscipy>(data, rows, cols);
 
   MatrixXR  row, limitedSt, replenish, eject, loss, reuptake, reprocess;
 
@@ -105,10 +103,10 @@ void Meddis::process(Real* data, int rows, int cols, Real** out, int* outRows, i
 
     // Now iterate through each time slice of the data.  Use the
     // max function to implement the "if (0>" test.
-    Eigen::Map<MatrixXRscipy>(*out, samples.rows(), samples.cols()).row(i) = h * c;
+    (*output).row(i) = h * c;
     
     if(_substractSpont){
-     Eigen::Map<MatrixXRscipy>(*out, samples.rows(), samples.cols()).row(i) = (Eigen::Map<MatrixXRscipy>(*out, samples.rows(), samples.cols()).row(i) - spont).unaryExpr(CwiseClipInfOp<Real>(Real(0.0)));
+     (*output).row(i) = ((*output).row(i) - spont).unaryExpr(CwiseClipInfOp<Real>(Real(0.0)));
     }
   } // for each row
 }

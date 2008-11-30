@@ -16,12 +16,15 @@
 ** Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */                                                                          
 
-#include "pymeddis.h"
-
 #define NO_IMPORT_ARRAY
 #include "ndarrayobject.h"
 
+#include "Eigen/Core"
+#include "Eigen/Array"
+
 #include "typedefs.h"
+
+#include "pymeddis.h"
 
 using namespace std;
 
@@ -117,11 +120,15 @@ PyObject* PyMeddis::process(PyObject* self, PyObject* args){
   }
 
   // prepare the input array
-  int in_samples = in_array->dimensions[0];
-  int in_channels = in_array->dimensions[1];
+  int in_rows = in_array->dimensions[0];
+  int in_cols = in_array->dimensions[1];
+  Real* in_data = (Real*)PyArray_DATA(in_array);
+
+  MatrixXR in_matrix = Eigen::Map<MatrixXRscipy>(in_data, in_rows, in_cols);
   
+  // TODO: move this check in the meddis.cpp
   // check that the input array has the right number of channels
-  if (in_channels != ((PyMeddis*)self)->base->channels()) {
+  if (in_cols != ((PyMeddis*)self)->base->channels()) {
     PyErr_SetString(PyExc_ValueError,
                     "the number of channels must be the same as the one set for the Meddis object");
     
@@ -129,20 +136,20 @@ PyObject* PyMeddis::process(PyObject* self, PyObject* args){
 
   }
 
-  // prepare the dimensions variables
-  int out_samples;
-  int out_channels;
-  
   // prepare resulting array
-  int dims[] = {in_samples, in_channels};
+  int dims[] = {in_rows, in_cols};
   PyObject * out_array = PyArray_FromDims(2, dims, PyArray_FLOAT);
-
+  
   if (out_array == NULL)
     return NULL;
 
-  Real* in_data = (Real*)PyArray_DATA(in_array);
+  ((PyMeddis*)self)->base->process(in_matrix, &out_matrix);
+
+  int out_rows = out_array->dimensions[0];
+  int out_cols = out_array->dimensions[1];
   Real* out_data = (Real*)PyArray_DATA(out_array);
-  ((PyMeddis*)self)->base->process(in_data, in_samples, in_channels, &out_data, &out_samples, &out_channels);
+
+  Eigen::Map<MatrixXRscipy>(*out_data, out_rows, out_cols) = out_matrix;
   
   //return PyArray_Return(out_array);
   return out_array;
