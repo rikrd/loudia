@@ -16,15 +16,15 @@
 ** Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */                                                                          
 
-#define NO_IMPORT_ARRAY
-#include "ndarrayobject.h"
-
 #include "Eigen/Core"
 #include "Eigen/Array"
 
-#include "typedefs.h"
-
 #include "pymeddis.h"
+
+#define NO_IMPORT_ARRAY
+#include "ndarrayobject.h"
+
+#include "typedefs.h"
 
 using namespace std;
 
@@ -138,18 +138,20 @@ PyObject* PyMeddis::process(PyObject* self, PyObject* args){
 
   // prepare resulting array
   int dims[] = {in_rows, in_cols};
-  PyObject * out_array = PyArray_FromDims(2, dims, PyArray_FLOAT);
+  PyObject* out_array = PyArray_FromDims(2, dims, PyArray_FLOAT);
   
   if (out_array == NULL)
     return NULL;
 
+  MatrixXR out_matrix(in_rows, in_cols);
+
   ((PyMeddis*)self)->base->process(in_matrix, &out_matrix);
 
-  int out_rows = out_array->dimensions[0];
-  int out_cols = out_array->dimensions[1];
+  int out_rows = ((PyArrayObject*)out_array)->dimensions[0];
+  int out_cols = ((PyArrayObject*)out_array)->dimensions[1];
   Real* out_data = (Real*)PyArray_DATA(out_array);
 
-  Eigen::Map<MatrixXRscipy>(*out_data, out_rows, out_cols) = out_matrix;
+  Eigen::Map<MatrixXRscipy>(out_data, out_rows, out_cols) = out_matrix;
   
   //return PyArray_Return(out_array);
   return out_array;

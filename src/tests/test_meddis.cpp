@@ -29,21 +29,19 @@ int main() {
 
   int rows = 1024;
   int cols = 30;
-  Real* result = new Real[rows*cols];
+  MatrixXR result(rows, cols);
 
-  Real* in = new Real[rows*cols];
+  MatrixXR in(rows, cols);
   
   for (int j = 0; j < rows; j++) {
     for (int k = 0; k < cols; k++) {
-      in[j*cols+k] = 3.0;
+      in(j, k) = 3.0;
     }
   }
   
   for (int i=0; i<1000; i++) {   
-    mds.process(in, 1024, 30, &result, &rows, &cols);
+    mds.process(in, &result);
   }
-
-  delete[] in;
 
   return 0;
 }

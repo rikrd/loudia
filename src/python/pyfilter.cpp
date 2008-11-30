@@ -16,6 +16,8 @@
 ** Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */                                                                          
 
+#include "pyfilter.h"
+
 #include "Eigen/Core"
 #include "Eigen/Array"
 
@@ -23,8 +25,6 @@
 #include "ndarrayobject.h"
 
 #include "typedefs.h"
-
-#include "pyfilter.h"
 
 using namespace std;
 
@@ -194,15 +194,16 @@ PyObject* PyFilter::process(PyObject* self, PyObject* args){
   Real* in_data = (Real*)PyArray_DATA(in_array);
 
   MatrixXR in_matrix = Eigen::Map<MatrixXRscipy>(in_data, in_rows, in_cols);
+  MatrixXR out_matrix(in_rows, in_cols);
 
   ((PyFilter*)self)->base->process(in_matrix, &out_matrix);
 
 
-  int out_rows = out_array->dimensions[0];
-  int out_cols = out_array->dimensions[1];
+  int out_rows = ((PyArrayObject*)out_array)->dimensions[0];
+  int out_cols = ((PyArrayObject*)out_array)->dimensions[1];
   Real* out_data = (Real*)PyArray_DATA(out_array);
 
-  Eigen::Map<MatrixXRscipy>(*out_data, out_rows, out_cols) = out_matrix;
+  Eigen::Map<MatrixXRscipy>(out_data, out_rows, out_cols) = out_matrix;
   
   return out_array;
 }

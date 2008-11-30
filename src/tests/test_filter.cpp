@@ -30,44 +30,42 @@ int main() {
   // Initialize out_samples space
   int out_nchannels;
   int out_nsamples;
-  Real* out_samples = new Real[nsamples*nchannels];
+  MatrixXR out_samples(nsamples, nchannels);
 
   // Initialize constant input
-  Real* in_samples = new Real[nsamples*nchannels];  
+  MatrixXR in_samples(nsamples, nchannels);  
   for (int j = 0; j < nsamples; j++) {
     for (int k = 0; k < nchannels; k++) {
-      in_samples[j*nchannels+k] = 3.0;
+      in_samples(j, k) = 3.0;
     }
   }
   
   // Initialize coefficients
   int n_acoeffs = 1;
   int n_bcoeffs = 10;
-  Real* acoeffs = new Real[n_acoeffs*nchannels];
-  Real* bcoeffs = new Real[n_bcoeffs*nchannels];
+  MatrixXR acoeffs(n_acoeffs, nchannels);
+  MatrixXR bcoeffs(n_bcoeffs, nchannels);
   
   for (int j = 0; j < n_acoeffs; j++) {
     for (int k = 0; k < nchannels; k++) {
-      acoeffs[j*nchannels+k] = 1.0;
+      acoeffs(j, k) = 1.0;
     }
   }
 
   for (int j = 0; j < n_bcoeffs; j++) {
     for (int k = 0; k < nchannels; k++) {
-      bcoeffs[j*nchannels+k] = 1/Real(n_bcoeffs);
+      bcoeffs(j, k) = 1/Real(n_bcoeffs);
     }
   }
   
 
 
-  Filter flt(acoeffs, n_acoeffs, bcoeffs, n_bcoeffs, 44100, nchannels);
+  Filter flt(bcoeffs, acoeffs, 44100, nchannels);
   flt.setup();
 
   for (int i=0; i<100; i++) {   
-    flt.process(in_samples, 1024, 30, &out_samples, &out_nsamples, &out_nchannels);
+    flt.process(in_samples, &out_samples);
   }
-
-  delete[] in_samples;
 
   return 0;
 }
