@@ -32,20 +32,22 @@ USING_PART_OF_NAMESPACE_EIGEN
 Filter::Filter(MatrixXR b,
                MatrixXR a,
                Real samplerate,
-               int channels) {
+               int channels){
 
-  DEBUG("FILTER: Constructor {samplerate:" << samplerate << ", channels:" << channels << "}")
-  
+  DEBUG("FILTER: Constructor samplerate:" << samplerate << ", channels:" << channels);
+  DEBUG("FILTER: Constructor b:" << b.transpose() << ", a:" << a.transpose());
+    
   _channels = channels;
   _length = max(b.rows(), a.rows());
   _samplerate = samplerate;
 
   _samples(1, _channels);
   //cout << "Building..."<<endl;
-
+  
   // Normalize by the first value value the denominator coefficients
   // since a[0] must be 1.0
   // TODO: throw an exception when a[0] == 0
+  DEBUG("FILTER: Initializing 'a' coeffs");
   _a = MatrixXR::Zero(_length, _channels);
   _a.block(0, 0, a.rows(), _channels) = a;
 
@@ -53,16 +55,22 @@ Filter::Filter(MatrixXR b,
     _a.row(i) = _a.row(i).cwise() / _a.row(0);
   }
 
+  DEBUG("FILTER: Setting the 'a' coefficients.");
+  DEBUG("FILTER: 'a' coefficients: " << a.transpose());
   //cout << "a coeffs:" << _a << endl;
 
-  //cout << "built _a..."<<endl;  
+  //cout << "built _a..."<<endl;
+  _b.resize(_length, _channels);  
   _b = MatrixXR::Zero(_length, _channels);
   _b.block(0, 0, b.rows(), _channels) = b;
 
   for(int i = 0; i < _b.rows(); i++){
     _b.row(i) = _b.row(i).cwise() / _a.row(0);
   }  
-  
+
+
+  DEBUG("FILTER: Setting the 'b' coefficients.");
+  DEBUG("FILTER: 'b' coefficients: " << b.transpose());  
   //cout << "b coeffs:" << _b << endl;
   //cout << "built _b..."<<endl;  
 }
