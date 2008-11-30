@@ -64,7 +64,7 @@ Meddis::~Meddis() {
 }
 
 void Meddis::setup(){
-  DEBUG("MEDDIS: Setting up...")
+  DEBUG("MEDDIS: Setting up...");
 
   // Configure the internal constants
   dt = 1./_samplerate;
@@ -76,6 +76,7 @@ void Meddis::setup(){
 
   // Prepare the buffers
   reset();
+  DEBUG("MEDDIS: Set up finished.");
 }
 
 void Meddis::process(MatrixXR samples, MatrixXR* output){
