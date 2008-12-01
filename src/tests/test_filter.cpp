@@ -27,6 +27,8 @@ int main() {
   int nsamples = 1024;
   int nchannels = 10;
 
+  // TODO: test with smaller input samples than coefficients of a filter
+
   // Initialize out_samples space
   int out_nchannels;
   int out_nsamples;
