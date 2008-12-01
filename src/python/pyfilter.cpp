@@ -194,7 +194,7 @@ PyObject* PyFilter::process(PyObject* self, PyObject* args){
   Real* in_data = (Real*)PyArray_DATA(in_array);
 
   MatrixXR in_matrix = Eigen::Map<MatrixXRscipy>(in_data, in_rows, in_cols);
-  MatrixXR out_matrix(in_rows, in_cols);
+  MatrixXR out_matrix(in_rows, out_channels);
 
   ((PyFilter*)self)->base->process(in_matrix, &out_matrix);
 

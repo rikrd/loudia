@@ -88,10 +88,10 @@ coeffsA4 = scipy.array(scipy.vstack((A0, A14, A2)), dtype = 'f4')
 
 coeffsB = scipy.array(scipy.vstack((B0, B1, B2)), dtype = 'f4')
 
-f1 = pycricaudio.Filter(coeffsA1, coeffsB, samplerate, numFilters)
-f2 = pycricaudio.Filter(coeffsA2, coeffsB, samplerate, numFilters)
-f3 = pycricaudio.Filter(coeffsA3, coeffsB, samplerate, numFilters)
-f4 = pycricaudio.Filter(coeffsA4, coeffsB, samplerate, numFilters)
+f1 = pycricaudio.Filter(coeffsB, coeffsA1, samplerate, numFilters)
+f2 = pycricaudio.Filter(coeffsB, coeffsA2, samplerate, numFilters)
+f3 = pycricaudio.Filter(coeffsB, coeffsA3, samplerate, numFilters)
+f4 = pycricaudio.Filter(coeffsB, coeffsA4, samplerate, numFilters)
 
 b1 = f4.process(f3.process(f2.process(f1.process(a1))))
 b2 = f4.process(f3.process(f2.process(f1.process(a2))))

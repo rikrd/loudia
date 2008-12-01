@@ -120,6 +120,7 @@ void Filter::setup(){
   DEBUG("FILTER: Setting up...");
 
   reset();
+
   DEBUG("FILTER: Finished set up...");
 }
 
@@ -148,25 +149,13 @@ void Filter::process(MatrixXR samples, MatrixXR* output){
     _samples.block(0, 0, samples.rows(), _channels) = samples;
   }
   
-  // If there is one single input channel then repeat it 
-  if (samples.cols() != _channels){
-    for (int i= 0; i < _samples.cols(); i++) {
-      _samples.col(i) = samples.col(0);      
-    }
-  } else {
-    _samples = samples;
-  }
-
-  for ( int i = 0; i < samples.rows(); i++ ) {
-
+  for ( int i = 0; i < _samples.rows(); i++ ) {
     if ( _length > 1 ) {
       (*output).row( i ) = _z.row( 0 ) + (_b.row( 0 ).cwise() * _samples.row( i ));
-      
       // Fill in middle delays
       for ( int j = 0; j < _length - 1; j++ ) {
         _z.row( j ) = _z.row( j + 1 ) + (_samples.row( i ).cwise() * _b.row( j + 1 )) - ((*output).row( i ).cwise() * _a.row( j + 1 ));
       }
-
       // Calculate the last delay
       _z.row( _length - 2 ) = (_samples.row( i ).cwise() * _b.row( _length - 1 )) - ((*output).row( i ).cwise() * _a.row( _length - 1 ));
     } else {
