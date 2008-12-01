@@ -142,19 +142,19 @@ void MelBands::triangleWindow(MatrixXR* window, Real start, Real stop, Real cent
 }
 
 Real MelBands::linearToMelReal(Real linearFreq) {
-  return log((linearFreq / 700) + 1.0) * 1127.0;
+  return log((linearFreq / 700) + 1.0) * 1127.01048;
 }
 
 Real MelBands::melToLinearReal(Real melFreq) {
-  return (exp(melFreq / 1127.0) - 1.0) * 700.0;
+  return (exp(melFreq / 1127.01048) - 1.0) * 700.0;
 }
 
 MatrixXR MelBands::linearToMel(MatrixXR linearFreq) {
-  return ((linearFreq / 700).cwise() + 1.0).cwise().log() * 1127.0;
+  return ((linearFreq / 700).cwise() + 1.0).cwise().log() * 1127.01048;
 }
 
 MatrixXR MelBands::melToLinear(MatrixXR melFreq) {
-  return ((melFreq / 1127.0).cwise().exp().cwise() - 1.0) * 700.0;
+  return ((melFreq / 1127.01048).cwise().exp().cwise() - 1.0) * 700.0;
 }
 
 void MelBands::reset(){
