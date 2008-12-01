@@ -19,50 +19,76 @@
 #include <Eigen/Core>
 #include <Eigen/Array>
 #include <iostream>
+#include <cmath>
+
 #include "mfcc.h"
+#include "melbands.h"
+#include "dct.h"
 
 #include "typedefs.h"
+#include "debug.h"
 
 using namespace std;
 
 // import most common Eigen types 
 USING_PART_OF_NAMESPACE_EIGEN
 
-Mfcc::Mfcc(int numCoeffs, Real lowFreq, Real highFreq) {
-  _numCoeffs = numCoeffs;  
+MFCC::MFCC(Real lowFreq, Real highFreq, int numBands, Real samplerate, int spectrumLength, int numCoeffs) : _melbands(lowFreq, highFreq, numBands, samplerate, spectrumLength), _dct(numBands, numCoeffs) {
+  DEBUG("MFCC: Constructor lowFreq: " << lowFreq << ", highFreq: " << highFreq << ", numBands: " << numBands << ", samplerate: "<< samplerate << ", spectrumLength: " << spectrumLength << ", numCoeffs: " << numCoeffs);
+  
   _lowFreq = lowFreq;
   _highFreq = highFreq;
+  _numBands = numBands;
+  _samplerate = samplerate;
+  _spectrumLength = spectrumLength;
+
+  _numCoeffs = numCoeffs;
+
 }
 
-Mfcc::~Mfcc() {
+MFCC::~MFCC() {
   // TODO: Here we should free the buffers
   // but I don't know how to do that with MatrixXR and MatrixXR
   // I'm sure Nico will...
 }
 
 
-void Mfcc::setup(){
+void MFCC::setup(){
   // Prepare the buffers
-  reset();
-}
+  DEBUG("MFCC: Setting up...");
 
-
-void Mfcc::process(MatrixXR spectrum, MatrixXR* mfccCoeffs){
+  _melbands.setup();
+  _dct.setup();
   
+  reset();
+  DEBUG("MFCC: Finished set up...");
 }
 
-void Mfcc::reset(){
+
+void MFCC::process(MatrixXR spectrum, MatrixXR* mfccCoeffs){
+  _melbands.process(spectrum, &_bands);
+  
+  _bands = _bands.cwise().log();
+  
+  _dct.process(_bands, mfccCoeffs);
+}
+
+void MFCC::reset(){
   // Initial values
+  _bands.set(MatrixXR::Zero(_numBands, 1));
+
+  _melbands.reset();
+  _dct.reset();
 }
 
-int Mfcc::numCoeffs() const {
+int MFCC::numCoeffs() const {
   return _numCoeffs;
 }
 
-Real Mfcc::lowFreq() const {
+Real MFCC::lowFreq() const {
   return _lowFreq;
 }
 
-Real Mfcc::highFreq() const {
+Real MFCC::highFreq() const {
   return _highFreq;
 }

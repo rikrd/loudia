@@ -1,5 +1,5 @@
 /*                                                         
-** Copyright (C) 2008 Ricard Marxer <email@ricardmarxer.com.com>
+** Copyright (C) 2008 Ricard Marxer <email@ricardmarxer.com>
 **                                                                  
 ** This program is free software; you can redistribute it and/or modify
 ** it under the terms of the GNU General Public License as published by
@@ -16,57 +16,35 @@
 ** Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */                                                                          
 
-#ifndef MFCC_H
-#define MFCC_H
+#include "mfcc.h"
+#include "typedefs.h"
 
 #include <Eigen/Core>
-#include <Eigen/Array>
 #include <iostream>
-
-#include "melbands.h"
-#include "dct.h"
-
-#include "typedefs.h"
 
 using namespace std;
 
-// import most common Eigen types 
-USING_PART_OF_NAMESPACE_EIGEN
+int main() {
+  Real lowFreq = 133.33;
+  Real highFreq = 4000.0;
+  int nBands = 34;
+  Real samplerate = 8000.0;
+  int spectrumLength = 1024;
+  
+  int nCoeffs = 13;
+  
+  MatrixXR in = MatrixXR::Constant(spectrumLength, 1, 1.0);
+  
+  MFCC mfcc(lowFreq, highFreq, nBands, samplerate, spectrumLength, nCoeffs);
+  mfcc.setup();
 
-class MFCC {
-protected:
-  // Internal parameters
-  Real _lowFreq;
-  Real _highFreq;
-  int _numBands;
-  Real _samplerate;
-  int _spectrumLength;
+  MatrixXR result(nCoeffs, 1);
+  
+  for (int i=0; i<2; i++) {   
+    mfcc.process(in, &result);
+    cout << "result:" << result << endl;
+  }
 
-  int _numCoeffs;
+  return 0;
+}
 
-  // Internal variables
-  MelBands _melbands;
-  DCT _dct;
-
-  MatrixXR _bands;
-
-public:
-  MFCC(Real lowFreq, Real highFreq, int numBands, Real samplerate, int spectrumLength, int numCoeffs);
-
-  ~MFCC();
-
-  void setup();
-
-  void process(MatrixXR spectrum, MatrixXR* mfccCoeffs);
-
-  void reset();
-
-  int numCoeffs() const;
-
-  Real lowFreq() const;
-
-  Real highFreq() const;
-
-};
-
-#endif  /* MFCC_H */

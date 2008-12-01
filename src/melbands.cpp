@@ -40,7 +40,7 @@ struct CwiseCeilOp {
 USING_PART_OF_NAMESPACE_EIGEN
 
 MelBands::MelBands(Real lowFreq, Real highFreq, int numBands, Real samplerate, int spectrumLength) {
-  DEBUG("MELBANDS: Constructor lowFreq:" << lowFreq << ", highFreq:" << highFreq << ", numBands:" << numBands << ", samplerate:" << samplerate << ", spectrumLength:" << spectrumLength);
+  DEBUG("MELBANDS: Constructor lowFreq: " << lowFreq << ", highFreq: " << highFreq << ", numBands: " << numBands << ", samplerate: " << samplerate << ", spectrumLength: " << spectrumLength);
 
   if ( lowFreq >= highFreq ) {
     // Throw an exception
@@ -54,7 +54,9 @@ MelBands::MelBands(Real lowFreq, Real highFreq, int numBands, Real samplerate, i
   _samplerate = samplerate;
   _lowFreq = lowFreq;
   _highFreq = highFreq;
-  _numBands = numBands;  
+  _numBands = numBands;
+
+  DEBUG("MELBANDS: Constructed");
 }
 
 void MelBands::setup(){
