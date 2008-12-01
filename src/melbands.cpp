@@ -63,6 +63,8 @@ void MelBands::setup(){
   DEBUG("MELBANDS: Setting up...");
   Real highMel = linearToMelRealStevens1937(_highFreq);
   Real lowMel = linearToMelRealStevens1937(_lowFreq);
+  DEBUG("MELBANDS: lowMel: " << lowMel << ", highMel: " << highMel);
+
   Real stepMel = (highMel - lowMel) / (_numBands + 1.0);
   Real stepSpectrum = Real(_spectrumLength) / _samplerate;
   
@@ -104,14 +106,19 @@ void MelBands::setup(){
     int stopBin = stopBins(i, 0);
     
     int filterLength = stopBin - startBin;
-
-    MatrixXR newFilter(filterLength, 1);
-
-    Real start = startsLinear(i, 0);
-    Real center = centersLinear(i, 0);
-    Real stop = stopsLinear(i, 0);
     
-    triangleWindow(&newFilter, start - startBin, stop  - startBin, center  - startBin);
+    DEBUG("MELBANDS: filterLength: " << filterLength);
+    MatrixXR newFilter = MatrixXR::Constant(1, 1, 1.0);
+    if (filterLength != 0){
+      newFilter.resize(filterLength, 1);
+      
+      Real start = startsLinear(i, 0);
+      Real center = centersLinear(i, 0);
+      Real stop = stopsLinear(i, 0);
+      
+      triangleWindow(&newFilter, start - startBin, stop  - startBin, center  - startBin);
+    }
+    
     _weights.push_back(newFilter);
   }
 
