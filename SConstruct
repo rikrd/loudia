@@ -46,6 +46,7 @@ env.Append(CPPPATH = [ '/usr/include/python2.5',
                        '/usr/lib/python2.5/site-packages/numpy/core/include/numpy/' ])
 env.SharedLibrary('build/pycricaudio', ['build/python/cricaudio.cpp',
                                         'build/python/pymeddis.cpp', 'build/meddis.cpp',
+                                        'build/python/pymfcc.cpp', 'build/mfcc.cpp', 'build/melbands.cpp', 'build/spectralbands.cpp', 'build/dct.cpp',
                                         'build/python/pyfilter.cpp', 'build/filter.cpp',
                                         'build/debug.cpp'])
 

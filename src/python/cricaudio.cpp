@@ -26,6 +26,7 @@ using namespace std;
 #include "arrayobject.h"
 
 #include "pymeddis.h"
+#include "pymfcc.h"
 #include "pyfilter.h"
 
 static PyObject* CRicaudio__Module = NULL;
@@ -36,12 +37,13 @@ static PyMethodDef CRicaudio__Methods[] = {
 
 
 extern PyTypeObject PyMeddisType;
+extern PyTypeObject PyMFCCType;
 extern PyTypeObject PyFilterType;
 
 extern "C" void initpycricaudio() {
   
   // import our wrapper types
-  if ((PyType_Ready(&PyMeddisType) < 0) || (PyType_Ready(&PyFilterType) < 0)) {
+  if ((PyType_Ready(&PyMeddisType) < 0) || (PyType_Ready(&PyMFCCType) < 0) || (PyType_Ready(&PyFilterType) < 0)) {
     
     cerr << "Unable to instantiate CRicaudio's wrapper types." << endl;
     return;
@@ -63,6 +65,9 @@ extern "C" void initpycricaudio() {
   // insert the classes
   Py_INCREF(&PyMeddisType);
   PyModule_AddObject(CRicaudio__Module, (char*)"Meddis", (PyObject*)&PyMeddisType);
+
+  Py_INCREF(&PyMFCCType);
+  PyModule_AddObject(CRicaudio__Module, (char*)"MFCC", (PyObject*)&PyMFCCType);
 
   Py_INCREF(&PyFilterType);
   PyModule_AddObject(CRicaudio__Module, (char*)"Filter", (PyObject*)&PyFilterType);
