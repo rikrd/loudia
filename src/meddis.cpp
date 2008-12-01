@@ -49,8 +49,8 @@ const Real Meddis::r = 6580.0;
 const Real Meddis::x = 66.31;
 const Real Meddis::h = 50000.0;
 
-Meddis::Meddis(Real samplerate, int channels, bool substractSpont) {
-  DEBUG("MEDDIS: Constructor {samplerate:" << samplerate << ", channels:" << channels << ", substractSpont:" << substractSpont << "}")
+Meddis::Meddis(Real samplerate, int channels, bool substractSpont) : kt(1, channels), spont(1, channels), c(1, channels), q(1, channels), w(1, channels) {
+  DEBUG("MEDDIS: Constructor samplerate:" << samplerate << ", channels:" << channels << ", substractSpont:" << substractSpont);
   
   _samplerate = samplerate;
   _channels = channels;
@@ -82,21 +82,20 @@ void Meddis::setup(){
 void Meddis::process(MatrixXR samples, MatrixXR* output){
   // Process will be called with a matrix where columns will be channels
   // and rows will be the time axis
-
   MatrixXR  row, limitedSt, replenish, eject, loss, reuptake, reprocess;
 
   for (uint i = 0; i < samples.rows(); ++i) {
-    row = samples.row(i);
+    row.set(samples.row(i));
   
-    limitedSt = (row.cwise() + A).unaryExpr(CwiseClipInfOp<Real>(Real(0.0)));
+    limitedSt.set(row.cwise() + A).unaryExpr(CwiseClipInfOp<Real>(Real(0.0)));
 
-    kt = (limitedSt * gdt).cwise() / (limitedSt.cwise() + B);
+    kt.set((limitedSt * gdt).cwise() / (limitedSt.cwise() + B));
 
-    replenish = (ydt * ((-q).cwise()+M)).unaryExpr(CwiseClipInfOp<Real>(Real(0.0)));
-    eject = kt.cwise() * q;
-    loss = ldt * c;
-    reuptake = rdt * c;
-    reprocess = xdt * w;
+    replenish.set(ydt * ((-q).cwise()+M)).unaryExpr(CwiseClipInfOp<Real>(Real(0.0)));
+    eject.set(kt.cwise() * q);
+    loss.set(ldt * c);
+    reuptake.set(rdt * c);
+    reprocess.set(xdt * w);
       
     q += replenish - eject + reprocess;
     c += eject - loss - reuptake;
@@ -114,6 +113,8 @@ void Meddis::process(MatrixXR samples, MatrixXR* output){
 
 void Meddis::reset(){
   // Initial values
+  DEBUG("MEDDIS: Resetting...");
+
   kt = MatrixXR::Constant(1, _channels, g * A / (A + B));
   spont = kt * (M * y);
   spont = spont.cwise() / ( (kt*l).cwise() + (y * ( l + r )) );

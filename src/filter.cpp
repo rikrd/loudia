@@ -32,7 +32,7 @@ USING_PART_OF_NAMESPACE_EIGEN
 Filter::Filter(MatrixXR b,
                MatrixXR a,
                Real samplerate,
-               int channels){
+               int channels) : _a(max(b.rows(), a.rows()), channels), _b(max(b.rows(), a.rows()), channels), _z(max(b.rows(), a.rows()), channels){
 
   DEBUG("FILTER: Constructor samplerate:" << samplerate << ", channels:" << channels);
   DEBUG("FILTER: Constructor b:" << b.transpose() << ", a:" << a.transpose());
@@ -41,7 +41,7 @@ Filter::Filter(MatrixXR b,
   _length = max(b.rows(), a.rows());
   _samplerate = samplerate;
 
-  _samples(1, _channels);
+  _samples.resize(1, _channels);
   //cout << "Building..."<<endl;
   
   // Normalize by the first value value the denominator coefficients
@@ -59,8 +59,7 @@ Filter::Filter(MatrixXR b,
   DEBUG("FILTER: 'a' coefficients: " << a.transpose());
   //cout << "a coeffs:" << _a << endl;
 
-  //cout << "built _a..."<<endl;
-  _b.resize(_length, _channels);  
+  //cout << "built _a..."<<endl;  
   _b = MatrixXR::Zero(_length, _channels);
   _b.block(0, 0, b.rows(), _channels) = b;
 
