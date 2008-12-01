@@ -30,7 +30,7 @@ using namespace std;
 // import most common Eigen types 
 USING_PART_OF_NAMESPACE_EIGEN
 
-SpectralBands::SpectralBands():_starts(0, 1){}
+SpectralBands::SpectralBands() : _starts(1, 1){ }
 
 
 SpectralBands::SpectralBands(MatrixXi starts, vector<MatrixXR> weights) {

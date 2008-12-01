@@ -41,10 +41,16 @@ protected:
   int _spectrumLength;
 
   void triangleWindow(MatrixXR* window, Real start, Real stop, Real center = -1, Real height = Real(1.0));
-  Real linearToMelReal(Real linearFreq);
-  Real melToLinearReal(Real melFreq);
-  MatrixXR linearToMel(MatrixXR linearFreq);
-  MatrixXR melToLinear(MatrixXR melFreq);
+
+  Real linearToMelRealStevens1937(Real linearFreq);
+  Real melToLinearRealStevens1937(Real melFreq);
+  MatrixXR linearToMelStevens1937(MatrixXR linearFreq);
+  MatrixXR melToLinearStevens1937(MatrixXR melFreq);
+
+  Real linearToMelRealFant1968(Real linearFreq);
+  Real melToLinearRealFant1968(Real melFreq);
+  MatrixXR linearToMelFant1968(MatrixXR linearFreq);
+  MatrixXR melToLinearFant1968(MatrixXR melFreq);
 
 
 public:

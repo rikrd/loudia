@@ -29,8 +29,8 @@ env.Append(LIBPATH = ['./build'])
 
 # Add the flags for the compiler
 #env.Append(CXXFLAGS = '-O3 -DRICAUDIO_DEBUG')
-#env.Append(CXXFLAGS = '-O3 -msse2 -DRICAUDIO_DEBUG')
-env.Append(CXXFLAGS = '-O3 -msse2 -DEIGEN_NO_DEBUG')
+env.Append(CXXFLAGS = '-O3 -msse2 -DRICAUDIO_DEBUG')
+#env.Append(CXXFLAGS = '-O3 -msse2 -DEIGEN_NO_DEBUG')
 
 # Build the tests
 env.Program('build/test_meddis', ['build/tests/test_meddis.cpp', 'build/meddis.cpp', 'build/debug.cpp'])

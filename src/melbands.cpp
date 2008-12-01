@@ -40,8 +40,7 @@ struct CwiseCeilOp {
 USING_PART_OF_NAMESPACE_EIGEN
 
 MelBands::MelBands(Real lowFreq, Real highFreq, int numBands, Real samplerate, int spectrumLength) {
-
-  DEBUG("MELBANDS: Constructor {lowFreq:" << lowFreq << ", highFreq:" << highFreq << ", numBands:" << numBands << ", samplerate:" << samplerate << ", spectrumLength:" << spectrumLength << "}");
+  DEBUG("MELBANDS: Constructor lowFreq:" << lowFreq << ", highFreq:" << highFreq << ", numBands:" << numBands << ", samplerate:" << samplerate << ", spectrumLength:" << spectrumLength);
 
   if ( lowFreq >= highFreq ) {
     // Throw an exception
@@ -50,18 +49,18 @@ MelBands::MelBands(Real lowFreq, Real highFreq, int numBands, Real samplerate, i
   if ( numBands <= 0 ) {
     // Throw an exception
   }
-
+  
   _spectrumLength = spectrumLength;
   _samplerate = samplerate;
   _lowFreq = lowFreq;
   _highFreq = highFreq;
-  _numBands = numBands;
-  
+  _numBands = numBands;  
 }
 
 void MelBands::setup(){
-  Real highMel = linearToMelReal(_highFreq);
-  Real lowMel = linearToMelReal(_lowFreq);
+  DEBUG("MELBANDS: Setting up...");
+  Real highMel = linearToMelRealStevens1937(_highFreq);
+  Real lowMel = linearToMelRealStevens1937(_lowFreq);
   Real stepMel = (highMel - lowMel) / (_numBands + 1.0);
   Real stepSpectrum = Real(_spectrumLength) / _samplerate;
   
@@ -70,7 +69,7 @@ void MelBands::setup(){
   for (int i=0; i<starts.rows(); i++) {
     starts(i, 0) = (Real(i) * stepMel + lowMel);
   }
-  MatrixXR startsLinear = melToLinear(starts) * stepSpectrum;
+  MatrixXR startsLinear = melToLinearStevens1937(starts) * stepSpectrum;
 
   // center Mel frequencies of filters
   MatrixXR centers(_numBands, 1);
@@ -78,7 +77,7 @@ void MelBands::setup(){
     centers(i, 0) = (Real(i + 1) * stepMel + lowMel);
   }
 
-  MatrixXR centersLinear = melToLinear(centers) * stepSpectrum;
+  MatrixXR centersLinear = melToLinearStevens1937(centers) * stepSpectrum;
 
   // stop Mel frequencies of filters
   MatrixXR stops(_numBands, 1);
@@ -86,7 +85,7 @@ void MelBands::setup(){
     stops(i, 0) = (Real(i + 2) * stepMel + lowMel);
   }
 
-  MatrixXR stopsLinear = melToLinear(stops) * stepSpectrum;
+  MatrixXR stopsLinear = melToLinearStevens1937(stops) * stepSpectrum;
   
   // start bins of filters
   MatrixXi startBins = startsLinear.unaryExpr(CwiseCeilOp<Real>());
@@ -95,7 +94,7 @@ void MelBands::setup(){
   MatrixXi stopBins = stopsLinear.unaryExpr(CwiseCeilOp<Real>());
 
   // set the start bins
-  _starts = startBins;
+  _starts.set(startBins);
   
   // fill in the weights
   for (int i=0; i < _starts.rows(); i++) {
@@ -113,6 +112,8 @@ void MelBands::setup(){
     triangleWindow(&newFilter, start - startBin, stop  - startBin, center  - startBin);
     _weights.push_back(newFilter);
   }
+
+  DEBUG("MELBANDS: Finished set up...");
 }
 
 void MelBands::triangleWindow(MatrixXR* window, Real start, Real stop, Real center, Real height) {
@@ -137,24 +138,59 @@ void MelBands::triangleWindow(MatrixXR* window, Real start, Real stop, Real cent
       (*window)(i,0) =  height * (Real(1.0) - ((Real(i) - center) / (stop - center)));
     }
   }
-
+  
   DEBUG("MELBANDS: Triangle window created: [" << (*window).transpose() << "]");
 }
 
-Real MelBands::linearToMelReal(Real linearFreq) {
+/**
+ *
+ * Mel scales computed using the original formula proposed by:
+ *
+ * Stevens, Stanley Smith; Volkman; John; & Newman, Edwin. (1937). 
+ * A scale for the measurement of the psychological magnitude of pitch.
+ * Journal of the Acoustical Society of America, 8 (3), 185-190.
+ *
+ */
+Real MelBands::linearToMelRealStevens1937(Real linearFreq) {
   return log((linearFreq / 700) + 1.0) * 1127.01048;
 }
 
-Real MelBands::melToLinearReal(Real melFreq) {
+Real MelBands::melToLinearRealStevens1937(Real melFreq) {
   return (exp(melFreq / 1127.01048) - 1.0) * 700.0;
 }
 
-MatrixXR MelBands::linearToMel(MatrixXR linearFreq) {
+MatrixXR MelBands::linearToMelStevens1937(MatrixXR linearFreq) {
   return ((linearFreq / 700).cwise() + 1.0).cwise().log() * 1127.01048;
 }
 
-MatrixXR MelBands::melToLinear(MatrixXR melFreq) {
+MatrixXR MelBands::melToLinearStevens1937(MatrixXR melFreq) {
   return ((melFreq / 1127.01048).cwise().exp().cwise() - 1.0) * 700.0;
+}
+
+
+/**
+ *
+ * Mel scales computed using the formula proposed by:
+ *  
+ * Fant, Gunnar. (1968).
+ * Analysis and synthesis of speech processes.
+ * In B. Malmberg (Ed.), Manual of phonetics (pp. 173-177). Amsterdam: North-Holland.
+ *
+ */
+Real MelBands::linearToMelRealFant1968(Real linearFreq) {
+  return (1000.0 / log(2.0)) * log(1.0 + linearFreq/1000.0);
+}
+
+Real MelBands::melToLinearRealFant1968(Real melFreq) {
+  return 1000.0 * (exp(melFreq * log(2.0) / 1000.0) - 1.0);
+}
+
+MatrixXR MelBands::linearToMelFant1968(MatrixXR linearFreq) {
+  return (1000.0 / log(2.0)) * ((linearFreq / 1000.0).cwise() + 1.0).cwise().log();
+}
+
+MatrixXR MelBands::melToLinearFant1968(MatrixXR melFreq) {
+  return 1000.0 * ((melFreq * log(2.0) / 1000.0).cwise().exp().cwise() - 1.0);
 }
 
 void MelBands::reset(){

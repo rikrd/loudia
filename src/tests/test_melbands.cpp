@@ -29,7 +29,7 @@ int main() {
   Real lowFreq = 133.33;
   Real highFreq = 4000.0;
   int spectrumLength = 1024;
-
+  
   MatrixXR in = MatrixXR::Constant(spectrumLength, 1, 1.0);
   
   MelBands bands(lowFreq, highFreq, nBands, samplerate, spectrumLength);
