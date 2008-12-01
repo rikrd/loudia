@@ -112,16 +112,16 @@ int PyFilter::init(PyObject* self, PyObject* args, PyObject* kwds) {
   }
 
   int a_rows = coeffsA->dimensions[0];
-  int a_cols = coeffsA->dimensions[1];  
+  int a_cols = coeffsA->dimensions[1];
   Real* a_data = (Real*)PyArray_DATA(coeffsA);
 
-  MatrixXR a = Eigen::Map<MatrixXRscipy>(a_data, a_cols, a_rows);
+  MatrixXR a = Eigen::Map<MatrixXRscipy>(a_data, a_rows, a_cols);
 
   int b_rows = coeffsB->dimensions[0];
   int b_cols = coeffsB->dimensions[1];
   Real* b_data = (Real*)PyArray_DATA(coeffsB);
 
-  MatrixXR b = Eigen::Map<MatrixXRscipy>(b_data, b_cols, b_rows);
+  MatrixXR b = Eigen::Map<MatrixXRscipy>(b_data, b_rows, b_cols);
 
 
   if(((PyFilter*)self)->base != NULL)

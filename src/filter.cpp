@@ -49,7 +49,24 @@ Filter::Filter(MatrixXR b,
   // TODO: throw an exception when a[0] == 0
   DEBUG("FILTER: Initializing 'a' coeffs");
   _a = MatrixXR::Zero(_length, _channels);
-  _a.block(0, 0, a.rows(), _channels) = a;
+
+  // Check that it has one column or as many as channels
+  if ((a.cols() != 1) && (a.cols() != _channels)) {
+    // TODO: Throw an exception
+    DEBUG("FILTER: Error in shape of 'a' coeffs. a.cols():" << a.cols() << ", _channels:" << _channels);
+    return;
+  }
+
+  // Set the coefficients
+  if (a.cols() == 1) {
+    // If only one column has been defined repeat it for all columns
+    for (int i=0; i < _a.cols(); i++) {
+      _a.block(0, i, a.rows(), 1) = a.col(0);
+    }
+  }else{
+    // Else set it directly
+    _a.block(0, 0, a.rows(), _channels) = a;
+  }
 
   for(int i = 0; i < _a.rows(); i++){
     _a.row(i) = _a.row(i).cwise() / _a.row(0);
@@ -61,7 +78,24 @@ Filter::Filter(MatrixXR b,
 
   //cout << "built _a..."<<endl;  
   _b = MatrixXR::Zero(_length, _channels);
-  _b.block(0, 0, b.rows(), _channels) = b;
+
+  // Check that it has one column or as many as channels
+  if ((b.cols() != 1) && (b.cols() != _channels)) {
+    // TODO: Throw an exception
+    DEBUG("FILTER: Error in shape of 'b' coeffs. b.cols():" << b.cols() << ", _channels:" << _channels);
+    return;
+  }
+
+  // Set the coefficients
+  if (b.cols() == 1) {
+    // If only one column has been defined repeat it for all columns
+    for (int i=0; i < _b.cols(); i++) {
+      _b.block(0, i, b.rows(), 1) = b.col(0);
+    }
+  }else{
+    // Else set it directly
+    _b.block(0, 0, b.rows(), _channels) = b;
+  }
 
   for(int i = 0; i < _b.rows(); i++){
     _b.row(i) = _b.row(i).cwise() / _a.row(0);
@@ -83,9 +117,10 @@ Filter::~Filter() {
 
 void Filter::setup(){
   // Prepare the buffers
-  DEBUG("FILTER: Setting up...")
+  DEBUG("FILTER: Setting up...");
 
   reset();
+  DEBUG("FILTER: Finished set up...");
 }
 
 
@@ -95,11 +130,28 @@ void Filter::process(MatrixXR samples, MatrixXR* output){
   
   _samples.resize(samples.rows(), _channels);
   
+  // Check that it has one column or as many as channels
+  if ((samples.cols() != 1) && (samples.cols() != _channels)) {
+    // TODO: Throw an exception
+    DEBUG("FILTER: Error in shape of 'samples'. samples.cols():" << samples.cols() << ", _channels:" << _channels);
+    return;
+  }
+
+  // Set the coefficients
+  if (samples.cols() == 1) {
+    // If only one column has been defined repeat it for all columns
+    for (int i=0; i < _samples.cols(); i++) {
+      _samples.block(0, i, samples.rows(), 1) = samples.col(0);
+    }
+  }else{
+    // Else set it directly
+    _samples.block(0, 0, samples.rows(), _channels) = samples;
+  }
+  
   // If there is one single input channel then repeat it 
   if (samples.cols() != _channels){
     for (int i= 0; i < _samples.cols(); i++) {
-      _samples.col(i) = samples.col(0);
-      
+      _samples.col(i) = samples.col(0);      
     }
   } else {
     _samples = samples;
