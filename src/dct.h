@@ -39,7 +39,7 @@ protected:
   MatrixXR _dctMatrix;
   
 public:
-  DCT(int inputLength, int dctLength, bool scale = true);
+  DCT(int inputLength, int dctLength, bool scale = false);
 
   ~DCT();
 
