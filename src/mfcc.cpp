@@ -66,11 +66,16 @@ void MFCC::setup(){
 
 
 void MFCC::process(MatrixXR spectrum, MatrixXR* mfccCoeffs){
+  DEBUG("MFCC: Processing Melbands")
   _melbands.process(spectrum, &_bands);
-  
+
+  DEBUG("MFCC: Processing Log of bands")
   _bands = _bands.cwise().log();
   
+  DEBUG("MFCC: Processing DCT")
   _dct.process(_bands, mfccCoeffs);
+
+  DEBUG("MFCC: Finished Processing")
 }
 
 void MFCC::reset(){

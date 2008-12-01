@@ -141,13 +141,14 @@ PyObject* PyMFCC::process(PyObject* self, PyObject* args){
   }
 
   // prepare resulting array
-  int dims[] = {((PyMFCC*)self)->base->numCoeffs(), 1};
+  int numCoeffs = ((PyMFCC*)self)->base->numCoeffs();
+  int dims[] = {numCoeffs, 1};
   PyObject* out_array = PyArray_FromDims(2, dims, PyArray_FLOAT);
   
   if (out_array == NULL)
     return NULL;
 
-  MatrixXR out_matrix(in_rows, in_cols);
+  MatrixXR out_matrix(numCoeffs, 1);
 
   ((PyMFCC*)self)->base->process(in_matrix, &out_matrix);
 

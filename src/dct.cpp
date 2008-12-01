@@ -31,6 +31,13 @@ using namespace std;
 USING_PART_OF_NAMESPACE_EIGEN
 
 DCT::DCT(int inputLength, int dctLength, bool scale) {
+  DEBUG("DCT: Construction inputLength: " << inputLength << ", dctLength: " << dctLength);
+  
+  if (inputLength < dctLength) {
+    // TODO: Throw an exception since dctLength is the number of coefficients to output and it cannot output more
+    return;
+  }
+
   _inputLength = inputLength;
   _dctLength = dctLength;
   _scale = scale;
@@ -40,6 +47,7 @@ DCT::~DCT(){}
 
 void DCT::setup(){
   // Prepare the buffers
+  DEBUG("DCT: Setting up...");
   _dctMatrix.resize(_inputLength, _inputLength);
 
   Real norm = 1.0;
@@ -51,13 +59,13 @@ void DCT::setup(){
     }
   }
   
-  DEBUG("DCT: Setup, DCT Matrix: " << _dctMatrix);
-  
   reset();
+  DEBUG("DCT: Finished setup.");
 }
 
 
 void DCT::process(MatrixXR input, MatrixXR* dctCoeffs){
+  DEBUG("DCT: Processing input.rows(): " << input.rows() << ", dctCoeffs.rows(): " << (*dctCoeffs).rows());
   (*dctCoeffs) = (_dctMatrix * input).block(0, 0, _dctLength, 1);
 }
 
