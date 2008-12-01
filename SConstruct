@@ -22,14 +22,15 @@ VariantDir('build', 'src')
 env = Environment()  # Initialize the environment
 
 # Add the includes
-env.Append(CPPPATH = ['/home/rmarxer/dev/eigen2', './build'])
+env.Append(CPPPATH = ['/home/rmarxer/dev/eigen2svn', './build'])
 
 # Add the lib dir
 env.Append(LIBPATH = ['./build'])
 
 # Add the flags for the compiler
-env.Append(CXXFLAGS = '-O3 -DRICAUDIO_DEBUG')
-#env.Append(CXXFLAGS = '-O3 -msse2 -DEIGEN_NO_DEBUG -DRICAUDIO_DEBUG')
+#env.Append(CXXFLAGS = '-O3 -DRICAUDIO_DEBUG')
+#env.Append(CXXFLAGS = '-O3 -msse2 -DRICAUDIO_DEBUG')
+env.Append(CXXFLAGS = '-O3 -msse2 -DEIGEN_NO_DEBUG')
 
 # Build the tests
 env.Program('build/test_meddis', ['build/tests/test_meddis.cpp', 'build/meddis.cpp', 'build/debug.cpp'])
