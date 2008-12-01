@@ -22,7 +22,7 @@ VariantDir('build', 'src')
 env = Environment()  # Initialize the environment
 
 # Add the includes
-env.Append(CPPPATH = ['/home/rmarxer/dev/eigen2svn', './build'])
+env.Append(CPPPATH = ['/home/rmarxer/dev/eigen2', './build'])
 
 # Add the lib dir
 env.Append(LIBPATH = ['./build'])

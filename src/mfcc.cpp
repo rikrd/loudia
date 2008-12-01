@@ -33,7 +33,7 @@ using namespace std;
 // import most common Eigen types 
 USING_PART_OF_NAMESPACE_EIGEN
 
-MFCC::MFCC(Real lowFreq, Real highFreq, int numBands, Real samplerate, int spectrumLength, int numCoeffs) : _melbands(lowFreq, highFreq, numBands, samplerate, spectrumLength), _dct(numBands, numCoeffs) {
+MFCC::MFCC(Real lowFreq, Real highFreq, int numBands, Real samplerate, int spectrumLength, int numCoeffs, Real minSpectrum, Real power) : _melbands(lowFreq, highFreq, numBands, samplerate, spectrumLength), _dct(numBands, numCoeffs) {
   DEBUG("MFCC: Constructor lowFreq: " << lowFreq << ", highFreq: " << highFreq << ", numBands: " << numBands << ", samplerate: "<< samplerate << ", spectrumLength: " << spectrumLength << ", numCoeffs: " << numCoeffs);
   
   _lowFreq = lowFreq;
@@ -44,6 +44,8 @@ MFCC::MFCC(Real lowFreq, Real highFreq, int numBands, Real samplerate, int spect
 
   _numCoeffs = numCoeffs;
 
+  _minSpectrum = minSpectrum;
+  _power = power;
 }
 
 MFCC::~MFCC() {
@@ -68,11 +70,11 @@ void MFCC::setup(){
 void MFCC::process(MatrixXR spectrum, MatrixXR* mfccCoeffs){
   spectrum = spectrum.cwise().square();
 
-  DEBUG("MFCC: Processing Melbands")
+  DEBUG("MFCC: Processing Melbands");
   _melbands.process(spectrum, &_bands);
 
-  DEBUG("MFCC: Processing Log of bands")
-  _bands = _bands.cwise().log();
+  DEBUG("MFCC: Processing Log of bands");
+  _bands = ((_bands.cwise() + _minSpectrum).cwise().log() / log(10.0)).cwise().pow(_power);
   
   DEBUG("MFCC: Processing DCT")
   _dct.process(_bands, mfccCoeffs);

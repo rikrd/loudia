@@ -43,7 +43,10 @@ protected:
   int _spectrumLength;
 
   int _numCoeffs;
-
+  
+  Real _minSpectrum;
+  Real _power;
+  
   // Internal variables
   MelBands _melbands;
   DCT _dct;
@@ -51,7 +54,7 @@ protected:
   MatrixXR _bands;
 
 public:
-  MFCC(Real lowFreq, Real highFreq, int numBands, Real samplerate, int spectrumLength, int numCoeffs);
+  MFCC(Real lowFreq, Real highFreq, int numBands, Real samplerate, int spectrumLength, int numCoeffs, Real minSpectrum = 0.001, Real power = 2.0);
 
   ~MFCC();
 
