@@ -83,11 +83,14 @@ int PyMFCC::init(PyObject* self, PyObject* args, PyObject* kwds) {
   Real samplerate;
   int spectrumLength;
   int numCoeffs;
+  Real minSpectrum;
+  Real power;
+
 
   // default constructor with no argument
-  if (!PyArg_ParseTuple(args, "ffifii", &lowFreq, &highFreq, &numBands, &samplerate, &spectrumLength, &numCoeffs)){
+  if (!PyArg_ParseTuple(args, "ffifiiff", &lowFreq, &highFreq, &numBands, &samplerate, &spectrumLength, &numCoeffs, &minSpectrum, &power)){
     PyErr_SetString(PyExc_ValueError,
-                    "the arguments must be (float)lowFreq, (float)highFreq, (int)numBands, (float)samplerate, (int)spectrumLength, (int)numCoeffs");
+                    "the arguments must be (float)lowFreq, (float)highFreq, (int)numBands, (float)samplerate, (int)spectrumLength, (int)numCoeffs, (float)minSpectrum, (float)power");
     
     return -1;
   }
@@ -95,7 +98,7 @@ int PyMFCC::init(PyObject* self, PyObject* args, PyObject* kwds) {
   if(((PyMFCC*)self)->base != NULL)
     delete ((PyMFCC*)self)->base;
       
-  ((PyMFCC*)self)->base = new MFCC::MFCC(lowFreq, highFreq, numBands, samplerate, spectrumLength, numCoeffs);
+  ((PyMFCC*)self)->base = new MFCC::MFCC(lowFreq, highFreq, numBands, samplerate, spectrumLength, numCoeffs, minSpectrum, power);
   ((PyMFCC*)self)->base->setup();
 
   return 0;
