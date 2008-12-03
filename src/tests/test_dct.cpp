@@ -27,12 +27,12 @@ int main() {
   int inputLength = 34;
   int dctLength = 12;
 
-  MatrixXR in = MatrixXR::Constant(inputLength, 1, 1.0);
+  MatrixXR in = MatrixXR::Constant(1, inputLength, 1.0);
   
   DCT dct(inputLength, dctLength);
   dct.setup();
 
-  MatrixXR result(dctLength, 1);
+  MatrixXR result(1, dctLength);
   
   for (int i=0; i<2; i++) {   
     dct.process(in, &result);

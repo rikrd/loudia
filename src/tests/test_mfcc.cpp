@@ -33,12 +33,12 @@ int main() {
   
   int nCoeffs = 13;
   
-  MatrixXR in = MatrixXR::Constant(spectrumLength, 1, 1.0);
+  MatrixXR in = MatrixXR::Constant(1, spectrumLength, 1.0);
   
   MFCC mfcc(lowFreq, highFreq, nBands, samplerate, spectrumLength, nCoeffs);
   mfcc.setup();
 
-  MatrixXR result(nCoeffs, 1);
+  MatrixXR result(1, nCoeffs);
   
   for (int i=0; i<2; i++) {   
     mfcc.process(in, &result);

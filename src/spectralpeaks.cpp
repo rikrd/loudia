@@ -56,24 +56,30 @@ void SpectralPeaks::setup(){
 
 void SpectralPeaks::process(MatrixXR spectrum, MatrixXR* peakMagnitudes, MatrixXR* peakPositions){
   DEBUG("SpectralPeaks: Processing");
-
-  int peakIndex = 0;
-
-  Real magnitude = 0;
-  Real pastMagnitude = 0;
-  Real postMagnitude = 0;
+  int peakIndex;
   
-  for ( int i = 0; i < spectrum.rows() - 1; i++) {
-    pastMagnitude = magnitude;
-    magnitude = posMagnitude;
-    postMagnitude = spectrum( i + 1 , 0);
+  Real magnitude;
+  Real pastMagnitude;
+  Real postMagnitude;
+
+  for ( int j = 0 ; j < spectrum.rows(); j++){
+    peakIndex = 0;
     
-    if ((magnitude >= pastMagnitude) && (magnitude > postMagnitude)) {
-      (*peakMagnitudes)(peakIndex,0) = magnitude;
-      (*peakPositions)(peakIndex,0) = i;
+    magnitude = 0;
+    pastMagnitude = 0;
+    postMagnitude = 0;
+  
+    for ( int i = 0; i < spectrum.row(j).cols() - 1; i++) {
+      pastMagnitude = magnitude;
+      magnitude = posMagnitude;
+      postMagnitude = spectrum( j, i + 1 );
+      
+      if ((magnitude >= pastMagnitude) && (magnitude > postMagnitude)) {
+        (*peakMagnitudes)(j, peakIndex) = magnitude;
+        (*peakPositions)(j, peakIndex) = i;
+      }
     }
   }
-  
   DEBUG("SpectralPeaks: Finished Processing");
 }
 

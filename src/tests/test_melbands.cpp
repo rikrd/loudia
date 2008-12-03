@@ -30,12 +30,12 @@ int main() {
   Real highFreq = 4000.0;
   int spectrumLength = 1024;
   
-  MatrixXR in = MatrixXR::Constant(spectrumLength, 1, 1.0);
+  MatrixXR in = MatrixXR::Constant(1, spectrumLength, 1.0);
   
   MelBands bands(lowFreq, highFreq, nBands, samplerate, spectrumLength);
   bands.setup();
 
-  MatrixXR result(nBands, 1);
+  MatrixXR result(1, nBands);
   
   for (int i=0; i<2; i++) {   
     bands.process(in, &result);

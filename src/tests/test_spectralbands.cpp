@@ -26,12 +26,12 @@ using namespace std;
 int main() {
   int spectrumLength = 1024;
   int nBands = 24;
-  MatrixXR in = MatrixXR::Constant(spectrumLength, 1, 1.0);
+  MatrixXR in = MatrixXR::Constant(1, spectrumLength, 1.0);
   
   SpectralBands bands;
   bands.setup();
 
-  MatrixXR result(nBands, 1);
+  MatrixXR result(1, nBands);
   
   for (int i=0; i<1000; i++) {   
     bands.process(in, &result);

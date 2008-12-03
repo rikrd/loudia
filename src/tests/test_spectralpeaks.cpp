@@ -27,12 +27,12 @@ using namespace std;
 int main() {
   int nPeaks = 100;
   
-  MatrixXR in = MatrixXR::Constant(spectrumLength, 1, 1.0);
+  MatrixXR in = MatrixXR::Constant(1, spectrumLength, 1.0);
   
   SpectralPeaks peaks(nPeaks);
   peaks.setup();
 
-  MatrixXR result(nPeaks, 1);
+  MatrixXR result(1, nPeaks);
   
   for (int i=0; i<2; i++) {   
     peaks.process(in, &result);
