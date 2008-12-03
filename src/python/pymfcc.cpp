@@ -133,16 +133,6 @@ PyObject* PyMFCC::process(PyObject* self, PyObject* args){
 
   MatrixXR in_matrix = Eigen::Map<MatrixXRscipy>(in_data, in_rows, in_cols);
   
-  // TODO: move this check in the mfcc.cpp
-  // check that the input array has the right number of channels
-  if (in_cols != 1) {
-    PyErr_SetString(PyExc_ValueError,
-                    "the number of columns of the input array must be 1");
-    
-    return NULL;
-
-  }
-
   // prepare resulting array
   int numCoeffs = ((PyMFCC*)self)->base->numCoeffs();
   int dims[] = {in_rows, numCoeffs};

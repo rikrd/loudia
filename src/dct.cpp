@@ -67,6 +67,7 @@ void DCT::setup(){
 void DCT::process(MatrixXR input, MatrixXR* dctCoeffs){
   DEBUG("DCT: Processing input.rows(): " << input.rows() << ", dctCoeffs.rows(): " << (*dctCoeffs).rows());
   for ( int i = 0 ; i < input.rows(); i++) {
+    // FIX: remove the need of two transpose() calls by calculating the DCT transformation matrix correctly at the beginning
     (*dctCoeffs).row(i) = (_dctMatrix * input.row(i).transpose()).block(0, 0, _dctLength, 1).transpose();
   }
 }

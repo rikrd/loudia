@@ -9,12 +9,15 @@ samplerate = 44100
 spectralLength = 1024
 nCoeffs = 13
 
-a1 = scipy.array(scipy.zeros((512, 1)), dtype='f4')
-a2 = scipy.array(scipy.ones((512, 1)), dtype='f4')
+minSpectrum = 1e-10
+power = 1
+
+a1 = scipy.array(scipy.zeros((1, 512)), dtype='f4')
+a2 = scipy.array(scipy.ones((1, 512)), dtype='f4')
 
 # CRicaudio's solution # --------------------------------- #
 import pycricaudio
-m = pycricaudio.MFCC(lowFreq, highFreq, nBands, samplerate, spectralLength, nCoeffs)
+m = pycricaudio.MFCC(lowFreq, highFreq, nBands, samplerate, spectralLength, nCoeffs, minSpectrum, power)
 
 b1 = m.process(a1)
 b2 = m.process(a2)
@@ -27,7 +30,7 @@ def mfcc_compute(samples):
                            1)
     
     for ind in range(samples.shape[0]):
-        aubioclass.fvec_write_sample(mvec(), float(samples[ind]), 0, ind)
+        aubioclass.fvec_write_sample(mvec(), float(samples[0, ind]), 0, ind)
     
     mopick = aubioclass.onsetpick(spectralLength,
                                   spectralLength,
