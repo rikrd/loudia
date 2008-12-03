@@ -62,15 +62,17 @@ void SpectralBands::setup(){
 
 
 void SpectralBands::process(MatrixXR spectrum, MatrixXR* bands){
-  (*bands).resize(_starts.rows(), 1);
+  (*bands).resize(spectrum.rows(), _starts.rows());
 
-  //DEBUG("SPECTRALBANDS: Process spectrum.cols(): " << spectrum.cols() << ", spectrum.rows():" << spectrum.rows() << "");
+  for (int j = 0; j < spectrum.rows(); j++){
+    //DEBUG("SPECTRALBANDS: Process spectrum.cols(): " << spectrum.cols() << ", spectrum.rows():" << spectrum.rows() << "");
 
-  for (int i = 0; i < _starts.rows(); i++ ) {
-    //DEBUG("SPECTRALBANDS: Process _weight[" << i <<"]: [" << _weights[i].transpose() << "]");
-    //DEBUG("SPECTRALBANDS: Process _weight[" << i <<"].rows(): " << _weights[i].rows() << "");
-    //DEBUG("SPECTRALBANDS: Process _starts(" << i <<", 0): " << _starts(i, 0) << "");
-    (*bands)(i, 0) = spectrum.block(_starts(i, 0), 0, _weights[i].rows(), 1).transpose().row(0).dot(_weights[i].col(0));
+    for (int i = 0; i < _starts.rows(); i++ ) {
+      //DEBUG("SPECTRALBANDS: Process _weight[" << i <<"]: [" << _weights[i].transpose() << "]");
+      //DEBUG("SPECTRALBANDS: Process _weight[" << i <<"].rows(): " << _weights[i].rows() << "");
+      //DEBUG("SPECTRALBANDS: Process _starts(" << i <<", 0): " << _starts(i, 0) << "");
+      (*bands)(j, i) = spectrum.block(j, _starts(i, 0), 1, _weights[i].rows()).row(0).dot(_weights[i].col(0));
+    }
   }
 }
 

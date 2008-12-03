@@ -69,27 +69,31 @@ void MFCC::setup(){
 
 void MFCC::process(MatrixXR spectrum, MatrixXR* mfccCoeffs){
   DEBUG("MFCC: Processing Melbands");
-  // Process the mel bands on the power of the spectrum
-  _melbands.process(spectrum.cwise().square(), &_bands);
+  for ( int i = 0; i < spectrum.rows(); i++) {  
+    // Process the mel bands on the power of the spectrum
+    _melbands.process(spectrum.row(i).cwise().square(), &_bands);
+    
+    DEBUG("MFCC: Processing Log of bands");
+    // Apply a power to the log mel amplitudes as in: http://en.wikipedia.org/wiki/Mel_frequency_cepstral_coefficient
+    // V. Tyagi and C. Wellekens
+    // On desensitizing the Mel-Cepstrum to spurious spectral components for Robust Speech Recognition
+    // in Acoustics, Speech, and Signal Processing, 2005. Proceedings. 
+    // IEEE International Conference on, vol. 1, 2005, pp. 529–532.
+    _bands = ((_bands.cwise() + _minSpectrum).cwise().log() / log(10.0)).cwise().pow(_power);
+    
+    DEBUG("MFCC: Processing DCT");
+    // Process the DCT
+    _dct.process(_bands, &_coeffs);
 
-  DEBUG("MFCC: Processing Log of bands");
-  // Apply a power to the log mel amplitudes as in: http://en.wikipedia.org/wiki/Mel_frequency_cepstral_coefficient
-  // V. Tyagi and C. Wellekens
-  // On desensitizing the Mel-Cepstrum to spurious spectral components for Robust Speech Recognition
-  // in Acoustics, Speech, and Signal Processing, 2005. Proceedings. 
-  // IEEE International Conference on, vol. 1, 2005, pp. 529–532.
-  _bands = ((_bands.cwise() + _minSpectrum).cwise().log() / log(10.0)).cwise().pow(_power);
-  
-  DEBUG("MFCC: Processing DCT");
-  // Process the DCT
-  _dct.process(_bands, mfccCoeffs);
-
+    (*mfccCoeffs).row(i) = _coeffs;
   DEBUG("MFCC: Finished Processing");
+  }
 }
 
 void MFCC::reset(){
   // Initial values
-  _bands.set(MatrixXR::Zero(_numBands, 1));
+  _bands.set(MatrixXR::Zero(1, _numBands));
+  _coeffs.set(MatrixXR::Zero(1, _numCoeffs));
 
   _melbands.reset();
   _dct.reset();

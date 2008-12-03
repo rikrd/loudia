@@ -52,6 +52,7 @@ protected:
   DCT _dct;
 
   MatrixXR _bands;
+  MatrixXR _coeffs;
 
 public:
   MFCC(Real lowFreq, Real highFreq, int numBands, Real samplerate, int spectrumLength, int numCoeffs, Real minSpectrum = 1e-10, Real power = 1.0);
