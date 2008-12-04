@@ -55,7 +55,7 @@ void DCT::setup(){
 
   for(int i=0; i < _dctMatrix.rows(); i++){
     for(int j=0; j < _dctMatrix.cols(); j++){
-      _dctMatrix(i,j) = norm * cos(Real(i) * M_PI / Real(_inputLength) * (Real(j) + Real(0.5)));
+      _dctMatrix(i,j) = norm * cos(Real(j) * M_PI / Real(_inputLength) * (Real(i) + Real(0.5)));
     }
   }
   
@@ -65,10 +65,9 @@ void DCT::setup(){
 
 
 void DCT::process(MatrixXR input, MatrixXR* dctCoeffs){
-  DEBUG("DCT: Processing input.rows(): " << input.rows() << ", dctCoeffs.rows(): " << (*dctCoeffs).rows());
+  DEBUG("DCT: Processing input.cols(): " << input.cols() << ", dctCoeffs.cols(): " << (*dctCoeffs).cols());
   for ( int i = 0 ; i < input.rows(); i++) {
-    // FIX: remove the need of two transpose() calls by calculating the DCT transformation matrix correctly at the beginning
-    (*dctCoeffs).row(i) = (_dctMatrix * input.row(i).transpose()).block(0, 0, _dctLength, 1).transpose();
+    (*dctCoeffs).row(i) = (input.row(i) * _dctMatrix).block(0, 0, 1, _dctLength);
   }
 }
 

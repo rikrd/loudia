@@ -19,4 +19,8 @@
 #include <fstream>
 using namespace std;
 
+#if defined(RICAUDIO_LOG)
+
 ofstream out("ricaudio.log");
+
+#endif
