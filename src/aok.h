@@ -39,7 +39,6 @@ protected:
   Real _normVolume;
 
   // Internal variables
-  int i,j,k,ii;
   int itemp;
   int xlen, tlen, nraf,tlag,nlag,mfft,nrad, nphi, nits;
   int slen,fftlen;

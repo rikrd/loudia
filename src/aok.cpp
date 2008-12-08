@@ -48,9 +48,9 @@ void AOK::setup(){
   DEBUG("AOK: Setting up...");
 
   tstep = _hopSize;
-  slen = _windowSize;
+  tlag = _windowSize;
   fftlen = _fftSize;
-
+  
   if ( fftlen < (2*tlag) )
     {
       fstep = 2*tlag/fftlen;
@@ -108,13 +108,13 @@ void AOK::process(MatrixXR frames, MatrixXR* timeFreqRep){
 
     for (int ii=0; ii < tlen; ii++) {
       // Fill in the input vectors
-      //DEBUG("AOK: Processing, setting the xr and xi C arrays");
+      DEBUG("AOK: Processing, setting the xr and xi C arrays");
       Eigen::Map<MatrixXR>(xr, 1, frames.cols()) = frames.row(row);
       Eigen::Map<MatrixXR>(xi, 1, frames.cols()) = MatrixXR::Zero(1, frames.cols());
       DEBUG("AOK: Processing, finished setting the xr and xi C arrays");
       
       rectaf(xr,xi,nlag,nraf,rar,rai,rarN,raiN,rectafr,rectafi);
-      
+
       if ( (ii - (ii/tstep)*tstep) == 0 )	/* output t-f slice	*/
         {
           outct = outct + 1;
@@ -132,7 +132,7 @@ void AOK::process(MatrixXR frames, MatrixXR* timeFreqRep){
               for (int j = 0; j < nraf; j++)	/* integrate over theta	*/
                 {
                   rtemp = ccmr(rectafr[i*nraf+j],rectafi[i*nraf+j],rectrotr[i*nraf+j],rectroti[i*nraf+j]);
-                  rtemp1 =ccmi(rectafr[i*nraf+j],rectafi[i*nraf+j],rectrotr[i*nraf+j],rectroti[i*nraf+j]);
+                  rtemp1 = ccmi(rectafr[i*nraf+j],rectafi[i*nraf+j],rectrotr[i*nraf+j],rectroti[i*nraf+j]);
                   
                   rtemp2 = rectkern(i,j,nraf,nphi,req,pheq,sigma);
                   tfslicer[i] = tfslicer[i] + rtemp*rtemp2;

@@ -44,9 +44,6 @@ int main() {
   MatrixXR in = MatrixXR::Random(numFrames, windowSize);
   loadFile("/home/rmarxer/downloads/aok4/papertest.frames", &in, numFrames, windowSize);
 
-  cout << in.rows() << endl;
-  cout << in.cols() << endl;
-
   AOK aok(windowSize, hopSize, fftLength);
   aok.setup();
 
