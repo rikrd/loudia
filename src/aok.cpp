@@ -111,7 +111,7 @@ void AOK::process(MatrixXR frames, MatrixXR* timeFreqRep){
       //DEBUG("AOK: Processing, setting the xr and xi C arrays");
       Eigen::Map<MatrixXR>(xr, 1, frames.cols()) = frames.row(row);
       Eigen::Map<MatrixXR>(xi, 1, frames.cols()) = MatrixXR::Zero(1, frames.cols());
-      //DEBUG("AOK: Processing, finished setting the xr and xi C arrays");
+      DEBUG("AOK: Processing, finished setting the xr and xi C arrays");
       
       rectaf(xr,xi,nlag,nraf,rar,rai,rarN,raiN,rectafr,rectafi);
       
@@ -155,7 +155,12 @@ void AOK::process(MatrixXR frames, MatrixXR* timeFreqRep){
           
           
           fft(fftlen,mfft,tfslicer,tfslicei);
-          
+          /*
+          DEBUG("AOK: Processing, tfslicer: ");
+          for(int b=0; b<fftlen; b++ ){
+            DEBUG("AOK: Processing, tfslicer["<<b<<"]="<<tfslicer[b]);
+          }
+          */
           itemp = fftlen/2 + fstep;
           int col = 0;				/* print output slice	*/
           //DEBUG("AOK: Processing, (*timeFreqRep).shape: " << (*timeFreqRep).rows() << ", " << (*timeFreqRep).cols());

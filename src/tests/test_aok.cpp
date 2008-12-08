@@ -21,25 +21,39 @@
 
 #include <Eigen/Core>
 #include <iostream>
+#include <fstream>
 
 using namespace std;
 
+void loadFile(char* filename, MatrixXR* result, int rows = 2, int cols = 64) {
+  FILE* in = fopen( filename, "r");
+  
+  for ( int i = 0; i<rows; i++ ) {
+    for (int j = 0; j<cols; j++) {
+      int r = fscanf(in, "%f", &((*result)(i, j)));
+    }
+  }
+}
+
 int main() {
-  int windowSize = 512;
-  int hopSize = 256;
-  int fftLength = 1024;
-  
-  MatrixXR in = MatrixXR::Constant(1, windowSize, 1.0);
-  
+  int windowSize = 64;
+  int hopSize = 1;
+  int fftLength = 256;
+  int numFrames = 223;
+
+  MatrixXR in = MatrixXR::Random(numFrames, windowSize);
+  loadFile("/home/rmarxer/downloads/aok4/papertest.frames", &in, numFrames, windowSize);
+
+  cout << in.rows() << endl;
+  cout << in.cols() << endl;
+
   AOK aok(windowSize, hopSize, fftLength);
   aok.setup();
 
-  MatrixXR result(1, fftLength);
+  MatrixXR result(numFrames, fftLength);
   
-  for (int i=0; i<2; i++) {   
-    aok.process(in, &result);
-    cout << "result:" << result << endl;
-  }
+  aok.process(in, &result);
+  cout << "result:" << result << endl;
 
   return 0;
 }
