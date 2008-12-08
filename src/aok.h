@@ -83,6 +83,45 @@ public:
 
   void reset();
 
+  void fft(int n, int m, Real x[], Real y[]);
+
+  int po2(int n);
+
+  int power(int x, int n);
+
+  void kfill(int len, Real k, Real x[]);
+
+  void cshift(int len, Real x[]);
+
+  Real cmr(Real xr, Real xi, Real yr, Real yi);
+
+  Real cmi(Real xr, Real xi, Real yr, Real yi);
+
+  Real ccmr(Real xr, Real xi, Real yr, Real yi);
+
+  Real ccmi(Real xr, Real xi, Real yr, Real yi);
+
+  void rectamake(int nlag, int n, Real forget, Real ar[], Real ai[], Real arN[], Real aiN[]);
+
+  void pthetamake(int nrad, int nphi, int ntheta, Real ptheta[], int maxrad[]);
+
+  void plagmake(int nrad, int nphi, int nlag, Real plag[]);
+
+  void rectopol(int nraf, int nlag, int nrad, int nphi, Real req[], Real pheq[]);
+
+  void rectrotmake(int nraf, int nlag, Real outdelay, Real rectrotr[], Real rectroti[]);
+
+  void rectaf(Real xr[], Real xi[] , int laglen, int freqlen,  Real alphar[], Real alphai[], Real alpharN[], Real alphaiN[], Real afr[], Real afi[]);
+
+  void polafint(int nrad, int nphi, int ntheta, int maxrad[], int nlag, Real plag[], Real ptheta[], Real rectafm2[], Real polafm2[]);
+
+  Real mklag(int nrad, int nphi, int nlag, int iphi, int jrad);
+
+  Real rectkern(int itau, int itheta, int ntheta, int nphi, Real req[], Real pheq[], Real sigma[]);
+
+  void sigupdate(int nrad, int nphi, int nits, Real vol, Real mu0, int maxrad[], Real polafm2[], Real sigma[]);
+
+  void mkmag2(int tlen, Real xr[], Real xi[], Real xm2[]);
 };
 
 #endif  /* AOK_H */

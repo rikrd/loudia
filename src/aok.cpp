@@ -50,8 +50,18 @@ void AOK::setup(){
   tstep = _hopSize;
   slen = _windowSize;
   fftlen = _fftSize;
-  vol = _normVolume;
 
+  if ( fftlen < (2*tlag) )
+    {
+      fstep = 2*tlag/fftlen;
+      fftlen = 2*tlag;
+    }
+  else
+    {
+      fstep = 1;
+    }
+  
+  vol = _normVolume;
 
   /*	tlag = 64; */		/* total number of rectangular AF lags	*/
   nits = (int) log2((Real) tstep+2);	/* number of gradient steps to take each time	*/
@@ -98,9 +108,11 @@ void AOK::process(MatrixXR frames, MatrixXR* timeFreqRep){
 
     for (int ii=0; ii < tlen; ii++) {
       // Fill in the input vectors
-      Matrix::Map(xr) = frames.row(row);
-      Matrix::Map(xi) = MatrixXR::Zero(1, frames.cols());
-
+      //DEBUG("AOK: Processing, setting the xr and xi C arrays");
+      Eigen::Map<MatrixXR>(xr, 1, frames.cols()) = frames.row(row);
+      Eigen::Map<MatrixXR>(xi, 1, frames.cols()) = MatrixXR::Zero(1, frames.cols());
+      //DEBUG("AOK: Processing, finished setting the xr and xi C arrays");
+      
       rectaf(xr,xi,nlag,nraf,rar,rai,rarN,raiN,rectafr,rectafi);
       
       if ( (ii - (ii/tstep)*tstep) == 0 )	/* output t-f slice	*/
@@ -111,52 +123,55 @@ void AOK::process(MatrixXR frames, MatrixXR* timeFreqRep){
           polafint(nrad,nphi,nraf,maxrad,nlag,plag,ptheta,rectafm2,polafm2);
           sigupdate(nrad,nphi,nits,vol,mu,maxrad,polafm2,sigma);
           
-          for (i=0; i < nlag-1; i++)	/* for each tau	*/
+          for (int i=0; i < nlag-1; i++)	/* for each tau	*/
             {
-                tfslicer[i] = 0.0;
-                tfslicei[i] = 0.0;
-                
-                
-                for (j = 0; j < nraf; j++)	/* integrate over theta	*/
-                  {
-                    rtemp = ccmr(rectafr[i*nraf+j],rectafi[i*nraf+j],rectrotr[i*nraf+j],rectroti[i*nraf+j]);
-                    rtemp1 =ccmi(rectafr[i*nraf+j],rectafi[i*nraf+j],rectrotr[i*nraf+j],rectroti[i*nraf+j]);
-                    
-                    rtemp2 = rectkern(i,j,nraf,nphi,req,pheq,sigma);
-                    tfslicer[i] = tfslicer[i] + rtemp*rtemp2;
-                    tfslicei[i] = tfslicei[i] + rtemp1*rtemp2;
-                    /*	fprintf(ofp," %d , %d , %g, %g, %g , %g , %g \n", i,j,rectafr[i*nraf+j],rectafi[i*nraf+j],rtemp,rtemp1,rtemp2); */
-                  }
-              }
-            for (i=nlag-1; i < (fftlen-nlag+2); i++)	/* zero pad for FFT	*/
-              {
-                tfslicer[i] = 0.0;
-                tfslicei[i] = 0.0;
-              }
-            
-            for (i=(fftlen-nlag+2); i < fftlen; i++)	/* fill in c.c. symmetric half of array	*/
-              {
-                tfslicer[i] = tfslicer[fftlen - i];
-                tfslicei[i] = - tfslicei[fftlen - i];
-              }
-            
-            
-            
-            fft(fftlen,mfft,tfslicer,tfslicei);
-            
-            itemp = fftlen/2 + fstep;
-            j = 1;				/* print output slice	*/
-            for (i=itemp; i < fftlen; i=i+fstep)
-              {
-                timeFreqRep(row, j - 1) = tfslicer[i];
-                j = j + 1;
-              }
-            for (i=0; i < itemp; i=i+fstep)
-              {
-                timeFreqRep(row, j - 1) = tfslicer[i];
-                j = j + 1;
-              }
-          }
+              tfslicer[i] = 0.0;
+              tfslicei[i] = 0.0;
+              
+              
+              for (int j = 0; j < nraf; j++)	/* integrate over theta	*/
+                {
+                  rtemp = ccmr(rectafr[i*nraf+j],rectafi[i*nraf+j],rectrotr[i*nraf+j],rectroti[i*nraf+j]);
+                  rtemp1 =ccmi(rectafr[i*nraf+j],rectafi[i*nraf+j],rectrotr[i*nraf+j],rectroti[i*nraf+j]);
+                  
+                  rtemp2 = rectkern(i,j,nraf,nphi,req,pheq,sigma);
+                  tfslicer[i] = tfslicer[i] + rtemp*rtemp2;
+                  tfslicei[i] = tfslicei[i] + rtemp1*rtemp2;
+                  /*	fprintf(ofp," %d , %d , %g, %g, %g , %g , %g \n", i,j,rectafr[i*nraf+j],rectafi[i*nraf+j],rtemp,rtemp1,rtemp2); */
+                }
+            }
+          for (int i=nlag-1; i < (fftlen-nlag+2); i++)	/* zero pad for FFT	*/
+            {
+              tfslicer[i] = 0.0;
+              tfslicei[i] = 0.0;
+            }
+          
+          for (int i=(fftlen-nlag+2); i < fftlen; i++)	/* fill in c.c. symmetric half of array	*/
+            {
+              tfslicer[i] = tfslicer[fftlen - i];
+              tfslicei[i] = - tfslicei[fftlen - i];
+            }
+          
+          
+          
+          fft(fftlen,mfft,tfslicer,tfslicei);
+          
+          itemp = fftlen/2 + fstep;
+          int col = 0;				/* print output slice	*/
+          //DEBUG("AOK: Processing, (*timeFreqRep).shape: " << (*timeFreqRep).rows() << ", " << (*timeFreqRep).cols());
+          for (int i=itemp; i < fftlen; i=i+fstep)
+            {
+              //DEBUG("AOK: Processing, row: " << row << ", col: " << col << ", i: " << i);
+              (*timeFreqRep)(row, col) = tfslicer[i];
+              col++;
+            }
+          for (int i=0; i < itemp; i=i+fstep)
+            {
+              //DEBUG("AOK: Processing, row: " << row << ", col: " << col << ", i: " << i);
+              (*timeFreqRep)(row, col) = tfslicer[i];
+              col++;
+            }
+        }
       }
         
   }
@@ -187,9 +202,7 @@ void AOK::reset(){
 /*   Permission to copy and use this program is granted		*/
 /*   as long as this header is included.			*/
 /****************************************************************/
-fft(n,m,x,y)
-int	n,m;
-Real	x[],y[];
+void AOK::fft(int n, int m, Real x[], Real y[])
 {
 	int	i,j,k,n1,n2;
 	Real	c,s,e,a,t1,t2;
@@ -253,8 +266,7 @@ Real	x[],y[];
 /*								*/
 /*   po2: find the smallest power of two >= input value		*/
 /*								*/
-int	po2(n)
-int	n;
+int	AOK::po2(int n)
 {
 	int	m, mm;
 
@@ -270,8 +282,7 @@ int	n;
 /*								*/
 /*   power: compute x^n, x and n positve integers		*/
 /*								*/
-power(x, n)
-int  x,n;
+int AOK::power(int x, int n)
 {
 	int	i,p;
 
@@ -283,9 +294,7 @@ int  x,n;
 /*								*/
 /*   zerofill: set array elements to constant			*/
 /*								*/
-kfill(len,k,x)
-int	len;
-Real	k,x[];
+void AOK::kfill(int len,Real k,Real x[])
 {
 	int	i;
 
@@ -297,9 +306,7 @@ Real	k,x[];
 /*								*/
 /*   cshift: circularly shift an array				*/
 /*								*/
-cshift(len,x)
-int	len;
-Real	x[];
+void AOK::cshift(int len, Real x[])
 {
 	int	i;
 	Real	rtemp;
@@ -318,8 +325,7 @@ Real	x[];
 /*								*/
 /*   cmr: computes real part of x times y			*/
 /*								*/
-Real	cmr(xr,xi,yr,yi)
-Real	xr,xi,yr,yi;
+Real	AOK::cmr(Real xr, Real xi, Real yr, Real yi)
 {
 	Real	rtemp;
 
@@ -330,8 +336,7 @@ Real	xr,xi,yr,yi;
 /*								*/
 /*   cmi: computes imaginary part of x times y			*/
 /*								*/
-Real	cmi(xr,xi,yr,yi)
-Real	xr,xi,yr,yi;
+Real	AOK::cmi(Real xr, Real xi, Real yr, Real yi)
 {
 	Real	rtemp;
 
@@ -342,8 +347,7 @@ Real	xr,xi,yr,yi;
 /*								*/
 /*   ccmr: computes real part of x times y*			*/
 /*								*/
-Real	ccmr(xr,xi,yr,yi)
-Real	xr,xi,yr,yi;
+Real	AOK::ccmr(Real xr, Real xi, Real yr, Real yi)
 {
 	Real	rtemp;
 
@@ -354,8 +358,7 @@ Real	xr,xi,yr,yi;
 /*								*/
 /*   ccmi: computes imaginary part of x times y*		*/
 /*								*/
-Real	ccmi(xr,xi,yr,yi)
-Real	xr,xi,yr,yi;
+Real	AOK::ccmi(Real xr, Real xi, Real yr, Real yi)
 {
 	Real	rtemp;
 
@@ -366,9 +369,7 @@ Real	xr,xi,yr,yi;
 /*								*/
 /*   rectamake: make vector of poles for rect running AF	*/
 /*								*/
-rectamake(nlag,n,forget,ar,ai,arN,aiN)
-int	nlag,n;
-Real	forget,ar[],ai[],arN[],aiN[];
+void AOK::rectamake(int nlag, int n, Real forget, Real ar[], Real ai[], Real arN[], Real aiN[])
 {
 	int	i,j;
 	Real	trig,decay;
@@ -403,9 +404,7 @@ Real	forget,ar[],ai[],arN[],aiN[];
 /*								*/
 /*   pthetamake: make matrix of theta indices for polar samples	*/
 /*								*/
-pthetamake(nrad,nphi,ntheta,ptheta,maxrad)
-int	nrad,nphi,ntheta,maxrad[];
-Real	ptheta[];
+void AOK::pthetamake(int nrad, int nphi, int ntheta, Real ptheta[], int maxrad[])
 {
 	int	i,j;
 	Real	theta,rtemp,deltheta;
@@ -449,13 +448,9 @@ Real	ptheta[];
 /*								*/
 /*   plagmake: make matrix of lags for polar running AF		*/
 /*								*/
-plagmake(nrad,nphi,nlag,plag)
-int	nrad,nphi,nlag;
-Real	plag[];
+void AOK::plagmake(int nrad, int nphi, int nlag, Real plag[])
 {
 	int	i,j;
-
-extern	Real	mklag();
 
 
 	for (i=0; i < nphi; i++)        /* for all phi ...      */
@@ -472,9 +467,7 @@ extern	Real	mklag();
 /*								*/
 /*   rectopol: find polar indices corresponding to rect samples	*/
 /*								*/
-rectopol(nraf,nlag,nrad,nphi,req,pheq)
-int	nraf,nlag,nrad,nphi;
-Real	req[],pheq[];
+void AOK::rectopol(int nraf, int nlag, int nrad, int nphi, Real req[], Real pheq[])
 {
 	int	i,j,jt;
 	Real	pi,deltau,deltheta,delrad,delphi;
@@ -513,9 +506,7 @@ Real	req[],pheq[];
 /*								*/
 /*   rectrotmake: make array of rect AF phase shifts		*/
 /*								*/
-rectrotmake(nraf,nlag,outdelay,rectrotr,rectroti)
-int	nraf,nlag;
-Real	outdelay,rectrotr[],rectroti[];
+void AOK::rectrotmake(int nraf, int nlag, Real outdelay, Real rectrotr[], Real rectroti[])
 {
 	int	i,j;
 	Real	twopin;
@@ -544,14 +535,10 @@ Real	outdelay,rectrotr[],rectroti[];
 /*   rectaf: generate running AF on rectangular grid;		*/
 /*	     negative lags, all DFT frequencies			*/
 /*								*/
-rectaf(xr,xi,laglen,freqlen,alphar,alphai,alpharN,alphaiN,afr,afi)
-int	laglen,freqlen;
-Real	xr[],xi[],alphar[],alphai[],alpharN[],alphaiN[],afr[],afi[];
+void AOK::rectaf(Real xr[], Real xi[] , int laglen, int freqlen,  Real alphar[], Real alphai[], Real alpharN[], Real alphaiN[], Real afr[], Real afi[])
 {
 	int	i,j;
 	Real	rtemp,rr,ri,rrN,riN;
-extern	Real	cmr(),cmi();
-extern	Real	ccmr(),ccmi();
 
 	for (i=0; i < laglen; i++)
 	 {
@@ -575,9 +562,7 @@ extern	Real	ccmr(),ccmi();
 /*								*/
 /*   polafint: interpolate AF on polar grid;			*/
 /*								*/
-polafint(nrad,nphi,ntheta,maxrad,nlag,plag,ptheta,rectafm2,polafm2)
-int	nrad,nphi,ntheta,nlag,maxrad[];
-Real	plag[],ptheta[],rectafm2[],polafm2[];
+void AOK::polafint(int nrad, int nphi, int ntheta, int maxrad[], int nlag, Real plag[], Real ptheta[], Real rectafm2[], Real polafm2[])
 {
 	int	i,j;
 	int	ilag,itheta,itheta1;
@@ -640,8 +625,7 @@ Real	plag[],ptheta[],rectafm2[],polafm2[];
 /*								*/
 /*   mklag: compute radial sample lag				*/
 /*								*/
-Real	mklag(nrad,nphi,nlag,iphi,jrad)
-int	nrad,nphi,nlag,iphi,jrad;
+Real	AOK::mklag(int nrad, int nphi, int nlag, int iphi, int jrad)
 {
 	Real	delay;
 
@@ -653,9 +637,7 @@ int	nrad,nphi,nlag,iphi,jrad;
 /*								*/
 /*   rectkern: generate kernel samples on rectangular grid	*/
 /*								*/
-Real	rectkern(itau,itheta,ntheta,nphi,req,pheq,sigma)
-int	itau,itheta,ntheta,nphi;
-Real	req[],pheq[],sigma[];
+Real	AOK::rectkern(int itau, int itheta, int ntheta, int nphi, Real req[], Real pheq[], Real sigma[])
 {
 	int	iphi,iphi1;
 	Real	kern,tsigma;
@@ -675,9 +657,7 @@ Real	req[],pheq[],sigma[];
 /*								*/
 /*   sigupdate: update RG kernel parameters			*/
 /*								*/
-sigupdate(nrad,nphi,nits,vol,mu0,maxrad,polafm2,sigma)
-int	nrad,nphi,nits,maxrad[];
-Real	vol,mu0,polafm2[],sigma[];
+void AOK::sigupdate(int nrad, int nphi, int nits, Real vol, Real mu0, int maxrad[], Real polafm2[], Real sigma[])
 {
 	int	ii,i,j;
 	Real	grad[1024],gradsum,gradsum1,tvol,volfac,eec,ee1,ee2,mu;
@@ -736,9 +716,7 @@ Real	vol,mu0,polafm2[],sigma[];
 /*								*/
 /*   mkmag2: compute squared magnitude of an array		*/
 /*								*/
-mkmag2(tlen,xr,xi,xm2)
-int	tlen;
-Real	xr[],xi[],xm2[];
+void AOK::mkmag2(int tlen, Real xr[], Real xi[], Real xm2[])
 {
 	int	i;
 
