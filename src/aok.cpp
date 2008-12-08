@@ -49,7 +49,7 @@ void AOK::setup(){
 
   tstep = _hopSize;
   tlag = _windowSize;
-  xlen = _windowSize;
+  xlen = 223;
   fftlen = _fftSize;
   
   if ( fftlen < (2*tlag) )
@@ -86,20 +86,26 @@ void AOK::setup(){
   
   
 
-  kfill((nrad*nphi),0.0,polafm2);
-  kfill((nraf*nlag),0.0,rectafr);
-  kfill((nraf*nlag),0.0,rectafi);
-  kfill(slen,0.0,xr);
-  kfill(slen,0.0,xi);
-  kfill(nphi,1.0,sigma);
+  kfill((nrad * nphi), 0.0, polafm2);
+  kfill((nraf * nlag), 0.0, rectafr);
+  kfill((nraf * nlag), 0.0, rectafi);
+  kfill(slen, 0.0, xr);
+  kfill(slen, 0.0, xi);
+  kfill(nphi, 1.0, sigma);
   
   tlen = xlen + nraf + 2;
+
+
   DEBUG("AOK: tlen: " << tlen);
-  rectamake(nlag,nraf,forget,rar,rai,rarN,raiN);/* make running rect AF parms	*/
-  plagmake(nrad,nphi,nlag,plag);
-  pthetamake(nrad,nphi,nraf,ptheta,maxrad);	/* make running polar AF parms	*/
-  rectrotmake(nraf,nlag,outdelay,rectrotr,rectroti);
-  rectopol(nraf,nlag,nrad,nphi,req,pheq);
+  DEBUG("AOK: nlag: " << nlag);
+  DEBUG("AOK: slen: " << slen);
+  DEBUG("AOK: xlen: " << xlen);
+
+  rectamake(nlag, nraf, forget, rar, rai, rarN, raiN);/* make running rect AF parms	*/
+  plagmake(nrad, nphi, nlag, plag);
+  pthetamake(nrad, nphi, nraf, ptheta, maxrad);	/* make running polar AF parms	*/
+  rectrotmake(nraf, nlag, outdelay, rectrotr, rectroti);
+  rectopol(nraf, nlag, nrad, nphi, req, pheq);
   
   reset();
 
@@ -110,79 +116,76 @@ void AOK::setup(){
 void AOK::process(MatrixXR frames, MatrixXR* timeFreqRep){
   for ( int row = 0; row < frames.rows(); row++) {  /*  for each temporal frame of samples  */
     DEBUG("AOK: Processing, row="<<row);
-    for (int ii=0; ii < tlen; ii++) {
-      // Fill in the input vectors
-      //DEBUG("AOK: Processing, setting the xr and xi C arrays, ii="<<ii);
-      Eigen::Map<MatrixXR>(xr, 1, frames.cols()) = frames.row(row);
-      Eigen::Map<MatrixXR>(xi, 1, frames.cols()) = MatrixXR::Zero(1, frames.cols());
-      //DEBUG("AOK: Processing, finished setting the xr and xi C arrays");
-      
-      rectaf(xr,xi,nlag,nraf,rar,rai,rarN,raiN,rectafr,rectafi);
+    // Fill in the input vectors
+    //DEBUG("AOK: Processing, setting the xr and xi C arrays, ii="<<ii);
+    Eigen::Map<MatrixXR>(xr, 1, frames.cols()) = frames.row(row);
+    Eigen::Map<MatrixXR>(xi, 1, frames.cols()) = MatrixXR::Zero(1, frames.cols());
+    //DEBUG("AOK: Processing, finished setting the xr and xi C arrays");
+    
+    rectaf(xr, xi, nlag, nraf, rar, rai, rarN, raiN, rectafr, rectafi);
 
-      if ( (ii - (ii/tstep)*tstep) == 0 )	/* output t-f slice	*/
-        {
-          outct = outct + 1;
-          
-          mkmag2((nlag*nraf),rectafr,rectafi,rectafm2);
-          polafint(nrad,nphi,nraf,maxrad,nlag,plag,ptheta,rectafm2,polafm2);
-          sigupdate(nrad,nphi,nits,vol,mu,maxrad,polafm2,sigma);
-          
-          for (int i=0; i < nlag-1; i++)	/* for each tau	*/
-            {
-              tfslicer[i] = 0.0;
-              tfslicei[i] = 0.0;
-              
-              
-              for (int j = 0; j < nraf; j++)	/* integrate over theta	*/
-                {
-                  rtemp = ccmr(rectafr[i*nraf+j],rectafi[i*nraf+j],rectrotr[i*nraf+j],rectroti[i*nraf+j]);
-                  rtemp1 = ccmi(rectafr[i*nraf+j],rectafi[i*nraf+j],rectrotr[i*nraf+j],rectroti[i*nraf+j]);
+    if ( (row % tstep) == 0 )	/* output t-f slice	*/
+      {
+        mkmag2((nlag*nraf), rectafr, rectafi, rectafm2);
+        polafint(nrad, nphi, nraf, maxrad, nlag, plag, ptheta, rectafm2, polafm2);
+        sigupdate(nrad, nphi, nits, vol, mu, maxrad, polafm2, sigma);
+        
+        for (int i=0; i < nlag-1; i++)	/* for each tau	*/
+          {
+            tfslicer[i] = 0.0;
+            tfslicei[i] = 0.0;
+            
+            
+            for (int j = 0; j < nraf; j++)	/* integrate over theta	*/
+              {
+                  rtemp = ccmr(rectafr[i*nraf+j], rectafi[i*nraf+j], rectrotr[i*nraf+j], rectroti[i*nraf+j]);
+                  rtemp1 = ccmi(rectafr[i*nraf+j], rectafi[i*nraf+j], rectrotr[i*nraf+j], rectroti[i*nraf+j]);
                   
-                  rtemp2 = rectkern(i,j,nraf,nphi,req,pheq,sigma);
+                  rtemp2 = rectkern(i, j, nraf, nphi, req, pheq, sigma);
                   tfslicer[i] = tfslicer[i] + rtemp*rtemp2;
                   tfslicei[i] = tfslicei[i] + rtemp1*rtemp2;
                   /*	fprintf(ofp," %d , %d , %g, %g, %g , %g , %g \n", i,j,rectafr[i*nraf+j],rectafi[i*nraf+j],rtemp,rtemp1,rtemp2); */
-                }
-            }
-          for (int i=nlag-1; i < (fftlen-nlag+2); i++)	/* zero pad for FFT	*/
-            {
-              tfslicer[i] = 0.0;
-              tfslicei[i] = 0.0;
-            }
-          
-          for (int i=(fftlen-nlag+2); i < fftlen; i++)	/* fill in c.c. symmetric half of array	*/
-            {
+              }
+          }
+        for (int i=nlag-1; i < (fftlen-nlag+2); i++)	/* zero pad for FFT	*/
+          {
+            tfslicer[i] = 0.0;
+            tfslicei[i] = 0.0;
+          }
+        
+        for (int i=(fftlen-nlag+2); i < fftlen; i++)	/* fill in c.c. symmetric half of array	*/
+          {
               tfslicer[i] = tfslicer[fftlen - i];
               tfslicei[i] = - tfslicei[fftlen - i];
-            }
-          
-          
-          
-          fft(fftlen,mfft,tfslicer,tfslicei);
-          /*
+          }
+        
+        
+        
+        fft(fftlen, mfft, tfslicer, tfslicei);
+        /*
           DEBUG("AOK: Processing, tfslicer: ");
           for(int b=0; b<fftlen; b++ ){
-            DEBUG("AOK: Processing, tfslicer["<<b<<"]="<<tfslicer[b]);
+          DEBUG("AOK: Processing, tfslicer["<<b<<"]="<<tfslicer[b]);
           }
-          */
-          itemp = fftlen/2 + fstep;
-          int col = 0;				/* print output slice	*/
-          //DEBUG("AOK: Processing, (*timeFreqRep).shape: " << (*timeFreqRep).rows() << ", " << (*timeFreqRep).cols());
-          for (int i=itemp; i < fftlen; i=i+fstep)
-            {
-              //DEBUG("AOK: Processing, row: " << row << ", col: " << col << ", i: " << i);
-              (*timeFreqRep)(row, col) = tfslicer[i];
-              col++;
-            }
-          for (int i=0; i < itemp; i=i+fstep)
-            {
-              //DEBUG("AOK: Processing, row: " << row << ", col: " << col << ", i: " << i);
-              (*timeFreqRep)(row, col) = tfslicer[i];
-              col++;
-            }
-        }
+        */
+        itemp = fftlen/2 + fstep;
+        int col = 0;				/* print output slice	*/
+        //DEBUG("AOK: Processing, (*timeFreqRep).shape: " << (*timeFreqRep).rows() << ", " << (*timeFreqRep).cols());
+        for (int i=itemp; i < fftlen; i=i+fstep)
+          {
+            //DEBUG("AOK: Processing, row: " << row << ", col: " << col << ", i: " << i);
+            (*timeFreqRep)(outct, col) = tfslicer[i];
+            col++;
+          }
+        for (int i=0; i < itemp; i=i+fstep)
+          {
+            //DEBUG("AOK: Processing, row: " << row << ", col: " << col << ", i: " << i);
+            (*timeFreqRep)(outct, col) = tfslicer[i];
+            col++;
+          }
+
+        outct = outct + 1;        
       }
-        
   }
 }
 

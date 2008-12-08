@@ -38,19 +38,20 @@ void loadFile(char* filename, MatrixXR* result, int rows = 2, int cols = 64) {
 int main() {
   int windowSize = 64;
   int hopSize = 1;
-  int fftLength = 256;
+  int fftLength = 64;
   int numFrames = 223;
+  Real normVolume = 4;
 
   MatrixXR in = MatrixXR::Random(numFrames, windowSize);
   loadFile("/home/rmarxer/downloads/aok4/papertest.frames", &in, numFrames, windowSize);
 
-  AOK aok(windowSize, hopSize, fftLength);
+  AOK aok(windowSize, hopSize, fftLength, normVolume);
   aok.setup();
 
   MatrixXR result(numFrames, fftLength);
   
   aok.process(in, &result);
-  cout << "result:" << result << endl;
+  cout << result << endl;
 
   return 0;
 }
