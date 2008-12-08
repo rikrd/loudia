@@ -45,8 +45,6 @@ int main() {
   MatrixXR in = MatrixXR::Random(numFrames, windowSize);
   loadFile("/home/rmarxer/dev/ricaudio/src/tests/papertest.frames", &in, numFrames, windowSize);
   
-  cout << in;
-
   AOK aok(windowSize, hopSize, fftLength, normVolume);
   aok.setup();
 
