@@ -43,7 +43,7 @@ int main() {
   Real normVolume = 4;
 
   MatrixXR in = MatrixXR::Random(numFrames, windowSize);
-  loadFile("/home/rmarxer/downloads/aok4/papertest.frames", &in, numFrames, windowSize);
+  loadFile("/home/rmarxer/dev/ricaudio/src/tests/papertest.frames", &in, numFrames, windowSize);
   
   cout << in;
 
