@@ -49,6 +49,7 @@ void AOK::setup(){
 
   tstep = _hopSize;
   tlag = _windowSize;
+  xlen = _windowSize;
   fftlen = _fftSize;
   
   if ( fftlen < (2*tlag) )
@@ -84,6 +85,7 @@ void AOK::setup(){
   vol = (2.0*vol*nphi*nrad*nrad)/(pi*tlag);	/* normalize volume	*/
   
   
+
   kfill((nrad*nphi),0.0,polafm2);
   kfill((nraf*nlag),0.0,rectafr);
   kfill((nraf*nlag),0.0,rectafi);
@@ -92,26 +94,28 @@ void AOK::setup(){
   kfill(nphi,1.0,sigma);
   
   tlen = xlen + nraf + 2;
-  rectamake(nlag,nraf,forget,rar,rai,rarN,raiN);	/* make running rect AF parms	*/
+  DEBUG("AOK: tlen: " << tlen);
+  rectamake(nlag,nraf,forget,rar,rai,rarN,raiN);/* make running rect AF parms	*/
   plagmake(nrad,nphi,nlag,plag);
   pthetamake(nrad,nphi,nraf,ptheta,maxrad);	/* make running polar AF parms	*/
   rectrotmake(nraf,nlag,outdelay,rectrotr,rectroti);
   rectopol(nraf,nlag,nrad,nphi,req,pheq);
   
   reset();
+
   DEBUG("AOK: Finished set up...");
 }
 
 
 void AOK::process(MatrixXR frames, MatrixXR* timeFreqRep){
   for ( int row = 0; row < frames.rows(); row++) {  /*  for each temporal frame of samples  */
-
+    DEBUG("AOK: Processing, row="<<row);
     for (int ii=0; ii < tlen; ii++) {
       // Fill in the input vectors
-      DEBUG("AOK: Processing, setting the xr and xi C arrays");
+      //DEBUG("AOK: Processing, setting the xr and xi C arrays, ii="<<ii);
       Eigen::Map<MatrixXR>(xr, 1, frames.cols()) = frames.row(row);
       Eigen::Map<MatrixXR>(xi, 1, frames.cols()) = MatrixXR::Zero(1, frames.cols());
-      DEBUG("AOK: Processing, finished setting the xr and xi C arrays");
+      //DEBUG("AOK: Processing, finished setting the xr and xi C arrays");
       
       rectaf(xr,xi,nlag,nraf,rar,rai,rarN,raiN,rectafr,rectafi);
 
