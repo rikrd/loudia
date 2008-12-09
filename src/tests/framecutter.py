@@ -1,13 +1,15 @@
 #!/usr/bin/env python
 
 import pylab
+import sys
 
-filein = 'papertest.sig'
-fileout = 'papertest.frames'
-framesize = 64
+filein = sys.argv[1]
+fileout = sys.argv[2]
+windowsize = int(sys.argv[3])
+framesize = int(2.42*windowsize + 3)
 hopsize = 1
 
-ls = [l.strip().split()[0] for l in open(filein)]
+ls = ['0']*(framesize-1) + [l.strip().split()[0] for l in open(filein)]
 
 frames = []
 end = False
@@ -25,7 +27,7 @@ while not end:
     frames.append(newframe)
     i += hopsize
 
-
+"""
 pylab.ion()
 for frame in frames:
     pylab.figure(1)
@@ -33,6 +35,7 @@ for frame in frames:
     pylab.plot([float(a) for a in frame])
     
 pylab.ioff()
+"""
 
 f = open(fileout, 'w')
 for frame in frames:
