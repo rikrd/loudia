@@ -49,7 +49,6 @@ void AOK::setup(){
 
   tstep = _hopSize;
   tlag = _windowSize;
-  xlen = 223;
   fftlen = _fftSize;
   
   if ( fftlen < (2*tlag) )
@@ -93,13 +92,13 @@ void AOK::setup(){
   kfill(slen, 0.0, xi);
   kfill(nphi, 1.0, sigma);
   
-  tlen = xlen + nraf + 2;
+  //tlen = xlen + nraf + 2;
 
 
-  DEBUG("AOK: tlen: " << tlen);
-  DEBUG("AOK: nlag: " << nlag);
-  DEBUG("AOK: slen: " << slen);
-  DEBUG("AOK: xlen: " << xlen);
+  //DEBUG("AOK: tlen: " << tlen);
+  //DEBUG("AOK: nlag: " << nlag);
+  //DEBUG("AOK: slen: " << slen);
+  //DEBUG("AOK: xlen: " << xlen);
 
   rectamake(nlag, nraf, forget, rar, rai, rarN, raiN);/* make running rect AF parms	*/
   plagmake(nrad, nphi, nlag, plag);
@@ -114,8 +113,15 @@ void AOK::setup(){
 
 
 void AOK::process(MatrixXR frames, MatrixXR* timeFreqRep){
+  outct = 0;
+  
+  // fliplr the frames
+  for(int i = 0; i < slen / 2; i++){
+    frames.col(i).swap(frames.col(slen - 1 - i));
+  }
+
   for ( int row = 0; row < frames.rows(); row++) {  /*  for each temporal frame of samples  */
-    DEBUG("AOK: Processing, row="<<row);
+    //DEBUG("AOK: Processing, row="<<row);
     // Fill in the input vectors
     //DEBUG("AOK: Processing, setting the xr and xi C arrays, ii="<<ii);
     Eigen::Map<MatrixXR>(xr, 1, frames.cols()) = frames.row(row);
