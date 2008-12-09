@@ -25,12 +25,13 @@
 
 using namespace std;
 
-void loadFile(char* filename, MatrixXR* result, int rows = 2, int cols = 64) {
-  FILE* in = fopen( filename, "r");
-  
+void loadFile(string filename, MatrixXR* result, int rows, int cols) {
+  FILE* in = fopen( filename.c_str(), "r");
+  Real coeff;
   for ( int i = 0; i<rows; i++ ) {
     for (int j = 0; j<cols; j++) {
-      int r = fscanf(in, "%f", &((*result)(i, j)));
+      int r = fscanf(in, "%f", &coeff);
+      (*result)(i, j) = coeff;
     }
   }
 }
@@ -39,11 +40,14 @@ int main() {
   int windowSize = 64;
   int hopSize = 1;
   int fftLength = 64;
-  int numFrames = 223;
-  Real normVolume = 4;
+  int numFrames = 128 + 2 * windowSize - 2;
+  Real normVolume = 3;
+  int frameSize = 2.42 * windowSize + 3;
 
-  MatrixXR in = MatrixXR::Random(numFrames, windowSize);
-  loadFile("/home/rmarxer/dev/ricaudio/src/tests/papertest.frames", &in, numFrames, windowSize);
+  MatrixXR in = MatrixXR::Zero(numFrames, frameSize);
+  loadFile("/home/rmarxer/dev/ricaudio/src/tests/chirp.frames", &in, numFrames, frameSize);
+  
+  //cerr << in << endl;
   
   AOK aok(windowSize, hopSize, fftLength, normVolume);
   aok.setup();
@@ -51,7 +55,8 @@ int main() {
   MatrixXR result(numFrames, fftLength);
   
   aok.process(in, &result);
-  cout << result << endl;
+  
+  //cout << result << endl;
 
   return 0;
 }
