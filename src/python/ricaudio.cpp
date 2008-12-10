@@ -42,7 +42,7 @@ extern PyTypeObject PyMFCCType;
 extern PyTypeObject PyFilterType;
 extern PyTypeObject PyAOKType;
 
-extern "C" void initpycricaudio() {
+extern "C" void initricaudio() {
   
   // import our wrapper types
   if ((PyType_Ready(&PyMeddisType) < 0) || (PyType_Ready(&PyMFCCType) < 0) || (PyType_Ready(&PyFilterType) < 0) || (PyType_Ready(&PyAOKType) < 0)) {
@@ -51,7 +51,7 @@ extern "C" void initpycricaudio() {
     return;
   }
 
-  CRicaudio__Module = Py_InitModule3("pycricaudio", CRicaudio__Methods,
+  CRicaudio__Module = Py_InitModule3("ricaudio", CRicaudio__Methods,
                                      "Module that allows access to cricaudio plugins and algorithms.");
     
   if (CRicaudio__Module == NULL)

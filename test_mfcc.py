@@ -16,8 +16,8 @@ a1 = scipy.array(scipy.zeros((1, 512)), dtype='f4')
 a2 = scipy.array(scipy.ones((1, 512)), dtype='f4')
 
 # CRicaudio's solution # --------------------------------- #
-import pycricaudio
-m = pycricaudio.MFCC(lowFreq, highFreq, nBands, samplerate, spectralLength, nCoeffs, minSpectrum, power)
+import ricaudio
+m = ricaudio.MFCC(lowFreq, highFreq, nBands, samplerate, spectralLength, nCoeffs, minSpectrum, power)
 
 b1 = m.process(a1)
 b2 = m.process(a2)
