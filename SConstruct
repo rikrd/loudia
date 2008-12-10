@@ -29,8 +29,8 @@ env.Append(LIBPATH = ['./build'])
 
 # Add the flags for the compiler
 #env.Append(CXXFLAGS = '-O3 -DRICAUDIO_DEBUG')
-#env.Append(CXXFLAGS = '-O3 -msse2 -DRICAUDIO_DEBUG')
-env.Append(CXXFLAGS = '-O3 -msse2 -DEIGEN_NO_DEBUG')
+env.Append(CXXFLAGS = '-O3 -msse2 -DRICAUDIO_DEBUG')
+#env.Append(CXXFLAGS = '-O3 -msse2 -DEIGEN_NO_DEBUG')
 
 # Build the tests
 env.Program('build/test_meddis', ['build/tests/test_meddis.cpp', 'build/meddis.cpp', 'build/debug.cpp'])
@@ -42,13 +42,14 @@ env.Program('build/test_mfcc', ['build/tests/test_mfcc.cpp', 'build/mfcc.cpp', '
 env.Program('build/test_aok', ['build/tests/test_aok.cpp', 'build/aok.cpp', 'build/debug.cpp'])
 
 
-#env['SHLIBPREFIX'] = ''
+env['SHLIBPREFIX'] = ''
 env.Append(CPPPATH = [ '/usr/include/python2.5',
                        '/usr/lib/python2.5/site-packages/numpy/core/include/numpy/' ])
-env.SharedLibrary('build/pycricaudio', ['build/python/cricaudio.cpp',
-                                        'build/python/pymeddis.cpp', 'build/meddis.cpp',
-                                        'build/python/pymfcc.cpp', 'build/mfcc.cpp', 'build/melbands.cpp', 'build/spectralbands.cpp', 'build/dct.cpp',
-                                        'build/python/pyaok.cpp', 'build/aok.cpp',
-                                        'build/python/pyfilter.cpp', 'build/filter.cpp',
-                                        'build/debug.cpp'])
+env.SharedLibrary('build/ricaudio', ['build/python/ricaudio.cpp',
+                                     'build/python/pymeddis.cpp', 'build/meddis.cpp',
+                                     'build/python/pymfcc.cpp', 'build/mfcc.cpp', 'build/melbands.cpp',
+                                     'build/spectralbands.cpp', 'build/dct.cpp',
+                                     'build/python/pyaok.cpp', 'build/aok.cpp',
+                                     'build/python/pyfilter.cpp', 'build/filter.cpp',
+                                     'build/debug.cpp'])
 
