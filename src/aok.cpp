@@ -199,7 +199,13 @@ void AOK::reset(){
   // Initial values
 }
 
+int AOK::frameSize() const{
+  return 2.42 * _windowSize + 3;
+}
 
+int AOK::fftSize() const{
+  return _fftSize;
+}
 
 
 /****************************************************************/

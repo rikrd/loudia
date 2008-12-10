@@ -39,7 +39,7 @@ env.Program('build/test_spectralbands', ['build/tests/test_spectralbands.cpp', '
 env.Program('build/test_melbands', ['build/tests/test_melbands.cpp', 'build/melbands.cpp', 'build/spectralbands.cpp', 'build/debug.cpp'])
 env.Program('build/test_dct', ['build/tests/test_dct.cpp', 'build/dct.cpp', 'build/debug.cpp'])
 env.Program('build/test_mfcc', ['build/tests/test_mfcc.cpp', 'build/mfcc.cpp', 'build/debug.cpp', 'build/melbands.cpp', 'build/spectralbands.cpp', 'build/dct.cpp'])
-#env.Program('build/test_aok', ['build/tests/test_aok.cpp', 'build/aok.cpp', 'build/debug.cpp'])
+env.Program('build/test_aok', ['build/tests/test_aok.cpp', 'build/aok.cpp', 'build/debug.cpp'])
 
 
 #env['SHLIBPREFIX'] = ''
@@ -48,6 +48,7 @@ env.Append(CPPPATH = [ '/usr/include/python2.5',
 env.SharedLibrary('build/pycricaudio', ['build/python/cricaudio.cpp',
                                         'build/python/pymeddis.cpp', 'build/meddis.cpp',
                                         'build/python/pymfcc.cpp', 'build/mfcc.cpp', 'build/melbands.cpp', 'build/spectralbands.cpp', 'build/dct.cpp',
+                                        'build/python/pyaok.cpp', 'build/aok.cpp',
                                         'build/python/pyfilter.cpp', 'build/filter.cpp',
                                         'build/debug.cpp'])
 

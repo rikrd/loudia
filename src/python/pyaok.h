@@ -16,48 +16,43 @@
 ** Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */                                                                          
 
+#ifndef CRICAUDIO_PYTHON_PYAOK_H
+#define CRICAUDIO_PYTHON_PYAOK_H
+
+#include <Python.h>
 #include "aok.h"
-#include "typedefs.h"
 
-#include <Eigen/Core>
-#include <iostream>
-#include <fstream>
+class PyAOK {
+public:
+  PyObject_HEAD
+  AOK::AOK* base;
 
-using namespace std;
-
-void loadFile(string filename, MatrixXR* result, int rows, int cols) {
-  FILE* in = fopen( filename.c_str(), "r");
-  Real coeff;
-  for ( int i = 0; i<rows; i++ ) {
-    for (int j = 0; j<cols; j++) {
-      int r = fscanf(in, "%f", &coeff);
-      (*result)(i, j) = coeff;
-    }
+  /* Basic Memory Management */
+  static PyObject* make_new(PyTypeObject* type, PyObject* args, PyObject* kwds) { 
+    return (PyObject*)(type->tp_alloc(type, 0));                                  
+  }                                                                               
+  
+  static void dealloc(PyObject* self) {
+    delete reinterpret_cast<PyAOK*>(self)->base;
+    self->ob_type->tp_free((PyObject*)self);
   }
-}
-
-int main() {
-  int windowSize = 64;
-  int hopSize = 1;
-  int fftLength = 64;
-  int numFrames = 128 + 2 * windowSize - 2;
-  Real normVolume = 3;
   
-  //cerr << in << endl;
-  
-  AOK aok(windowSize, hopSize, fftLength, normVolume);
-  aok.setup();
+  static int init(PyObject* self, PyObject* args, PyObject* kwds); /* {
+    if (!PyArg_ParseTuple(args, (char*)"")) return -1;
+    return 0;
+    }*/
 
-  int frameSize = aok.frameSize();
-  MatrixXR in = MatrixXR::Zero(numFrames, frameSize);
-  loadFile("/home/rmarxer/dev/ricaudio/src/tests/chirp.frames", &in, numFrames, frameSize);
+  static PyObject* make_new_from_data(PyTypeObject* type, PyObject* args,
+                                      PyObject* kwds, AOK::AOK* data) {
+    PyAOK* self = (PyAOK*)make_new(type, args, kwds);
+    self->base = data;
+    return (PyObject*)self;
+  }
 
-  MatrixXR result(numFrames, fftLength);
+  static PyObject* process(PyObject* self, PyObject* args);
   
-  aok.process(in, &result);
-  
-  cout << result << endl;
+  static PyObject* frameSize(PyObject* self, PyObject* args);
+};
 
-  return 0;
-}
+#endif // CRICAUDIO_PYTHON_PYAOK_H
 

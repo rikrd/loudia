@@ -82,6 +82,11 @@ public:
 
   void reset();
 
+  int frameSize() const;
+
+  int fftSize() const;
+
+protected:
   void fft(int n, int m, Real x[], Real y[]);
 
   int po2(int n);
