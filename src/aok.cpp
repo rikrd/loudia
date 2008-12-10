@@ -83,7 +83,14 @@ void AOK::setup(){
   pi = 3.141592654;
   vol = (2.0*vol*nphi*nrad*nrad)/(pi*tlag);	/* normalize volume	*/
   
-  
+  DEBUG("AOK: tlen: " << tlen);
+  DEBUG("AOK: nlag: " << nlag);
+  DEBUG("AOK: slen: " << slen);
+  DEBUG("AOK: xlen: " << xlen);
+  DEBUG("AOK: fftlen: " << fftlen);
+  DEBUG("AOK: nrad: " << nrad);
+  DEBUG("AOK: nraf: " << nraf);
+  DEBUG("AOK: nlag: " << nlag);
 
   kfill((nrad * nphi), 0.0, polafm2);
   kfill((nraf * nlag), 0.0, rectafr);
@@ -93,12 +100,6 @@ void AOK::setup(){
   kfill(nphi, 1.0, sigma);
   
   //tlen = xlen + nraf + 2;
-
-
-  //DEBUG("AOK: tlen: " << tlen);
-  //DEBUG("AOK: nlag: " << nlag);
-  //DEBUG("AOK: slen: " << slen);
-  //DEBUG("AOK: xlen: " << xlen);
 
   rectamake(nlag, nraf, forget, rar, rai, rarN, raiN);/* make running rect AF parms	*/
   plagmake(nrad, nphi, nlag, plag);
