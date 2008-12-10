@@ -37,10 +37,10 @@ void loadFile(string filename, MatrixXR* result, int rows, int cols) {
 }
 
 int main() {
-  int windowSize = 64;
-  int hopSize = 1;
-  int fftLength = 64;
-  int numFrames = 128 + 2 * windowSize - 2;
+  int windowSize = 256;
+  int hopSize = 128;
+  int fftLength = 256;
+  int numFrames = 3442;
   Real normVolume = 3;
   
   //cerr << in << endl;
@@ -50,7 +50,7 @@ int main() {
 
   int frameSize = aok.frameSize();
   MatrixXR in = MatrixXR::Zero(numFrames, frameSize);
-  loadFile("/home/rmarxer/dev/ricaudio/src/tests/chirp.frames", &in, numFrames, frameSize);
+  loadFile("/home/rmarxer/dev/ricaudio/src/tests/test.frames", &in, numFrames, frameSize);
 
   MatrixXR result(numFrames, fftLength);
   
