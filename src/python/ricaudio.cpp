@@ -30,9 +30,9 @@ using namespace std;
 #include "pyfilter.h"
 #include "pyaok.h"
 
-static PyObject* CRicaudio__Module = NULL;
+static PyObject* Ricaudio__Module = NULL;
 
-static PyMethodDef CRicaudio__Methods[] = {
+static PyMethodDef Ricaudio__Methods[] = {
   { NULL,           NULL,                     0,           NULL } // Sentinel
 };
 
@@ -42,39 +42,39 @@ extern PyTypeObject PyMFCCType;
 extern PyTypeObject PyFilterType;
 extern PyTypeObject PyAOKType;
 
-extern "C" void initricaudio() {
+PyMODINIT_FUNC
+initricaudio(void) {
   
   // import our wrapper types
   if ((PyType_Ready(&PyMeddisType) < 0) || (PyType_Ready(&PyMFCCType) < 0) || (PyType_Ready(&PyFilterType) < 0) || (PyType_Ready(&PyAOKType) < 0)) {
     
-    cerr << "Unable to instantiate CRicaudio's wrapper types." << endl;
+    cerr << "Unable to instantiate Ricaudio's wrapper types." << endl;
     return;
   }
 
-  CRicaudio__Module = Py_InitModule3("ricaudio", CRicaudio__Methods,
-                                     "Module that allows access to cricaudio plugins and algorithms.");
+  Ricaudio__Module = Py_InitModule3("ricaudio", Ricaudio__Methods,
+                                    "Module that allows access to ricaudio plugins and algorithms.");
     
-  if (CRicaudio__Module == NULL)
+  if (Ricaudio__Module == NULL)
     return;
   
   // import the NumPy C api
   int numpy_error = _import_array();
   if (numpy_error) {
-    cerr << "Unable to import NumPy C API from CRicaudio module. Error code = " << numpy_error << endl;
+    cerr << "Unable to import NumPy C API from Ricaudio module. Error code = " << numpy_error << endl;
     return;
   }
 
   // insert the classes
   Py_INCREF(&PyMeddisType);
-  PyModule_AddObject(CRicaudio__Module, (char*)"Meddis", (PyObject*)&PyMeddisType);
+  PyModule_AddObject(Ricaudio__Module, (char*)"Meddis", (PyObject*)&PyMeddisType);
 
   Py_INCREF(&PyMFCCType);
-  PyModule_AddObject(CRicaudio__Module, (char*)"MFCC", (PyObject*)&PyMFCCType);
+  PyModule_AddObject(Ricaudio__Module, (char*)"MFCC", (PyObject*)&PyMFCCType);
 
   Py_INCREF(&PyFilterType);
-  PyModule_AddObject(CRicaudio__Module, (char*)"Filter", (PyObject*)&PyFilterType);
+  PyModule_AddObject(Ricaudio__Module, (char*)"Filter", (PyObject*)&PyFilterType);
 
   Py_INCREF(&PyAOKType);
-  PyModule_AddObject(CRicaudio__Module, (char*)"AOK", (PyObject*)&PyAOKType);
-
+  PyModule_AddObject(Ricaudio__Module, (char*)"AOK", (PyObject*)&PyAOKType);
 }
