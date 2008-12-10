@@ -23,14 +23,16 @@
 
 #include <iostream>
 
-#define DEBUG(msg) std::cerr << msg << std::endl;
+extern bool debug;
+#define DEBUG(msg) if(debug) std::cerr << msg << std::endl;
 
 #elif defined(RICAUDIO_LOG)
 
 #include <iostream>
 
 extern ostream out;
-#define DEBUG(msg) out << msg << std::endl;
+extern bool debug;
+#define DEBUG(msg) if(debug) out << msg << std::endl;
 
 #else
 

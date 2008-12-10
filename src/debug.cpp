@@ -17,10 +17,22 @@
 */                                                                          
 
 #include <fstream>
+#include "debug.h"
+
 using namespace std;
+
+
+#if defined(RICAUDIO_DEBUG)
+
+bool debug = false;
+
+#endif
+
+
 
 #if defined(RICAUDIO_LOG)
 
+bool debug = true;
 ofstream out("ricaudio.log");
 
 #endif
