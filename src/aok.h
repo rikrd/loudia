@@ -44,7 +44,7 @@ protected:
   int slen,fftlen;
   int tstep,fstep,outct;
   
-  int maxrad[1024];	/* max radius for each phi s.t. theta < pi */
+  int maxrad[100000];	/* max radius for each phi s.t. theta < pi */
   
   
   char name[10];
@@ -53,7 +53,7 @@ protected:
   Real pi, rtemp, rtemp1, rtemp2, mu, forget;
   Real vol;			/* total kernel volume	*/
   Real outdelay;		/* delay in samples of output time from current sample time	*/
-  Real xr[1024],xi[1024];	/* recent data samples	*/
+  Real xr[100000],xi[100000];	/* recent data samples	*/
   Real rectafr[70000];		/* real part of rect running AF	*/
   Real rectafi[70000];		/* imag part of rect running AF	*/
   Real rectafm2[70000];	/* rect |AF|^2	*/
@@ -64,12 +64,12 @@ protected:
   Real pheq[70000];		/* phi corresp. to rect coord	*/
   Real plag[70000];		/* lag index at polar AF sample points	*/
   Real ptheta[70000];		/* theta index at polar AF sample points	*/
-  Real sigma[1024];		/* optimal kernel spreads	*/
-  Real rar[1024],rai[1024];	/* poles for running FFTs for rect AF	*/
+  Real sigma[100000];		/* optimal kernel spreads	*/
+  Real rar[100000],rai[100000];	/* poles for running FFTs for rect AF	*/
   Real rarN[70000];		/* poles for running FFTs for rect AF	*/
   Real raiN[70000];
-  Real tfslicer[1024];		/* freq slice at current time	*/
-  Real tfslicei[1024];
+  Real tfslicer[100000];		/* freq slice at current time	*/
+  Real tfslicei[100000];
 
 public:
   AOK(int windowSize, int hopSize, int fftSize, Real normVolume = 3.0);
