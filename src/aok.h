@@ -78,7 +78,7 @@ public:
 
   void setup();
 
-  void process(MatrixXR frames, MatrixXR* timeFreqRep);
+  void process(MatrixXC frames, MatrixXR* timeFreqRep);
 
   void reset();
 

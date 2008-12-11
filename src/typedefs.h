@@ -20,11 +20,18 @@
 #ifndef TYPEDEFS_H
 #define TYPEDEFS_H
 
+#include<cmath>
+
 // Type for the Real values
 typedef float Real;
+typedef std::complex< Real > Complex;
+
+// Normally used matrices
+typedef Eigen::Matrix< Real, Eigen::Dynamic,Eigen::Dynamic > MatrixXR;
+typedef Eigen::Matrix< Complex, Eigen::Dynamic,Eigen::Dynamic > MatrixXC;
 
 // Type for the matrices that come from scipy (these are RowMajor)
 typedef Eigen::Matrix< Real, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor, Eigen::Dynamic, Eigen::Dynamic > MatrixXRscipy;
+typedef Eigen::Matrix< Complex, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor, Eigen::Dynamic, Eigen::Dynamic > MatrixXCscipy;
 
-typedef Eigen::Matrix< Real, Eigen::Dynamic,Eigen::Dynamic > MatrixXR;
 #endif // TYPEDEFS_H

@@ -113,14 +113,14 @@ PyObject* PyAOK::process(PyObject* self, PyObject* args){
   if (!PyArg_ParseTuple(args, "O", &input))
     return NULL;
 
-  in_array = (PyArrayObject *) PyArray_ContiguousFromObject(input, PyArray_FLOAT, 2, 2);
+  in_array = (PyArrayObject *) PyArray_ContiguousFromObject(input, PyArray_CFLOAT, 2, 2);
   
   if (in_array == NULL)
     return NULL;
   
   
   // check that the input array has 2 dimensions
-  if (in_array->nd != 2 || in_array->descr->type_num != PyArray_FLOAT) { 
+  if (in_array->nd != 2 || in_array->descr->type_num != PyArray_CFLOAT) { 
     PyErr_SetString(PyExc_ValueError,
                     "array must be two-dimensional and of type float");
     
@@ -139,9 +139,9 @@ PyObject* PyAOK::process(PyObject* self, PyObject* args){
   // prepare the input array
   int in_rows = in_array->dimensions[0];
   int in_cols = in_array->dimensions[1];
-  Real* in_data = (Real*)PyArray_DATA(in_array);
+  Complex* in_data = (Complex*)PyArray_DATA(in_array);
 
-  MatrixXR in_matrix = Eigen::Map<MatrixXRscipy>(in_data, in_rows, in_cols);
+  MatrixXC in_matrix = Eigen::Map<MatrixXCscipy>(in_data, in_rows, in_cols);
   
   // prepare resulting array
   int numCoeffs = ((PyAOK*)self)->base->fftSize();

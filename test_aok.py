@@ -11,8 +11,8 @@ a1 = scipy.array(scipy.zeros((1, 512)), dtype='f4')
 a2 = scipy.array(scipy.ones((1, 512)), dtype='f4')
 
 # CRicaudio's solution # --------------------------------- #
-import pycricaudio
-m = pycricaudio.AOK()
+import ricaudio
+m = ricaudio.AOK()
 
 b2 = m.process(a2)
 # -------------------------------------------------------- #

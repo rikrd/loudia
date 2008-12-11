@@ -113,7 +113,7 @@ void AOK::setup(){
 }
 
 
-void AOK::process(MatrixXR frames, MatrixXR* timeFreqRep){
+void AOK::process(MatrixXC frames, MatrixXR* timeFreqRep){
   outct = 0;
   
   // fliplr the frames
@@ -125,8 +125,8 @@ void AOK::process(MatrixXR frames, MatrixXR* timeFreqRep){
     //DEBUG("AOK: Processing, row="<<row);
     // Fill in the input vectors
     //DEBUG("AOK: Processing, setting the xr and xi C arrays, ii="<<ii);
-    Eigen::Map<MatrixXR>(xr, 1, frames.cols()) = frames.row(row);
-    Eigen::Map<MatrixXR>(xi, 1, frames.cols()) = MatrixXR::Zero(1, frames.cols());
+    Eigen::Map<MatrixXR>(xr, 1, frames.cols()) = frames.row(row).real();
+    Eigen::Map<MatrixXR>(xi, 1, frames.cols()) = frames.row(row).imag();
     //DEBUG("AOK: Processing, finished setting the xr and xi C arrays");
     
     rectaf(xr, xi, nlag, nraf, rar, rai, rarN, raiN, rectafr, rectafi);

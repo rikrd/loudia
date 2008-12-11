@@ -25,7 +25,7 @@
 
 using namespace std;
 
-void loadFile(string filename, MatrixXR* result, int rows, int cols) {
+void loadFile(string filename, MatrixXC* result, int rows, int cols) {
   FILE* in = fopen( filename.c_str(), "r");
   Real coeff;
   for ( int i = 0; i<rows; i++ ) {
@@ -49,7 +49,7 @@ int main() {
   aok.setup();
 
   int frameSize = aok.frameSize();
-  MatrixXR in = MatrixXR::Zero(numFrames, frameSize);
+  MatrixXC in = MatrixXC::Zero(numFrames, frameSize);
   loadFile("/home/rmarxer/dev/ricaudio/src/tests/test.frames", &in, numFrames, frameSize);
 
   MatrixXR result(numFrames, fftLength);
