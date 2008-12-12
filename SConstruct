@@ -44,6 +44,7 @@ env.Program('build/test_dct', ['build/tests/test_dct.cpp', 'build/dct.cpp', 'bui
 env.Program('build/test_mfcc', ['build/tests/test_mfcc.cpp', 'build/mfcc.cpp', 'build/debug.cpp', 'build/melbands.cpp', 'build/spectralbands.cpp', 'build/dct.cpp'])
 env.Program('build/test_aok', ['build/tests/test_aok.cpp', 'build/aok.cpp', 'build/debug.cpp'])
 env.Program('build/test_fft', ['build/tests/test_fft.cpp', 'build/fft.cpp', 'build/debug.cpp'])
+env.Program('build/test_window', ['build/tests/test_window.cpp', 'build/window.cpp', 'build/debug.cpp'])
 
 
 env['SHLIBPREFIX'] = ''

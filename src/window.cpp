@@ -16,15 +16,13 @@
 ** Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */                                                                          
 
-#ifndef FFT_H
-#define FFT_H
-
 #include <Eigen/Core>
 #include <Eigen/Array>
 #include <iostream>
 
-#include <fftw3.h>
+#include "window.h"
 
+#include "debug.h"
 #include "typedefs.h"
 
 using namespace std;
@@ -32,33 +30,66 @@ using namespace std;
 // import most common Eigen types 
 USING_PART_OF_NAMESPACE_EIGEN
 
-class FFT{
-protected:
-  int _frameSize;
-  int _fftSize;
-  bool _zeroPhase;
- 
-  fftwf_complex* _in;
-  fftwf_complex* _out;
+Window::Window(int frameSize, Window::WindowType windowType) {
+  DEBUG("WINDOW: Constructor frameSize: " << frameSize << ", windowType: " << windowType);
 
-  fftwf_plan _fftplan;
+  _frameSize = frameSize;
+  _windowType = windowType;
+
+  DEBUG("WINDOW: Constructed");
+}
+
+Window::~Window(){
+}
+
+void Window::setup(){
+  DEBUG("WINDOW: Setting up...");
   
-  template <class F>
-  void process(F frames, MatrixXC* fft);
-
-
-public:
-  FFT(int frameSize, int fftSize, bool zeroPhase = true);
-  ~FFT();
+  switch(_windowType){
+  case NONE:
+    _window.set(MatrixXR::Ones(1, _frameSize));
+    break;
+  default:
+    // Throw assertion unknown window type
+    break;
+  }
   
-  void process(MatrixXC frames, MatrixXC* fft);
-  void process(MatrixXR frames, MatrixXC* fft);
-  
-  void setup();
-  void reset();
+  DEBUG("WINDOW: Finished set up...");
+}
 
-  int frameSize() const;
-  int fftSize() const;
-};
 
-#endif  /* FFT_H */
+template<class F, class W>
+void Window::process(F frames, W* windowedFrames){
+  for (int i = 0; i < frames.rows(); i++){
+    // Process and set
+    (*windowedFrames).row(i) = frames.cwise() * _window;
+  }
+}
+
+void Window::process(MatrixXC frames, MatrixXC* windowedFrames){
+  process<MatrixXC, MatrixXC>(frames, windowedFrames);
+}
+
+void Window::process(MatrixXR frames, MatrixXC* windowedFrames){
+  process<MatrixXR, MatrixXC>(frames, windowedFrames);
+}
+
+void Window::process(MatrixXR frames, MatrixXR* windowedFrames){
+  process<MatrixXR, MatrixXR>(frames, windowedFrames);
+}
+
+
+void Window::reset(){
+}
+
+int Window::frameSize() const{
+  return _frameSize;
+}
+
+Window::WindowType Window::windowType() const{
+  return _windowType;
+}
+
+MatrixXR Window::window() const{
+  return _window;
+}

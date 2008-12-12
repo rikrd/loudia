@@ -16,14 +16,12 @@
 ** Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */                                                                          
 
-#ifndef FFT_H
-#define FFT_H
+#ifndef WINDOW_H
+#define WINDOW_H
 
 #include <Eigen/Core>
 #include <Eigen/Array>
 #include <iostream>
-
-#include <fftw3.h>
 
 #include "typedefs.h"
 
@@ -32,33 +30,48 @@ using namespace std;
 // import most common Eigen types 
 USING_PART_OF_NAMESPACE_EIGEN
 
-class FFT{
+class Window{
+public:
+  enum WindowType {
+    NONE,
+    HAMMING,
+    HANNING,
+    BLACKMAN,
+    BLCAKMANHARRIS,
+    BARTLETT,
+    GAUSSIAN,
+    GENERAL_GAUSSIAN,
+    SLEPIAN,
+    TRIANG,
+    BOXCAR,
+    BOHMAN,
+    PARZEN,
+    NUTTALL,
+    BARTHANN,
+  };
+
 protected:
   int _frameSize;
-  int _fftSize;
-  bool _zeroPhase;
+  WindowType _windowType;
+  MatrixXR _window;
+  
+  template<class F, class W>
+  void process(F frames, W* windowedFrames);
  
-  fftwf_complex* _in;
-  fftwf_complex* _out;
-
-  fftwf_plan _fftplan;
+public: 
+  Window(int frameSize, WindowType windowType = NONE);
+  ~Window();
   
-  template <class F>
-  void process(F frames, MatrixXC* fft);
-
-
-public:
-  FFT(int frameSize, int fftSize, bool zeroPhase = true);
-  ~FFT();
-  
-  void process(MatrixXC frames, MatrixXC* fft);
-  void process(MatrixXR frames, MatrixXC* fft);
+  void process(MatrixXC frames, MatrixXC* windowedFrames);
+  void process(MatrixXR frames, MatrixXR* windowedFrames);
+  void process(MatrixXR frames, MatrixXC* windowedFrames);
   
   void setup();
   void reset();
 
   int frameSize() const;
-  int fftSize() const;
+  WindowType windowType() const;
+  MatrixXR window() const;
 };
 
-#endif  /* FFT_H */
+#endif  /* WINDOW_H */

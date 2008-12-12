@@ -52,8 +52,7 @@ FFT::~FFT(){
 
 void FFT::setup(){
   DEBUG("FFT: Setting up...");
-  Complex* _input;
-  
+
   _in = (fftwf_complex*) fftwf_malloc(sizeof(fftwf_complex) * _fftSize);
   _out = (fftwf_complex*) fftwf_malloc(sizeof(fftwf_complex) * _fftSize);
   _fftplan = fftwf_plan_dft_1d(_fftSize, _in, _out, FFTW_FORWARD, FFTW_ESTIMATE);
@@ -61,7 +60,8 @@ void FFT::setup(){
   DEBUG("FFT: Finished set up...");
 }
 
-void FFT::process(MatrixXC frames, MatrixXC* ffts){
+template<class F>
+void FFT::process(F frames, MatrixXC* ffts){
   for (int i = 0; i < frames.rows(); i++){    
     // Put the data in _in
     Eigen::Map<MatrixXC>(reinterpret_cast< Complex* >(_in), 1, _fftSize) = MatrixXC::Zero(1, _fftSize);
@@ -76,19 +76,12 @@ void FFT::process(MatrixXC frames, MatrixXC* ffts){
 }
 
 void FFT::process(MatrixXR frames, MatrixXC* ffts){
-  for (int i = 0; i < frames.rows(); i++){    
-    // Put the data in _in
-    Eigen::Map<MatrixXC>(reinterpret_cast< Complex* >(_in), 1, _fftSize) = MatrixXC::Zero(1, _fftSize);
-    Eigen::Map<MatrixXC>(reinterpret_cast< Complex* >(_in), 1, _fftSize).block(0, 0, 1, _frameSize) = frames.row(i);
-    
-    // Process the data
-    fftwf_execute(_fftplan);
-
-    // Take the data from _out
-    (*ffts).row(i) = Eigen::Map<MatrixXC>(reinterpret_cast< Complex* >(_out), 1, _fftSize);
-  }
+  process<MatrixXR>(frames, ffts);
 }
 
+void FFT::process(MatrixXC frames, MatrixXC* ffts){
+  process<MatrixXC>(frames, ffts);
+}
 
 void FFT::reset(){
 }
