@@ -201,7 +201,3 @@ MatrixXR MelBands::linearToMelFant1968(MatrixXR linearFreq) {
 MatrixXR MelBands::melToLinearFant1968(MatrixXR melFreq) {
   return 1000.0 * ((melFreq * log(2.0) / 1000.0).cwise().exp().cwise() - 1.0);
 }
-
-void MelBands::reset(){
-
-}

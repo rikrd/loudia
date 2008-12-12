@@ -32,7 +32,10 @@ env.Append(LIBPATH = ['./build'])
 env.Append(CXXFLAGS = '-O3 -msse2 -DRICAUDIO_DEBUG')
 #env.Append(CXXFLAGS = '-O3 -msse2 -DEIGEN_NO_DEBUG')
 
+env.Append(LINKFLAGS = '-lfftw3f')
+
 # Build the tests
+
 env.Program('build/test_meddis', ['build/tests/test_meddis.cpp', 'build/meddis.cpp', 'build/debug.cpp'])
 env.Program('build/test_filter', ['build/tests/test_filter.cpp', 'build/filter.cpp', 'build/debug.cpp'])
 env.Program('build/test_spectralbands', ['build/tests/test_spectralbands.cpp', 'build/spectralbands.cpp', 'build/debug.cpp'])
@@ -40,6 +43,7 @@ env.Program('build/test_melbands', ['build/tests/test_melbands.cpp', 'build/melb
 env.Program('build/test_dct', ['build/tests/test_dct.cpp', 'build/dct.cpp', 'build/debug.cpp'])
 env.Program('build/test_mfcc', ['build/tests/test_mfcc.cpp', 'build/mfcc.cpp', 'build/debug.cpp', 'build/melbands.cpp', 'build/spectralbands.cpp', 'build/dct.cpp'])
 env.Program('build/test_aok', ['build/tests/test_aok.cpp', 'build/aok.cpp', 'build/debug.cpp'])
+env.Program('build/test_fft', ['build/tests/test_fft.cpp', 'build/fft.cpp', 'build/debug.cpp'])
 
 
 env['SHLIBPREFIX'] = ''

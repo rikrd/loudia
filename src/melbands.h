@@ -57,7 +57,6 @@ public:
   MelBands(Real lowFreq, Real highFreq, int numBands, Real samplerate, int spectrumLength);
 
   void setup();
-  void reset();
 };
 
 #endif  /* MELBANDS_H */
