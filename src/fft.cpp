@@ -33,6 +33,10 @@ USING_PART_OF_NAMESPACE_EIGEN
 FFT::FFT(int frameSize, int fftSize, bool zeroPhase) {
   DEBUG("FFT: Constructor frameSize: " << frameSize << ", fftSize: " << fftSize << ", zeroPhase: " << zeroPhase);
 
+  if(_fftSize < _frameSize){
+    // Throw exception, the FFT size must be greater or equal than the input size
+  }
+
   _frameSize = frameSize;
   _fftSize = fftSize;
   _zeroPhase = zeroPhase;
@@ -60,7 +64,7 @@ void FFT::setup(){
 void FFT::process(MatrixXC frames, MatrixXC* ffts){
   for (int i = 0; i < frames.rows(); i++){    
     // Put the data in _in
-    Eigen::Map<MatrixXC>(reinterpret_cast< Complex* >(_in), 1, _fftSize) = MatrixXR::Zero(1, _fftSize);
+    Eigen::Map<MatrixXC>(reinterpret_cast< Complex* >(_in), 1, _fftSize) = MatrixXC::Zero(1, _fftSize);
     Eigen::Map<MatrixXC>(reinterpret_cast< Complex* >(_in), 1, _fftSize).block(0, 0, 1, _frameSize) = frames.row(i);
     
     // Process the data
@@ -71,5 +75,28 @@ void FFT::process(MatrixXC frames, MatrixXC* ffts){
   }
 }
 
+void FFT::process(MatrixXR frames, MatrixXC* ffts){
+  for (int i = 0; i < frames.rows(); i++){    
+    // Put the data in _in
+    Eigen::Map<MatrixXC>(reinterpret_cast< Complex* >(_in), 1, _fftSize) = MatrixXC::Zero(1, _fftSize);
+    Eigen::Map<MatrixXC>(reinterpret_cast< Complex* >(_in), 1, _fftSize).block(0, 0, 1, _frameSize) = frames.row(i);
+    
+    // Process the data
+    fftwf_execute(_fftplan);
+
+    // Take the data from _out
+    (*ffts).row(i) = Eigen::Map<MatrixXC>(reinterpret_cast< Complex* >(_out), 1, _fftSize);
+  }
+}
+
+
 void FFT::reset(){
+}
+
+int FFT::frameSize() const{
+  return _frameSize;
+}
+
+int FFT::fftSize() const{
+  return _fftSize;
 }

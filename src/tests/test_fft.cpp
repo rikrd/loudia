@@ -16,46 +16,29 @@
 ** Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */                                                                          
 
-#ifndef FFT_H
-#define FFT_H
-
-#include <Eigen/Core>
-#include <Eigen/Array>
-#include <iostream>
-
-#include <fftw3.h>
-
-#include "spectralbands.h"
+#include "fft.h"
 #include "typedefs.h"
+#include <Eigen/Core>
+#include <iostream>
 
 using namespace std;
 
-// import most common Eigen types 
-USING_PART_OF_NAMESPACE_EIGEN
+int main() {
+  int frameLength = 128;
+  int fftLength = 256;
 
-class FFT{
-protected:
-  int _frameSize;
-  int _fftSize;
-  bool _zeroPhase;
- 
-  fftwf_complex* _in;
-  fftwf_complex* _out;
-
-  fftwf_plan _fftplan;
-
-public:
-  FFT(int frameSize, int fftSize, bool zeroPhase = true);
-  ~FFT();
+  MatrixXR in = MatrixXR::Constant(1, frameLength, 2.0);
   
-  void process(MatrixXC frames, MatrixXC* fft);
-  void process(MatrixXR frames, MatrixXC* fft);
+  FFT fft(frameLength, fftLength);
+  fft.setup();
+
+  MatrixXC result(1, fftLength);
   
-  void setup();
-  void reset();
+  for (int i=0; i<2; i++) {   
+    fft.process(in, &result);
+    cout << "result:" << result.cwise().abs() << endl;
+  }
 
-  int frameSize() const;
-  int fftSize() const;
-};
+  return 0;
+}
 
-#endif  /* FFT_H */

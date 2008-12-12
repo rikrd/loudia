@@ -16,46 +16,41 @@
 ** Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */                                                                          
 
-#ifndef FFT_H
-#define FFT_H
+#ifndef CRICAUDIO_PYTHON_PYFFT_H
+#define CRICAUDIO_PYTHON_PYFFT_H
 
-#include <Eigen/Core>
-#include <Eigen/Array>
-#include <iostream>
+#include <Python.h>
+#include "fft.h"
 
-#include <fftw3.h>
-
-#include "spectralbands.h"
-#include "typedefs.h"
-
-using namespace std;
-
-// import most common Eigen types 
-USING_PART_OF_NAMESPACE_EIGEN
-
-class FFT{
-protected:
-  int _frameSize;
-  int _fftSize;
-  bool _zeroPhase;
- 
-  fftwf_complex* _in;
-  fftwf_complex* _out;
-
-  fftwf_plan _fftplan;
-
+class PyFFT {
 public:
-  FFT(int frameSize, int fftSize, bool zeroPhase = true);
-  ~FFT();
-  
-  void process(MatrixXC frames, MatrixXC* fft);
-  void process(MatrixXR frames, MatrixXC* fft);
-  
-  void setup();
-  void reset();
+  PyObject_HEAD
+  FFT::FFT* base;
 
-  int frameSize() const;
-  int fftSize() const;
+  /* Basic Memory Management */
+  static PyObject* make_new(PyTypeObject* type, PyObject* args, PyObject* kwds) { 
+    return (PyObject*)(type->tp_alloc(type, 0));                                  
+  }                                                                               
+  
+  static void dealloc(PyObject* self) {
+    delete reinterpret_cast<PyFFT*>(self)->base;
+    self->ob_type->tp_free((PyObject*)self);
+  }
+  
+  static int init(PyObject* self, PyObject* args, PyObject* kwds); /* {
+    if (!PyArg_ParseTuple(args, (char*)"")) return -1;
+    return 0;
+    }*/
+
+  static PyObject* make_new_from_data(PyTypeObject* type, PyObject* args,
+                                      PyObject* kwds, FFT::FFT* data) {
+    PyFFT* self = (PyFFT*)make_new(type, args, kwds);
+    self->base = data;
+    return (PyObject*)self;
+  }
+
+  static PyObject* process(PyObject* self, PyObject* args);
 };
 
-#endif  /* FFT_H */
+#endif // CRICAUDIO_PYTHON_PYFFT_H
+

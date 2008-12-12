@@ -41,12 +41,17 @@ extern PyTypeObject PyMeddisType;
 extern PyTypeObject PyMFCCType;
 extern PyTypeObject PyFilterType;
 extern PyTypeObject PyAOKType;
+extern PyTypeObject PyFFTType;
 
 PyMODINIT_FUNC
 initricaudio(void) {
   
   // import our wrapper types
-  if ((PyType_Ready(&PyMeddisType) < 0) || (PyType_Ready(&PyMFCCType) < 0) || (PyType_Ready(&PyFilterType) < 0) || (PyType_Ready(&PyAOKType) < 0)) {
+  if ((PyType_Ready(&PyMeddisType) < 0) || \
+      (PyType_Ready(&PyMFCCType) < 0) || \
+      (PyType_Ready(&PyFilterType) < 0) || \
+      (PyType_Ready(&PyAOKType) < 0) || \
+      (PyType_Ready(&PyFFTType) < 0)) {
     
     cerr << "Unable to instantiate Ricaudio's wrapper types." << endl;
     return;
@@ -77,4 +82,7 @@ initricaudio(void) {
 
   Py_INCREF(&PyAOKType);
   PyModule_AddObject(Ricaudio__Module, (char*)"AOK", (PyObject*)&PyAOKType);
+
+  Py_INCREF(&PyFFTType);
+  PyModule_AddObject(Ricaudio__Module, (char*)"FFT", (PyObject*)&PyFFTType);
 }
