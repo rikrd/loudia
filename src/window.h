@@ -33,21 +33,15 @@ USING_PART_OF_NAMESPACE_EIGEN
 class Window{
 public:
   enum WindowType {
-    NONE,
-    HAMMING,
+    RECTANGULAR,
+    HANN,
     HANNING,
+    HAMMING,
+    COSINE,
     BLACKMAN,
-    BLCAKMANHARRIS,
-    BARTLETT,
-    GAUSSIAN,
-    GENERAL_GAUSSIAN,
-    SLEPIAN,
-    TRIANG,
-    BOXCAR,
-    BOHMAN,
-    PARZEN,
+    BLACKMANHARRIS,
     NUTTALL,
-    BARTHANN,
+    BLACKMANNUTTALL
   };
 
 protected:
@@ -57,9 +51,19 @@ protected:
   
   template<class F, class W>
   void process(F frames, W* windowedFrames);
+
+  MatrixXR hann(int length);
+  MatrixXR hamming(int length);
+  MatrixXR cosine(int length);
+
+  MatrixXR blackmanType(int length, Real a0, Real a1, Real a2, Real a3);
+  MatrixXR blackman(int length);
+  MatrixXR nuttall(int length);
+  MatrixXR blackmanHarris(int length);
+  MatrixXR blackmanNuttall(int length);
  
 public: 
-  Window(int frameSize, WindowType windowType = NONE);
+  Window(int frameSize, WindowType windowType = RECTANGULAR);
   ~Window();
   
   void process(MatrixXC frames, MatrixXC* windowedFrames);

@@ -28,10 +28,10 @@ int main() {
 
   MatrixXR in = MatrixXR::Constant(1, frameLength, 1.0);
   
-  Window window(frameLength);
+  Window window(frameLength, Window::HANN);
   window.setup();
 
-  MatrixXC result(1, frameLength);
+  MatrixXR result(1, frameLength);
   
   for (int i=0; i<2; i++) {   
     window.process(in, &result);
