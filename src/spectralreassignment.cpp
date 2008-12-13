@@ -65,7 +65,8 @@ void SpectralReassignment::setup(){
   
   // Create the reassign operator matrix
   DEBUG("SPECTRALREASSIGNMENT: Creating reassignment op...");
-  _reassignOp.resize(_frameSize, _fftSize);
+  _reassignTime.resize(_frameSize, _fftSize);
+  _reassignFreq.resize(_frameSize, _fftSize);
 
   // Calculate and set the time weighted window
   DEBUG("SPECTRALREASSIGNMENT: Calculate time weighted window...");
@@ -91,6 +92,7 @@ void SpectralReassignment::setup(){
 
   // Create the necessary buffers for the FFT
   _fft.resize(1, _fftSize);
+  _fftAbs2.resize(1, _fftSize);
   _fftInteg.resize(1, _fftSize);
   _fftDeriv.resize(1, _fftSize);
   
@@ -119,7 +121,11 @@ void SpectralReassignment::process(F frames, W* reassigned, W* fft){
     _fftAlgo.process(_windowDeriv, &_fftDeriv);
 
     // Reassign
-    
+    _fftAbs2 = _fft.cwise().abs2();
+    DEBUG("SPECTRALREASSIGNMENT: Processing: creating the time reassignment operation...");    
+    _reassignTime = _time - ((_fftInteg.cwise() * _fft.adjoint().transpose()).cwise() / _fftAbs2).real();
+    DEBUG("SPECTRALREASSIGNMENT: Processing: creating the freq reassignment operation...");    
+    _reassignFreq = _freq + ((_fftDeriv.cwise() * _fft.adjoint().transpose()).cwise() / _fftAbs2).imag();
   }
 }
 
