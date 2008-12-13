@@ -29,6 +29,8 @@ using namespace std;
 #include "pymfcc.h"
 #include "pyfilter.h"
 #include "pyaok.h"
+#include "pyfft.h"
+#include "pywindow.h"
 
 static PyObject* Ricaudio__Module = NULL;
 
@@ -42,6 +44,7 @@ extern PyTypeObject PyMFCCType;
 extern PyTypeObject PyFilterType;
 extern PyTypeObject PyAOKType;
 extern PyTypeObject PyFFTType;
+extern PyTypeObject PyWindowType;
 
 PyMODINIT_FUNC
 initricaudio(void) {
@@ -51,7 +54,8 @@ initricaudio(void) {
       (PyType_Ready(&PyMFCCType) < 0) || \
       (PyType_Ready(&PyFilterType) < 0) || \
       (PyType_Ready(&PyAOKType) < 0) || \
-      (PyType_Ready(&PyFFTType) < 0)) {
+      (PyType_Ready(&PyFFTType) < 0) || \
+      (PyType_Ready(&PyWindowType) < 0)) {
     
     cerr << "Unable to instantiate Ricaudio's wrapper types." << endl;
     return;
@@ -85,4 +89,8 @@ initricaudio(void) {
 
   Py_INCREF(&PyFFTType);
   PyModule_AddObject(Ricaudio__Module, (char*)"FFT", (PyObject*)&PyFFTType);
+
+  Py_INCREF(&PyWindowType);
+  PyModule_AddObject(Ricaudio__Module, (char*)"Window", (PyObject*)&PyWindowType);
+
 }
