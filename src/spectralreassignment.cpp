@@ -48,28 +48,33 @@ void SpectralReassignment::setup(){
   DEBUG("SPECTRALREASSIGNMENT: Setting up...");
   
   // Create the time vector
+  DEBUG("SPECTRALREASSIGNMENT: Creating time vector...");
   Real timestep = 1.0 / _samplerate;
-  _time.resize(_frameSize, 1);
-  for(int i = 0; i < _time.cols(); i++){
-    _time(i, 0) = timestep * i;
+  _time.resize(_frameSize, _fftSize);
+  for(int i = 0; i < _time.rows(); i++){
+    _time.row(i) = MatrixXR::Constant(1, _time.cols(), timestep).row(0) * i;
   }
-  
+
   // Create the freq vector
+  DEBUG("SPECTRALREASSIGNMENT: Creating freq vector...");
   Real freqstep = 2.0 * M_PI / _fftSize;
-  _freq.resize(1, _frameSize);
+  _freq.resize(_frameSize, _fftSize);
   for(int i = 0; i < _freq.cols(); i++){
-    _freq(0, i) = freqstep * i;
+    _freq.col(i) = MatrixXR::Constant(_freq.rows(), 1, freqstep).col(0) * i;
   }
   
   // Create the reassign operator matrix
+  DEBUG("SPECTRALREASSIGNMENT: Creating reassignment op...");
   _reassignOp.resize(_frameSize, _fftSize);
 
-  // Calculate and set the time integrated window
+  // Calculate and set the time weighted window
+  DEBUG("SPECTRALREASSIGNMENT: Calculate time weighted window...");
   MatrixXR windowInteg = _windowIntegAlgo.window();
-  windowInteg = windowInteg.cwise() * _time.transpose();
+  windowInteg = windowInteg.cwise() * _time.col(0).transpose();
   _windowIntegAlgo.setWindow(windowInteg);
 
   // Calculate and set the time derivated window
+  DEBUG("SPECTRALREASSIGNMENT: Calculate time derivative window...");
   MatrixXR windowDeriv = _windowDerivAlgo.window();
   for(int i = windowDeriv.cols() - 1; i > 0; i--){
     windowDeriv(0, i) = (windowDeriv(0, i) - windowDeriv(0, i-1)) / timestep;
@@ -114,6 +119,7 @@ void SpectralReassignment::process(F frames, W* reassigned, W* fft){
     _fftAlgo.process(_windowDeriv, &_fftDeriv);
 
     // Reassign
+    
   }
 }
 
