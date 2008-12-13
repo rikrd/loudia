@@ -5,22 +5,23 @@ import scipy
 import ricaudio
 
 frameSize = 121
-fftSize = 2048
+fftSize = 512
 samplerate = 8000
 
 a_zeros = scipy.array(scipy.zeros((1, frameSize)), dtype='f4')
 a_ones = scipy.array(scipy.ones((1, frameSize)), dtype='f4')
 a_random = scipy.array(scipy.random.random((1, frameSize)), dtype='f4')
-a_sine = scipy.array(scipy.cos(2 * scipy.pi * 440 * scipy.arange(frameSize) / samplerate), dtype='f4')
+a_sine = scipy.array(scipy.cos(2 * scipy.pi * 440 * scipy.arange(frameSize) / samplerate + scipy.pi/4.0), dtype='f4')
 a_sine = a_sine.reshape((1, a_sine.shape[0]))
 
 # Ricaudio's solution # --------------------------------- #
+w = ricaudio.Window(frameSize, 0)
 m = ricaudio.FFT(frameSize, fftSize, True)
 
-r_zeros = m.process(a_zeros)
-r_ones = m.process(a_ones)
-r_random = m.process(a_random)
-r_sine = m.process(a_sine)
+r_zeros = m.process(w.process(a_zeros))
+r_ones = m.process(w.process(a_ones))
+r_random = m.process(w.process(a_random))
+r_sine = m.process(w.process(a_sine))
 # -------------------------------------------------------- #
 
 
@@ -56,4 +57,5 @@ pylab.hold(True)
 pylab.plot(r_abs*r_ang/r_max, label = 'Ricaudio')
 pylab.plot(s_abs*s_ang/s_max, label = 'Scipy')
 
+pylab.legend()
 pylab.show()
