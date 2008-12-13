@@ -41,7 +41,8 @@ public:
     BLACKMAN = 5,
     BLACKMANHARRIS = 6,
     NUTTALL = 7,
-    BLACKMANNUTTALL = 8
+    BLACKMANNUTTALL = 8,
+    CUSTOM = 9
   };
 
 protected:
@@ -76,6 +77,7 @@ public:
   int frameSize() const;
   WindowType windowType() const;
   MatrixXR window() const;
+  void setWindow(MatrixXR window);
 };
 
 #endif  /* WINDOW_H */

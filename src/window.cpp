@@ -36,6 +36,7 @@ Window::Window(int frameSize, Window::WindowType windowType) {
 
   _frameSize = frameSize;
   _windowType = windowType;
+  _window.set(MatrixXR::Ones(1, _frameSize));
 
   DEBUG("WINDOW: Constructed");
 }
@@ -80,7 +81,9 @@ void Window::setup(){
   case BLACKMANNUTTALL:
     _window.set(blackmanNuttall(_frameSize));
     break;
-
+  case CUSTOM:
+    break;
+    
   default:
     // Throw assertion unknown window type
     break;
@@ -207,4 +210,12 @@ Window::WindowType Window::windowType() const{
 
 MatrixXR Window::window() const{
   return _window;
+}
+
+void Window::setWindow(MatrixXR window){
+  if (window.cols() != _frameSize || window.rows() != 1) {
+    // Throw exception wrong window size
+  }
+  
+  _window = window;
 }
