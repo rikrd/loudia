@@ -79,11 +79,12 @@ PyTypeObject PyFFTType = {
 int PyFFT::init(PyObject* self, PyObject* args, PyObject* kwds) {
   int frameSize;
   int fftSize;
+  bool zeroPhase;
 
   // default constructor with no argument
-  if (!PyArg_ParseTuple(args, "ii", &frameSize, &fftSize)){
+  if (!PyArg_ParseTuple(args, "iib", &frameSize, &fftSize, &zeroPhase)){
     PyErr_SetString(PyExc_ValueError,
-                    "the arguments must be (int)frameSize, (int)fftSize");
+                    "the arguments must be (int)frameSize, (int)fftSize, (bool)zeroPhase");
     
     return -1;
   }
@@ -91,7 +92,7 @@ int PyFFT::init(PyObject* self, PyObject* args, PyObject* kwds) {
   if(((PyFFT*)self)->base != NULL)
     delete ((PyFFT*)self)->base;
       
-  ((PyFFT*)self)->base = new FFT::FFT(frameSize, fftSize);
+  ((PyFFT*)self)->base = new FFT::FFT(frameSize, fftSize, zeroPhase);
   ((PyFFT*)self)->base->setup();
 
   return 0;

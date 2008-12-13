@@ -63,10 +63,27 @@ void FFT::setup(){
 template<class F>
 void FFT::process(F frames, MatrixXC* ffts){
   for (int i = 0; i < frames.rows(); i++){    
-    // Put the data in _in
+    // Fill the buffer with zeros
     Eigen::Map<MatrixXC>(reinterpret_cast< Complex* >(_in), 1, _fftSize) = MatrixXC::Zero(1, _fftSize);
-    Eigen::Map<MatrixXC>(reinterpret_cast< Complex* >(_in), 1, _fftSize).block(0, 0, 1, _frameSize) = frames.row(i);
     
+    // Put the data in _in
+    if(_zeroPhase){
+
+      int half_plus = ceil((Real)_frameSize / 2.0);
+      int half_minus = floor((Real)_frameSize / 2.0);
+
+      // Put second half of the frame at the beginning 
+      Eigen::Map<MatrixXC>(reinterpret_cast< Complex* >(_in), 1, _fftSize).block(0, 0, 1, half_plus) = frames.row(i).block(0, half_minus, 1, half_plus);
+      
+      // and first half of the frame at the end
+      Eigen::Map<MatrixXC>(reinterpret_cast< Complex* >(_in), 1, _fftSize).block(0, _fftSize - half_minus, 1, half_minus) = frames.row(i).block(0, 0, 1, half_minus);
+
+
+    }else{
+
+      // Put all of the frame at the beginning
+      Eigen::Map<MatrixXC>(reinterpret_cast< Complex* >(_in), 1, _fftSize).block(0, 0, 1, _frameSize) = frames.row(i);
+    }
     // Process the data
     fftwf_execute(_fftplan);
 
