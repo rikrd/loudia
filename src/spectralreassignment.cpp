@@ -47,19 +47,32 @@ SpectralReassignment::~SpectralReassignment(){}
 void SpectralReassignment::setup(){
   DEBUG("SPECTRALREASSIGNMENT: Setting up...");
   
-  Real sampleperiod = 1.0 / _samplerate;
+  // Create the time vector
+  Real timestep = 1.0 / _samplerate;
+  _time.resize(_frameSize, 1);
+  for(int i = 0; i < _time.cols(); i++){
+    _time(i, 0) = timestep * i;
+  }
+  
+  // Create the freq vector
+  Real freqstep = 2.0 * M_PI / _fftSize;
+  _freq.resize(1, _frameSize);
+  for(int i = 0; i < _freq.cols(); i++){
+    _freq(0, i) = freqstep * i;
+  }
+  
+  // Create the reassign operator matrix
+  _reassignOp.resize(_frameSize, _fftSize);
 
   // Calculate and set the time integrated window
   MatrixXR windowInteg = _windowIntegAlgo.window();
-  for(int i = 0; i < windowInteg.cols(); i++){
-    windowInteg(0, i) = windowInteg(0, i) * sampleperiod * i;
-  }
+  windowInteg = windowInteg.cwise() * _time.transpose();
   _windowIntegAlgo.setWindow(windowInteg);
 
   // Calculate and set the time derivated window
   MatrixXR windowDeriv = _windowDerivAlgo.window();
   for(int i = windowDeriv.cols() - 1; i > 0; i--){
-    windowDeriv(0, i) = (windowDeriv(0, i) - windowDeriv(0, i-1)) / sampleperiod;
+    windowDeriv(0, i) = (windowDeriv(0, i) - windowDeriv(0, i-1)) / timestep;
   }
   // TODO: Check what is the initial condition for the window
   // Should this be 0 or just the value it was originally * dt
