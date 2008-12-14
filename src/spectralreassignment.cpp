@@ -57,7 +57,7 @@ void SpectralReassignment::setup(){
 
   // Create the freq vector
   DEBUG("SPECTRALREASSIGNMENT: Creating freq vector...");
-  Real freqstep = 2.0 * M_PI / _fftSize;
+  Real freqstep = 1.0; //2.0 * M_PI / _fftSize;
   _freq.resize(1, _fftSize);
   for(int i = 0; i < _freq.cols(); i++){
     _freq(0, i) = freqstep * i;
@@ -140,7 +140,12 @@ void SpectralReassignment::process(F frames, W* reassigned, W* fft){
     DEBUG("SPECTRALREASSIGNMENT: Processing: reassigning...");
     DEBUG("SPECTRALREASSIGNMENT: Processing: reassigning _reassignFreq: " << _reassignFreq.rows() << ", " << _reassignFreq.cols())
     for(int j = 0; j < _reassignFreq.cols(); j++){
-      (*reassigned)(i, int(_reassignFreq(i, j))) += abs(_fft(i, j));
+      if((int(_reassignTime(i, j)) < (*reassigned).rows()) \
+         && (int(_reassignTime(i, j)) >= 0)){
+
+        (*reassigned)(i, int(_reassignFreq(i, j))) += (1.0 - abs(_reassignFreq(i, j)- int(_reassignFreq(i,j)))) * abs(_fft(i, j));
+        
+      }
     }
   }
 }

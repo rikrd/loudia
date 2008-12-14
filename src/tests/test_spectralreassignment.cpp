@@ -22,6 +22,7 @@
 #include "typedefs.h"
 #include <Eigen/Core>
 #include <iostream>
+#include <cmath>
 
 using namespace std;
 
@@ -32,16 +33,28 @@ int main() {
   Window::WindowType windowType(Window::HAMMING);
 
   MatrixXR in = MatrixXR::Constant(1, frameLength, 2.0);
+  MatrixXR in2(1, frameLength);
+  for (int i=0; i< in2.cols(); i++){
+    in2(0, i) = cos(2.0 * M_PI * 440.0 * Real(i) / samplerate);
+  }
+  MatrixXR in3(1, frameLength);
+  for (int i=0; i< in2.cols(); i++){
+    in3(0, i) = cos(2.0 * M_PI * 440.0 * Real(i) / samplerate) + cos(2.0 * M_PI * 220.0 * Real(i) / samplerate);
+  }
   
   SpectralReassignment specreassign(frameLength, fftLength, samplerate, windowType);
   specreassign.setup();
 
   MatrixXC result(1, fftLength);
   
-  for (int i=0; i<2; i++) {   
-    specreassign.process(in, &result);
-    cout << "result:" << result.cwise().abs() << endl;
-  }
+  specreassign.process(in, &result);
+  cout << "result in:" << result.cwise().abs() << endl;
+
+  specreassign.process(in2, &result);
+  cout << "result in2:" << result.cwise().abs() << endl;
+
+  specreassign.process(in3, &result);
+  cout << "result in3:" << result.cwise().abs() << endl;
 
   return 0;
 }

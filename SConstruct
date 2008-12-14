@@ -59,5 +59,6 @@ env.SharedLibrary('build/ricaudio', ['build/python/ricaudio.cpp',
                                      'build/python/pyfilter.cpp', 'build/filter.cpp',
                                      'build/python/pyfft.cpp', 'build/fft.cpp',
                                      'build/python/pywindow.cpp', 'build/window.cpp',
+                                     'build/python/pyspectralreassignment.cpp', 'build/spectralreassignment.cpp',
                                      'build/debug.cpp'])
 

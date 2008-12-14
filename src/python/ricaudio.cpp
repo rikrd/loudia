@@ -31,6 +31,7 @@ using namespace std;
 #include "pyaok.h"
 #include "pyfft.h"
 #include "pywindow.h"
+#include "pyspectralreassignment.h"
 
 static PyObject* Ricaudio__Module = NULL;
 
@@ -45,6 +46,7 @@ extern PyTypeObject PyFilterType;
 extern PyTypeObject PyAOKType;
 extern PyTypeObject PyFFTType;
 extern PyTypeObject PyWindowType;
+extern PyTypeObject PySpectralReassignmentType;
 
 PyMODINIT_FUNC
 initricaudio(void) {
@@ -55,6 +57,7 @@ initricaudio(void) {
       (PyType_Ready(&PyFilterType) < 0) || \
       (PyType_Ready(&PyAOKType) < 0) || \
       (PyType_Ready(&PyFFTType) < 0) || \
+      (PyType_Ready(&PySpectralReassignmentType) < 0) || \
       (PyType_Ready(&PyWindowType) < 0)) {
     
     cerr << "Unable to instantiate Ricaudio's wrapper types." << endl;
@@ -92,5 +95,8 @@ initricaudio(void) {
 
   Py_INCREF(&PyWindowType);
   PyModule_AddObject(Ricaudio__Module, (char*)"Window", (PyObject*)&PyWindowType);
+  
+  Py_INCREF(&PySpectralReassignmentType);
+  PyModule_AddObject(Ricaudio__Module, (char*)"SpectralReassignment", (PyObject*)&PySpectralReassignmentType);
 
 }
