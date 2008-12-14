@@ -30,10 +30,14 @@ using namespace std;
 // import most common Eigen types 
 USING_PART_OF_NAMESPACE_EIGEN
 
-SpectralBands::SpectralBands() : _starts(1, 1){ }
+SpectralBands::SpectralBands() : _starts(1, 1){ 
+  _weights.push_back(MatrixXR::Constant(1, 1, 0.0));
+}
 
 
 SpectralBands::SpectralBands(MatrixXi starts, vector<MatrixXR> weights) {
+  DEBUG("SPECTRALBANDS: Constructor starts: " << starts);
+
   if ( starts.rows() != weights.size() ) {
     // Throw an exception
   }
@@ -57,7 +61,10 @@ SpectralBands::~SpectralBands() {}
 
 void SpectralBands::setup(){
   // Prepare the buffers
+  DEBUG("SPECTRALBANDS: Setting up...");
+
   reset();
+  DEBUG("SPECTRALBANDS: Finished set up...");
 }
 
 
