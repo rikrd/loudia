@@ -15,7 +15,7 @@ a_sine = a_random[0,:] + scipy.array(scipy.cos(2 * scipy.pi * 440 * scipy.arange
 a_sine = a_sine.reshape((1, a_sine.shape[0]))
 
 # Ricaudio's solution # --------------------------------- #
-m = ricaudio.SpectralReassignment(frameSize, fftSize, samplerate, 5)
+m = ricaudio.SpectralReassignment(frameSize, fftSize, samplerate, 0)
 
 r_zeros = m.process(a_zeros)
 r_ones = m.process(a_ones)

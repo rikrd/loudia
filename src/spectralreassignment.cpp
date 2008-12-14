@@ -52,7 +52,7 @@ void SpectralReassignment::setup(){
   Real timestep = 1.0 / _samplerate;
   _time.resize(_frameSize, 1);
   for(int i = 0; i < _time.rows(); i++){
-    _time(i, 0) = timestep * i;
+    _time(i, 0) = timestep * (i - Real(_time.rows())/2.0);
   }
 
   // Create the freq vector
@@ -111,6 +111,7 @@ void SpectralReassignment::setup(){
 
 template<class F, class W>
 void SpectralReassignment::process(F frames, W* reassigned, W* fft){
+  (*reassigned) = W::Zero((*reassigned).rows(), (*reassigned).cols());
   for (int i = 0; i < frames.rows(); i++){
 
     // Process the windowing
@@ -127,23 +128,19 @@ void SpectralReassignment::process(F frames, W* reassigned, W* fft){
     _fftAbs2 = _fft.cwise().abs2();
     DEBUG("SPECTRALREASSIGNMENT: Processing: creating the time reassignment operation...");    
     //_reassignTime = _time - ((_fftInteg.cwise() * _fft.adjoint().transpose()).cwise() / _fftAbs2).real().transpose();
-    _reassignTime = ((_fftInteg.cwise() * _fft.adjoint().transpose()).cwise() / (_fftAbs2.cwise() + 0.0001)).real();
+    _reassignTime = ((_fftInteg.cwise() * _fft.adjoint().transpose()).cwise() / (_fftAbs2.cwise() + 0.0001)).real() * _samplerate;
 
     DEBUG("SPECTRALREASSIGNMENT: Processing: creating the freq reassignment operation...");    
     _reassignFreq = _freq + ((_fftDeriv.cwise() * _fft.adjoint().transpose()).cwise() / (_fftAbs2.cwise() + 0.0001)).imag();
     
-    // Initialize the result to 0
-    DEBUG("SPECTRALREASSIGNMENT: Processing: initializing the reassigned row...");
-    (*reassigned).row(i) = MatrixXR::Zero(1, (*reassigned).cols());
-
     // Reassign the spectrum values
     DEBUG("SPECTRALREASSIGNMENT: Processing: reassigning...");
     DEBUG("SPECTRALREASSIGNMENT: Processing: reassigning _reassignFreq: " << _reassignFreq.rows() << ", " << _reassignFreq.cols())
     for(int j = 0; j < _reassignFreq.cols(); j++){
-      if((int(_reassignTime(i, j)) < (*reassigned).rows()) \
-         && (int(_reassignTime(i, j)) >= 0)){
+      if(((int)round(_reassignTime(i, j)) < (*reassigned).rows()) \
+         && ((int)round(_reassignTime(i, j)) >= 0)){
 
-        (*reassigned)(i, int(_reassignFreq(i, j))) += (1.0 - abs(_reassignFreq(i, j)- int(_reassignFreq(i,j)))) * abs(_fft(i, j));
+        (*reassigned)(i - (int)round(_reassignTime(i,j)), (int)round(_reassignFreq(i, j))) += (1.0 - abs(_reassignFreq(i, j)- (int)round(_reassignFreq(i,j)))) * abs(_fft(i, j));
         
       }
     }
