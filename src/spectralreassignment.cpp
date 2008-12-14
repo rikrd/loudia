@@ -123,7 +123,7 @@ void SpectralReassignment::process(F frames, W* reassigned, W* fft){
     _fftAlgo.process(_windowInteg, &_fftInteg);
     _fftAlgo.process(_windowDeriv, &_fftDeriv);
 
-    // Reassign
+    // Create the reassignment operations
     _fftAbs2 = _fft.cwise().abs2();
     DEBUG("SPECTRALREASSIGNMENT: Processing: creating the time reassignment operation...");    
     //_reassignTime = _time - ((_fftInteg.cwise() * _fft.adjoint().transpose()).cwise() / _fftAbs2).real().transpose();
@@ -132,10 +132,11 @@ void SpectralReassignment::process(F frames, W* reassigned, W* fft){
     DEBUG("SPECTRALREASSIGNMENT: Processing: creating the freq reassignment operation...");    
     _reassignFreq = _freq + ((_fftDeriv.cwise() * _fft.adjoint().transpose()).cwise() / (_fftAbs2.cwise() + 0.0001)).imag();
     
-    cout << _reassignFreq << endl;
+    // Initialize the result to 0
     DEBUG("SPECTRALREASSIGNMENT: Processing: initializing the reassigned row...");
     (*reassigned).row(i) = MatrixXR::Zero(1, (*reassigned).cols());
 
+    // Reassign the spectrum values
     DEBUG("SPECTRALREASSIGNMENT: Processing: reassigning...");
     DEBUG("SPECTRALREASSIGNMENT: Processing: reassigning _reassignFreq: " << _reassignFreq.rows() << ", " << _reassignFreq.cols())
     for(int j = 0; j < _reassignFreq.cols(); j++){
