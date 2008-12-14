@@ -64,6 +64,9 @@ void SpectralReassignment::setup(){
   }
   
   // Create the reassign operator matrix
+  // TODO: check if the current timestamp is enough for a good reassignment
+  // we might need for it to depend on past frames (if the reassignment of time
+  // goes further than one)
   DEBUG("SPECTRALREASSIGNMENT: Creating reassignment op...");
   _reassignTime.resize(1, _fftSize);
   _reassignFreq.resize(1, _fftSize);
