@@ -50,28 +50,28 @@ void SpectralReassignment::setup(){
   // Create the time vector
   DEBUG("SPECTRALREASSIGNMENT: Creating time vector...");
   Real timestep = 1.0 / _samplerate;
-  _time.resize(_frameSize, _fftSize);
+  _time.resize(_frameSize, 1);
   for(int i = 0; i < _time.rows(); i++){
-    _time.row(i) = MatrixXR::Constant(1, _time.cols(), timestep).row(0) * i;
+    _time(i, 0) = timestep * i;
   }
 
   // Create the freq vector
   DEBUG("SPECTRALREASSIGNMENT: Creating freq vector...");
   Real freqstep = 2.0 * M_PI / _fftSize;
-  _freq.resize(_frameSize, _fftSize);
+  _freq.resize(1, _fftSize);
   for(int i = 0; i < _freq.cols(); i++){
-    _freq.col(i) = MatrixXR::Constant(_freq.rows(), 1, freqstep).col(0) * i;
+    _freq(0, i) = freqstep * i;
   }
   
   // Create the reassign operator matrix
   DEBUG("SPECTRALREASSIGNMENT: Creating reassignment op...");
-  _reassignTime.resize(_frameSize, _fftSize);
-  _reassignFreq.resize(_frameSize, _fftSize);
+  _reassignTime.resize(1, _fftSize);
+  _reassignFreq.resize(1, _fftSize);
 
   // Calculate and set the time weighted window
   DEBUG("SPECTRALREASSIGNMENT: Calculate time weighted window...");
   MatrixXR windowInteg = _windowIntegAlgo.window();
-  windowInteg = windowInteg.cwise() * _time.col(0).transpose();
+  windowInteg = windowInteg.cwise() * _time.transpose();
   _windowIntegAlgo.setWindow(windowInteg);
 
   // Calculate and set the time derivated window
@@ -123,7 +123,9 @@ void SpectralReassignment::process(F frames, W* reassigned, W* fft){
     // Reassign
     _fftAbs2 = _fft.cwise().abs2();
     DEBUG("SPECTRALREASSIGNMENT: Processing: creating the time reassignment operation...");    
-    _reassignTime = _time - ((_fftInteg.cwise() * _fft.adjoint().transpose()).cwise() / _fftAbs2).real();
+    //_reassignTime = _time - ((_fftInteg.cwise() * _fft.adjoint().transpose()).cwise() / _fftAbs2).real().transpose();
+    _reassignTime = ((_fftInteg.cwise() * _fft.adjoint().transpose()).cwise() / _fftAbs2).real();
+
     DEBUG("SPECTRALREASSIGNMENT: Processing: creating the freq reassignment operation...");    
     _reassignFreq = _freq + ((_fftDeriv.cwise() * _fft.adjoint().transpose()).cwise() / _fftAbs2).imag();
   }
