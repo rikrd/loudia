@@ -50,17 +50,27 @@ void SpectralReassignment::setup(){
   // Create the time vector
   DEBUG("SPECTRALREASSIGNMENT: Creating time vector...");
   Real timestep = 1.0 / _samplerate;
+
+  // The unit of the vectors is Time Sample fractions
+  // So the difference between one coeff and the next is 1
+  // and the center of the window must be 0, so even sized windows
+  // will have the two center coeffs to -0.5 and 0.5
+  // This should be a line going from [-(window_size - 1)/2 ... (window_size - 1)/2]
   _time.resize(_frameSize, 1);
   for(int i = 0; i < _time.rows(); i++){
-    _time(i, 0) = timestep * (i - Real(_time.rows())/2.0);
+    _time(i, 0) = (i - Real(_time.rows() - 1)/2.0);
   }
 
   // Create the freq vector
   DEBUG("SPECTRALREASSIGNMENT: Creating freq vector...");
-  Real freqstep = 1.0; //2.0 * M_PI / _fftSize;
+  Real freqstep = 2.0 * M_PI / _fftSize;
+
+  // The unit of the vectors is Frequency Bin fractions
+  // TODO: Must rethink how the frequency vector is initialized
+  // as we did for the time vector
   _freq.resize(1, _fftSize);
   for(int i = 0; i < _freq.cols(); i++){
-    _freq(0, i) = freqstep * i;
+    _freq(0, i) = i;
   }
   
   // Create the reassign operator matrix
@@ -74,7 +84,7 @@ void SpectralReassignment::setup(){
   // Calculate and set the time weighted window
   DEBUG("SPECTRALREASSIGNMENT: Calculate time weighted window...");
   MatrixXR windowInteg = _windowIntegAlgo.window();
-  windowInteg = windowInteg.cwise() * _time.transpose();
+  windowInteg = windowInteg.cwise() * _time.transpose()  * timestep;
   _windowIntegAlgo.setWindow(windowInteg);
 
   // Calculate and set the time derivated window
@@ -134,6 +144,14 @@ void SpectralReassignment::process(F frames, W* reassigned, W* fft){
     _reassignFreq = _freq + ((_fftDeriv.cwise() * _fft.adjoint().transpose()).cwise() / (_fftAbs2.cwise() + 0.0001)).imag();
     
     // Reassign the spectrum values
+    // TODO: put this into a function and do it right
+    // will have to calculate and return all the reassigned values:
+    // reassignedFrequency, reassignedTime:
+    //      - are calculated using Flandrin's method using the 3 DFT
+    // reassignedMagnitude, reassignedPhase: 
+    //      - are calculated from reassigned freq and time and the original DFT
+    //        (the magnitude and phase must then be put back 
+    //         in the form of a complex in the reassigned frame)  
     DEBUG("SPECTRALREASSIGNMENT: Processing: reassigning...");
     DEBUG("SPECTRALREASSIGNMENT: Processing: reassigning _reassignFreq: " << _reassignFreq.rows() << ", " << _reassignFreq.cols())
     for(int j = 0; j < _reassignFreq.cols(); j++){
