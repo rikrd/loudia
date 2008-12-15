@@ -4,18 +4,25 @@
 import scipy
 import ricaudio
 
-frameSize = 128
+fundamental = 440.0
+harmonics = 5
+
+frameSize = 256
 fftSize = 512
 samplerate = 8000
 
 a_zeros = scipy.array(scipy.zeros((1, frameSize)), dtype='f4')
 a_ones = scipy.array(scipy.ones((1, frameSize)), dtype='f4')
 a_random = scipy.array(scipy.random.random((1, frameSize)), dtype='f4')
-a_sine = a_random[0,:] + scipy.array(scipy.cos(2 * scipy.pi * 440 * scipy.arange(frameSize) / samplerate + scipy.pi/4.0), dtype='f4')
-a_sine = a_sine.reshape((1, a_sine.shape[0]))
+
+a_sine = a_zeros
+for i in range(harmonics):
+    a_sine[0, :] += scipy.array(scipy.cos(2 * scipy.pi * i * fundamental * scipy.arange(frameSize) / samplerate), dtype='f4')
+
+a_sine += (a_random - 0.5) * 1.0
 
 # Ricaudio's solution # --------------------------------- #
-m = ricaudio.SpectralReassignment(frameSize, fftSize, samplerate, 0)
+m = ricaudio.SpectralReassignment(frameSize, fftSize, samplerate, 2)
 
 r_zeros = m.process(a_zeros)
 r_ones = m.process(a_ones)
@@ -46,12 +53,15 @@ s_ang = scipy.angle(s_sine).T
 s_max = max(s_abs)
 
 import pylab
-pylab.subplot(211)
+pylab.subplot(311)
+pylab.plot(a_sine.T)
+
+pylab.subplot(312)
 pylab.hold(True)
 pylab.plot(r_abs, label = 'Ricaudio')
 pylab.plot(s_abs, label = 'Scipy')
 
-pylab.subplot(212)
+pylab.subplot(313)
 pylab.hold(True)
 pylab.plot(r_abs*r_ang/r_max, label = 'Ricaudio')
 pylab.plot(s_abs*s_ang/s_max, label = 'Scipy')

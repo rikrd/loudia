@@ -31,7 +31,7 @@ using namespace std;
 // import most common Eigen types 
 USING_PART_OF_NAMESPACE_EIGEN
 
-SpectralReassignment::SpectralReassignment(int frameSize, int fftSize, Real samplerate, Window::WindowType windowType) : _windowAlgo(frameSize, windowType), _windowIntegAlgo(frameSize, Window::CUSTOM), _windowDerivAlgo(frameSize, Window::CUSTOM), _fftAlgo(frameSize, fftSize){
+SpectralReassignment::SpectralReassignment(int frameSize, int fftSize, Real samplerate, Window::WindowType windowType) : _windowAlgo(frameSize, windowType), _windowIntegAlgo(frameSize, Window::CUSTOM), _windowDerivAlgo(frameSize, Window::CUSTOM), _fftAlgo(frameSize, fftSize, true){
   DEBUG("SPECTRALREASSIGNMENT: Constructor frameSize: " << frameSize << ", fftSize: " << fftSize << ", samplerate: " << samplerate << ", windowType: " << windowType);
 
   _frameSize = frameSize;
@@ -46,6 +46,9 @@ SpectralReassignment::~SpectralReassignment(){}
 
 void SpectralReassignment::setup(){
   DEBUG("SPECTRALREASSIGNMENT: Setting up...");
+  
+  // Setup the window so it gets calculated and can be reused
+  _windowAlgo.setup();
   
   // Create the time vector
   DEBUG("SPECTRALREASSIGNMENT: Creating time vector...");
@@ -83,19 +86,20 @@ void SpectralReassignment::setup(){
 
   // Calculate and set the time weighted window
   DEBUG("SPECTRALREASSIGNMENT: Calculate time weighted window...");
-  MatrixXR windowInteg = _windowIntegAlgo.window();
-  windowInteg = windowInteg.cwise() * _time.transpose()  * timestep;
+  MatrixXR windowInteg = _windowAlgo.window();
+  windowInteg = windowInteg.cwise() * _time.transpose();
   _windowIntegAlgo.setWindow(windowInteg);
 
   // Calculate and set the time derivated window
   DEBUG("SPECTRALREASSIGNMENT: Calculate time derivative window...");
-  MatrixXR windowDeriv = _windowDerivAlgo.window();
+  MatrixXR windowDeriv = _windowAlgo.window();
   for(int i = windowDeriv.cols() - 1; i > 0; i--){
-    windowDeriv(0, i) = (windowDeriv(0, i) - windowDeriv(0, i-1)) / timestep;
+    windowDeriv(0, i) = (windowDeriv(0, i) - windowDeriv(0, i - 1)) / timestep;
   }
+
   // TODO: Check what is the initial condition for the window
   // Should this be 0 or just the value it was originally * dt
-  windowDeriv(0, 0) = 0.0;
+  //windowDeriv(0, 0) = 0.0;
   _windowDerivAlgo.setWindow(windowDeriv);
 
   // Create the necessary buffers for the windowing
@@ -110,7 +114,6 @@ void SpectralReassignment::setup(){
   _fftDeriv.resize(1, _fftSize);
   
   // Setup the algos
-  _windowAlgo.setup();
   _windowIntegAlgo.setup();
   _windowDerivAlgo.setup();
   _fftAlgo.setup();
@@ -136,12 +139,13 @@ void SpectralReassignment::process(F frames, W* reassigned, W* fft){
 
     // Create the reassignment operations
     _fftAbs2 = _fft.cwise().abs2();
-    DEBUG("SPECTRALREASSIGNMENT: Processing: creating the time reassignment operation...");    
-    //_reassignTime = _time - ((_fftInteg.cwise() * _fft.adjoint().transpose()).cwise() / _fftAbs2).real().transpose();
-    _reassignTime = ((_fftInteg.cwise() * _fft.adjoint().transpose()).cwise() / (_fftAbs2.cwise() + 0.0001)).real() * _samplerate;
 
-    DEBUG("SPECTRALREASSIGNMENT: Processing: creating the freq reassignment operation...");    
-    _reassignFreq = _freq + ((_fftDeriv.cwise() * _fft.adjoint().transpose()).cwise() / (_fftAbs2.cwise() + 0.0001)).imag();
+    DEBUG("SPECTRALREASSIGNMENT: Processing: creating the time reassignment operation...");    
+    _reassignTime = - ((_fftInteg.cwise() * _fft.conjugate()).cwise() / _fftAbs2).real();
+    
+    // TODO: Check the unity of the freq reassignment, it may need to be normalized by something
+    DEBUG("SPECTRALREASSIGNMENT: Processing: creating the freq reassignment operation...");
+    _reassignFreq = _freq + ((_fftDeriv.cwise() * _fft.conjugate()).cwise() / _fftAbs2).imag();
     
     // Reassign the spectrum values
     // TODO: put this into a function and do it right
@@ -153,14 +157,11 @@ void SpectralReassignment::process(F frames, W* reassigned, W* fft){
     //        (the magnitude and phase must then be put back 
     //         in the form of a complex in the reassigned frame)  
     DEBUG("SPECTRALREASSIGNMENT: Processing: reassigning...");
-    DEBUG("SPECTRALREASSIGNMENT: Processing: reassigning _reassignFreq: " << _reassignFreq.rows() << ", " << _reassignFreq.cols())
+    DEBUG("SPECTRALREASSIGNMENT: Processing: reassigning _reassignFreq: " << _reassignFreq.rows() << ", " << _reassignFreq.cols());
+    //(*reassigned).row(i) = _reassignFreq.row(0);
     for(int j = 0; j < _reassignFreq.cols(); j++){
-      if(((int)round(_reassignTime(i, j)) < (*reassigned).rows()) \
-         && ((int)round(_reassignTime(i, j)) >= 0)){
-
-        (*reassigned)(i - (int)round(_reassignTime(i,j)), (int)round(_reassignFreq(i, j))) += (1.0 - abs(_reassignFreq(i, j)- (int)round(_reassignFreq(i,j)))) * abs(_fft(i, j));
-        
-      }
+      if((int)round(_reassignFreq(i, j)) >= 0 && (int)round(_reassignFreq(i, j)) < (*reassigned).cols())
+        (*reassigned)(i, (int)round(_reassignFreq(i, j))) += (1.0 - (abs(_reassignFreq(i, j) - (int)round(_reassignFreq(i,j))))) * abs(_fft(i, (int)round(_reassignFreq(i,j))));
     }
   }
 }
