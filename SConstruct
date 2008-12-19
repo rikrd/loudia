@@ -16,6 +16,7 @@
 ** Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 """
 
+import distutils.sysconfig
 
 VariantDir('build', 'src')
 
@@ -48,9 +49,11 @@ env.Program('build/test_window', ['build/tests/test_window.cpp', 'build/window.c
 env.Program('build/test_spectralreassignment', ['build/tests/test_spectralreassignment.cpp', 'build/spectralreassignment.cpp', 'build/window.cpp', 'build/fft.cpp', 'build/debug.cpp'])
 
 
-env['SHLIBPREFIX'] = ''
-env.Append(CPPPATH = [ '/usr/include/python2.5',
-                       '/usr/lib/python2.5/site-packages/numpy/core/include/numpy/' ])
+# Build manual python bindings
+env.Append(CPPPATH = [ distutils.sysconfig.get_python_inc(),
+                       '/usr/lib/python2.5/site-packages/numpy/core/include/numpy/' ],
+           SHLIBPREFIX="")
+
 env.SharedLibrary('build/ricaudio', ['build/python/ricaudio.cpp',
                                      'build/python/pymeddis.cpp', 'build/meddis.cpp',
                                      'build/python/pymfcc.cpp', 'build/mfcc.cpp', 'build/melbands.cpp',
@@ -62,3 +65,7 @@ env.SharedLibrary('build/ricaudio', ['build/python/ricaudio.cpp',
                                      'build/python/pyspectralreassignment.cpp', 'build/spectralreassignment.cpp',
                                      'build/debug.cpp'])
 
+
+# Build SWIG generated python bindings
+env.Append(SWIGFLAGS=['-python'])
+env.SharedLibrary('build/swig/_ricaudio.so', ['build/swig/ricaudio_wrap.cpp', 'build/swig/ricaudio.i'])
