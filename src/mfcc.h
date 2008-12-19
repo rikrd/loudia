@@ -28,10 +28,10 @@
 
 #include "typedefs.h"
 
-using namespace std;
+//using namespace std;
 
 // import most common Eigen types 
-using namespace Eigen;
+//using namespace Eigen;
 
 class MFCC {
 protected:

@@ -27,12 +27,12 @@
 #include "typedefs.h"
 
 // import most common Eigen types 
-using namespace Eigen;
+//using namespace Eigen;
 
 class SpectralBands {
 protected:
   // Internal parameters
-  MatrixXi _starts;
+  Eigen::MatrixXi _starts;
   std::vector<MatrixXR> _weights;
 
   // Internal variables
@@ -40,7 +40,7 @@ protected:
 public:
   SpectralBands();
 
-  SpectralBands(MatrixXi starts, std::vector<MatrixXR> weights);
+  SpectralBands(Eigen::MatrixXi starts, std::vector<MatrixXR> weights);
 
   ~SpectralBands();
 
@@ -52,7 +52,7 @@ public:
 
   std::vector<MatrixXR> weights() const;
 
-  MatrixXi starts() const;
+  Eigen::MatrixXi starts() const;
 
 };
 

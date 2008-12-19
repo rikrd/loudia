@@ -49,7 +49,8 @@ env.Program('build/test_spectralreassignment', ['build/tests/test_spectralreassi
 
 
 # Build python bindings
-env.Append(CPPPATH = [distutils.sysconfig.get_python_inc(), '/usr/lib/python2.5/site-packages/numpy/core/include/numpy/'],
+env.Append(CPPPATH = [distutils.sysconfig.get_python_inc(),
+                      '/usr/lib/python2.5/site-packages/numpy/core/include/numpy/'],
            SHLIBPREFIX="")
 
 # Build manual bindings
@@ -64,9 +65,16 @@ env.SharedLibrary('build/ricaudio', ['build/python/ricaudio.cpp',
                                      'build/python/pyspectralreassignment.cpp', 'build/spectralreassignment.cpp',
                                      'build/debug.cpp'], SHLIBPREFIX="")
 
-
-# Build SWIG generated python bindings
 """
+# Build SWIG generated python bindings
+env.Append(CPPPATH = [distutils.sysconfig.get_python_inc(),
+                      '/usr/lib/python2.5/site-packages/numpy/core/include/numpy/'],
+           SHLIBPREFIX="",
+           CXXFLAGS = ['-I./build', '-I/home/rmarxer/dev/eigen2'])
+
 env.Append(SWIGFLAGS=['-c++', '-python', '-Wall', '-I./build', '-I/home/rmarxer/dev/eigen2'])
-env.SharedLibrary('build/swig/_ricaudio.so', ['build/swig/ricaudio_wrap.cc', 'build/swig/ricaudio.i'], SHLIBPREFIX="")
+env.SharedLibrary('build/swig/_ricaudio.so', ['build/swig/ricaudio.i',
+                                              'build/filter.cpp',
+                                              'build/debug.cpp'], SHLIBPREFIX="")
+
 """
