@@ -52,7 +52,7 @@ env.Program('build/test_spectralreassignment', ['build/tests/test_spectralreassi
 env.Append(CPPPATH = [distutils.sysconfig.get_python_inc(),
                       '/usr/lib/python2.5/site-packages/numpy/core/include/numpy/'],
            SHLIBPREFIX="")
-
+"""
 # Build manual bindings
 env.SharedLibrary('build/ricaudio', ['build/python/ricaudio.cpp',
                                      'build/python/pymeddis.cpp', 'build/meddis.cpp',
@@ -77,4 +77,4 @@ env.SharedLibrary('build/swig/_ricaudio.so', ['build/swig/ricaudio.i',
                                               'build/filter.cpp',
                                               'build/debug.cpp'], SHLIBPREFIX="")
 
-"""
+
