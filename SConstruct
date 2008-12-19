@@ -67,5 +67,5 @@ env.SharedLibrary('build/ricaudio', ['build/python/ricaudio.cpp',
 
 
 # Build SWIG generated python bindings
-env.Append(SWIGFLAGS=['-python'])
-env.SharedLibrary('build/swig/_ricaudio.so', ['build/swig/ricaudio_wrap.cpp', 'build/swig/ricaudio.i'])
+env.Append(SWIGFLAGS=['-c++','-python'])
+env.SharedLibrary('build/swig/_ricaudio.so', ['build/swig/ricaudio_wrap.cc', 'build/swig/ricaudio.i'])
