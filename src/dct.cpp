@@ -28,7 +28,7 @@
 using namespace std;
 
 // import most common Eigen types 
-USING_PART_OF_NAMESPACE_EIGEN
+using namespace Eigen;
 
 DCT::DCT(int inputLength, int dctLength, bool scale) {
   DEBUG("DCT: Construction inputLength: " << inputLength << ", dctLength: " << dctLength);

@@ -31,7 +31,7 @@
 using namespace std;
 
 // import most common Eigen types 
-USING_PART_OF_NAMESPACE_EIGEN
+using namespace Eigen;
 
 MFCC::MFCC(Real lowFreq, Real highFreq, int numBands, Real samplerate, int spectrumLength, int numCoeffs, Real minSpectrum, Real power) : _melbands(lowFreq, highFreq, numBands, samplerate, spectrumLength), _dct(numBands, numCoeffs) {
   DEBUG("MFCC: Constructor lowFreq: " << lowFreq << ", highFreq: " << highFreq << ", numBands: " << numBands << ", samplerate: "<< samplerate << ", spectrumLength: " << spectrumLength << ", numCoeffs: " << numCoeffs);

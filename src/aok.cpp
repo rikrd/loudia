@@ -29,7 +29,7 @@
 using namespace std;
 
 // import most common Eigen types 
-USING_PART_OF_NAMESPACE_EIGEN
+using namespace Eigen;
 
 AOK::AOK(int windowSize, int hopSize, int fftSize, Real normVolume) : _windowSize(windowSize), _hopSize(hopSize), _fftSize(fftSize), _normVolume(normVolume) {
 

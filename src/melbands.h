@@ -30,9 +30,9 @@
 using namespace std;
 
 // import most common Eigen types 
-USING_PART_OF_NAMESPACE_EIGEN
+using namespace Eigen;
 
-class MelBands: public SpectralBands {
+class MelBands : public SpectralBands {
 protected:
   Real _lowFreq;
   Real _highFreq;

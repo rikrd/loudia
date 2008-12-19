@@ -29,7 +29,7 @@
 using namespace std;
 
 // import most common Eigen types 
-USING_PART_OF_NAMESPACE_EIGEN
+using namespace Eigen;
 
 Window::Window(int frameSize, Window::WindowType windowType) {
   DEBUG("WINDOW: Constructor frameSize: " << frameSize << ", windowType: " << windowType);

@@ -37,7 +37,7 @@ struct CwiseCeilOp {
 };
 
 // import most common Eigen types 
-USING_PART_OF_NAMESPACE_EIGEN
+using namespace Eigen;
 
 MelBands::MelBands(Real lowFreq, Real highFreq, int numBands, Real samplerate, int spectrumLength) {
   DEBUG("MELBANDS: Constructor lowFreq: " << lowFreq << ", highFreq: " << highFreq << ", numBands: " << numBands << ", samplerate: " << samplerate << ", spectrumLength: " << spectrumLength);

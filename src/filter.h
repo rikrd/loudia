@@ -27,8 +27,8 @@
 
 using namespace std;
 
-// import most common Eigen types 
-USING_PART_OF_NAMESPACE_EIGEN
+// import most common Eigen types
+using namespace Eigen;
 
 class Filter {
 protected:

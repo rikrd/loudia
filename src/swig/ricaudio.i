@@ -1,5 +1,3 @@
-%module ricaudio
-
 %{
 #define SWIG_FILE_WITH_INIT
 %}
@@ -10,10 +8,12 @@
 import_array();
 %}
 
+%module ricaudio
+
 %{
-#include "melbands.h"
+#include "filter.h"
 %}
 
 
-#include "melbands.h"
+%include "filter.h"
 

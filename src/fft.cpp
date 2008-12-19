@@ -28,7 +28,7 @@
 using namespace std;
 
 // import most common Eigen types 
-USING_PART_OF_NAMESPACE_EIGEN
+using namespace Eigen;
 
 FFT::FFT(int frameSize, int fftSize, bool zeroPhase) {
   DEBUG("FFT: Constructor frameSize: " << frameSize << ", fftSize: " << fftSize << ", zeroPhase: " << zeroPhase);

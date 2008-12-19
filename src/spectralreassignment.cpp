@@ -29,7 +29,7 @@
 using namespace std;
 
 // import most common Eigen types 
-USING_PART_OF_NAMESPACE_EIGEN
+using namespace Eigen;
 
 SpectralReassignment::SpectralReassignment(int frameSize, int fftSize, Real samplerate, Window::WindowType windowType) : _windowAlgo(frameSize, windowType), _windowIntegAlgo(frameSize, Window::CUSTOM), _windowDerivAlgo(frameSize, Window::CUSTOM), _fftAlgo(frameSize, fftSize, true){
   DEBUG("SPECTRALREASSIGNMENT: Constructor frameSize: " << frameSize << ", fftSize: " << fftSize << ", samplerate: " << samplerate << ", windowType: " << windowType);

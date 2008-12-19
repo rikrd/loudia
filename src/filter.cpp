@@ -27,7 +27,7 @@
 using namespace std;
 
 // import most common Eigen types 
-USING_PART_OF_NAMESPACE_EIGEN
+using namespace Eigen;
 
 Filter::Filter(MatrixXR b,
                MatrixXR a,

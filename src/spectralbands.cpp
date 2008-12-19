@@ -28,7 +28,7 @@
 using namespace std;
 
 // import most common Eigen types 
-USING_PART_OF_NAMESPACE_EIGEN
+using namespace Eigen;
 
 SpectralBands::SpectralBands() : _starts(1, 1){ 
   _weights.push_back(MatrixXR::Constant(1, 1, 0.0));
