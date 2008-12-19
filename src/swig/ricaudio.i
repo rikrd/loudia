@@ -1,6 +1,10 @@
+/* -*- C -*-  (not really, but good for syntax highlighting) */
+
 %{
 #define SWIG_FILE_WITH_INIT
 %}
+
+%module ricaudio
 
 %include "numpy.i"
 
@@ -8,7 +12,13 @@
 import_array();
 %}
 
-%module ricaudio
+%{
+#include <Eigen/Core>
+#include <Eigen/Array>
+
+#include "filter.h"
+%}
+
 
 %typemap(in) MatrixXR {
     int newObject;
@@ -35,10 +45,6 @@ import_array();
     $1 = in_matrix;
 }
 
-
-%{
-#include "filter.h"
-%}
 
 
 %include "filter.h"
