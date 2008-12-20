@@ -15,6 +15,8 @@ import_array();
 #include <Eigen/Array>
 
 #include "filter.h"
+#include "dct.h"
+
 %}
 
 %typemap(in,
@@ -101,8 +103,10 @@ import_array();
 
   Eigen::Map<MatrixXRscipy>(out_data, out_rows, out_cols) = (*$1);
 
+  $result = out_array;
 }
 
 %include "filter.h"
+%include "dct.h"
 
 %module ricaudio

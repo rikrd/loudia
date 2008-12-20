@@ -75,6 +75,7 @@ env.Append(CPPPATH = [distutils.sysconfig.get_python_inc(),
 env.Append(SWIGFLAGS=['-c++', '-python', '-Wall', '-I./build', '-I/home/rmarxer/dev/eigen2'])
 env.SharedLibrary('build/swig/_ricaudio.so', ['build/swig/ricaudio.i',
                                               'build/filter.cpp',
+                                              'build/dct.cpp',
                                               'build/debug.cpp'], SHLIBPREFIX="")
 """
 
