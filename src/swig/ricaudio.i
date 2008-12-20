@@ -85,7 +85,7 @@ using namespace std;
     $1.set(in_matrix);
 }
 
-%typemap(in) MatrixXR* (MatrixXR temp) {
+%typemap(in, numinputs = 0) MatrixXR* (MatrixXR temp) {
   $1 = &temp;
 }
 
@@ -100,12 +100,11 @@ using namespace std;
     
     return NULL;
   }
-
-  int out_rows = ((PyArrayObject*)out_array)->dimensions[0];
-  int out_cols = ((PyArrayObject*)out_array)->dimensions[1];
+  
+  cout << "-----------------------Out" << (*$1).rows() << ", " << (*$1).cols() << endl;
+  
   Real* out_data = (Real*)array_data(out_array);
-
-  Eigen::Map<MatrixXRscipy>(out_data, out_rows, out_cols) = (*$1);
+  Eigen::Map<MatrixXRscipy>(out_data, dims[0], dims[1]) = (*$1);
 
   $result = out_array;
 }

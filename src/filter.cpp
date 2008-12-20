@@ -128,9 +128,11 @@ void Filter::setup(){
 void Filter::process(MatrixXR samples, MatrixXR* output){
   // Process will be called with a matrix where columns will be channels
   // and rows will be the time axis
-  
+
+  DEBUG("FILTER: Entering process...");
   _samples.resize(samples.rows(), _channels);
-  
+  DEBUG("FILTER: After resize...");  
+
   // Check that it has one column or as many as channels
   if ((samples.cols() != 1) && (samples.cols() != _channels)) {
     // TODO: Throw an exception
@@ -148,7 +150,8 @@ void Filter::process(MatrixXR samples, MatrixXR* output){
     // Else set it directly
     _samples.block(0, 0, samples.rows(), _channels) = samples;
   }
-  
+
+  DEBUG("FILTER: After setting coeffs...");    
   for ( int i = 0; i < _samples.rows(); i++ ) {
     if ( _length > 1 ) {
       (*output).row( i ) = _z.row( 0 ) + (_b.row( 0 ).cwise() * _samples.row( i ));
@@ -161,7 +164,8 @@ void Filter::process(MatrixXR samples, MatrixXR* output){
     } else {
       (*output).row( i ) = _samples.row( i ) * _b.row( 0 );
     }
-  }  
+  }
+  DEBUG("FILTER: After processing...");    
 }
 
 void Filter::reset(){
