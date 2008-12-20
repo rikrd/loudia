@@ -80,7 +80,7 @@ using namespace std;
 
     MatrixXC in_matrix = Eigen::Map<MatrixXCscipy>(in_data, in_rows, in_cols);
 
-    $1 = in_matrix;
+    $1.set(in_matrix);
 }
 
 %typemap(in) MatrixXR* (MatrixXR temp) {
