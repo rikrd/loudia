@@ -31,15 +31,13 @@ using namespace Eigen;
 
 Filter::Filter(MatrixXR b,
                MatrixXR a,
-               Real samplerate,
                int channels) : _a(max(b.rows(), a.rows()), channels), _b(max(b.rows(), a.rows()), channels), _z(max(b.rows(), a.rows()), channels){
 
-  DEBUG("FILTER: Constructor samplerate:" << samplerate << ", channels:" << channels);
+  DEBUG("FILTER: Constructor channels:" << channels);
   DEBUG("FILTER: Constructor b:" << b.transpose() << ", a:" << a.transpose());
     
   _channels = channels;
   _length = max(b.rows(), a.rows());
-  _samplerate = samplerate;
 
   _samples.resize(1, _channels);
   //cout << "Building..."<<endl;
@@ -106,6 +104,8 @@ Filter::Filter(MatrixXR b,
   DEBUG("FILTER: 'b' coefficients: " << b.transpose());  
   //cout << "b coeffs:" << _b << endl;
   //cout << "built _b..."<<endl;  
+
+  setup();
 }
 
 Filter::~Filter() {
@@ -171,10 +171,6 @@ void Filter::reset(){
 
 int Filter::channels() const {
   return _channels;
-}
-
-Real Filter::samplerate() const {
-  return _samplerate;
 }
 
 int Filter::length() const {

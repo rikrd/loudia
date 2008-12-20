@@ -33,7 +33,6 @@
 class Filter {
 protected:
   // Internal parameters
-  Real _samplerate;
   int _channels; 
   int _length; 
 
@@ -45,7 +44,7 @@ protected:
   MatrixXR _samples;
 
 public:
-  Filter(MatrixXR b, MatrixXR a, Real samplerate, int channels);
+  Filter(MatrixXR b, MatrixXR a, int channels);
 
   ~Filter();
 
@@ -56,8 +55,6 @@ public:
   void reset();
 
   int channels() const;
-
-  Real samplerate() const;
 
   int length() const;
 

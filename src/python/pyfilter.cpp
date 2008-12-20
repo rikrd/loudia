@@ -77,7 +77,6 @@ PyTypeObject PyFilterType = {
 };
 
 int PyFilter::init(PyObject* self, PyObject* args, PyObject* kwds) {
-  Real samplerate;
   int channels;
 
   PyObject *inputA;
@@ -87,9 +86,9 @@ int PyFilter::init(PyObject* self, PyObject* args, PyObject* kwds) {
   PyArrayObject *coeffsB;
 
   // Parse the arguments
-  if (!PyArg_ParseTuple(args, "OOfi", &inputA, &inputB, &samplerate, &channels)){
+  if (!PyArg_ParseTuple(args, "OOi", &inputA, &inputB, &channels)){
     PyErr_SetString(PyExc_ValueError,
-                    "must pass two arrays of coefficients (a and b) and the samplerate and channels as arguments");
+                    "must pass two arrays of coefficients (a and b) and channels as arguments");
     return -1;
   }
 
@@ -128,8 +127,7 @@ int PyFilter::init(PyObject* self, PyObject* args, PyObject* kwds) {
     delete ((PyFilter*)self)->base;
   
   // Create the filter and set it up
-  ((PyFilter*)self)->base = new Filter::Filter(b, a, samplerate, channels);
-  ((PyFilter*)self)->base->setup();
+  ((PyFilter*)self)->base = new Filter::Filter(b, a, channels);
   
   return 0;
 }
