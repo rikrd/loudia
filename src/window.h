@@ -50,9 +50,6 @@ protected:
   WindowType _windowType;
   MatrixXR _window;
   
-  template<class F, class W>
-  void process(F frames, W* windowedFrames);
-
   MatrixXR hann(int length);
   MatrixXR hamming(int length);
   MatrixXR cosine(int length);
