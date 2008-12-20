@@ -22,6 +22,8 @@ import_array();
 using namespace std;
 %}
 
+%apply float { Real };
+
 %typemap(in,
          fragment="NumPy_Fragments") MatrixXR {
     int newObject;
