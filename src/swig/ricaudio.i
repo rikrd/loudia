@@ -14,9 +14,12 @@ import_array();
 #include <Eigen/Core>
 #include <Eigen/Array>
 
+#include <stdio.h>
+
 #include "filter.h"
 #include "dct.h"
 
+using namespace std;
 %}
 
 %typemap(in,
@@ -44,10 +47,9 @@ import_array();
 
     // prepare the input array  
     Real* in_data = (Real*)array_data(in_array);
-
     MatrixXR in_matrix = Eigen::Map<MatrixXRscipy>(in_data, in_rows, in_cols);
 
-    $1 = in_matrix;
+    $1.set(in_matrix);
 }
 
 %typemap(in,
