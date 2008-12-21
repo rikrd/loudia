@@ -41,6 +41,8 @@ DCT::DCT(int inputLength, int dctLength, bool scale) {
   _inputLength = inputLength;
   _dctLength = dctLength;
   _scale = scale;
+
+  setup();
 }
 
 DCT::~DCT(){}
@@ -65,7 +67,8 @@ void DCT::setup(){
 
 
 void DCT::process(MatrixXR input, MatrixXR* dctCoeffs){
-  DEBUG("DCT: Processing input.cols(): " << input.cols() << ", dctCoeffs.cols(): " << (*dctCoeffs).cols());
+  (*dctCoeffs).resize(input.rows(), _dctLength);
+  
   for ( int i = 0 ; i < input.rows(); i++) {
     (*dctCoeffs).row(i) = (input.row(i) * _dctMatrix).block(0, 0, 1, _dctLength);
   }
