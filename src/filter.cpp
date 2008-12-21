@@ -129,9 +129,11 @@ void Filter::process(MatrixXR samples, MatrixXR* output){
   // Process will be called with a matrix where columns will be channels
   // and rows will be the time axis
 
-  DEBUG("FILTER: Entering process...");
+  //DEBUG("FILTER: Entering process...");
   _samples.resize(samples.rows(), _channels);
-  DEBUG("FILTER: After resize...");  
+  (*output).resize(samples.rows(), _channels);
+  //DEBUG("FILTER: After resize...");  
+  
 
   // Check that it has one column or as many as channels
   if ((samples.cols() != 1) && (samples.cols() != _channels)) {
@@ -140,7 +142,7 @@ void Filter::process(MatrixXR samples, MatrixXR* output){
     return;
   }
 
-  // Set the coefficients
+  // Set the input
   if (samples.cols() == 1) {
     // If only one column has been defined repeat it for all columns
     for (int i=0; i < _samples.cols(); i++) {
@@ -150,22 +152,36 @@ void Filter::process(MatrixXR samples, MatrixXR* output){
     // Else set it directly
     _samples.block(0, 0, samples.rows(), _channels) = samples;
   }
+  //DEBUG("FILTER: _a: " << _a);
 
-  DEBUG("FILTER: After setting coeffs...");    
+  //DEBUG("FILTER: After setting coeffs...");    
   for ( int i = 0; i < _samples.rows(); i++ ) {
     if ( _length > 1 ) {
+      //DEBUG("output.rows(): " << (*output).rows());
+      //DEBUG("output.cols(): " << (*output).cols());
+      //DEBUG("_z.rows(): " << _z.rows());
+      //DEBUG("_z.cols(): " << _z.cols());
+      //DEBUG("_b.rows(): " << _b.rows());
+      //DEBUG("_b.cols(): " << _b.cols());
+      //DEBUG("_a.rows(): " << _a.rows());
+      //DEBUG("_a.cols(): " << _a.cols());
       (*output).row( i ) = _z.row( 0 ) + (_b.row( 0 ).cwise() * _samples.row( i ));
+      
+      //DEBUG("FILTER: After setting output..., output: " << (*output).row( i ));
       // Fill in middle delays
-      for ( int j = 0; j < _length - 1; j++ ) {
+      for ( int j = 0; j < _length - 1; j++ ) {      
         _z.row( j ) = _z.row( j + 1 ) + (_samples.row( i ).cwise() * _b.row( j + 1 )) - ((*output).row( i ).cwise() * _a.row( j + 1 ));
       }
+
       // Calculate the last delay
       _z.row( _length - 2 ) = (_samples.row( i ).cwise() * _b.row( _length - 1 )) - ((*output).row( i ).cwise() * _a.row( _length - 1 ));
+
     } else {
       (*output).row( i ) = _samples.row( i ) * _b.row( 0 );
     }
   }
-  DEBUG("FILTER: After processing...");    
+  DEBUG("FILTER: output: " << (*output));
+  //DEBUG("FILTER: After processing...");
 }
 
 void Filter::reset(){

@@ -60,10 +60,8 @@ int main() {
     }
   }
   
-
-
   Filter flt(bcoeffs, acoeffs, nchannels);
-
+  
   for (int i=0; i<100; i++) {   
     flt.process(in_samples, &out_samples);
   }

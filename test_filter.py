@@ -4,13 +4,13 @@
 import scipy
 import scipy.signal
 
-samplerate = 44100
 size = 4096*1
 a1 = scipy.array(scipy.random.random((size, 1)), dtype='f4')
 a2 = scipy.array(scipy.random.random((size, 1)), dtype='f4')
 
 # Setup the Gammatone parameters and coefficients # --------------------- #
 numFilters = 30
+samplerate = 44100
 
 # Frequency parameters
 lowFreq = 100.0
