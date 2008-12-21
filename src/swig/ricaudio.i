@@ -28,6 +28,13 @@ using namespace std;
          fragment="NumPy_Fragments") MatrixXR {
     int newObject;
     PyArrayObject * in_array = obj_to_array_contiguous_allow_conversion($input, PyArray_FLOAT, &newObject);
+
+    if( in_array == NULL ){
+      PyErr_SetString(PyExc_ValueError,
+                      "array must be of type float (dtype = 'float32')");
+      
+      return NULL;
+    }
     
     int dims[] = {1, 2};
     require_dimensions_n(in_array, dims, 2);
@@ -59,6 +66,13 @@ using namespace std;
     int newObject;
     PyArrayObject * in_array = obj_to_array_contiguous_allow_conversion($input, PyArray_CFLOAT, &newObject);
     
+    if( in_array == NULL ){
+      PyErr_SetString(PyExc_ValueError,
+                      "array must be of type complex float (dtype = 'complex64')");
+      
+      return NULL;
+    }
+
     int dims[] = {1, 2};
     require_dimensions_n(in_array, dims, 2);
 
@@ -90,7 +104,7 @@ using namespace std;
 }
 
 %typemap(argout) MatrixXR* {
-    // prepare resulting array
+  // prepare resulting array
   int dims[] = {(*$1).rows(), (*$1).cols()};
   PyObject * out_array = PyArray_FromDims(2, dims, PyArray_FLOAT);
 
