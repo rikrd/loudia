@@ -18,6 +18,14 @@ import_array();
 
 #include "filter.h"
 #include "dct.h"
+#include "window.h"
+#include "melbands.h"
+#include "spectralbands.h"
+#include "fft.h"
+#include "mfcc.h"
+#include "aok.h"
+#include "meddis.h"
+#include "spectralreassignment.h"
 
 using namespace std;
 %}
@@ -115,8 +123,6 @@ using namespace std;
     return NULL;
   }
   
-  cout << "-----------------------Out" << (*$1).rows() << ", " << (*$1).cols() << endl;
-  
   Real* out_data = (Real*)array_data(out_array);
   Eigen::Map<MatrixXRscipy>(out_data, dims[0], dims[1]) = (*$1);
 
@@ -125,5 +131,13 @@ using namespace std;
 
 %include "filter.h"
 %include "dct.h"
+%include "window.h"
+%include "spectralbands.h"
+%include "melbands.h"
+%include "fft.h"
+%include "mfcc.h"
+%include "aok.h"
+%include "meddis.h"
+%include "spectralreassignment.h"
 
 %module ricaudio

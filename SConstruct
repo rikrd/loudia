@@ -76,6 +76,14 @@ env.Append(SWIGFLAGS=['-c++', '-python', '-Wall', '-I./build', '-I/home/rmarxer/
 env.SharedLibrary('build/swig/_ricaudio.so', ['build/swig/ricaudio.i',
                                               'build/filter.cpp',
                                               'build/dct.cpp',
+                                              'build/meddis.cpp',
+                                              'build/mfcc.cpp',
+                                              'build/melbands.cpp',
+                                              'build/spectralbands.cpp',
+                                              'build/aok.cpp',
+                                              'build/fft.cpp',
+                                              'build/window.cpp',
+                                              'build/spectralreassignment.cpp',
                                               'build/debug.cpp'], SHLIBPREFIX="")
 """
 

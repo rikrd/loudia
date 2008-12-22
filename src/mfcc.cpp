@@ -69,6 +69,9 @@ void MFCC::setup(){
 
 void MFCC::process(MatrixXR spectrum, MatrixXR* mfccCoeffs){
   DEBUG("MFCC: Processing Melbands");
+
+  (*mfccCoeffs).resize(spectrum.rows(), _numCoeffs);
+  
   for ( int i = 0; i < spectrum.rows(); i++) {  
     // Process the mel bands on the power of the spectrum
     _melbands.process(spectrum.row(i).cwise().square(), &_bands);

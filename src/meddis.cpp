@@ -84,6 +84,8 @@ void Meddis::process(MatrixXR samples, MatrixXR* output){
   // and rows will be the time axis
   MatrixXR  row, limitedSt, replenish, eject, loss, reuptake, reprocess;
 
+  (*output).resize(samples.rows(), _channels);
+
   for (uint i = 0; i < samples.rows(); ++i) {
     row.set(samples.row(i));
   
