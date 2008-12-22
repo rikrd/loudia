@@ -177,31 +177,27 @@ MatrixXR Window::blackmanNuttall(int length){
   return blackmanType(length, a0, a1, a2, a3);
 }
 
-void Window::process(MatrixXC frames, MatrixXC* windowedFrames){
-  (*windowedFrames).resize(frames.rows(), _frameSize);
-
-  for (int i = 0; i < frames.rows(); i++){
-    // Process and set
-    (*windowedFrames).row(i) = frames.cwise() * _window.cast<Complex>();
-  }
-}
-
-void Window::process(MatrixXR frames, MatrixXC* windowedFrames){
-  (*windowedFrames).resize(frames.rows(), _frameSize);
-
-  for (int i = 0; i < frames.rows(); i++){
-    // Process and set
-    (*windowedFrames).row(i) = (frames.cwise() * _window).cast<Real>();
-  }
-}
-
-void Window::process(MatrixXR frames, MatrixXR* windowedFrames){
+template<class F, class W>
+void Window::process(F frames, W* windowedFrames){
   (*windowedFrames).resize(frames.rows(), _frameSize);
 
   for (int i = 0; i < frames.rows(); i++){
     // Process and set
     (*windowedFrames).row(i) = frames.cwise() * _window;
   }
+
+}
+
+void Window::process(MatrixXC frames, MatrixXC* windowedFrames){
+  process<MatrixXC, MatrixXC>(frames, windowedFrames);
+}
+
+void Window::process(MatrixXR frames, MatrixXC* windowedFrames){
+  process<MatrixXR, MatrixXC>(frames, windowedFrames);
+}
+
+void Window::process(MatrixXR frames, MatrixXR* windowedFrames){
+  process<MatrixXR, MatrixXR>(frames, windowedFrames);
 }
 
 

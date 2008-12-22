@@ -59,6 +59,9 @@ protected:
   MatrixXR nuttall(int length);
   MatrixXR blackmanHarris(int length);
   MatrixXR blackmanNuttall(int length);
+
+  template<class F, class W>
+  void process(F frames, W* windowedFrames);
  
 public: 
   Window(int frameSize, WindowType windowType = RECTANGULAR);
