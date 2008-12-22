@@ -180,7 +180,7 @@ void Filter::process(MatrixXR samples, MatrixXR* output){
       (*output).row( i ) = _samples.row( i ) * _b.row( 0 );
     }
   }
-  DEBUG("FILTER: output: " << (*output));
+  //DEBUG("FILTER: output: " << (*output));
   //DEBUG("FILTER: After processing...");
 }
 
