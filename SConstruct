@@ -53,19 +53,7 @@ env.Append(CPPPATH = [distutils.sysconfig.get_python_inc(),
                       '/usr/lib/python2.5/site-packages/numpy/core/include/numpy/'],
            SHLIBPREFIX="")
 
-# Build manual bindings
-env.SharedLibrary('build/ricaudio', ['build/python/ricaudio.cpp',
-                                     'build/python/pymeddis.cpp', 'build/meddis.cpp',
-                                     'build/python/pymfcc.cpp', 'build/mfcc.cpp', 'build/melbands.cpp',
-                                     'build/spectralbands.cpp', 'build/dct.cpp',
-                                     'build/python/pyaok.cpp', 'build/aok.cpp',
-                                     'build/python/pyfilter.cpp', 'build/filter.cpp',
-                                     'build/python/pyfft.cpp', 'build/fft.cpp',
-                                     'build/python/pywindow.cpp', 'build/window.cpp',
-                                     'build/python/pyspectralreassignment.cpp', 'build/spectralreassignment.cpp',
-                                     'build/debug.cpp'], SHLIBPREFIX="")
 
-"""
 # Build SWIG generated python bindings
 env.Append(CPPPATH = [distutils.sysconfig.get_python_inc(),
                       '/usr/lib/python2.5/site-packages/numpy/core/include/numpy/'],
@@ -85,5 +73,5 @@ env.SharedLibrary('build/swig/_ricaudio.so', ['build/swig/ricaudio.i',
                                               'build/window.cpp',
                                               'build/spectralreassignment.cpp',
                                               'build/debug.cpp'], SHLIBPREFIX="")
-"""
+
 
