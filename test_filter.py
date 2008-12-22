@@ -74,24 +74,24 @@ def filter_coeffs_gammatone(freqs, B, samplerate):
     return fcoefs
         
 freqs, B = freqs_b_by_freqs(numFilters, lowFreq, highFreq, c, d)
-(A0, A11, A12, A13, A14, A2, B0, B1, B2, gain) = filter_coeffs_gammatone(freqs, B, samplerate)
+(B0, B11, B12, B13, B14, B2, A0, A1, A2, gain) = filter_coeffs_gammatone(freqs, B, samplerate)
 # -------------------------------------------------------- #
 
 
 # CRicaudio's solution # --------------------------------- #
 import ricaudio
 
-coeffsA1 = scipy.array(scipy.vstack((A0, A11, A2)) / gain, dtype = 'f4')
-coeffsA2 = scipy.array(scipy.vstack((A0, A12, A2)), dtype = 'f4')
-coeffsA3 = scipy.array(scipy.vstack((A0, A13, A2)), dtype = 'f4')
-coeffsA4 = scipy.array(scipy.vstack((A0, A14, A2)), dtype = 'f4')
+coeffsB1 = scipy.array(scipy.vstack((B0, B11, B2)) / gain, dtype = 'f4')
+coeffsB2 = scipy.array(scipy.vstack((B0, B12, B2)), dtype = 'f4')
+coeffsB3 = scipy.array(scipy.vstack((B0, B13, B2)), dtype = 'f4')
+coeffsB4 = scipy.array(scipy.vstack((B0, B14, B2)), dtype = 'f4')
 
-coeffsB = scipy.array(scipy.vstack((B0, B1, B2)), dtype = 'f4')
+coeffsA = scipy.array(scipy.vstack((A0, A1, A2)), dtype = 'f4')
 
-f1 = ricaudio.Filter(coeffsA1, coeffsB, numFilters)
-f2 = ricaudio.Filter(coeffsA2, coeffsB, numFilters)
-f3 = ricaudio.Filter(coeffsA3, coeffsB, numFilters)
-f4 = ricaudio.Filter(coeffsA4, coeffsB, numFilters)
+f1 = ricaudio.Filter(coeffsB1, coeffsA, numFilters)
+f2 = ricaudio.Filter(coeffsB2, coeffsA, numFilters)
+f3 = ricaudio.Filter(coeffsB3, coeffsA, numFilters)
+f4 = ricaudio.Filter(coeffsB4, coeffsA, numFilters)
 
 b1 = f4.process(f3.process(f2.process(f1.process(a1))))
 b2 = f4.process(f3.process(f2.process(f1.process(a2))))
@@ -110,32 +110,32 @@ def filterbank_compute(samples):
         zi.resize((max(gain.shape[0], gain.shape[0]), 4 , 2))
         
     def filt(x):
-        coeffsA1 = scipy.array([A0[row[0]] / gain[row[0]],
-                                A11[row[0]]/ gain[row[0]],
-                                A2[row[0]] / gain[row[0]]], dtype = 'f4')
+        coeffsB1 = scipy.array([B0[row[0]] / gain[row[0]],
+                                B11[row[0]]/ gain[row[0]],
+                                B2[row[0]] / gain[row[0]]], dtype = 'f4')
 
-        b = scipy.array([B0[row[0]], B1[row[0]], B2[row[0]]])
+        a = scipy.array([A0[row[0]], A1[row[0]], A2[row[0]]])
 
-        y1, zi[row[0],0,:] = scipy.signal.lfilter(coeffsA1,
-                                                  b,
+        y1, zi[row[0],0,:] = scipy.signal.lfilter(coeffsB1,
+                                                  a,
                                                   x, zi = zi[row[0],0,:])
         
-        y2, zi[row[0],1,:] = scipy.signal.lfilter([A0[row[0]],
-                                                   A12[row[0]],
-                                                   A2[row[0]]],
-                                                  b,
+        y2, zi[row[0],1,:] = scipy.signal.lfilter([B0[row[0]],
+                                                   B12[row[0]],
+                                                   B2[row[0]]],
+                                                  a,
                                                   y1, zi = zi[row[0],1,:])
         
-        y3, zi[row[0],2,:] = scipy.signal.lfilter([A0[row[0]],
-                                                   A13[row[0]],
-                                                   A2[row[0]]],
-                                                  b,
+        y3, zi[row[0],2,:] = scipy.signal.lfilter([B0[row[0]],
+                                                   B13[row[0]],
+                                                   B2[row[0]]],
+                                                  a,
                                                   y2, zi = zi[row[0],2,:])
         
-        y4, zi[row[0],3,:] = scipy.signal.lfilter([A0[row[0]],
-                                                   A14[row[0]],
-                                                   A2[row[0]]],
-                                                  b,
+        y4, zi[row[0],3,:] = scipy.signal.lfilter([B0[row[0]],
+                                                   B14[row[0]],
+                                                   B2[row[0]]],
+                                                  a,
                                                   y3, zi = zi[row[0],3,:])
         row[0] += 1
         return y4
