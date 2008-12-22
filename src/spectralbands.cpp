@@ -32,6 +32,8 @@ using namespace Eigen;
 
 SpectralBands::SpectralBands() : _starts(1, 1){ 
   _weights.push_back(MatrixXR::Constant(1, 1, 0.0));
+
+  setup();
 }
 
 
@@ -55,6 +57,8 @@ SpectralBands::SpectralBands(MatrixXi starts, vector<MatrixXR> weights) {
 
   _starts = starts;
   _weights = weights;
+
+  setup();
 }
 
 SpectralBands::~SpectralBands() {}
@@ -69,6 +73,9 @@ void SpectralBands::setup(){
 
 
 void SpectralBands::process(MatrixXR spectrum, MatrixXR* bands){
+
+  (*bands).resize(spectrum.rows(), _starts.rows());
+
   for (int j = 0; j < spectrum.rows(); j++){
     for (int i = 0; i < _starts.rows(); i++ ) {
       (*bands)(j, i) = spectrum.block(j, _starts(i, 0), 1, _weights[i].rows()).row(0).dot(_weights[i].col(0));

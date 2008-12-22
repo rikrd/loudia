@@ -56,6 +56,7 @@ MelBands::MelBands(Real lowFreq, Real highFreq, int numBands, Real samplerate, i
   _highFreq = highFreq;
   _numBands = numBands;
 
+  setup();
   DEBUG("MELBANDS: Constructed");
 }
 

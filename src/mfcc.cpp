@@ -46,6 +46,8 @@ MFCC::MFCC(Real lowFreq, Real highFreq, int numBands, Real samplerate, int spect
 
   _minSpectrum = minSpectrum;
   _power = power;
+
+  setup();
 }
 
 MFCC::~MFCC() {

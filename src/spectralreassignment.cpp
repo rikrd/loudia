@@ -38,7 +38,8 @@ SpectralReassignment::SpectralReassignment(int frameSize, int fftSize, Real samp
   _fftSize = fftSize;
   _samplerate = samplerate;
   _windowType = windowType;
-  
+
+  setup();
   DEBUG("SPECTRALREASSIGNMENT: Constructed");
 }
 
@@ -124,7 +125,12 @@ void SpectralReassignment::setup(){
 
 template<class F, class W>
 void SpectralReassignment::process(F frames, W* reassigned, W* fft){
+
+  (*reassigned).resize(frames.rows(), _fftSize);
+  (*fft).resize(frames.rows(), _fftSize);
+
   (*reassigned) = W::Zero((*reassigned).rows(), (*reassigned).cols());
+
   for (int i = 0; i < frames.rows(); i++){
 
     // Process the windowing

@@ -38,6 +38,7 @@ Window::Window(int frameSize, Window::WindowType windowType) {
   _windowType = windowType;
   _window.set(MatrixXR::Ones(1, _frameSize));
 
+  setup();
   DEBUG("WINDOW: Constructed");
 }
 
@@ -177,6 +178,8 @@ MatrixXR Window::blackmanNuttall(int length){
 }
 
 void Window::process(MatrixXC frames, MatrixXC* windowedFrames){
+  (*windowedFrames).resize(frames.rows(), _frameSize);
+
   for (int i = 0; i < frames.rows(); i++){
     // Process and set
     (*windowedFrames).row(i) = frames.cwise() * _window.cast<Complex>();
@@ -184,6 +187,8 @@ void Window::process(MatrixXC frames, MatrixXC* windowedFrames){
 }
 
 void Window::process(MatrixXR frames, MatrixXC* windowedFrames){
+  (*windowedFrames).resize(frames.rows(), _frameSize);
+
   for (int i = 0; i < frames.rows(); i++){
     // Process and set
     (*windowedFrames).row(i) = (frames.cwise() * _window).cast<Real>();
@@ -191,6 +196,8 @@ void Window::process(MatrixXR frames, MatrixXC* windowedFrames){
 }
 
 void Window::process(MatrixXR frames, MatrixXR* windowedFrames){
+  (*windowedFrames).resize(frames.rows(), _frameSize);
+
   for (int i = 0; i < frames.rows(); i++){
     // Process and set
     (*windowedFrames).row(i) = frames.cwise() * _window;

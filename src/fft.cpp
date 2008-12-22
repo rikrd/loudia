@@ -41,6 +41,7 @@ FFT::FFT(int frameSize, int fftSize, bool zeroPhase) {
   _fftSize = fftSize;
   _zeroPhase = zeroPhase;
 
+  setup();
   DEBUG("FFT: Constructed");
 }
 
@@ -62,6 +63,8 @@ void FFT::setup(){
 
 template<class F>
 void FFT::process(F frames, MatrixXC* ffts){
+  (*ffts).resize(frames.rows(), _fftSize);
+
   for (int i = 0; i < frames.rows(); i++){    
     // Fill the buffer with zeros
     Eigen::Map<MatrixXC>(reinterpret_cast< Complex* >(_in), 1, _fftSize) = MatrixXC::Zero(1, _fftSize);

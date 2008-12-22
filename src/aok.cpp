@@ -33,7 +33,7 @@ using namespace Eigen;
 
 AOK::AOK(int windowSize, int hopSize, int fftSize, Real normVolume) : _windowSize(windowSize), _hopSize(hopSize), _fftSize(fftSize), _normVolume(normVolume) {
 
-
+  setup();
 }
 
 AOK::~AOK() {
@@ -115,6 +115,8 @@ void AOK::setup(){
 
 void AOK::process(MatrixXC frames, MatrixXR* timeFreqRep){
   outct = 0;
+
+  (*timeFreqRep).resize(frames.rows() / tstep, _fftSize);
   
   // fliplr the frames
   for(int i = 0; i < slen / 2; i++){

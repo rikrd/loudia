@@ -55,6 +55,8 @@ Meddis::Meddis(Real samplerate, int channels, bool substractSpont) : kt(1, chann
   _samplerate = samplerate;
   _channels = channels;
   _substractSpont = substractSpont;
+  
+  setup();
 }
 
 Meddis::~Meddis() {
