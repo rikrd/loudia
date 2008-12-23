@@ -177,27 +177,27 @@ MatrixXR Window::blackmanNuttall(int length){
   return blackmanType(length, a0, a1, a2, a3);
 }
 
-template<class F, class W>
+template<class F, class W, class ScalarW>
 void Window::process(F frames, W* windowedFrames){
   (*windowedFrames).resize(frames.rows(), _frameSize);
 
   for (int i = 0; i < frames.rows(); i++){
     // Process and set
-    (*windowedFrames).row(i) = frames.cwise() * _window;
+    (*windowedFrames).row(i) = (frames.cwise() * _window).template cast<ScalarW>();
   }
 
 }
 
 void Window::process(MatrixXC frames, MatrixXC* windowedFrames){
-  process<MatrixXC, MatrixXC>(frames, windowedFrames);
+  process<MatrixXC, MatrixXC, Complex>(frames, windowedFrames);
 }
 
 void Window::process(MatrixXR frames, MatrixXC* windowedFrames){
-  process<MatrixXR, MatrixXC>(frames, windowedFrames);
+  process<MatrixXR, MatrixXC, Complex>(frames, windowedFrames);
 }
 
 void Window::process(MatrixXR frames, MatrixXR* windowedFrames){
-  process<MatrixXR, MatrixXR>(frames, windowedFrames);
+  process<MatrixXR, MatrixXR, Real>(frames, windowedFrames);
 }
 
 

@@ -60,7 +60,7 @@ protected:
   MatrixXR blackmanHarris(int length);
   MatrixXR blackmanNuttall(int length);
 
-  template<class F, class W>
+  template<class F, class W, class ScalarW>
   void process(F frames, W* windowedFrames);
  
 public: 

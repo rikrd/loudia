@@ -50,7 +50,7 @@ protected:
   MatrixXC _windowDeriv;
 
   MatrixXC _fft;
-  MatrixXC _fftAbs2;
+  MatrixXR _fftAbs2;
   MatrixXC _fftInteg;
   MatrixXC _fftDeriv;
 
@@ -59,7 +59,7 @@ protected:
   MatrixXR _reassignTime;
   MatrixXR _reassignFreq;
 
-  template<class F, class W>
+  template<class F, class W, class ScalarW>
   void process(F frames, W* reassigned, W* fft);
  
 public: 

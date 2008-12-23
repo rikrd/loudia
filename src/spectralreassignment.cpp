@@ -123,7 +123,7 @@ void SpectralReassignment::setup(){
 }
 
 
-template<class F, class W>
+template<class F, class W, class ScalarW>
 void SpectralReassignment::process(F frames, W* reassigned, W* fft){
 
   (*reassigned).resize(frames.rows(), _fftSize);
@@ -144,14 +144,14 @@ void SpectralReassignment::process(F frames, W* reassigned, W* fft){
     _fftAlgo.process(_windowDeriv, &_fftDeriv);
 
     // Create the reassignment operations
-    _fftAbs2 = _fft.cwise().abs2();
+    _fftAbs2 = (_fft.cwise().abs2()).template cast<Real>();
 
     DEBUG("SPECTRALREASSIGNMENT: Processing: creating the time reassignment operation...");    
-    _reassignTime = - ((_fftInteg.cwise() * _fft.conjugate()).cwise() / _fftAbs2).real();
+    //_reassignTime = (- ((_fftInteg.cwise() * _fft.conjugate()).cwise() / _fftAbs2).real()).template cast<Real>();
     
     // TODO: Check the unity of the freq reassignment, it may need to be normalized by something
     DEBUG("SPECTRALREASSIGNMENT: Processing: creating the freq reassignment operation...");
-    _reassignFreq = _freq + ((_fftDeriv.cwise() * _fft.conjugate()).cwise() / _fftAbs2).imag();
+    //_reassignFreq = _freq + ((_fftDeriv.cwise() * _fft.conjugate()).cwise() / _fftAbs2).imag().template cast<Real>();
     
     // Reassign the spectrum values
     // TODO: put this into a function and do it right
@@ -164,28 +164,32 @@ void SpectralReassignment::process(F frames, W* reassigned, W* fft){
     //         in the form of a complex in the reassigned frame)  
     DEBUG("SPECTRALREASSIGNMENT: Processing: reassigning...");
     DEBUG("SPECTRALREASSIGNMENT: Processing: reassigning _reassignFreq: " << _reassignFreq.rows() << ", " << _reassignFreq.cols());
-    //(*reassigned).row(i) = _reassignFreq.row(0);
+
     for(int j = 0; j < _reassignFreq.cols(); j++){
-      if((int)round(_reassignFreq(i, j)) >= 0 && (int)round(_reassignFreq(i, j)) < (*reassigned).cols())
-        (*reassigned)(i, (int)round(_reassignFreq(i, j))) += (1.0 - (abs(_reassignFreq(i, j) - (int)round(_reassignFreq(i,j))))) * abs(_fft(i, (int)round(_reassignFreq(i,j))));
+
+      if((int)round(_reassignFreq(i, j)) >= 0 && (int)round(_reassignFreq(i, j)) < (*reassigned).cols()) {
+
+        //(*reassigned)(i, (int)round(_reassignFreq(i, j))) += ((1.0 - (abs(_reassignFreq(i, j) - (int)round(_reassignFreq(i,j))))) * abs(_fft(i, (int)round(_reassignFreq(i,j))))).template cast<ScalarW>();
+
+      }
     }
   }
 }
 
 void SpectralReassignment::process(MatrixXC frames, MatrixXC* reassigned, MatrixXC* fft){
-  process<MatrixXC, MatrixXC>(frames, reassigned, fft);
+  process<MatrixXC, MatrixXC, Complex>(frames, reassigned, fft);
 }
 
 void SpectralReassignment::process(MatrixXR frames, MatrixXC* reassigned, MatrixXC* fft){
-  process<MatrixXR, MatrixXC>(frames, reassigned, fft);
+  process<MatrixXR, MatrixXC, Complex>(frames, reassigned, fft);
 }
 
 void SpectralReassignment::process(MatrixXC frames, MatrixXC* reassigned){
-  process<MatrixXC, MatrixXC>(frames, reassigned, &_fft);
+  process<MatrixXC, MatrixXC, Complex>(frames, reassigned, &_fft);
 }
 
 void SpectralReassignment::process(MatrixXR frames, MatrixXC* reassigned){
-  process<MatrixXR, MatrixXC>(frames, reassigned, &_fft);
+  process<MatrixXR, MatrixXC, Complex>(frames, reassigned, &_fft);
 }
 
 void SpectralReassignment::reset(){
