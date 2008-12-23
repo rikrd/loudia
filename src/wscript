@@ -2,7 +2,7 @@
 # encoding: utf-8
 # Ricard Marxer 2008
 
-LIBNAME = 'ricaudiolib'
+LIBNAME = 'ricaudio'
 LIBVERSION = '0.1-dev'
 
 

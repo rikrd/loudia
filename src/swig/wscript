@@ -11,7 +11,7 @@ def configure(conf):
 	conf.check_tool('compiler_cxx python')
         conf.check_python_version((2,4,2))
 	conf.check_python_headers()
-	conf.check_tool('swig', tooldir = '.')
+	conf.check_tool('swig', tooldir = '/home/rmarxer/dev/ricaudio/src/swig')
 	conf.check_swig_version('1.3.27')
 
         try:
@@ -28,12 +28,14 @@ def build(bld):
                 features = ['cxx', 'pyembed'],
                 source = 'ricaudio.i',
                 target = 'ricaudio',
-                swig_flags = '-c++ -python',
-                includes = '.. ~/dev/eigen2',
-                name         = 'ricaudio',
+                swig_flags = '-c++ -python -Wall -I/home/rmarxer/dev/eigen2',
+                swig_includes = '.. /home/rmarxer/dev/eigen2',
+                includes = '.. /home/rmarxer/dev/eigen2',
+                name         = 'pyricaudio',
                 want_libtool = 1,
-                vnum         = '0.1'
+                vnum         = '0.1',
+                uselib_local = 'ricaudio',
         )        
 
-        obj.find_sources_in_dirs('.', exts=['.i'])
         obj.find_sources_in_dirs('..', exts=['.cpp'])
+        print obj.source
