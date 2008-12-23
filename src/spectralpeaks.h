@@ -23,9 +23,6 @@
 #include <Eigen/Array>
 #include <iostream>
 
-#include "melbands.h"
-#include "dct.h"
-
 #include "typedefs.h"
 
 //using namespace std;
@@ -47,7 +44,7 @@ public:
 
   void setup();
 
-  void process(MatrixXR spectrum, MatrixXR* peakMagnitudes, MatrixXi* peakPositions);
+  void process(MatrixXR spectrum, MatrixXR* peakMagnitudes, MatrixXI* peakPositions);
 
   void reset();
 

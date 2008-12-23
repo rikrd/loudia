@@ -23,10 +23,12 @@
 #include<cmath>
 
 // Type for the Real values
+typedef int Integer;
 typedef float Real;
 typedef std::complex< Real > Complex;
 
 // Normally used matrices
+typedef Eigen::Matrix< Integer, Eigen::Dynamic,Eigen::Dynamic > MatrixXI;
 typedef Eigen::Matrix< Real, Eigen::Dynamic,Eigen::Dynamic > MatrixXR;
 typedef Eigen::Matrix< Complex, Eigen::Dynamic,Eigen::Dynamic > MatrixXC;
 

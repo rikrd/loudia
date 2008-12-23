@@ -37,4 +37,3 @@ def build(bld):
         )        
 
         obj.find_sources_in_dirs('..', exts=['.cpp'])
-        print obj.source
