@@ -1,0 +1,26 @@
+#! /usr/bin/env python
+# encoding: utf-8
+# Ricard Marxer 2008
+
+LIBNAME = 'ricaudio'
+LIBVERSION = '0.0.1'
+
+def set_options(opt):
+	opt.tool_options('g++')
+
+def configure(conf):
+	conf.check_tool('g++')
+        
+	conf.env.append_value('CXXFLAGS', '-O3 -fPIC -msse2 -DRICAUDIO_DEBUG')
+        conf.env.append_value('LINKFLAGS', '-lfftw3f')
+
+def build(bld):
+        obj = bld.new_task_gen(
+                features = ['cxx', 'program'],
+                uselib = 'fftw3',
+                target = 'test_fft',
+                includes = '. /home/rmarxer/dev/eigen2',
+                uselib_local = LIBNAME
+        )
+        
+        
