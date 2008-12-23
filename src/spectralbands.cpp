@@ -37,7 +37,7 @@ SpectralBands::SpectralBands() : _starts(1, 1){
 }
 
 
-SpectralBands::SpectralBands(MatrixXi starts, vector<MatrixXR> weights) {
+SpectralBands::SpectralBands(MatrixXI starts, vector<MatrixXR> weights) {
   DEBUG("SPECTRALBANDS: Constructor starts: " << starts);
 
   if ( starts.rows() != weights.size() ) {
@@ -91,6 +91,6 @@ vector<MatrixXR> SpectralBands::weights() const {
   return _weights;
 }
 
-MatrixXi SpectralBands::starts() const {
+MatrixXI SpectralBands::starts() const {
   return _starts;
 }
