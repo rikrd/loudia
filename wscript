@@ -15,6 +15,7 @@ def set_options(opt):
 
 def configure(conf):
         conf.sub_config('src')
+	pass
 
 def build(bld):
         bld.add_subdirs('src')
