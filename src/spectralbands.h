@@ -32,7 +32,7 @@
 class SpectralBands {
 protected:
   // Internal parameters
-  Eigen::MatrixXi _starts;
+  MatrixXI _starts;
   std::vector<MatrixXR> _weights;
 
   // Internal variables
@@ -40,7 +40,7 @@ protected:
 public:
   SpectralBands();
 
-  SpectralBands(Eigen::MatrixXi starts, std::vector<MatrixXR> weights);
+  SpectralBands(MatrixXI starts, std::vector<MatrixXR> weights);
 
   ~SpectralBands();
 
@@ -52,9 +52,9 @@ public:
 
   std::vector<MatrixXR> weights() const;
 
-  Eigen::MatrixXi starts() const;
+  MatrixXI starts() const;
 
-  void setStartsWeights(Eigen::MatrixXi starts, std::vector<MatrixXR> weights);
+  void setStartsWeights(MatrixXI starts, std::vector<MatrixXR> weights);
 };
 
 #endif  /* SPECTRALBANDS_H */
