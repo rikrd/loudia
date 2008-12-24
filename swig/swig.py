@@ -98,6 +98,8 @@ def i_file(self, node):
 	tsk.set_inputs(node)
 	tsk.set_outputs(out_node)
 	tsk.module = module
+        import os
+        print os.getcwd()
 	tsk.env['SWIGFLAGS'] = flags
 
 	if not '-outdir' in flags:
