@@ -10,6 +10,7 @@ def set_options(opt):
 	opt.tool_options('compiler_cxx')
 
         opt.sub_options('swig')
+        opt.sub_options('tests')
 
 def configure(conf):
 	conf.check_tool('compiler_cxx')
@@ -18,6 +19,7 @@ def configure(conf):
         conf.env.append_value('LINKFLAGS', '-lfftw3f')
 
         conf.sub_config('swig')
+        conf.sub_config('tests')
 
 
 def build(bld):
@@ -37,3 +39,4 @@ def build(bld):
         bld.add_subdirs('tests')
         
         bld.install_files('${PREFIX}/include/ricaudio', 'aok.h')
+        
