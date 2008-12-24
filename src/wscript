@@ -9,6 +9,7 @@ LIBVERSION = '0.1-dev'
 def set_options(opt):
 	opt.tool_options('compiler_cxx')
 
+        opt.sub_options('swig')
         opt.sub_options('tests')
 
 def configure(conf):
@@ -17,6 +18,7 @@ def configure(conf):
 	conf.env.append_value('CXXFLAGS', '-O3 -fPIC -msse2 -DRICAUDIO_DEBUG')
         conf.env.append_value('LINKFLAGS', '-lfftw3f')
 
+        conf.sub_config('swig')
         conf.sub_config('tests')
 
 
@@ -32,9 +34,8 @@ def build(bld):
         )
         
 	obj.find_sources_in_dirs('.', exts=['.cpp'])
-
-        bld.install_files('${PREFIX}/ricaudio', '*.h')
         
+	bld.add_subdirs('swig')
         bld.add_subdirs('tests')
         
-        bld.install_files('${PREFIX}/include/ricaudio', 'aok.h')        
+        bld.install_files('${PREFIX}/include/ricaudio', 'aok.h')
