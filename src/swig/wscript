@@ -27,13 +27,13 @@ def build(bld):
                 features = ['cxx', 'pyembed'],
                 source = 'ricaudio.i',
                 target = 'ricaudio',
-                swig_flags = '-c++ -python -Wall -I/home/rmarxer/dev/eigen2',
+                swig_flags = '-c++ -python -Wall -I/home/rmarxer/dev/eigen2 -I..',
                 swig_includes = '.. /home/rmarxer/dev/eigen2',
                 includes = '.. /home/rmarxer/dev/eigen2',
                 name         = 'pyricaudio',
                 want_libtool = 1,
                 vnum         = '0.1',
-                uselib_local = 'ricaudio',
+                uselib_local = 'ricaudio'
         )        
 
         obj.find_sources_in_dirs('..', exts=['.cpp'])
