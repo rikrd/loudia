@@ -77,7 +77,7 @@
 
     // prepare the input array  
     Real* in_data = (Real*)array_data(in_array);
-    MatrixXR in_matrix = Eigen::Map<MatrixXRscipy>(in_data, in_rows, in_cols);
+    Eigen::Map<MatrixXRscipy> in_matrix(in_data, in_rows, in_cols);
 
     $1.set(in_matrix);
 }
@@ -117,7 +117,7 @@
     // prepare the input array  
     Complex* in_data = (Complex*)array_data(in_array);
 
-    MatrixXC in_matrix = Eigen::Map<MatrixXCscipy>(in_data, in_rows, in_cols);
+    Eigen::Map<MatrixXCscipy> in_matrix(in_data, in_rows, in_cols);
 
     $1.set(in_matrix);
 }
