@@ -32,13 +32,15 @@
 // import most common Eigen types 
 //using namespace Eigen;
 
-class MelBands : public SpectralBands {
+class MelBands {
 protected:
   Real _lowFreq;
   Real _highFreq;
   int _numBands;
   Real _samplerate;
   int _spectrumLength;
+  
+  SpectralBands _spectralBands;
 
   void triangleWindow(MatrixXR* window, Real start, Real stop, Real center = -1, Real height = Real(1.0));
 
@@ -57,6 +59,10 @@ public:
   MelBands(Real lowFreq, Real highFreq, int numBands, Real samplerate, int spectrumLength);
 
   void setup();
+
+  void process(MatrixXR spectrum, MatrixXR* bands);
+  
+  void reset();
 };
 
 #endif  /* MELBANDS_H */

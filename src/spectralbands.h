@@ -54,6 +54,7 @@ public:
 
   Eigen::MatrixXi starts() const;
 
+  void setStartsWeights(Eigen::MatrixXi starts, std::vector<MatrixXR> weights);
 };
 
 #endif  /* SPECTRALBANDS_H */

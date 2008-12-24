@@ -94,3 +94,8 @@ vector<MatrixXR> SpectralBands::weights() const {
 MatrixXi SpectralBands::starts() const {
   return _starts;
 }
+
+void SpectralBands::setStartsWeights(Eigen::MatrixXi starts, std::vector<MatrixXR> weights) {
+  _weights = weights;
+  _starts.set(starts);
+}

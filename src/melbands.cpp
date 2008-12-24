@@ -39,7 +39,8 @@ struct CwiseCeilOp {
 // import most common Eigen types 
 using namespace Eigen;
 
-MelBands::MelBands(Real lowFreq, Real highFreq, int numBands, Real samplerate, int spectrumLength) {
+MelBands::MelBands(Real lowFreq, Real highFreq, int numBands, Real samplerate, int spectrumLength) 
+{
   DEBUG("MELBANDS: Constructor lowFreq: " << lowFreq << ", highFreq: " << highFreq << ", numBands: " << numBands << ", samplerate: " << samplerate << ", spectrumLength: " << spectrumLength);
 
   if ( lowFreq >= highFreq ) {
@@ -98,11 +99,10 @@ void MelBands::setup(){
   // stop bins of filters
   MatrixXi stopBins = stopsLinear.unaryExpr(CwiseCeilOp<Real>());
 
-  // set the start bins
-  _starts.set(startBins);
-  
+  std::vector<MatrixXR> weights;
+
   // fill in the weights
-  for (int i=0; i < _starts.rows(); i++) {
+  for (int i=0; i < startBins.rows(); i++) {
     int startBin = startBins(i, 0);
     int stopBin = stopBins(i, 0);
     
@@ -120,10 +120,16 @@ void MelBands::setup(){
       triangleWindow(&newFilter, start - startBin, stop  - startBin, center  - startBin);
     }
     
-    _weights.push_back(newFilter);
+    weights.push_back(newFilter);
   }
 
+  _spectralBands.setStartsWeights(startBins, weights);
+
   DEBUG("MELBANDS: Finished set up...");
+}
+
+void MelBands::process(MatrixXR spectrum, MatrixXR* bands) {
+  _spectralBands.process(spectrum, bands);
 }
 
 void MelBands::triangleWindow(MatrixXR* window, Real start, Real stop, Real center, Real height) {
@@ -201,4 +207,8 @@ MatrixXR MelBands::linearToMelFant1968(MatrixXR linearFreq) {
 
 MatrixXR MelBands::melToLinearFant1968(MatrixXR melFreq) {
   return 1000.0 * ((melFreq * log(2.0) / 1000.0).cwise().exp().cwise() - 1.0);
+}
+
+void MelBands::reset(){
+  // Initial values
 }
