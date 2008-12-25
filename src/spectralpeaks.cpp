@@ -56,13 +56,24 @@ void SpectralPeaks::setup(){
 }
 
 
-void SpectralPeaks::process(MatrixXR spectrum, MatrixXR* peakMagnitudes, MatrixXR* peakPositions){
+void SpectralPeaks::process(MatrixXR spectrum, MatrixXR* peakPositions, MatrixXR* peakMagnitudes){
   DEBUG("SpectralPeaks: Processing");
   int peakIndex;
   
   Real magnitude;
   Real pastMagnitude;
   Real postMagnitude;
+
+  int numPeaks = _numPeaks;
+  if(numPeaks == -1){
+    numPeaks = spectrum.cols();
+  }
+
+  (*peakPositions).resize(spectrum.rows(), numPeaks);
+  (*peakPositions).setConstant(-1);
+
+  (*peakMagnitudes).resize(spectrum.rows(), numPeaks);
+  (*peakMagnitudes).setConstant(-1);
 
   for ( int j = 0 ; j < spectrum.rows(); j++){
     peakIndex = 0;
@@ -79,6 +90,7 @@ void SpectralPeaks::process(MatrixXR spectrum, MatrixXR* peakMagnitudes, MatrixX
       if ((magnitude >= pastMagnitude) && (magnitude > postMagnitude)) {
         (*peakMagnitudes)(j, peakIndex) = magnitude;
         (*peakPositions)(j, peakIndex) = i;
+        peakIndex ++;
       }
     }
   }

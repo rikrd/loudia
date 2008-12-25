@@ -146,8 +146,7 @@
   Real* out_data = (Real*)array_data(out_array);
   Eigen::Map<MatrixXRscipy>(out_data, dims[0], dims[1]) = (*$1);
 
-  $result = out_array;
-
+  $result = SWIG_Python_AppendOutput($result, out_array);
 }
 
 %typemap(in, numinputs = 0) 
@@ -174,6 +173,5 @@
   Complex* out_data = (Complex*)array_data(out_array);
   Eigen::Map<MatrixXCscipy>(out_data, dims[0], dims[1]) = (*$1);
 
-  $result = out_array;
-
+  $result = SWIG_Python_AppendOutput($result, out_array);
 }

@@ -26,7 +26,11 @@ window = ricaudio.Window(frameSize, ricaudio.Window.HAMMING)
 fft = ricaudio.FFT(frameSize, fftSize)
 peaks = ricaudio.SpectralPeaks(-1)
 
-r_sine = peaks.process(fft.process(window.process(a_sine)))
+r_sine_windowed = window.process(a_sine)
+r_sine_mag = abs(fft.process(r_sine_windowed))
+r_sine_pos, r_sine_mag = peaks.process(r_sine_mag)
 # -------------------------------------------------------- #
 
-print r_sine
+print r_sine_pos
+print r_sine_mag
+
