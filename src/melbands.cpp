@@ -211,4 +211,5 @@ MatrixXR MelBands::melToLinearFant1968(MatrixXR melFreq) {
 
 void MelBands::reset(){
   // Initial values
+  _spectralBands.reset();
 }
