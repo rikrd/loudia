@@ -47,7 +47,7 @@ public:
 
   void setup();
 
-  void process(MatrixXR spectrum, MatrixXR* peakMagnitudes, MatrixXI* peakPositions);
+  void process(MatrixXR spectrum, MatrixXR* peakMagnitudes, MatrixXR* peakPositions);
 
   void reset();
 

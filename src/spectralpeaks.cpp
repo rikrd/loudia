@@ -32,10 +32,12 @@ using namespace std;
 using namespace Eigen;
 
 SpectralPeaks::SpectralPeaks(int numPeaks) {
-  DEBUG("SpectralPeaks: Constructor lowFreq: " << lowFreq << ", highFreq: " << highFreq << ", numBands: " << numBands << ", samplerate: "<< samplerate << ", spectrumLength: " << spectrumLength << ", numCoeffs: " << numCoeffs);
+  DEBUG("SpectralPeaks: Constructor numPeaks: " << numPeaks);
   
   _numPeaks = numPeaks;
 
+  setup();
+  DEBUG("SpectralPeaks: Constructed");
 }
 
 SpectralPeaks::~SpectralPeaks() {
@@ -71,7 +73,7 @@ void SpectralPeaks::process(MatrixXR spectrum, MatrixXR* peakMagnitudes, MatrixX
   
     for ( int i = 0; i < spectrum.row(j).cols() - 1; i++) {
       pastMagnitude = magnitude;
-      magnitude = posMagnitude;
+      magnitude = postMagnitude;
       postMagnitude = spectrum( j, i + 1 );
       
       if ((magnitude >= pastMagnitude) && (magnitude > postMagnitude)) {
