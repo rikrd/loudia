@@ -21,7 +21,7 @@
 #include <iostream>
 #include <cmath>
 
-#include "peaks.h"
+#include "peakpick.h"
 
 #include "typedefs.h"
 #include "debug.h"
