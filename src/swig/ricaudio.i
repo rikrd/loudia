@@ -28,6 +28,7 @@ import_array();
 #include "meddis.h"
 #include "spectralreassignment.h"
 #include "peakpick.h"
+#include "peakinterpolate.h"
 
 using namespace std;
 %}
@@ -45,5 +46,6 @@ using namespace std;
 %include "meddis.h"
 %include "spectralreassignment.h"
 %include "peakpick.h"
+%include "peakinterpolate.h"
 
 %module ricaudio
