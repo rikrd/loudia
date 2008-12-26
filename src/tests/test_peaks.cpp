@@ -16,43 +16,29 @@
 ** Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */                                                                          
 
-#ifndef SPECTRALPEAKS_H
-#define SPECTRALPEAKS_H
-
-#include <Eigen/Core>
-#include <Eigen/Array>
-#include <iostream>
-
-#include "melbands.h"
-#include "dct.h"
-
+#include "peaks.h"
 #include "typedefs.h"
 
-//using namespace std;
+#include <Eigen/Core>
+#include <iostream>
 
-// import most common Eigen types 
-//using namespace Eigen;
+using namespace std;
 
-class SpectralPeaks {
-protected:
-  // Internal parameters
-  int _numPeaks;
-    
-  // Internal variables
+int main() {
+  int nPeaks = 100;
+  
+  MatrixXR in = MatrixXR::Constant(1, spectrumLength, 1.0);
+  
+  Peaks peaks(nPeaks);
+  peaks.setup();
 
-public:
-  SpectralPeaks(int numPeaks);
+  MatrixXR result(1, nPeaks);
+  
+  for (int i=0; i<2; i++) {   
+    peaks.process(in, &result);
+    cout << "result:" << result << endl;
+  }
 
-  ~SpectralPeaks();
+  return 0;
+}
 
-  void setup();
-
-  void process(MatrixXR spectrum, MatrixXR* peakPositions, MatrixXR* peakMagnitudes);
-
-  void reset();
-
-  int numPeaks() const;
-
-};
-
-#endif  /* SPECTRALPEAKS_H */

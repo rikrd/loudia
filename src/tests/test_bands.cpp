@@ -16,27 +16,25 @@
 ** Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */                                                                          
 
-#include "mfcc.h"
+#include "bands.h"
 #include "typedefs.h"
-
 #include <Eigen/Core>
 #include <iostream>
 
 using namespace std;
 
 int main() {
-  int nPeaks = 100;
-  
+  int spectrumLength = 1024;
+  int nBands = 24;
   MatrixXR in = MatrixXR::Constant(1, spectrumLength, 1.0);
   
-  SpectralPeaks peaks(nPeaks);
-  peaks.setup();
+  Bands bands;
+  bands.setup();
 
-  MatrixXR result(1, nPeaks);
+  MatrixXR result(1, nBands);
   
-  for (int i=0; i<2; i++) {   
-    peaks.process(in, &result);
-    cout << "result:" << result << endl;
+  for (int i=0; i<1000; i++) {   
+    bands.process(in, &result);
   }
 
   return 0;

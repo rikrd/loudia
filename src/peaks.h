@@ -16,45 +16,43 @@
 ** Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */                                                                          
 
-#ifndef SPECTRALBANDS_H
-#define SPECTRALBANDS_H
+#ifndef PEAKS_H
+#define PEAKS_H
 
 #include <Eigen/Core>
 #include <Eigen/Array>
 #include <iostream>
-#include <vector>
+
+#include "melbands.h"
+#include "dct.h"
 
 #include "typedefs.h"
+
+//using namespace std;
 
 // import most common Eigen types 
 //using namespace Eigen;
 
-class SpectralBands {
+class Peaks {
 protected:
   // Internal parameters
-  MatrixXI _starts;
-  std::vector<MatrixXR> _weights;
-
+  int _numPeaks;
+    
   // Internal variables
 
 public:
-  SpectralBands();
+  Peaks(int numPeaks);
 
-  SpectralBands(MatrixXI starts, std::vector<MatrixXR> weights);
-
-  ~SpectralBands();
+  ~Peaks();
 
   void setup();
 
-  void process(MatrixXR spectrum, MatrixXR* bands);
+  void process(MatrixXR spectrum, MatrixXR* peakPositions, MatrixXR* peakMagnitudes);
 
   void reset();
 
-  std::vector<MatrixXR> weights() const;
+  int numPeaks() const;
 
-  MatrixXI starts() const;
-
-  void setStartsWeights(MatrixXI starts, std::vector<MatrixXR> weights);
 };
 
-#endif  /* SPECTRALBANDS_H */
+#endif  /* PEAKS_H */

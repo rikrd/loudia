@@ -123,13 +123,13 @@ void MelBands::setup(){
     weights.push_back(newFilter);
   }
 
-  _spectralBands.setStartsWeights(startBins, weights);
+  _bands.setStartsWeights(startBins, weights);
 
   DEBUG("MELBANDS: Finished set up...");
 }
 
 void MelBands::process(MatrixXR spectrum, MatrixXR* bands) {
-  _spectralBands.process(spectrum, bands);
+  _bands.process(spectrum, bands);
 }
 
 void MelBands::triangleWindow(MatrixXR* window, Real start, Real stop, Real center, Real height) {
@@ -211,5 +211,5 @@ MatrixXR MelBands::melToLinearFant1968(MatrixXR melFreq) {
 
 void MelBands::reset(){
   // Initial values
-  _spectralBands.reset();
+  _bands.reset();
 }

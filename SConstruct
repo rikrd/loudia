@@ -38,10 +38,10 @@ env.Append(LINKFLAGS = '-lfftw3f')
 # Build the tests
 env.Program('build/test_meddis', ['build/tests/test_meddis.cpp', 'build/meddis.cpp', 'build/debug.cpp'])
 env.Program('build/test_filter', ['build/tests/test_filter.cpp', 'build/filter.cpp', 'build/debug.cpp'])
-env.Program('build/test_spectralbands', ['build/tests/test_spectralbands.cpp', 'build/spectralbands.cpp', 'build/debug.cpp'])
-env.Program('build/test_melbands', ['build/tests/test_melbands.cpp', 'build/melbands.cpp', 'build/spectralbands.cpp', 'build/debug.cpp'])
+env.Program('build/test_bands', ['build/tests/test_bands.cpp', 'build/bands.cpp', 'build/debug.cpp'])
+env.Program('build/test_melbands', ['build/tests/test_melbands.cpp', 'build/melbands.cpp', 'build/bands.cpp', 'build/debug.cpp'])
 env.Program('build/test_dct', ['build/tests/test_dct.cpp', 'build/dct.cpp', 'build/debug.cpp'])
-env.Program('build/test_mfcc', ['build/tests/test_mfcc.cpp', 'build/mfcc.cpp', 'build/debug.cpp', 'build/melbands.cpp', 'build/spectralbands.cpp', 'build/dct.cpp'])
+env.Program('build/test_mfcc', ['build/tests/test_mfcc.cpp', 'build/mfcc.cpp', 'build/debug.cpp', 'build/melbands.cpp', 'build/bands.cpp', 'build/dct.cpp'])
 env.Program('build/test_aok', ['build/tests/test_aok.cpp', 'build/aok.cpp', 'build/debug.cpp'])
 env.Program('build/test_fft', ['build/tests/test_fft.cpp', 'build/fft.cpp', 'build/debug.cpp'])
 env.Program('build/test_window', ['build/tests/test_window.cpp', 'build/window.cpp', 'build/debug.cpp'])
@@ -67,12 +67,12 @@ env.SharedLibrary('build/swig/_ricaudio.so', ['build/swig/ricaudio.i',
                                               'build/meddis.cpp',
                                               'build/mfcc.cpp',
                                               'build/melbands.cpp',
-                                              'build/spectralbands.cpp',
+                                              'build/bands.cpp',
                                               'build/aok.cpp',
                                               'build/fft.cpp',
                                               'build/window.cpp',
                                               'build/spectralreassignment.cpp',
-                                              'build/spectralpeaks.cpp',
+                                              'build/peaks.cpp',
                                               'build/debug.cpp'], SHLIBPREFIX="")
 
 

@@ -21,7 +21,7 @@
 #include <iostream>
 #include <cmath>
 
-#include "spectralbands.h"
+#include "bands.h"
 #include "debug.h"
 #include "typedefs.h"
 
@@ -30,15 +30,15 @@ using namespace std;
 // import most common Eigen types 
 using namespace Eigen;
 
-SpectralBands::SpectralBands() : _starts(1, 1){ 
+Bands::Bands() : _starts(1, 1){ 
   _weights.push_back(MatrixXR::Constant(1, 1, 0.0));
 
   setup();
 }
 
 
-SpectralBands::SpectralBands(MatrixXi starts, vector<MatrixXR> weights) {
-  DEBUG("SPECTRALBANDS: Constructor starts: " << starts);
+Bands::Bands(MatrixXi starts, vector<MatrixXR> weights) {
+  DEBUG("BANDS: Constructor starts: " << starts);
 
   if ( starts.rows() != weights.size() ) {
     // Throw an exception
@@ -61,18 +61,18 @@ SpectralBands::SpectralBands(MatrixXi starts, vector<MatrixXR> weights) {
   setup();
 }
 
-SpectralBands::~SpectralBands() {}
+Bands::~Bands() {}
 
-void SpectralBands::setup(){
+void Bands::setup(){
   // Prepare the buffers
-  DEBUG("SPECTRALBANDS: Setting up...");
+  DEBUG("BANDS: Setting up...");
 
   reset();
-  DEBUG("SPECTRALBANDS: Finished set up...");
+  DEBUG("BANDS: Finished set up...");
 }
 
 
-void SpectralBands::process(MatrixXR spectrum, MatrixXR* bands){
+void Bands::process(MatrixXR spectrum, MatrixXR* bands){
 
   (*bands).resize(spectrum.rows(), _starts.rows());
 
@@ -83,19 +83,19 @@ void SpectralBands::process(MatrixXR spectrum, MatrixXR* bands){
   }
 }
 
-void SpectralBands::reset(){
+void Bands::reset(){
   // Initial values
 }
 
-vector<MatrixXR> SpectralBands::weights() const {
+vector<MatrixXR> Bands::weights() const {
   return _weights;
 }
 
-MatrixXi SpectralBands::starts() const {
+MatrixXi Bands::starts() const {
   return _starts;
 }
 
-void SpectralBands::setStartsWeights(MatrixXI starts, std::vector<MatrixXR> weights) {
+void Bands::setStartsWeights(MatrixXI starts, std::vector<MatrixXR> weights) {
   _weights = weights;
   _starts.set(starts);
 }

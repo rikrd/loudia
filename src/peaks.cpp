@@ -21,7 +21,7 @@
 #include <iostream>
 #include <cmath>
 
-#include "spectralpeaks.h"
+#include "peaks.h"
 
 #include "typedefs.h"
 #include "debug.h"
@@ -31,33 +31,33 @@ using namespace std;
 // import most common Eigen types 
 using namespace Eigen;
 
-SpectralPeaks::SpectralPeaks(int numPeaks) {
-  DEBUG("SpectralPeaks: Constructor numPeaks: " << numPeaks);
+Peaks::Peaks(int numPeaks) {
+  DEBUG("PEAKS: Constructor numPeaks: " << numPeaks);
   
   _numPeaks = numPeaks;
 
   setup();
-  DEBUG("SpectralPeaks: Constructed");
+  DEBUG("PEAKS: Constructed");
 }
 
-SpectralPeaks::~SpectralPeaks() {
+Peaks::~Peaks() {
   // TODO: Here we should free the buffers
   // but I don't know how to do that with MatrixXR and MatrixXR
   // I'm sure Nico will...
 }
 
 
-void SpectralPeaks::setup(){
+void Peaks::setup(){
   // Prepare the buffers
-  DEBUG("SpectralPeaks: Setting up...");
+  DEBUG("PEAKS: Setting up...");
 
   reset();
-  DEBUG("SpectralPeaks: Finished set up...");
+  DEBUG("PEAKS: Finished set up...");
 }
 
 
-void SpectralPeaks::process(MatrixXR spectrum, MatrixXR* peakPositions, MatrixXR* peakMagnitudes){
-  DEBUG("SpectralPeaks: Processing");
+void Peaks::process(MatrixXR spectrum, MatrixXR* peakPositions, MatrixXR* peakMagnitudes){
+  DEBUG("PEAKS: Processing");
   int peakIndex;
   
   Real magnitude;
@@ -82,25 +82,25 @@ void SpectralPeaks::process(MatrixXR spectrum, MatrixXR* peakPositions, MatrixXR
     pastMagnitude = 0;
     postMagnitude = 0;
   
-    for ( int i = 0; i < spectrum.row(j).cols() - 1; i++) {
+    for ( int i = -1; i < spectrum.row(j).cols() - 1; i++) {
       pastMagnitude = magnitude;
       magnitude = postMagnitude;
       postMagnitude = spectrum( j, i + 1 );
       
-      if ((magnitude >= pastMagnitude) && (magnitude > postMagnitude)) {
+      if ((magnitude > pastMagnitude) && (magnitude >= postMagnitude)) {
         (*peakMagnitudes)(j, peakIndex) = magnitude;
         (*peakPositions)(j, peakIndex) = i;
         peakIndex ++;
       }
     }
   }
-  DEBUG("SpectralPeaks: Finished Processing");
+  DEBUG("PEAKS: Finished Processing");
 }
 
-void SpectralPeaks::reset(){
+void Peaks::reset(){
   // Initial values
 }
 
-int SpectralPeaks::numPeaks() const {
+int Peaks::numPeaks() const {
   return _numPeaks;
 }

@@ -23,7 +23,7 @@
 #include <Eigen/Array>
 #include <iostream>
 
-#include "spectralbands.h"
+#include "bands.h"
 
 #include "typedefs.h"
 
@@ -40,7 +40,7 @@ protected:
   Real _samplerate;
   int _spectrumLength;
   
-  SpectralBands _spectralBands;
+  Bands _bands;
 
   void triangleWindow(MatrixXR* window, Real start, Real stop, Real center = -1, Real height = Real(1.0));
 

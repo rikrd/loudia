@@ -16,27 +16,45 @@
 ** Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */                                                                          
 
-#include "spectralbands.h"
-#include "typedefs.h"
+#ifndef BANDS_H
+#define BANDS_H
+
 #include <Eigen/Core>
+#include <Eigen/Array>
 #include <iostream>
+#include <vector>
 
-using namespace std;
+#include "typedefs.h"
 
-int main() {
-  int spectrumLength = 1024;
-  int nBands = 24;
-  MatrixXR in = MatrixXR::Constant(1, spectrumLength, 1.0);
-  
-  SpectralBands bands;
-  bands.setup();
+// import most common Eigen types 
+//using namespace Eigen;
 
-  MatrixXR result(1, nBands);
-  
-  for (int i=0; i<1000; i++) {   
-    bands.process(in, &result);
-  }
+class Bands {
+protected:
+  // Internal parameters
+  MatrixXI _starts;
+  std::vector<MatrixXR> _weights;
 
-  return 0;
-}
+  // Internal variables
 
+public:
+  Bands();
+
+  Bands(MatrixXI starts, std::vector<MatrixXR> weights);
+
+  ~Bands();
+
+  void setup();
+
+  void process(MatrixXR spectrum, MatrixXR* bands);
+
+  void reset();
+
+  std::vector<MatrixXR> weights() const;
+
+  MatrixXI starts() const;
+
+  void setStartsWeights(MatrixXI starts, std::vector<MatrixXR> weights);
+};
+
+#endif  /* BANDS_H */

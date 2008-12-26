@@ -21,13 +21,13 @@ import_array();
 #include "dct.h"
 #include "window.h"
 #include "melbands.h"
-#include "spectralbands.h"
+#include "bands.h"
 #include "fft.h"
 #include "mfcc.h"
 #include "aok.h"
 #include "meddis.h"
 #include "spectralreassignment.h"
-#include "spectralpeaks.h"
+#include "peaks.h"
 
 using namespace std;
 %}
@@ -37,13 +37,13 @@ using namespace std;
 %include "filter.h"
 %include "dct.h"
 %include "window.h"
-%include "spectralbands.h"
+%include "bands.h"
 %include "melbands.h"
 %include "fft.h"
 %include "mfcc.h"
 %include "aok.h"
 %include "meddis.h"
 %include "spectralreassignment.h"
-%include "spectralpeaks.h"
+%include "peaks.h"
 
 %module ricaudio
