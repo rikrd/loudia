@@ -16,24 +16,16 @@
 ** Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */                                                                          
 
-#ifndef PEAKS_H
-#define PEAKS_H
+#ifndef PEAKPICK_H
+#define PEAKPICK_H
 
 #include <Eigen/Core>
 #include <Eigen/Array>
 #include <iostream>
 
-#include "melbands.h"
-#include "dct.h"
-
 #include "typedefs.h"
 
-//using namespace std;
-
-// import most common Eigen types 
-//using namespace Eigen;
-
-class Peaks {
+class PeakPick {
 protected:
   // Internal parameters
   int _numPeaks;
@@ -41,9 +33,9 @@ protected:
   // Internal variables
 
 public:
-  Peaks(int numPeaks);
+  PeakPick(int numPeaks);
 
-  ~Peaks();
+  ~PeakPick();
 
   void setup();
 
@@ -55,4 +47,4 @@ public:
 
 };
 
-#endif  /* PEAKS_H */
+#endif  /* PEAKPICK_H */

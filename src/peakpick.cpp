@@ -31,33 +31,33 @@ using namespace std;
 // import most common Eigen types 
 using namespace Eigen;
 
-Peaks::Peaks(int numPeaks) {
-  DEBUG("PEAKS: Constructor numPeaks: " << numPeaks);
+PeakPick::PeakPick(int numPeaks) {
+  DEBUG("PEAKPICK: Constructor numPeaks: " << numPeaks);
   
   _numPeaks = numPeaks;
 
   setup();
-  DEBUG("PEAKS: Constructed");
+  DEBUG("PEAKPICK: Constructed");
 }
 
-Peaks::~Peaks() {
+PeakPick::~PeakPick() {
   // TODO: Here we should free the buffers
   // but I don't know how to do that with MatrixXR and MatrixXR
   // I'm sure Nico will...
 }
 
 
-void Peaks::setup(){
+void PeakPick::setup(){
   // Prepare the buffers
-  DEBUG("PEAKS: Setting up...");
+  DEBUG("PEAKPICK: Setting up...");
 
   reset();
-  DEBUG("PEAKS: Finished set up...");
+  DEBUG("PEAKPICK: Finished set up...");
 }
 
 
-void Peaks::process(MatrixXR spectrum, MatrixXR* peakPositions, MatrixXR* peakMagnitudes){
-  DEBUG("PEAKS: Processing");
+void PeakPick::process(MatrixXR spectrum, MatrixXR* peakPositions, MatrixXR* peakMagnitudes){
+  DEBUG("PEAKPICK: Processing");
   int peakIndex;
   
   Real magnitude;
@@ -94,13 +94,13 @@ void Peaks::process(MatrixXR spectrum, MatrixXR* peakPositions, MatrixXR* peakMa
       }
     }
   }
-  DEBUG("PEAKS: Finished Processing");
+  DEBUG("PEAKPICK: Finished Processing");
 }
 
-void Peaks::reset(){
+void PeakPick::reset(){
   // Initial values
 }
 
-int Peaks::numPeaks() const {
+int PeakPick::numPeaks() const {
   return _numPeaks;
 }

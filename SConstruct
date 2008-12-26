@@ -72,7 +72,7 @@ env.SharedLibrary('build/swig/_ricaudio.so', ['build/swig/ricaudio.i',
                                               'build/fft.cpp',
                                               'build/window.cpp',
                                               'build/spectralreassignment.cpp',
-                                              'build/peaks.cpp',
+                                              'build/peakpick.cpp',
                                               'build/debug.cpp'], SHLIBPREFIX="")
 
 

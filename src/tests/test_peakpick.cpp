@@ -16,7 +16,7 @@
 ** Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */                                                                          
 
-#include "peaks.h"
+#include "peakpick.h"
 #include "typedefs.h"
 
 #include <Eigen/Core>
@@ -29,7 +29,7 @@ int main() {
   
   MatrixXR in = MatrixXR::Constant(1, spectrumLength, 1.0);
   
-  Peaks peaks(nPeaks);
+  PeakPick peaks(nPeaks);
   peaks.setup();
 
   MatrixXR result(1, nPeaks);
