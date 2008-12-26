@@ -27,7 +27,7 @@ import_array();
 #include "aok.h"
 #include "meddis.h"
 #include "spectralreassignment.h"
-#include "peaks.h"
+#include "peakpick.h"
 
 using namespace std;
 %}
@@ -44,6 +44,6 @@ using namespace std;
 %include "aok.h"
 %include "meddis.h"
 %include "spectralreassignment.h"
-%include "peaks.h"
+%include "peakpick.h"
 
 %module ricaudio
