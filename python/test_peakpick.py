@@ -7,7 +7,7 @@ import ricaudio
 fundamental = 440.0
 harmonics = 5
 
-frameSize = 256
+frameSize = 128
 fftSize = 512
 samplerate = 8000
 
@@ -27,7 +27,7 @@ fft = ricaudio.FFT(frameSize, fftSize)
 peaks = ricaudio.PeakPick(fftSize / 3)
 
 r_sine_windowed = window.process(a_sine)
-r_sine_mag = abs(fft.process(r_sine_windowed))
+r_sine_mag = fft.process(r_sine_windowed)
 r_sine_mag = r_sine_mag[:,:scipy.ceil(r_sine_mag.shape[1]/2)]
 r_sine_peakpos, r_sine_peakmag = peaks.process(r_sine_mag)
 # -------------------------------------------------------- #
@@ -38,7 +38,7 @@ print r_sine_peakmag
 
 import pylab
 pylab.hold(True)
-pylab.plot(r_sine_mag[0,:])
+pylab.plot(abs(r_sine_mag[0,:]))
 pylab.hold(True)
 pylab.scatter(r_sine_peakpos[0,:], r_sine_peakmag[0,:])
 

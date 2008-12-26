@@ -31,6 +31,7 @@ protected:
   int _numPeaks;
     
   // Internal variables
+  MatrixXR _magnitudes;
 
 public:
   PeakPick(int numPeaks);
@@ -39,7 +40,7 @@ public:
 
   void setup();
 
-  void process(MatrixXR spectrum, MatrixXR* peakPositions, MatrixXR* peakMagnitudes);
+  void process(MatrixXC fft, MatrixXR* peakPositions, MatrixXR* peakMagnitudes);
 
   void reset();
 

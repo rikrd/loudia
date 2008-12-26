@@ -55,7 +55,7 @@ void PeakInterpolate::setup(){
 }
 
 
-void PeakInterpolate::process(MatrixXR spectrum,
+void PeakInterpolate::process(MatrixXC fft,
                               MatrixXR peakPositions, MatrixXR peakMagnitudes,
                               MatrixXR* peakPositionsInterp, MatrixXR* peakMagnitudesInterp){
   
@@ -64,20 +64,21 @@ void PeakInterpolate::process(MatrixXR spectrum,
   Real rightMag;
   Real mag;
   
-  (*peakPositionsInterp).resize(spectrum.rows(), peakPositions.cols());
-  (*peakMagnitudesInterp).resize(spectrum.rows(), peakPositions.cols());
+  (*peakPositionsInterp).resize(fft.rows(), peakPositions.cols());
+  (*peakMagnitudesInterp).resize(fft.rows(), peakPositions.cols());
+
+  _magnitudes.set(fft.cwise().abs());
   
-  for ( int row = 0 ; row < spectrum.rows(); row++ ) {
+  for ( int row = 0 ; row < _magnitudes.rows(); row++ ) {
   
     for ( int i = 0; i < peakPositions.cols(); i++ ) {
       
       // If the position is -1 do nothing since it means it is nothing
       if( peakPositions(row, i) == -1 ){
         
-        (*peakMagnitudesInterp)(row, i) = -1;
+        (*peakMagnitudesInterp)(row, i) = peakMagnitudes(row, i); 
+        (*peakPositionsInterp)(row, i) = peakPositions(row, i);
         
-        (*peakPositionsInterp)(row, i) = -1;
-      
       } else {
         
         // Take the center magnitude in dB
@@ -86,22 +87,22 @@ void PeakInterpolate::process(MatrixXR spectrum,
         // Take the left magnitude in dB
         if( peakPositions(row, i) <= 0 ){
           
-          leftMag = 20.0 * log10( spectrum(row, (int)peakPositions(row, i) + 1) );
+          leftMag = 20.0 * log10( _magnitudes(row, (int)peakPositions(row, i) + 1) );
           
         } else {
           
-          leftMag = 20.0 * log10( spectrum(row, (int)peakPositions(row, i) - 1) );
+          leftMag = 20.0 * log10( _magnitudes(row, (int)peakPositions(row, i) - 1) );
           
         }
         
         // Take the right magnitude in dB
-        if( peakPositions(row, i) >= spectrum.row(row).cols() - 1 ){
+        if( peakPositions(row, i) >= _magnitudes.row(row).cols() - 1 ){
           
-          rightMag = 20.0 * log10( spectrum(row, (int)peakPositions(row, i) - 1) );
+          rightMag = 20.0 * log10( _magnitudes(row, (int)peakPositions(row, i) - 1) );
           
         } else {
           
-          rightMag = 20.0 * log10( spectrum(row, (int)peakPositions(row, i) + 1) );
+          rightMag = 20.0 * log10( _magnitudes(row, (int)peakPositions(row, i) + 1) );
           
         }
                 

@@ -56,7 +56,7 @@ void PeakPick::setup(){
 }
 
 
-void PeakPick::process(MatrixXR spectrum, MatrixXR* peakPositions, MatrixXR* peakMagnitudes){
+void PeakPick::process(MatrixXC fft, MatrixXR* peakPositions, MatrixXR* peakMagnitudes){
   DEBUG("PEAKPICK: Processing");
   int peakIndex;
   
@@ -66,26 +66,28 @@ void PeakPick::process(MatrixXR spectrum, MatrixXR* peakPositions, MatrixXR* pea
 
   int numPeaks = _numPeaks;
   if(numPeaks == -1){
-    numPeaks = spectrum.cols();
+    numPeaks = fft.cols();
   }
 
-  (*peakPositions).resize(spectrum.rows(), numPeaks);
+  (*peakPositions).resize(fft.rows(), numPeaks);
   (*peakPositions).setConstant(-1);
 
-  (*peakMagnitudes).resize(spectrum.rows(), numPeaks);
+  (*peakMagnitudes).resize(fft.rows(), numPeaks);
   (*peakMagnitudes).setConstant(-1);
 
-  for ( int j = 0 ; j < spectrum.rows(); j++){
+  _magnitudes.set(fft.cwise().abs());
+
+  for ( int j = 0 ; j < _magnitudes.rows(); j++){
     peakIndex = 0;
     
     magnitude = 0;
     pastMagnitude = 0;
     postMagnitude = 0;
   
-    for ( int i = -1; i < spectrum.row(j).cols() - 1; i++) {
+    for ( int i = -1; i < _magnitudes.row(j).cols() - 1; i++) {
       pastMagnitude = magnitude;
       magnitude = postMagnitude;
-      postMagnitude = spectrum( j, i + 1 );
+      postMagnitude = _magnitudes( j, i + 1 );
       
       if ((magnitude > pastMagnitude) && (magnitude >= postMagnitude)) {
         (*peakMagnitudes)(j, peakIndex) = magnitude;

@@ -30,6 +30,7 @@ protected:
   // Internal parameters
     
   // Internal variables
+  MatrixXR _magnitudes;
 
 public:
   PeakInterpolate();
@@ -38,7 +39,7 @@ public:
 
   void setup();
 
-  void process(MatrixXR spectrum, 
+  void process(MatrixXC fft, 
                MatrixXR peakPositions, MatrixXR peakMagnitudes,
                MatrixXR* peakPositionsInterp, MatrixXR* peakMagnitudesInterp);
 
