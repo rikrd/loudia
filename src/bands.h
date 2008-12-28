@@ -16,8 +16,8 @@
 ** Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */                                                                          
 
-#ifndef SPECTRALBANDS_H
-#define SPECTRALBANDS_H
+#ifndef BANDS_H
+#define BANDS_H
 
 #include <Eigen/Core>
 #include <Eigen/Array>
@@ -29,7 +29,7 @@
 // import most common Eigen types 
 //using namespace Eigen;
 
-class SpectralBands {
+class Bands {
 protected:
   // Internal parameters
   MatrixXI _starts;
@@ -38,11 +38,11 @@ protected:
   // Internal variables
 
 public:
-  SpectralBands();
+  Bands();
 
-  SpectralBands(MatrixXI starts, std::vector<MatrixXR> weights);
+  Bands(MatrixXI starts, std::vector<MatrixXR> weights);
 
-  ~SpectralBands();
+  ~Bands();
 
   void setup();
 
@@ -54,6 +54,7 @@ public:
 
   MatrixXI starts() const;
 
+  void setStartsWeights(MatrixXI starts, std::vector<MatrixXR> weights);
 };
 
-#endif  /* SPECTRALBANDS_H */
+#endif  /* BANDS_H */

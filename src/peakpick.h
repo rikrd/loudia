@@ -16,29 +16,36 @@
 ** Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */                                                                          
 
-#include "mfcc.h"
-#include "typedefs.h"
+#ifndef PEAKPICK_H
+#define PEAKPICK_H
 
 #include <Eigen/Core>
+#include <Eigen/Array>
 #include <iostream>
 
-using namespace std;
+#include "typedefs.h"
 
-int main() {
-  int nPeaks = 100;
-  
-  MatrixXR in = MatrixXR::Constant(1, spectrumLength, 1.0);
-  
-  SpectralPeaks peaks(nPeaks);
-  peaks.setup();
+class PeakPick {
+protected:
+  // Internal parameters
+  int _numPeaks;
+    
+  // Internal variables
+  MatrixXR _magnitudes;
 
-  MatrixXR result(1, nPeaks);
-  
-  for (int i=0; i<2; i++) {   
-    peaks.process(in, &result);
-    cout << "result:" << result << endl;
-  }
+public:
+  PeakPick(int numPeaks);
 
-  return 0;
-}
+  ~PeakPick();
 
+  void setup();
+
+  void process(MatrixXC fft, MatrixXR* peakPositions, MatrixXR* peakMagnitudes);
+
+  void reset();
+
+  int numPeaks() const;
+
+};
+
+#endif  /* PEAKPICK_H */

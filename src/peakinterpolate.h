@@ -16,27 +16,35 @@
 ** Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */                                                                          
 
-#include "spectralbands.h"
-#include "typedefs.h"
+#ifndef PEAKINTERPOLATE_H
+#define PEAKINTERPOLATE_H
+
 #include <Eigen/Core>
+#include <Eigen/Array>
 #include <iostream>
 
-using namespace std;
+#include "typedefs.h"
 
-int main() {
-  int spectrumLength = 1024;
-  int nBands = 24;
-  MatrixXR in = MatrixXR::Constant(1, spectrumLength, 1.0);
-  
-  SpectralBands bands;
-  bands.setup();
+class PeakInterpolate {
+protected:
+  // Internal parameters
+    
+  // Internal variables
+  MatrixXR _magnitudes;
 
-  MatrixXR result(1, nBands);
-  
-  for (int i=0; i<1000; i++) {   
-    bands.process(in, &result);
-  }
+public:
+  PeakInterpolate();
 
-  return 0;
-}
+  ~PeakInterpolate();
 
+  void setup();
+
+  void process(MatrixXC fft, 
+               MatrixXR peakPositions, MatrixXR peakMagnitudes,
+               MatrixXR* peakPositionsInterp, MatrixXR* peakMagnitudesInterp);
+
+  void reset();
+
+};
+
+#endif  /* PEAKINTERPOLATE_H */

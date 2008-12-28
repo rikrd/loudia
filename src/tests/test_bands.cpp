@@ -16,53 +16,27 @@
 ** Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */                                                                          
 
-#ifndef MELBANDS_H
-#define MELBANDS_H
-
+#include "bands.h"
+#include "typedefs.h"
 #include <Eigen/Core>
-#include <Eigen/Array>
 #include <iostream>
 
-#include "bands.h"
+using namespace std;
 
-#include "typedefs.h"
-
-//using namespace std;
-
-// import most common Eigen types 
-//using namespace Eigen;
-
-class MelBands {
-protected:
-  Real _lowFreq;
-  Real _highFreq;
-  int _numBands;
-  Real _samplerate;
-  int _spectrumLength;
+int main() {
+  int spectrumLength = 1024;
+  int nBands = 24;
+  MatrixXR in = MatrixXR::Constant(1, spectrumLength, 1.0);
   
-  Bands _bands;
+  Bands bands;
+  bands.setup();
 
-  void triangleWindow(MatrixXR* window, Real start, Real stop, Real center = -1, Real height = Real(1.0));
-
-  Real linearToMelRealStevens1937(Real linearFreq);
-  Real melToLinearRealStevens1937(Real melFreq);
-  MatrixXR linearToMelStevens1937(MatrixXR linearFreq);
-  MatrixXR melToLinearStevens1937(MatrixXR melFreq);
-
-  Real linearToMelRealFant1968(Real linearFreq);
-  Real melToLinearRealFant1968(Real melFreq);
-  MatrixXR linearToMelFant1968(MatrixXR linearFreq);
-  MatrixXR melToLinearFant1968(MatrixXR melFreq);
-
-
-public:
-  MelBands(Real lowFreq, Real highFreq, int numBands, Real samplerate, int spectrumLength);
-
-  void setup();
-
-  void process(MatrixXR spectrum, MatrixXR* bands);
+  MatrixXR result(1, nBands);
   
-  void reset();
-};
+  for (int i=0; i<1000; i++) {   
+    bands.process(in, &result);
+  }
 
-#endif  /* MELBANDS_H */
+  return 0;
+}
+

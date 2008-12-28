@@ -21,7 +21,7 @@
 #include <iostream>
 #include <cmath>
 
-#include "spectralpeaks.h"
+#include "peakpick.h"
 
 #include "typedefs.h"
 #include "debug.h"
@@ -31,62 +31,78 @@ using namespace std;
 // import most common Eigen types 
 using namespace Eigen;
 
-SpectralPeaks::SpectralPeaks(int numPeaks) {
-  DEBUG("SpectralPeaks: numPeaks: " << numPeaks);
+PeakPick::PeakPick(int numPeaks) {
+  DEBUG("PEAKPICK: Constructor numPeaks: " << numPeaks);
   
   _numPeaks = numPeaks;
 
+  setup();
+  DEBUG("PEAKPICK: Constructed");
 }
 
-SpectralPeaks::~SpectralPeaks() {
+PeakPick::~PeakPick() {
   // TODO: Here we should free the buffers
   // but I don't know how to do that with MatrixXR and MatrixXR
   // I'm sure Nico will...
 }
 
 
-void SpectralPeaks::setup(){
+void PeakPick::setup(){
   // Prepare the buffers
-  DEBUG("SpectralPeaks: Setting up...");
+  DEBUG("PEAKPICK: Setting up...");
 
   reset();
-  DEBUG("SpectralPeaks: Finished set up...");
+  DEBUG("PEAKPICK: Finished set up...");
 }
 
 
-void SpectralPeaks::process(MatrixXR spectrum, MatrixXR* peakMagnitudes, MatrixXI* peakPositions){
-  DEBUG("SpectralPeaks: Processing");
+void PeakPick::process(MatrixXC fft, MatrixXR* peakPositions, MatrixXR* peakMagnitudes){
+  DEBUG("PEAKPICK: Processing");
   int peakIndex;
   
   Real magnitude;
   Real pastMagnitude;
   Real postMagnitude;
 
-  for ( int j = 0 ; j < spectrum.rows(); j++){
+  int numPeaks = _numPeaks;
+  if(numPeaks == -1){
+    numPeaks = fft.cols();
+  }
+
+  (*peakPositions).resize(fft.rows(), numPeaks);
+  (*peakPositions).setConstant(-1);
+
+  (*peakMagnitudes).resize(fft.rows(), numPeaks);
+  (*peakMagnitudes).setConstant(-1);
+
+  _magnitudes.set(fft.cwise().abs());
+
+  for ( int j = 0 ; j < _magnitudes.rows(); j++){
     peakIndex = 0;
     
     magnitude = 0;
     pastMagnitude = 0;
     postMagnitude = 0;
   
-    for ( int i = 0; i < spectrum.row(j).cols() - 1; i++) {
+    for ( int i = -1; i < _magnitudes.row(j).cols() - 1; i++) {
       pastMagnitude = magnitude;
       magnitude = postMagnitude;
-      postMagnitude = spectrum( j, i + 1 );
+      postMagnitude = _magnitudes( j, i + 1 );
       
-      if ((magnitude >= pastMagnitude) && (magnitude > postMagnitude)) {
+      if ((magnitude > pastMagnitude) && (magnitude >= postMagnitude)) {
         (*peakMagnitudes)(j, peakIndex) = magnitude;
         (*peakPositions)(j, peakIndex) = i;
+        peakIndex ++;
       }
     }
   }
-  DEBUG("SpectralPeaks: Finished Processing");
+  DEBUG("PEAKPICK: Finished Processing");
 }
 
-void SpectralPeaks::reset(){
+void PeakPick::reset(){
   // Initial values
 }
 
-int SpectralPeaks::numPeaks() const {
+int PeakPick::numPeaks() const {
   return _numPeaks;
 }
