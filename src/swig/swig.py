@@ -4,7 +4,7 @@
 # Thomas Nagy 2008
 
 import re
-import Task, Utils
+import Task, Utils, Logs
 from TaskGen import extension
 from Configure import conf
 import preproc
@@ -41,22 +41,20 @@ def scan(self):
 		code = preproc.re_nl.sub('', code)
 		code = preproc.re_cpp.sub(preproc.repl, code)
 
-		# find .i files (and perhaps .h files)
-		names = re_2.findall(code)
+		# find .i files and project headers
+		names = re_2.findall(code) + re_3.findall(code)
 		for n in names:
-			u = node.parent.find_resource(n)
-			if u:
-				to_see.append(u)
-
-		# find project headers
-		names = re_3.findall(code)
-		for n in names:
-			u = node.parent.find_resource(n)
-			if u:
-				to_see.append(u)
+			for d in self.generator.swig_dir_nodes + [node.parent]:
+				u = d.find_resource(n)
+				if u:
+					to_see.append(u)
+					break
+			else:
+				Logs.warn('could not find %r' % n)
 
 	# list of nodes this one depends on, and module name if present
-	print "result of ", node, lst_src
+	if Logs.verbose:
+		Logs.debug('deps: deps for %s: %s' % (str(self), str(lst_src)))
 	return (lst_src, [])
 cls.scan = scan
 
@@ -73,6 +71,25 @@ def swig_python(tsk):
 def swig_ocaml(tsk):
 	tsk.set_outputs(tsk.inputs[0].parent.find_or_declare(tsk.module + '.ml'))
 	tsk.set_outputs(tsk.inputs[0].parent.find_or_declare(tsk.module + '.mli'))
+
+def add_swig_paths(self):
+	if getattr(self, 'add_swig_paths_done', None):
+		return
+	self.add_swig_paths_done = True
+
+	self.swig_dir_nodes = []
+	for x in self.to_list(self.includes):
+		node = self.path.find_dir(x)
+		if not node:
+			Logs.warn('could not find the include %r' % x)
+			continue
+		self.swig_dir_nodes.append(node)
+
+	# add the top-level, it is likely to be added
+	self.swig_dir_nodes.append(self.bld.srcnode)
+	for x in self.swig_dir_nodes:
+		self.env.append_unique('SWIGFLAGS', '-I%s' % x.abspath(self.env)) # build dir
+		self.env.append_unique('SWIGFLAGS', '-I%s' % x.abspath()) # source dir
 
 @extension(SWIG_EXTS)
 def i_file(self, node):
@@ -122,6 +139,8 @@ def i_file(self, node):
 
 	self.allnodes.append(out_node)
 
+	add_swig_paths(self)
+
 @conf
 def check_swig_version(conf, minver=None):
 	"""Check for a minimum swig version  like conf.check_swig_version('1.3.28')
@@ -147,5 +166,5 @@ def check_swig_version(conf, minver=None):
 	return result
 
 def detect(conf):
-	swig = conf.find_program('swig', var='SWIG')
+	swig = conf.find_program('swig', var='SWIG', mandatory=True)
 
