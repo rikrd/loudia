@@ -38,4 +38,4 @@ def build(bld):
 	bld.add_subdirs('swig')
         bld.add_subdirs('tests')
         
-        bld.install_files('${PREFIX}/include/ricaudio', 'aok.h')
+        #bld.install_files('${PREFIX}/include/ricaudio', 'aok.h')
