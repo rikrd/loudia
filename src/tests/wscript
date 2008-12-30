@@ -15,12 +15,14 @@ def configure(conf):
         conf.env.append_value('LINKFLAGS', '-lfftw3f')
 
 def build(bld):
+        pass
+        """
         obj = bld.new_task_gen(
-                features = ['cxx', 'program'],
+                features = ['cxx', 'cprogram'],
                 uselib = 'fftw3',
                 target = 'test_fft',
                 includes = '. /home/rmarxer/dev/eigen2',
                 uselib_local = LIBNAME
         )
-        
+        """
         

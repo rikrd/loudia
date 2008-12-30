@@ -26,7 +26,7 @@ def build(bld):
         obj = bld.new_task_gen(
                 features = 'cxx cshlib pyext',
                 source = 'ricaudio.i',
-                target = 'ricaudio',
+                target = '_ricaudio',
                 swig_flags = '-c++ -python -Wall -I/home/rmarxer/dev/eigen2 -I..',
                 swig_includes = '.. /home/rmarxer/dev/eigen2',
                 includes = '.. /home/rmarxer/dev/eigen2',
