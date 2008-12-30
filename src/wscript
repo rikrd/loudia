@@ -24,7 +24,7 @@ def configure(conf):
 
 def build(bld):
         obj = bld.new_task_gen(
-                features = ['cxx', 'shlib'],
+                features = 'cxx cshlib',
                 uselib = 'fftw3',
                 target = LIBNAME,
                 includes = '. /home/rmarxer/dev/eigen2',
