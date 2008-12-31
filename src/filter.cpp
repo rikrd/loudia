@@ -29,6 +29,11 @@ using namespace std;
 // import most common Eigen types 
 using namespace Eigen;
 
+Filter::Filter(int channels){
+  Filter::Filter(MatrixXR::Zero(1, channels), MatrixXR::Ones(1, channels), channels);
+}
+
+
 Filter::Filter(MatrixXR b,
                MatrixXR a,
                int channels) : _a(max(b.rows(), a.rows()), channels), _b(max(b.rows(), a.rows()), channels), _z(max(b.rows(), a.rows()), channels){

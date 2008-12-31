@@ -1,5 +1,5 @@
 /*                                                         
-** Copyright (C) 2008 Ricard Marxer <email@ricardmarxer.com.com>
+** Copyright (C) 2008 Ricard Marxer <email@ricardmarxer.com>
 **                                                                  
 ** This program is free software; you can redistribute it and/or modify
 ** it under the terms of the GNU General Public License as published by
@@ -16,50 +16,30 @@
 ** Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */                                                                          
 
-#ifndef FILTER_H
-#define FILTER_H
+#ifndef CHEBYSHEV_H
+#define CHEBYSHEV_H
 
-#include <Eigen/Core>
-#include <Eigen/Array>
-#include <iostream>
+#include "filter.h"
 
 #include "typedefs.h"
 
-//using namespace std;
-
-// import most common Eigen types
-//using namespace Eigen;
-
-class Filter {
+class Chebyshev {
 protected:
-  // Internal parameters
-  int _channels; 
-  int _length; 
+  Real _rippleDB;
+  Real _samplerate;
+  int _order;
+  int _channels;
 
-  // Internal variables
-  MatrixXR _a;
-  MatrixXR _b;
-
-  MatrixXR _z;
-  MatrixXR _samples;
+  Filter _filter;
 
 public:
-  Filter(int channels);
-
-  Filter(MatrixXR b, MatrixXR a, int channels);
-
-  ~Filter();
+  Chebyshev(int channels, int order, Real rippleDB, Real samplerate);
 
   void setup();
 
-  void process(MatrixXR samples, MatrixXR* output);
-
+  void process(MatrixXR samples, MatrixXR* filtered);
+  
   void reset();
-
-  int channels() const;
-
-  int length() const;
-
 };
 
-#endif  /* FILTER_H */
+#endif  /* CHEBYSHEV_H */
