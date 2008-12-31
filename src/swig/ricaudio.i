@@ -15,8 +15,6 @@ import_array();
 #include <Eigen/Core>
 #include <Eigen/Array>
 
-#include <stdio.h>
-
 #include "filter.h"
 #include "dct.h"
 #include "window.h"
@@ -30,8 +28,6 @@ import_array();
 #include "peakpick.h"
 #include "peakinterpolate.h"
 #include "chebyshev.h"
-
-using namespace std;
 %}
 
 %include "typemaps.i"

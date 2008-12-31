@@ -18,6 +18,8 @@
 
 #include <Eigen/Core>
 #include <Eigen/Array>
+#include <Eigen/QR> 
+
 #include <iostream>
 #include <cmath>
 #include <vector>
@@ -29,23 +31,59 @@
 
 using namespace std;
 
-// define a custom template unary functor
-/*
-template<typename Scalar>
-struct CwiseSinh {
-  CwiseSinhOp(){}
-  const Scalar operator()(const Scalar& x) const { return sinh(x); }
-};
-
-template<typename Scalar>
-struct CwiseCosh {
-  CwiseCoshOp(){}
-  const Scalar operator()(const Scalar& x) const { return cosh(x); }
-};
-*/
-
 // import most common Eigen types 
 using namespace Eigen;
+
+void Chebyshev::roots(MatrixXR poly, MatrixXC* roots){
+  const int N = poly.cols();
+  if ( N > 1 ) {
+    // Build companion matrix and find its eigenvalues (the roots)
+    MatrixXR A = MatrixXR::Zero(N - 1, N - 1);
+    A.corner( Eigen::BottomLeft, N - 2, N - 2).diagonal().setOnes();
+    A.row(0) = -poly.corner( Eigen::TopRight, 1, N - 1 ) / poly(0, 0);
+    
+    // Get the eigen values
+    (*roots).set(Eigen::EigenSolver<MatrixXR>(A).eigenvalues());
+  }
+}
+
+/*
+void Chebyshev::tf2zpk(MatrixXC b, MatrixXC a, MatrixXC* zeros, MatrixXC* poles, Real* gain){
+  // Return zero, pole, gain (z,p,k) representation from a numerator,
+  // denominator representation of a linear filter.
+  (*gain) = b(0);
+  b /= b[0];
+  z = roots(b);
+  p = roots(a);
+}
+
+def zpk2tf(MatrixXC zeros, MatrixXC poles, Real gain, MatrixXC* b, MatrixXC* a):
+    """Return polynomial transfer function representation from zeros
+    and poles
+
+    Inputs:
+
+      z, p --- sequences representing the zeros and poles.
+      k --- system gain.
+
+    Outputs: (b,a)
+
+      b, a --- numerator and denominator polynomials.
+    """
+    z = atleast_1d(z)
+    k = atleast_1d(k)
+    if len(z.shape) > 1:
+        temp = poly(z[0])
+        b = zeros((z.shape[0], z.shape[1]+1), temp.dtype.char)
+        if len(k) == 1:
+            k = [k[0]]*z.shape[0]
+        for i in range(z.shape[0]):
+            b[i] = k[i] * poly(z[i])
+    else:
+        b = k * poly(z)
+    a = poly(p)
+    return b, a
+*/
 
 Chebyshev::Chebyshev(int channels, int order, Real rippleDB, Real samplerate) : _filter(channels)
 {
