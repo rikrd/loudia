@@ -34,6 +34,4 @@ def build(bld):
                 want_libtool = 1,
                 vnum         = '0.1',
                 uselib_local = 'ricaudio'
-        )        
-
-        obj.find_sources_in_dirs('..', exts=['.cpp'])
+        )
