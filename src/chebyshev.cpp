@@ -34,8 +34,29 @@ using namespace std;
 // import most common Eigen types 
 using namespace Eigen;
 
+void Chebyshev::reverse(MatrixXC* in){
+  const int N = (*in).cols();
+  
+  for(int i = 0; i < N / 2; i++ ){
+    (*in).col(i).swap((*in).col(N - i - 1));
+
+  }
+}
+
+void Chebyshev::reverse(MatrixXR* in){
+  const int N = (*in).cols();
+  
+  for(int i = 0; i < N / 2; i++ ){
+    (*in).col(i).swap((*in).col(N - i - 1));
+
+  }
+}
+
+
 void Chebyshev::roots(MatrixXR poly, MatrixXC* roots){
   const int N = poly.cols();
+  (*roots).resize(1, N-1);
+  
   if ( N > 1 ) {
     // Build companion matrix and find its eigenvalues (the roots)
     MatrixXR A = MatrixXR::Zero(N - 1, N - 1);
@@ -43,8 +64,11 @@ void Chebyshev::roots(MatrixXR poly, MatrixXC* roots){
     A.row(0) = -poly.corner( Eigen::TopRight, 1, N - 1 ) / poly(0, 0);
     
     // Get the eigen values
-    (*roots).set(Eigen::EigenSolver<MatrixXR>(A).eigenvalues());
+    (*roots).set(Eigen::EigenSolver<MatrixXR>(A).eigenvalues().transpose());
   }
+  
+  reverse(roots);
+  
 }
 
 /*
