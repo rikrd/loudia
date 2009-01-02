@@ -20,6 +20,8 @@
 #ifndef TYPEDEFS_H
 #define TYPEDEFS_H
 
+#include <Eigen/Core>
+#include <Eigen/Array>
 #include<cmath>
 
 // Type for the Real values
