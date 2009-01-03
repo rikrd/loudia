@@ -16,46 +16,20 @@
 ** Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */                                                                          
 
+#include "typedefs.h"
+#include "debug.h"
+
 #include <Eigen/Core>
 #include <Eigen/Array>
 #include <Eigen/QR> 
 
-#include <iostream>
 #include <cmath>
-#include <vector>
 
-#include "chebyshev.h"
+#include "utils.h"
 
-#include "debug.h"
-#include "typedefs.h"
-
-using namespace std;
-
-// import most common Eigen types 
-using namespace Eigen;
-
-void Chebyshev::reverse(MatrixXC* in){
-  const int N = (*in).cols();
-  
-  for(int i = 0; i < N / 2; i++ ){
-    (*in).col(i).swap((*in).col(N - i - 1));
-
-  }
-}
-
-void Chebyshev::reverse(MatrixXR* in){
-  const int N = (*in).cols();
-  
-  for(int i = 0; i < N / 2; i++ ){
-    (*in).col(i).swap((*in).col(N - i - 1));
-
-  }
-}
-
-
-void Chebyshev::roots(MatrixXR poly, MatrixXC* roots){
+void roots(MatrixXR poly, MatrixXC* result) {
   const int N = poly.cols();
-  (*roots).resize(1, N-1);
+  (*roots).resize(N-1, 1);
   
   if ( N > 1 ) {
     // Build companion matrix and find its eigenvalues (the roots)
@@ -64,15 +38,30 @@ void Chebyshev::roots(MatrixXR poly, MatrixXC* roots){
     A.row(0) = -poly.corner( Eigen::TopRight, 1, N - 1 ) / poly(0, 0);
     
     // Get the eigen values
-    (*roots).set(Eigen::EigenSolver<MatrixXR>(A).eigenvalues().transpose());
+    (*roots).set(Eigen::EigenSolver<MatrixXR>(A).eigenvalues());
   }
   
   reverse(roots);
+}
+
+void reverse(MatrixXC* in) { 
+  const int N = (*in).cols();
   
+  for(int i = 0; i < N / 2; i++ ){
+    (*in).col(i).swap((*in).col(N - i - 1));
+  }
+}
+
+void reverse(MatrixXR* in) {
+  const int N = (*in).cols();
+  
+  for(int i = 0; i < N / 2; i++ ){
+    (*in).col(i).swap((*in).col(N - i - 1));
+  }
 }
 
 /*
-void Chebyshev::tf2zpk(MatrixXC b, MatrixXC a, MatrixXC* zeros, MatrixXC* poles, Real* gain){
+void tf2zpk(MatrixXC b, MatrixXC a, MatrixXC* zeros, MatrixXC* poles, Real* gain){
   // Return zero, pole, gain (z,p,k) representation from a numerator,
   // denominator representation of a linear filter.
   (*gain) = b(0);
@@ -108,70 +97,3 @@ def zpk2tf(MatrixXC zeros, MatrixXC poles, Real gain, MatrixXC* b, MatrixXC* a):
     a = poly(p)
     return b, a
 */
-
-Chebyshev::Chebyshev(int channels, int order, Real rippleDB, Real samplerate) : _filter(channels)
-{
-  DEBUG("CHEBYSHEV: Constructor order: " << order << ", rippleDB: " << rippleDB << ", samplerate: " << samplerate);
-
-  if ( order < 1 ) {
-    // Throw an exception
-  }
-
-  if ( samplerate <= 0 ) {
-    // Throw an exception
-  }
-  
-  _channels = channels;
-  _order = order;
-  _rippleDB = rippleDB;
-  _samplerate = samplerate;
-
-  setup();
-  DEBUG("CHEBYSHEV: Constructed");
-}
-
-void Chebyshev::setup(){
-  DEBUG("CHEBYSHEV: Setting up...");
-  
-  MatrixXC zeros(1,1);
-  zeros.setZero();
-  
-  Real eps = sqrt(pow(10, (0.1 * _rippleDB) - 1.0));
-
-  MatrixXR n(1, _order + 1);
-  for ( int i = 0; i < n.cols(); i++ ) {
-    n(0, i) = i;
-  }
-  
-  Real mu = 1.0 / _order * log((1.0 + sqrt( 1 + eps * eps)) / eps);
-
-  MatrixXC theta = ((n * 2).cwise() - 1.0) / _order * M_PI / 2.0;
-
-  MatrixXC poles = -sinh(mu) * theta.cwise().sin() + Complex(0, 1) * cosh(mu) * theta.cwise().cos();
-
-  Complex gainComplex = 1.0;
-  for ( int i = 0; i < poles.cols(); i++ ) {
-    gainComplex *= -poles(0, i);
-  }
-
-  Real gain = gainComplex.real();
-  
-  if ( _order % 2 == 0 ) {
-    gain = gain / sqrt((1 + eps * eps));
-  }
-  
-  DEBUG("CHEBYSHEV: zeros:" << zeros );
-  DEBUG("CHEBYSHEV: poles:" << poles );
-  DEBUG("CHEBYSHEV: gain:" << gain );
-
-  DEBUG("CHEBYSHEV: Finished set up...");
-}
-
-void Chebyshev::process(MatrixXR samples, MatrixXR* filtered) {
-  _filter.process(samples, filtered);
-}
-
-void Chebyshev::reset(){
-  // Initial values
-  _filter.reset();
-}

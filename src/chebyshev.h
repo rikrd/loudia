@@ -38,10 +38,6 @@ public:
   void setup();
 
   void process(MatrixXR samples, MatrixXR* filtered);
-
-  void roots(MatrixXR poly, MatrixXC* roots);
-  void reverse(MatrixXC* in);
-  void reverse(MatrixXR* in);
   
   void reset();
 };
