@@ -20,6 +20,8 @@
 #ifndef TYPEDEFS_H
 #define TYPEDEFS_H
 
+#define EIGEN_MATRIXBASE_PLUGIN "MatrixBaseAddons.h"
+
 #include "debug.h"
 
 #include <Eigen/Core>

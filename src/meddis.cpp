@@ -24,23 +24,10 @@
 #include <iostream>
 #include "meddis.h"
 
-
-
-
-
 using namespace std;
 
 // import most common Eigen types 
 using namespace Eigen;
-
-// define a custom template unary functor
-template<typename Scalar>
-struct CwiseClipInfOp {
-  CwiseClipInfOp(const Scalar& inf) : m_inf(inf){}
-  const Scalar operator()(const Scalar& x) const { return x<m_inf ? m_inf : x; }
-  Scalar m_inf;
-};
-
 
   // Internal fixed constants
 const Real Meddis::M = 1.0;
@@ -95,11 +82,11 @@ void Meddis::process(MatrixXR samples, MatrixXR* output){
   for (uint i = 0; i < samples.rows(); ++i) {
     row.set(samples.row(i));
   
-    limitedSt.set(row.cwise() + A).unaryExpr(CwiseClipInfOp<Real>(Real(0.0)));
+    limitedSt.set(row.cwise() + A).max(0.0);
 
     kt.set((limitedSt * gdt).cwise() / (limitedSt.cwise() + B));
 
-    replenish.set(ydt * ((-q).cwise()+M)).unaryExpr(CwiseClipInfOp<Real>(Real(0.0)));
+    replenish.set(ydt * ((-q).cwise() + M)).max(0.0);
     eject.set(kt.cwise() * q);
     loss.set(ldt * c);
     reuptake.set(rdt * c);
@@ -114,7 +101,7 @@ void Meddis::process(MatrixXR samples, MatrixXR* output){
     (*output).row(i) = h * c;
     
     if(_substractSpont){
-     (*output).row(i) = ((*output).row(i) - spont).unaryExpr(CwiseClipInfOp<Real>(Real(0.0)));
+      (*output).row(i) = ((*output).row(i) - spont.row(0)).max(0.0);
     }
   } // for each row
 }
