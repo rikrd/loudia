@@ -19,11 +19,14 @@
 #ifndef PEAKPICK_H
 #define PEAKPICK_H
 
+#include "typedefs.h"
+#include "debug.h"
+
 #include <Eigen/Core>
 #include <Eigen/Array>
 #include <iostream>
 
-#include "typedefs.h"
+
 
 class PeakPick {
 protected:

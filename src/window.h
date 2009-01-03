@@ -19,11 +19,14 @@
 #ifndef WINDOW_H
 #define WINDOW_H
 
+#include "typedefs.h"
+#include "debug.h"
+
 #include <Eigen/Core>
 #include <Eigen/Array>
 #include <iostream>
 
-#include "typedefs.h"
+
 
 //using namespace std;
 

@@ -19,11 +19,14 @@
 #ifndef MEDDIS_H
 #define MEDDIS_H
 
+#include "typedefs.h"
+#include "debug.h"
+
 #include <Eigen/Core>
 #include <Eigen/Array>
 #include <iostream>
 
-#include "typedefs.h"
+
 
 //using namespace std;
 

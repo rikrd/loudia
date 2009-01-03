@@ -20,6 +20,9 @@
 #ifndef TYPEDEFS_H
 #define TYPEDEFS_H
 
+#include "typedefs.h"
+#include "debug.h"
+
 #include <Eigen/Core>
 #include <Eigen/Array>
 #include<cmath>
