@@ -23,8 +23,8 @@
 
 void roots(MatrixXR poly, MatrixXC* result);
 
-void reverse(MatrixXC* in);
+void reverseCols(MatrixXC* in);
 
-void reverse(MatrixXR* in);
+void reverseCols(MatrixXR* in);
 
 #endif  /* UTILS_H */
