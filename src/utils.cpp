@@ -64,17 +64,19 @@ void reverseCols(MatrixXR* in) {
   }
 }
 
-/*
-void tf2zpk(MatrixXC b, MatrixXC a, MatrixXC* zeros, MatrixXC* poles, Real* gain){
+
+void coeffsToZpk(MatrixXC b, MatrixXC a, MatrixXC* zeros, MatrixXC* poles, Complex* gain){
   // Return zero, pole, gain (z,p,k) representation from a numerator,
   // denominator representation of a linear filter.
-  (*gain) = b(0);
-  b /= b[0];
-  z = roots(b);
-  p = roots(a);
+  (*gain) = b(0, 0);
+  MatrixXC bTemp = b;
+  bTemp /= b(0, 0);
+  roots(bTemp, zeros);
+  roots(a, poles);
 }
 
-def zpk2tf(MatrixXC zeros, MatrixXC poles, Real gain, MatrixXC* b, MatrixXC* a):
+/*
+void zpkToCoeffs(MatrixXC zeros, MatrixXC poles, Real gain, MatrixXC* b, MatrixXC* a):
     """Return polynomial transfer function representation from zeros
     and poles
 
