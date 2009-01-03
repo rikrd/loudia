@@ -27,44 +27,66 @@
 
 #include "utils.h"
 
+
+/**
+ * Given a matrix of polynomes (one per row)
+ * returns a matrix of roots (a vector of roots per row)
+ */
 void roots(MatrixXR poly, MatrixXC* result) {
-  const int N = poly.cols();
+  const int coeffs = poly.cols();
   
-  if ( N <= 1 ) {
+  if ( coeffs <= 1 ) {
     // Throw error about wrong input length
   }
   
   // Prepare the output
-  (*result).resize(1, N-1);
+  (*result).resize(1, coeffs-1);
 
   // Build companion matrix and find its eigenvalues (the root)
-  MatrixXR A = MatrixXR::Zero(N - 1, N - 1);
-  A.corner( Eigen::BottomLeft, N - 2, N - 2).diagonal().setOnes();
-  A.row(0) = -poly.corner( Eigen::TopRight, 1, N - 1 ) / poly(0, 0);
+  MatrixXR A = MatrixXR::Zero(coeffs - 1, coeffs - 1);
+  A.corner( Eigen::BottomLeft, coeffs - 2, coeffs - 2).diagonal().setOnes();
+  A.row(0) = -poly.corner( Eigen::TopRight, 1, coeffs - 1 ) / poly(0, 0);
   
   // Get the eigen values
-  (*result).set(Eigen::EigenSolver<MatrixXR>(A).eigenvalues().transpose());
+  (*result) = Eigen::EigenSolver<MatrixXR>(A).eigenvalues().transpose();
   
   reverseCols(result);
 }
 
-void reverseCols(MatrixXC* in) { 
-  const int N = (*in).cols();
+/**
+ * Given a matrix of roots (a vector of roots per row)
+ * returns a matrix of polynomes (a polynome per vector of roots)
+ */
+void poly(MatrixXR roots, MatrixXC* result) {
+  const int nroots = roots.cols();
   
-  for(int i = 0; i < N / 2; i++ ){
-    (*in).col(i).swap((*in).col(N - i - 1));
+  // Prepare the output
+  (*result).resize(1, nroots + 1);
+}
+
+/**
+ * Reverse in place the order of the columns
+ */
+void reverseCols(MatrixXC* in) { 
+  const int cols = (*in).cols();
+  
+  for(int i = 0; i < cols / 2; i++ ){
+    (*in).col(i).swap((*in).col(cols - i - 1));
   }
 }
 
 void reverseCols(MatrixXR* in) {
-  const int N = (*in).cols();
+  const int cols = (*in).cols();
   
-  for(int i = 0; i < N / 2; i++ ){
-    (*in).col(i).swap((*in).col(N - i - 1));
+  for(int i = 0; i < cols / 2; i++ ){
+    (*in).col(i).swap((*in).col(cols - i - 1));
   }
 }
 
-
+/**
+ * Convert from the b and a coefficients of an IIR filter to the
+ * zeros, poles and gain of the filter
+ */
 void coeffsToZpk(MatrixXR b, MatrixXR a, MatrixXC* zeros, MatrixXC* poles, Real* gain){
   // Return zero, pole, gain (z,p,k) representation from a numerator,
   // denominator representation of a linear filter.
