@@ -29,18 +29,22 @@
 
 void roots(MatrixXR poly, MatrixXC* result) {
   const int N = poly.cols();
-  (*result).resize(N-1, 1);
   
-  if ( N > 1 ) {
-    // Build companion matrix and find its eigenvalues (the root)
-    MatrixXR A = MatrixXR::Zero(N - 1, N - 1);
-    A.corner( Eigen::BottomLeft, N - 2, N - 2).diagonal().setOnes();
-    A.row(0) = -poly.corner( Eigen::TopRight, 1, N - 1 ) / poly(0, 0);
-    
-    // Get the eigen values
-    (*result).set(Eigen::EigenSolver<MatrixXR>(A).eigenvalues());
+  if ( N <= 1 ) {
+    // Throw error about wrong input length
   }
+  
+  // Prepare the output
+  (*result).resize(1, N-1);
 
+  // Build companion matrix and find its eigenvalues (the root)
+  MatrixXR A = MatrixXR::Zero(N - 1, N - 1);
+  A.corner( Eigen::BottomLeft, N - 2, N - 2).diagonal().setOnes();
+  A.row(0) = -poly.corner( Eigen::TopRight, 1, N - 1 ) / poly(0, 0);
+  
+  // Get the eigen values
+  (*result).set(Eigen::EigenSolver<MatrixXR>(A).eigenvalues().transpose());
+  
   reverseCols(result);
 }
 
