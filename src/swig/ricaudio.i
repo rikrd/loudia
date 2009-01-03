@@ -28,6 +28,8 @@ import_array();
 #include "peakpick.h"
 #include "peakinterpolate.h"
 #include "chebyshev.h"
+
+#include "utils.h"
 %}
 
 %include "typemaps.i"
@@ -45,5 +47,7 @@ import_array();
 %include "peakpick.h"
 %include "peakinterpolate.h"
 %include "chebyshev.h"
+
+%include "utils.h"
 
 %module ricaudio
