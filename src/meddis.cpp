@@ -114,7 +114,7 @@ void Meddis::process(MatrixXR samples, MatrixXR* output){
     (*output).row(i) = h * c;
     
     if(_substractSpont){
-     (*output).row(i) = ((*output).row(i) - spont).unaryExpr(CwiseClipInfOp<Real>(Real(0.0)));
+      (*output).row(i) = ((*output).row(i) - spont).max( 0.0 ); //.unaryExpr(CwiseClipInfOp<Real>(Real(0.0)));
     }
   } // for each row
 }
