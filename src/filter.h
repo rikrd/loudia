@@ -19,11 +19,14 @@
 #ifndef FILTER_H
 #define FILTER_H
 
+#include "typedefs.h"
+#include "debug.h"
+
 #include <Eigen/Core>
 #include <Eigen/Array>
 #include <iostream>
 
-#include "typedefs.h"
+
 
 //using namespace std;
 

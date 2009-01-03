@@ -19,13 +19,16 @@
 #ifndef SPECTRALREASSIGNMENT_H
 #define SPECTRALREASSIGNMENT_H
 
+#include "typedefs.h"
+#include "debug.h"
+
 #include <Eigen/Core>
 #include <Eigen/Array>
 #include <iostream>
 
 #include "window.h"
 #include "fft.h"
-#include "typedefs.h"
+
 
 //using namespace std;
 

@@ -19,6 +19,9 @@
 #ifndef MFCC_H
 #define MFCC_H
 
+#include "typedefs.h"
+#include "debug.h"
+
 #include <Eigen/Core>
 #include <Eigen/Array>
 #include <iostream>
@@ -26,7 +29,7 @@
 #include "melbands.h"
 #include "dct.h"
 
-#include "typedefs.h"
+
 
 //using namespace std;
 

@@ -19,12 +19,15 @@
 #ifndef BANDS_H
 #define BANDS_H
 
+#include "typedefs.h"
+#include "debug.h"
+
 #include <Eigen/Core>
 #include <Eigen/Array>
 #include <iostream>
 #include <vector>
 
-#include "typedefs.h"
+
 
 // import most common Eigen types 
 //using namespace Eigen;

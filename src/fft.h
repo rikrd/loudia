@@ -19,13 +19,16 @@
 #ifndef FFT_H
 #define FFT_H
 
+#include "typedefs.h"
+#include "debug.h"
+
 #include <Eigen/Core>
 #include <Eigen/Array>
 #include <iostream>
 
 #include <fftw3.h>
 
-#include "typedefs.h"
+
 
 //using namespace std;
 

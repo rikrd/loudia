@@ -17,7 +17,10 @@
 */                                                                          
 
 #include "filter.h"
+
 #include "typedefs.h"
+#include "debug.h"
+
 #include <Eigen/Core>
 #include <iostream>
 

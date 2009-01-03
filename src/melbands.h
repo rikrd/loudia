@@ -19,13 +19,16 @@
 #ifndef MELBANDS_H
 #define MELBANDS_H
 
+#include "typedefs.h"
+#include "debug.h"
+
 #include <Eigen/Core>
 #include <Eigen/Array>
 #include <iostream>
 
 #include "bands.h"
 
-#include "typedefs.h"
+
 
 //using namespace std;
 

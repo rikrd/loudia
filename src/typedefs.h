@@ -20,19 +20,33 @@
 #ifndef TYPEDEFS_H
 #define TYPEDEFS_H
 
-#include<cmath>
+#include "debug.h"
 
-// Type for the Real values
+#include <Eigen/Core>
+#include <Eigen/Array>
+#include <cmath>
+
+// Types for scalar values
 typedef int Integer;
 typedef float Real;
 typedef std::complex< Real > Complex;
 
-// Normally used matrices
-typedef Eigen::Matrix< Integer, Eigen::Dynamic,Eigen::Dynamic > MatrixXI;
-typedef Eigen::Matrix< Real, Eigen::Dynamic,Eigen::Dynamic > MatrixXR;
-typedef Eigen::Matrix< Complex, Eigen::Dynamic,Eigen::Dynamic > MatrixXC;
+// Types for vector values
+typedef Eigen::Matrix< Integer, 1, Eigen::Dynamic > RowXI;
+typedef Eigen::Matrix< Real, 1, Eigen::Dynamic > RowXR;
+typedef Eigen::Matrix< Complex, 1, Eigen::Dynamic > RowXC;
 
-// Type for the matrices that come from scipy (these are RowMajor)
+typedef Eigen::Matrix< Integer, Eigen::Dynamic, 1 > ColXI;
+typedef Eigen::Matrix< Real, Eigen::Dynamic, 1 > ColXR;
+typedef Eigen::Matrix< Complex, Eigen::Dynamic, 1 > ColXC;
+
+// Types for matrix values
+typedef Eigen::Matrix< Integer, Eigen::Dynamic, Eigen::Dynamic > MatrixXI;
+typedef Eigen::Matrix< Real, Eigen::Dynamic, Eigen::Dynamic > MatrixXR;
+typedef Eigen::Matrix< Complex, Eigen::Dynamic, Eigen::Dynamic > MatrixXC;
+
+// Types for mapping Scipy matrices (these are RowMajor)
+typedef Eigen::Matrix< Integer, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor, Eigen::Dynamic, Eigen::Dynamic > MatrixXIscipy;
 typedef Eigen::Matrix< Real, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor, Eigen::Dynamic, Eigen::Dynamic > MatrixXRscipy;
 typedef Eigen::Matrix< Complex, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor, Eigen::Dynamic, Eigen::Dynamic > MatrixXCscipy;
 

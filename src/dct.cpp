@@ -16,14 +16,18 @@
 ** Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */                                                                          
 
+#include "typedefs.h"
+#include "debug.h"
+
 #include <Eigen/Core>
 #include <Eigen/Array>
 #include <iostream>
 #include <cmath>
 #include "dct.h"
 
-#include "debug.h"
-#include "typedefs.h"
+
+
+
 
 using namespace std;
 

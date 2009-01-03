@@ -19,11 +19,14 @@
 #ifndef PEAKINTERPOLATE_H
 #define PEAKINTERPOLATE_H
 
+#include "typedefs.h"
+#include "debug.h"
+
 #include <Eigen/Core>
 #include <Eigen/Array>
 #include <iostream>
 
-#include "typedefs.h"
+
 
 class PeakInterpolate {
 protected:
