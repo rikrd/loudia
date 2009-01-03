@@ -65,11 +65,11 @@ void reverseCols(MatrixXR* in) {
 }
 
 
-void coeffsToZpk(MatrixXC b, MatrixXC a, MatrixXC* zeros, MatrixXC* poles, Complex* gain){
+void coeffsToZpk(MatrixXR b, MatrixXR a, MatrixXC* zeros, MatrixXC* poles, Real* gain){
   // Return zero, pole, gain (z,p,k) representation from a numerator,
   // denominator representation of a linear filter.
   (*gain) = b(0, 0);
-  MatrixXC bTemp = b;
+  MatrixXR bTemp = b;
   bTemp /= b(0, 0);
   roots(bTemp, zeros);
   roots(a, poles);

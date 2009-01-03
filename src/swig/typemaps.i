@@ -175,3 +175,17 @@
 
   $result = SWIG_Python_AppendOutput($result, out_array);
 }
+
+%typemap(in, numinputs = 0) 
+         Real* (Real temp) {
+
+  $1 = &temp;
+
+}
+
+%typemap(argout) 
+         Real* {
+
+  // prepare resulting array
+  $result = SWIG_Python_AppendOutput($result, Py_BuildValue("f", *$1));
+}
