@@ -42,7 +42,8 @@ operator+(const Scalar& scalar, const MatrixBase<Derived>& mat) { return mat + s
 */
 
 #include "CwiseUnaryOps.h"
-const CwiseUnaryOp< CwiseMaxOp< Scalar >, Derived > max(const Scalar s) { return derived().unaryExpr( CwiseMaxOp< Scalar >( s ) ); }
+const CwiseUnaryOp< CwiseMaxOp< Scalar >, Derived > max(const Scalar s) const
+{ return derived().unaryExpr( CwiseMaxOp< Scalar >( s ) ); }
 
 
 
