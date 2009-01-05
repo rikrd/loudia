@@ -22,6 +22,8 @@
 
 #define EIGEN_MATRIXBASE_PLUGIN "MatrixBaseAddons.h"
 
+//#define EIGEN_DEFAULT_TO_ROW_MAJOR
+
 #include "debug.h"
 
 #include <Eigen/Core>
