@@ -46,8 +46,8 @@ protected:
 
   fftwf_plan _fftplan;
   
-  template <class F>
-  void process(F frames, MatrixXC* fft);
+  template <typename FrameMatrixType>
+  void process(FrameMatrixType frames, MatrixXC* fft);
 
 
 public:

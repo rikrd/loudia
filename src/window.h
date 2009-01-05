@@ -63,8 +63,8 @@ protected:
   MatrixXR blackmanHarris(int length);
   MatrixXR blackmanNuttall(int length);
 
-  template<class F, class W, class ScalarW>
-  void process(F frames, W* windowedFrames);
+  template<typename FrameMatrixType, typename WindowedMatrixType>
+  void process(FrameMatrixType frames, WindowedMatrixType* windowedFrames);
  
 public: 
   Window(int frameSize, WindowType windowType = RECTANGULAR);
