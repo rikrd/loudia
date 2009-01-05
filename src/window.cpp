@@ -26,10 +26,6 @@
 
 #include "window.h"
 
-
-
-
-
 using namespace std;
 
 // import most common Eigen types 
@@ -181,27 +177,27 @@ MatrixXR Window::blackmanNuttall(int length){
   return blackmanType(length, a0, a1, a2, a3);
 }
 
-template<class F, class W, class ScalarW>
-void Window::process(F frames, W* windowedFrames){
+template<typename FrameMatrixType, typename WindowedMatrixType>
+void Window::process(FrameMatrixType frames, WindowedMatrixType* windowedFrames){
   (*windowedFrames).resize(frames.rows(), _frameSize);
 
   for (int i = 0; i < frames.rows(); i++){
     // Process and set
-    (*windowedFrames).row(i) = (frames.cwise() * _window).template cast<ScalarW>();
+    (*windowedFrames).row(i) = (frames.cwise() * _window).template cast<typename WindowedMatrixType::Scalar>();
   }
 
 }
 
 void Window::process(MatrixXC frames, MatrixXC* windowedFrames){
-  process<MatrixXC, MatrixXC, Complex>(frames, windowedFrames);
+  process<MatrixXC, MatrixXC>(frames, windowedFrames);
 }
 
 void Window::process(MatrixXR frames, MatrixXC* windowedFrames){
-  process<MatrixXR, MatrixXC, Complex>(frames, windowedFrames);
+  process<MatrixXR, MatrixXC>(frames, windowedFrames);
 }
 
 void Window::process(MatrixXR frames, MatrixXR* windowedFrames){
-  process<MatrixXR, MatrixXR, Real>(frames, windowedFrames);
+  process<MatrixXR, MatrixXR>(frames, windowedFrames);
 }
 
 

@@ -65,8 +65,8 @@ void FFT::setup(){
   DEBUG("FFT: Finished set up...");
 }
 
-template<class F>
-void FFT::process(F frames, MatrixXC* ffts){
+template<typename FrameMatrixType>
+void FFT::process(FrameMatrixType frames, MatrixXC* ffts){
   (*ffts).resize(frames.rows(), _fftSize);
 
   for (int i = 0; i < frames.rows(); i++){    
