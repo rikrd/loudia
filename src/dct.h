@@ -32,17 +32,34 @@
 //using namespace Eigen;
 
 class DCT {
+public:
+  enum DCTType {
+    I = 0,
+    II = 1,
+    III = 2,
+    IV = 3,
+    OCTAVE = 4
+  };
+
 protected:
   // Internal parameters
   int _inputLength;
   int _dctLength;
   Real _scale;
 
+  DCTType _dctType;
+
   // Internal variables
   MatrixXR _dctMatrix;
-  
+
+  void type1Matrix(MatrixXR* dctMatrix);
+
+  void type2Matrix(MatrixXR* dctMatrix);
+
+  void typeOctaveMatrix(MatrixXR* dctMatrix);
+
 public:
-  DCT(int inputLength, int dctLength, bool scale = false);
+  DCT(int inputLength, int dctLength, bool scale = false, DCTType dctType = II);
 
   ~DCT();
 

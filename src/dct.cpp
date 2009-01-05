@@ -25,17 +25,13 @@
 #include <cmath>
 #include "dct.h"
 
-
-
-
-
 using namespace std;
 
 // import most common Eigen types 
 using namespace Eigen;
 
-DCT::DCT(int inputLength, int dctLength, bool scale) {
-  DEBUG("DCT: Construction inputLength: " << inputLength << ", dctLength: " << dctLength);
+DCT::DCT(int inputLength, int dctLength, bool scale, DCTType dctType) {
+  DEBUG("DCT: Construction inputLength: " << inputLength << ", dctLength: " << dctLength << ", dctType: " << dctType);
   
   if (inputLength < dctLength) {
     // TODO: Throw an exception since dctLength is the number of coefficients to output and it cannot output more
@@ -45,6 +41,8 @@ DCT::DCT(int inputLength, int dctLength, bool scale) {
   _inputLength = inputLength;
   _dctLength = dctLength;
   _scale = scale;
+
+  _dctType = dctType;
 
   setup();
 }
@@ -56,19 +54,71 @@ void DCT::setup(){
   DEBUG("DCT: Setting up...");
   _dctMatrix.resize(_inputLength, _inputLength);
 
-  Real norm = 1.0;
-  if ( _scale ) norm = sqrt(Real(2.0)/Real(_inputLength));
 
-  for(int i=0; i < _dctMatrix.rows(); i++){
-    for(int j=0; j < _dctMatrix.cols(); j++){
-      _dctMatrix(i,j) = norm * cos(Real(j) * M_PI / Real(_inputLength) * (Real(i) + Real(0.5)));
-    }
+  switch(_dctType) {
+  case I:
+    type1Matrix( &_dctMatrix );
+    break;
+
+  case II:
+    type2Matrix( &_dctMatrix );
+    break;
+
+  case OCTAVE:
+    typeOctaveMatrix( &_dctMatrix );
+    break;
+
   }
+
   
   reset();
   DEBUG("DCT: Finished setup.");
 }
 
+void DCT::type1Matrix(MatrixXR* dctMatrix) {
+  int length = (*dctMatrix).rows();
+
+  Real norm = 1.0;
+  if ( _scale ) norm = sqrt(Real(2.0)/Real(length - 1));
+  
+  for(int i=0; i < length; i++){
+    (*dctMatrix)(i, length - 1) = norm * 0.5 * pow(-1, i);
+    for(int j=1; j < length-1; j++){
+      (*dctMatrix)(i,j) = norm * cos(Real(j * i) * M_PI / Real(length - 1));
+    }
+  }
+
+  (*dctMatrix).col(0).setConstant(norm * 0.5);
+
+}
+
+void DCT::type2Matrix(MatrixXR* dctMatrix) {
+  int length = (*dctMatrix).rows();
+
+  Real norm = 1.0;
+  if ( _scale ) norm = sqrt(Real(2.0)/Real(length));
+  
+  for(int i=0; i < length; i++){
+    for(int j=0; j < length; j++){
+      (*dctMatrix)(i,j) = norm * cos(Real(j) * M_PI / Real(length) * (Real(i) + 0.5));
+    }
+  }
+}
+
+void DCT::typeOctaveMatrix(MatrixXR* dctMatrix) {
+  int length = (*dctMatrix).rows();
+
+  Real norm = 1.0;
+  if ( _scale ) norm = sqrt(2.0/Real(length));
+  
+  for(int i=0; i < length; i++){
+    for(int j=1; j < length; j++){
+      (*dctMatrix)(i,j) = norm * cos(Real(j) * M_PI / Real(2 * length) * (Real(2 * i - 1)));
+    }
+  }
+  
+  (*dctMatrix).col(0).setConstant( norm * sqrt(0.5) );
+}
 
 void DCT::process(MatrixXR input, MatrixXR* dctCoeffs){
   (*dctCoeffs).resize(input.rows(), _dctLength);
