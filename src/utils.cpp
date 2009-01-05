@@ -29,8 +29,8 @@
 
 
 /**
- * Given a matrix of polynomes (one per row)
- * returns a matrix of roots (a vector of roots per row)
+ * Given a matrix of polynomes (one per column)
+ * returns a matrix of roots (a vector of roots per column)
  */
 void roots(MatrixXR poly, MatrixXC* result) {
   const int coeffs = poly.cols();
@@ -40,21 +40,20 @@ void roots(MatrixXR poly, MatrixXC* result) {
   }
   
   // Prepare the output
-  (*result).resize(1, coeffs-1);
+  (*result).resize(coeffs - 1, 1);
 
-  // Build companion matrix and find its eigenvalues (the root)
-  MatrixXR A = MatrixXR::Zero(coeffs - 1, coeffs - 1);
-  A.corner( Eigen::BottomLeft, coeffs - 2, coeffs - 2).diagonal().setOnes();
-  A.row(0) = -poly.corner( Eigen::TopRight, 1, coeffs - 1 ) / poly(0, 0);
+  // Build companion matrix and find its eigenvalues (the roots)
+  MatrixXR companion(coeffs - 1, coeffs - 1);
+  companion.corner( Eigen::TopRight, coeffs - 2, 1 ).setZero();
+  companion.corner( Eigen::BottomLeft, coeffs - 2, coeffs - 2).setIdentity();
+  companion.row(0) = -poly.corner( Eigen::TopRight, 1, coeffs - 1 ) / poly(0, 0);
   
   // Get the eigen values
-  (*result) = Eigen::EigenSolver<MatrixXR>(A).eigenvalues().transpose();
-  
-  reverseCols(result);
+  (*result) = Eigen::EigenSolver<MatrixXR>(companion).eigenvalues();
 }
 
 /**
- * Given a matrix of roots (a vector of roots per row)
+ * Given a matrix of roots (a vector of roots per column)
  * returns a matrix of polynomes (a polynome per vector of roots)
  */
 void poly(MatrixXR roots, MatrixXC* result) {
