@@ -42,7 +42,7 @@ protected:
   MatrixXR _windowed;
   MatrixXC _ffted;
   MatrixXC _spectrum;
-  MatrixXC _unwrapped;
+  MatrixXR _unwrappedAngle;
 
 public:
   ODFComplex(int frameLength, int fftLength, Window::WindowType windowType = Window::RECTANGULAR, bool zeroPhase = true);

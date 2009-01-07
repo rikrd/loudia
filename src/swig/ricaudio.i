@@ -30,6 +30,7 @@ import_array();
 #include "peakpick.h"
 #include "peakinterpolate.h"
 #include "unwrap.h"
+#include "odfcomplex.h"
 
 using namespace std;
 %}
@@ -49,5 +50,6 @@ using namespace std;
 %include "peakpick.h"
 %include "peakinterpolate.h"
 %include "unwrap.h"
+%include "odfcomplex.h"
 
 %module ricaudio

@@ -36,7 +36,7 @@ ODFComplex::ODFComplex(int frameLength,
                        Window::WindowType windowType, 
                        bool zeroPhase) : _window(frameLength, windowType), 
                                          _fft(frameLength, fftLength, zeroPhase),
-                                         _unwrap(fftLength / 2) {
+                                         _unwrap((int)(fftLength / 2.0)) {
   
   DEBUG("ODFComplex: Constructor frameLength: " << frameLength << ", fftLength: " << fftLength);
   
@@ -72,15 +72,19 @@ void ODFComplex::process(MatrixXR samples, MatrixXR* odfValue){
   DEBUG("ODFComplex: Processing windowed");
 
   (*odfValue).resize(1, 1);
+  _spectrum.resize(samples.rows(), (int)ceil(_fftLength / 2.0));
 
   _window.process(samples, &_windowed);
 
   _fft.process(_windowed, &_ffted);
-
-  //_spectrum = _ffted.block(0, 0, _ffted.rows(), ceil(_ffted.cols() / 2));
   
-  //_unwrap.process(_spectrum, &_unwrapped);
+  _spectrum = _ffted.block(0, 0, _ffted.rows(), (int)ceil(_fftLength / 2.0));
 
+  _unwrap.process(_spectrum.angle().real().cast<Real>(), &_unwrappedAngle);
+
+  DEBUG("ODFComplex: Processing unwrappedAngle");
+  cout << _unwrappedAngle << endl;
+  
   //(*odfValue)(0, 0) = 0.0;
   DEBUG("ODFComplex: Finished Processing");
 }
