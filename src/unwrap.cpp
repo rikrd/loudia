@@ -48,20 +48,20 @@ void Unwrap::setup(){
 void Unwrap::process(MatrixXC input, MatrixXC* unwrapped){
   (*unwrapped).resize(input.rows(), input.cols());
   
-  if(input.rows <= 1){
+  if(input.rows() <= 1){
     (*unwrapped) = input;
   }
+  
+  _diff.resize(input.rows(), input.cols());
 
-  _diff.resize(input.rows()-1, input.cols());
-
-  _diff = input.angle().real().cast<Real>().block(0, 0, input.rows()-1, input.cols()) - input.angle().real().cast<Real>().block(1, 0, input.rows()-1, input.cols());
+  _diff << MatrixXR::Zero(1, input.cols()), input.angle().real().cast<Real>().block(0, 0, input.rows()-1, input.cols()) - input.angle().real().cast<Real>().block(1, 0, input.rows()-1, input.cols());
   
   MatrixXR _upsteps = _diff.cwise() > M_PI;
   MatrixXR _downsteps = _diff.cwise() < -M_PI;
 
-  MatrixXR _shift = _upsteps - _downsteps;
+  MatrixXC _shift = _upsteps - _downsteps;
 
-  (*unwrapped) = (_shift * (-2.0 * M_PI)).cwise() * input;
+  (*unwrapped) = input + (-2.0 * M_PI * _shift);
   DEBUG("UNWRAPPED: diff" << _diff);
 }
 
