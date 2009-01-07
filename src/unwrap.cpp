@@ -1,0 +1,70 @@
+/*                                                         
+** Copyright (C) 2008 Ricard Marxer <email@ricardmarxer.com>
+**                                                                  
+** This program is free software; you can redistribute it and/or modify
+** it under the terms of the GNU General Public License as published by
+** the Free Software Foundation; either version 2 of the License, or   
+** (at your option) any later version.                                 
+**                                                                     
+** This program is distributed in the hope that it will be useful,     
+** but WITHOUT ANY WARRANTY; without even the implied warranty of      
+** MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the       
+** GNU General Public License for more details.                        
+**                                                                     
+** You should have received a copy of the GNU General Public License   
+** along with this program; if not, write to the Free Software         
+** Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
+*/                                                                          
+
+#include "typedefs.h"
+#include "debug.h"
+
+#include <cmath>
+#include "unwrap.h"
+
+using namespace std;
+
+// import most common Eigen types 
+using namespace Eigen;
+
+Unwrap::Unwrap(int inputLength) {
+  DEBUG("Unwrap: Construction inputLength: " << inputLength);
+
+  _inputLength = inputLength;
+
+  setup();
+}
+
+Unwrap::~Unwrap(){}
+
+void Unwrap::setup(){
+  // Prepare the buffers
+  DEBUG("Unwrap: Setting up...");
+  
+  reset();
+  DEBUG("Unwrap: Finished setup.");
+}
+
+void Unwrap::process(MatrixXC input, MatrixXC* unwrapped){
+  (*unwrapped).resize(input.rows(), input.cols());
+  
+  if(input.rows <= 1){
+    (*unwrapped) = input;
+  }
+
+  _diff.resize(input.rows()-1, input.cols());
+
+  _diff = input.angle().real().cast<Real>().block(0, 0, input.rows()-1, input.cols()) - input.angle().real().cast<Real>().block(1, 0, input.rows()-1, input.cols());
+  
+  MatrixXR _upsteps = _diff.cwise() > M_PI;
+  MatrixXR _downsteps = _diff.cwise() < -M_PI;
+
+  MatrixXR _shift = _upsteps - _downsteps;
+
+  (*unwrapped) = (_shift * (-2.0 * M_PI)).cwise() * input;
+  DEBUG("UNWRAPPED: diff" << _diff);
+}
+
+void Unwrap::reset(){
+  // Initial values
+}

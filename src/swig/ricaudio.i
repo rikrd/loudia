@@ -29,6 +29,7 @@ import_array();
 #include "spectralreassignment.h"
 #include "peakpick.h"
 #include "peakinterpolate.h"
+#include "unwrap.h"
 
 using namespace std;
 %}
@@ -47,5 +48,6 @@ using namespace std;
 %include "spectralreassignment.h"
 %include "peakpick.h"
 %include "peakinterpolate.h"
+%include "unwrap.h"
 
 %module ricaudio
