@@ -59,10 +59,9 @@ void Unwrap::process(MatrixXC input, MatrixXC* unwrapped){
   MatrixXR _upsteps = _diff.cwise() > M_PI;
   MatrixXR _downsteps = _diff.cwise() < -M_PI;
 
-  MatrixXC _shift = _upsteps - _downsteps;
+  MatrixXC _shift = -2.0 * M_PI * (_upsteps - _downsteps);
 
-  (*unwrapped) = input + (-2.0 * M_PI * _shift);
-  DEBUG("UNWRAPPED: diff" << _diff);
+  (*unwrapped) = input + _shift;
 }
 
 void Unwrap::reset(){
