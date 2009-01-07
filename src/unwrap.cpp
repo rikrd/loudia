@@ -21,6 +21,7 @@
 
 #include <cmath>
 #include "unwrap.h"
+#include "utils.h"
 
 using namespace std;
 
@@ -46,22 +47,31 @@ void Unwrap::setup(){
 }
 
 void Unwrap::process(MatrixXR input, MatrixXR* unwrapped){
-  (*unwrapped).resize(input.rows(), input.cols());
+  const int rows = input.rows();
+  const int cols = input.cols();
+
+  (*unwrapped).resize(rows, cols);
   
   if(input.rows() <= 1){
     (*unwrapped) = input;
   }
+
+  _diff.resize(rows, cols);
+  _upsteps.resize(rows, cols);
+  _downsteps.resize(rows, cols);
+  _shift.resize(rows, cols);  
+
+  _diff << MatrixXR::Zero(1, cols), input.block(0, 0, rows-1, cols) - input.block(1, 0, rows-1, cols);
   
-  _diff.resize(input.rows(), input.cols());
+  _upsteps = (_diff.cwise() > M_PI).cast<Real>();
+  _downsteps = (_diff.cwise() < -M_PI).cast<Real>();
 
-  _diff << MatrixXR::Zero(1, input.cols()), input.cast<Real>().block(0, 0, input.rows()-1, input.cols()) - input.block(1, 0, input.rows()-1, input.cols());
-  
-  MatrixXR _upsteps = _diff.cwise() > M_PI;
-  MatrixXR _downsteps = _diff.cwise() < -M_PI;
+  rowCumsum(&_upsteps);
+  rowCumsum(&_downsteps);
 
-  MatrixXR _shift = _upsteps - _downsteps;
+  _shift =  _upsteps - _downsteps;
 
-  (*unwrapped) = input + (-2.0 * M_PI * _shift);
+  (*unwrapped) = input + (2.0 * M_PI * _shift);
 }
 
 void Unwrap::reset(){

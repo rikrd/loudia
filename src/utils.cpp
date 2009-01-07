@@ -74,6 +74,17 @@ void reverseCols(MatrixXC* in) {
   }
 }
 
+/**
+ * Calculate inplace the cumulative sum
+ */
+void rowCumsum(MatrixXR* in) { 
+  const int rows = (*in).rows();
+  
+  for(int i = 1; i < rows; i++ ){
+    (*in).row(i) += (*in).row(i-1);
+  }
+}
+
 void reverseCols(MatrixXR* in) {
   const int cols = (*in).cols();
   

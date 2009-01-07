@@ -27,6 +27,8 @@ void reverseCols(MatrixXC* in);
 
 void reverseCols(MatrixXR* in);
 
+void rowCumsum(MatrixXR* in);
+
 void coeffsToZpk(MatrixXR b, MatrixXR a, MatrixXC* zeros, MatrixXC* poles, Real* gain);
 
 #endif  /* UTILS_H */

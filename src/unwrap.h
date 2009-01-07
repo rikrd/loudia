@@ -25,6 +25,9 @@
 class Unwrap {
 protected:
   MatrixXR _diff;
+  MatrixXR _upsteps;
+  MatrixXR _downsteps;
+  MatrixXR _shift;
 
   int _inputLength;
 
@@ -35,7 +38,7 @@ public:
 
   void setup();
 
-  void process(MatrixXR fft, MatrixXR* unwrapped);
+  void process(MatrixXR theta, MatrixXR* unwrapped);
 
   void reset();
 };
