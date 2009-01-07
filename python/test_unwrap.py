@@ -3,10 +3,10 @@
 import ricaudio
 import scipy
 
-a = [[1,2,3,4,5,6,7,8,9],
-     [1+3j,2,3+4j,4,5,6,7,8,9]]
+a = [[1  , 2, 6, 4],
+     [1.2, 6, 2, 4]]
 
-d = ricaudio.Unwrap(9)
+d = ricaudio.Unwrap(4)
 b1 = d.process(a)
 
 # Use a different unwarp since scipy's is 2x slower

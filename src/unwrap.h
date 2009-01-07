@@ -35,7 +35,7 @@ public:
 
   void setup();
 
-  void process(MatrixXC fft, MatrixXC* unwrapped);
+  void process(MatrixXR fft, MatrixXR* unwrapped);
 
   void reset();
 };
