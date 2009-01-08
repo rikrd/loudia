@@ -154,23 +154,17 @@ def spectralPredictionError(vector, cursor):
     # Calculate the predicted complex fft
     predictMagnitude, predictPhase = predict(passedMags, passedPhases)
     predictFft = predictMagnitude * scipy.exp( predictPhase * j )
-
-    print predictFft
-    
+   
     # Calculate prediction error
     predictionError = distance(predictFft, passedFft[-1])
-
-    print predictionError
-    
+        
     # The energy should have the weight of the other bins
     weights = scipy.ones(predictionError.shape)
     weights[0] = 0.0
     
     # Integrate the prediction error of all bins
     predictionError = wmean(predictionError, weights)
-
-    print predictionError
-    
+        
     return predictionError
 
 print 'start scipy'
