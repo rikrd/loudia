@@ -85,12 +85,8 @@ void ODFComplex::process(MatrixXR samples, MatrixXR* odfValue) {
 
   _unwrap.process(_spectrum.angle().real().cast<Real>(), &_unwrappedAngle);
   
-  //cout << _spectrum << endl;
-  //cout << _spectrum.cwise().abs() << endl;
-  //cout << _unwrappedAngle << endl;
-  
   (*odfValue)(0, 0) = spectralDistanceEuclidean(_spectrum, _spectrum.cwise().abs(), _unwrappedAngle);
-
+  
   DEBUG("ODFComplex: Finished Processing");
 }
 
@@ -108,10 +104,10 @@ Real ODFComplex::spectralDistanceEuclidean(MatrixXC spectrum, MatrixXR spectrumA
   polar(spectrumAbs.row(rows - 2), 2.0*spectrumArg.row(rows - 2) - spectrumArg.row(rows - 3), &_spectrumPredict);
   
   _predictionError = (_spectrumPredict.row(0) - spectrum.row(rows - 1)).cwise().abs();
-
+  
   _predictionError(0,0) = 0.0;
   
-  return _predictionError.sum() / (cols-1);
+  return _predictionError.sum() / (cols-1) * sqrt(2.0);
 }
 
 Real ODFComplex::spectralDistanceEuclideanWeighted(MatrixXC spectrum, MatrixXR spectrumAbs, MatrixXR spectrumArg) {
@@ -127,12 +123,35 @@ Real ODFComplex::spectralDistanceEuclideanWeighted(MatrixXC spectrum, MatrixXR s
 
   polar(spectrumAbs.row(rows - 2), 2.0*spectrumArg.row(rows - 2) - spectrumArg.row(rows - 3), &_spectrumPredict);
 
-  _predictionError = ((_spectrumPredict.row(0) - spectrum.row(rows - 1)) * spectrumAbs.row(rows - 1)).cwise().abs();
+  _predictionError = ((_spectrumPredict.row(0) - spectrum.row(rows - 1)) * spectrumAbs.row(rows - 1)).cwise().abs() / spectrumAbs.row(rows - 1).sum();
 
   _predictionError(0,0) = 0.0;
   
-  return ((_spectrumPredict.row(0) - spectrum.row(rows - 1)) * spectrum.row(rows - 1).cwise().abs()).norm();
+  return _predictionError.sum() / (cols-1);
 }
+
+Real ODFComplex::spectralDistanceHypot(MatrixXC spectrum, MatrixXR spectrumAbs, MatrixXR spectrumArg) {
+  const int rows = spectrum.rows();
+  const int cols = spectrum.cols();
+  
+  if (rows < 3) {
+    // Throw not enough rows
+  }
+  
+  _spectrumPredict.resize(1, cols);
+  _predictionError.resize(1, cols);
+
+  polar(spectrumAbs.row(rows - 2), 2.0*spectrumArg.row(rows - 2) - spectrumArg.row(rows - 3), &_spectrumPredict);
+  
+  MatrixXR _predictionErrorReal = (_spectrumPredict.row(0) - spectrum.row(rows - 1)).real();
+  MatrixXR _predictionErrorImag = (_spectrumPredict.row(0) - spectrum.row(rows - 1)).imag();
+
+  
+  _predictionError(0,0) = 0.0;
+  
+  return _predictionError.sum() / (cols-1);
+}
+
 
 void ODFComplex::reset() {
   // Initial values

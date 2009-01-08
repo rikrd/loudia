@@ -36,7 +36,7 @@ elif predictMethod == 'lineal_lineal':
 else:
     raise RuntimeError, "The predict method selected is not implemented.  Please select one of the following: 'const_lineal' or 'lineal_lineal'."
 
-distanceMethod = 'euclidean'
+distanceMethod = 'hypot'
 if distanceMethod == 'euclidean':
     def distance(predictFft, currentFft):
         return scipy.hypot(currentFft.real - predictFft.real,
@@ -179,5 +179,5 @@ ffted = scipy.fft(a, 16)
 b2 = spectralPredictionError(ffted, 0)
 print 'end'
 
-print b2
 print b1[0,0]
+print b2
