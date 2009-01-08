@@ -44,7 +44,9 @@ protected:
   MatrixXC _spectrum;
   MatrixXC _unwrappedSpectrum;
   MatrixXR _unwrappedAngle;
-
+  MatrixXC _spectrumPredict;
+  MatrixXR _predictionError;
+  
   Real spectralDistanceEuclidean(MatrixXC spectrum, MatrixXR spectrumAbs, MatrixXR spectrumArg);
   Real spectralDistanceEuclideanWeighted(MatrixXC spectrum, MatrixXR spectrumAbs, MatrixXR spectrumArg);
 
