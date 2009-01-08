@@ -42,7 +42,11 @@ protected:
   MatrixXR _windowed;
   MatrixXC _ffted;
   MatrixXC _spectrum;
+  MatrixXC _unwrappedSpectrum;
   MatrixXR _unwrappedAngle;
+
+  Real spectralDistanceEuclidean(MatrixXC spectrum, MatrixXR spectrumAbs, MatrixXR spectrumArg);
+  Real spectralDistanceEuclideanWeighted(MatrixXC spectrum, MatrixXR spectrumAbs, MatrixXR spectrumArg);
 
 public:
   ODFComplex(int frameLength, int fftLength, Window::WindowType windowType = Window::RECTANGULAR, bool zeroPhase = true);

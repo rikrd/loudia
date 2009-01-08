@@ -26,6 +26,8 @@
 #include "fft.h"
 #include "unwrap.h"
 
+#include "utils.h"
+
 using namespace std;
 
 // import most common Eigen types 
@@ -55,7 +57,7 @@ ODFComplex::~ODFComplex() {
 }
 
 
-void ODFComplex::setup(){
+void ODFComplex::setup() {
   // Prepare the buffers
   DEBUG("ODFComplex: Setting up...");
 
@@ -64,16 +66,17 @@ void ODFComplex::setup(){
   _unwrap.setup();
 
   reset();
+
   DEBUG("ODFComplex: Finished set up...");
 }
 
 
-void ODFComplex::process(MatrixXR samples, MatrixXR* odfValue){
+void ODFComplex::process(MatrixXR samples, MatrixXR* odfValue) {
   DEBUG("ODFComplex: Processing windowed");
 
   (*odfValue).resize(1, 1);
   _spectrum.resize(samples.rows(), (int)ceil(_fftLength / 2.0));
-
+  
   _window.process(samples, &_windowed);
 
   _fft.process(_windowed, &_ffted);
@@ -81,15 +84,39 @@ void ODFComplex::process(MatrixXR samples, MatrixXR* odfValue){
   _spectrum = _ffted.block(0, 0, _ffted.rows(), (int)ceil(_fftLength / 2.0));
 
   _unwrap.process(_spectrum.angle().real().cast<Real>(), &_unwrappedAngle);
-
-  DEBUG("ODFComplex: Processing unwrappedAngle");
-  cout << _unwrappedAngle << endl;
   
-  //(*odfValue)(0, 0) = 0.0;
+  (*odfValue)(0, 0) = spectralDistanceEuclidean(_spectrum, _spectrum.cwise().abs(), _unwrappedAngle);
+
   DEBUG("ODFComplex: Finished Processing");
 }
 
-void ODFComplex::reset(){
+Real ODFComplex::spectralDistanceEuclidean(MatrixXC spectrum, MatrixXR spectrumAbs, MatrixXR spectrumArg) {
+  const int rows = spectrum.rows();
+  
+  if (rows < 3) {
+    // Throw not enough rows
+  }
+  
+  MatrixXC _spectrumPredict;
+  polar(spectrumAbs.row(rows - 2), 2.0*spectrumArg.row(rows - 2) - spectrumArg.row(rows - 3), &_spectrumPredict);
+  
+  return (_spectrumPredict.row(0) - spectrum.row(rows - 1)).norm();
+}
+
+Real ODFComplex::spectralDistanceEuclideanWeighted(MatrixXC spectrum, MatrixXR spectrumAbs, MatrixXR spectrumArg) {
+  const int rows = spectrum.rows();
+  
+  if (rows < 3) {
+    // Throw not enough rows
+  }
+  
+  MatrixXC _spectrumPredict;
+  polar(spectrumAbs.row(rows - 2), 2.0*spectrumArg.row(rows - 2) - spectrumArg.row(rows - 3), &_spectrumPredict);
+  
+  return ((_spectrumPredict.row(0) - spectrum.row(rows - 1)) * spectrum.row(rows - 1).cwise().abs()).norm();
+}
+
+void ODFComplex::reset() {
   // Initial values
   _window.reset();
   _fft.reset();
