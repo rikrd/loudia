@@ -33,7 +33,7 @@ using namespace Eigen;
 
 ODFComplex::ODFComplex(int fftLength) : _unwrap((int)(fftLength / 2.0)) {
   
-  DEBUG("ODFComplex: Constructor frameLength: " << frameLength << ", fftLength: " << fftLength);
+  DEBUG("ODFComplex: Constructor fftLength: " << fftLength);
   
   _fftLength = fftLength;
   
