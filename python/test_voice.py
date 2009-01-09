@@ -82,7 +82,7 @@ for frame in stream:
             
             
         if 'peak_mags' in processes:            
-            pylab.stem(peakLocs[0,:], spec[peakLocs[0,:]])
+            pylab.scatter(peakLocs[0,:], spec[peakLocs[0,:]], c='r')
             
             
         if 'phase' in processes:           
@@ -93,6 +93,8 @@ for frame in stream:
 
             
         if 'peak_phases' in processes:
-            pylab.stem(peakLocs[0,:], phase[peakLocs[0,:]])
+            pylab.scatter(peakLocs[0,:], phase[peakLocs[0,:]], c='r')
+
+            
             
 pylab.ioff()
