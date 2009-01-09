@@ -22,8 +22,6 @@
 #include <cmath>
 
 #include "odfcomplex.h"
-#include "window.h"
-#include "fft.h"
 #include "unwrap.h"
 
 #include "utils.h"
@@ -33,19 +31,11 @@ using namespace std;
 // import most common Eigen types 
 using namespace Eigen;
 
-ODFComplex::ODFComplex(int frameLength, 
-                       int fftLength, 
-                       Window::WindowType windowType, 
-                       bool zeroPhase) : _window(frameLength, windowType), 
-                                         _fft(frameLength, fftLength, zeroPhase),
-                                         _unwrap((int)(fftLength / 2.0)) {
+ODFComplex::ODFComplex(int fftLength) : _unwrap((int)(fftLength / 2.0)) {
   
   DEBUG("ODFComplex: Constructor frameLength: " << frameLength << ", fftLength: " << fftLength);
   
-  _frameLength = frameLength;
   _fftLength = fftLength;
-  _windowType = windowType;
-  _zeroPhase = zeroPhase;
   
   setup();
 }
@@ -61,8 +51,6 @@ void ODFComplex::setup() {
   // Prepare the buffers
   DEBUG("ODFComplex: Setting up...");
 
-  _window.setup();
-  _fft.setup();
   _unwrap.setup();
 
   reset();
@@ -71,17 +59,13 @@ void ODFComplex::setup() {
 }
 
 
-void ODFComplex::process(MatrixXR samples, MatrixXR* odfValue) {
+void ODFComplex::process(MatrixXC fft, MatrixXR* odfValue) {
   DEBUG("ODFComplex: Processing windowed");
 
   (*odfValue).resize(1, 1);
-  _spectrum.resize(samples.rows(), (int)ceil(_fftLength / 2.0));
+  _spectrum.resize(fft.rows(), (int)ceil(_fftLength / 2.0));
   
-  _window.process(samples, &_windowed);
-
-  _fft.process(_windowed, &_ffted);
-  
-  _spectrum = _ffted.block(0, 0, _ffted.rows(), (int)ceil(_fftLength / 2.0));
+  _spectrum = fft.block(0, 0, fft.rows(), (int)ceil(_fftLength / 2.0));
 
   _unwrap.process(_spectrum.angle().real().cast<Real>(), &_unwrappedAngle);
   
@@ -155,6 +139,5 @@ Real ODFComplex::spectralDistanceHypot(MatrixXC spectrum, MatrixXR spectrumAbs, 
 
 void ODFComplex::reset() {
   // Initial values
-  _window.reset();
-  _fft.reset();
+  _unwrap.reset();
 }

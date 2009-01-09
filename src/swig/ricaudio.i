@@ -31,6 +31,7 @@ import_array();
 #include "peakinterpolate.h"
 #include "unwrap.h"
 #include "odfcomplex.h"
+#include "onsetcomplex.h"
 
 using namespace std;
 %}
@@ -51,5 +52,6 @@ using namespace std;
 %include "peakinterpolate.h"
 %include "unwrap.h"
 %include "odfcomplex.h"
+%include "onsetcomplex.h"
 
 %module ricaudio

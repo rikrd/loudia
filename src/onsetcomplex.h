@@ -16,43 +16,43 @@
 ** Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */                                                                          
 
-#ifndef ODFCOMPLEX_H
-#define ODFCOMPLEX_H
+#ifndef ONSETCOMPLEX_H
+#define ONSETCOMPLEX_H
 
 #include "typedefs.h"
 #include "debug.h"
 
-#include "unwrap.h"
+#include "window.h"
+#include "fft.h"
+#include "odfcomplex.h"
 
-class ODFComplex {
+class OnsetComplex {
 protected:
   // Internal parameters
+  int _frameLength;
   int _fftLength;
+  bool _zeroPhase;
+  Window::WindowType _windowType;
   
   // Internal variables
-  Unwrap _unwrap;
+  Window _window;
+  FFT _fft;
+  ODFComplex _odf;
 
-  MatrixXC _spectrum;
-  MatrixXC _unwrappedSpectrum;
-  MatrixXR _unwrappedAngle;
-  MatrixXC _spectrumPredict;
-  MatrixXR _predictionError;
+  MatrixXR _windowed;
+  MatrixXC _ffted;
   
-  Real spectralDistanceEuclidean(MatrixXC spectrum, MatrixXR spectrumAbs, MatrixXR spectrumArg);
-  Real spectralDistanceEuclideanWeighted(MatrixXC spectrum, MatrixXR spectrumAbs, MatrixXR spectrumArg);
-  Real spectralDistanceHypot(MatrixXC spectrum, MatrixXR spectrumAbs, MatrixXR spectrumArg);
-
 public:
-  ODFComplex(int fftLength);
+  OnsetComplex(int frameLength, int fftLength, Window::WindowType windowType = Window::RECTANGULAR, bool zeroPhase = true);
 
-  ~ODFComplex();
+  ~OnsetComplex();
 
   void setup();
 
-  void process(MatrixXC fft, MatrixXR* odfValue);
+  void process(MatrixXR samples, MatrixXR* odfValue);
 
   void reset();
 
 };
 
-#endif  /* ODFCOMPLEX_H */
+#endif  /* ONSETCOMPLEX_H */
