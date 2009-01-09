@@ -31,7 +31,7 @@ stream = pyricaudio.sndfilereader({'filename': filename,
 
 stream = pyricaudio.window_ricaudio(stream, {'inputKey': 'samplesMono',
                                              'outputKey': 'windowed',
-                                             'windowType': 'blackmanharris'})
+                                             'windowType': 'hann'})
 
 stream = pyricaudio.fft_ricaudio(stream, {'inputKey': 'windowed',
                                           'outputKey': 'fft',
@@ -55,7 +55,8 @@ print subplots
 pylab.ion()
 
 if 'peak_mags' in all_processes:
-    peaker = ricaudio.PeakPick( plotSize / 3 )
+    minPeakWidth = 8 # bins for Hamming
+    peaker = ricaudio.PeakDetect( plotSize / 3, minPeakWidth )
 
 for frame in stream:
     fft = frame['fft'][:plotSize]
