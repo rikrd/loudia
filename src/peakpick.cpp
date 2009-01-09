@@ -19,16 +19,9 @@
 #include "typedefs.h"
 #include "debug.h"
 
-#include <Eigen/Core>
-#include <Eigen/Array>
-#include <iostream>
 #include <cmath>
 
 #include "peakpick.h"
-
-
-
-
 
 using namespace std;
 
@@ -73,6 +66,8 @@ void PeakPick::process(MatrixXC fft, MatrixXR* peakPositions, MatrixXR* peakMagn
     numPeaks = fft.cols();
   }
 
+  DEBUG("PEAKPICK: Processing, fft.shape: (" << fft.rows() << ", " << fft.cols() << ")");
+
   (*peakPositions).resize(fft.rows(), numPeaks);
   (*peakPositions).setConstant(-1);
 
@@ -80,6 +75,9 @@ void PeakPick::process(MatrixXC fft, MatrixXR* peakPositions, MatrixXR* peakMagn
   (*peakMagnitudes).setConstant(-1);
 
   _magnitudes.set(fft.cwise().abs());
+
+  DEBUG("PEAKPICK: Processing, _magnitudes.shape: (" << _magnitudes.rows() << ", " << _magnitudes.cols() << ")");
+
 
   for ( int j = 0 ; j < _magnitudes.rows(); j++){
     peakIndex = 0;
@@ -89,6 +87,10 @@ void PeakPick::process(MatrixXC fft, MatrixXR* peakPositions, MatrixXR* peakMagn
     postMagnitude = 0;
   
     for ( int i = -1; i < _magnitudes.row(j).cols() - 1; i++) {
+      if ( peakIndex >= _numPeaks ) {
+        break;
+      }
+
       pastMagnitude = magnitude;
       magnitude = postMagnitude;
       postMagnitude = _magnitudes( j, i + 1 );
