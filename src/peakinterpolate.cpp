@@ -19,16 +19,7 @@
 #include "typedefs.h"
 #include "debug.h"
 
-#include <Eigen/Core>
-#include <Eigen/Array>
-#include <iostream>
-#include <cmath>
-
 #include "peakinterpolate.h"
-
-
-
-
 
 using namespace std;
 

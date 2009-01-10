@@ -22,12 +22,6 @@
 #include "typedefs.h"
 #include "debug.h"
 
-#include <Eigen/Core>
-#include <Eigen/Array>
-#include <iostream>
-
-
-
 class PeakInterpolate {
 protected:
   // Internal parameters
