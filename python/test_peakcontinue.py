@@ -40,6 +40,7 @@ r_sine_trajpos, r_sine_trajmag = trajs.process(r_sine_mag, r_sine_peakipos, r_si
 print r_sine_mag
 print r_sine_peakpos
 print r_sine_peakmag
+print r_sine_trajpos, r_sine_trajmag
 
 import pylab
 pylab.hold(True)
