@@ -19,17 +19,10 @@
 #include "typedefs.h"
 #include "debug.h"
 
-#include <Eigen/Core>
-#include <Eigen/Array>
-#include <iostream>
 #include <cmath>
 #include <vector>
 
 #include "melbands.h"
-
-
-
-
 
 using namespace std;
 
