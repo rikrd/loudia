@@ -193,3 +193,63 @@
 
   $result = SWIG_Python_AppendOutput($result, out_array);
 }
+
+%typemap(out,
+         fragment="NumPy_Fragments") 
+         MatrixXR {
+  int dims[] = {($1).rows(), ($1).cols()};
+  PyObject * out_array = PyArray_FromDims(2, dims, PyArray_FLOAT);
+  
+  if (out_array == NULL){
+    PyErr_SetString(PyExc_ValueError,
+                    "Unable to create the output array.");
+    
+    return NULL;
+  }
+  
+  Real* out_data = (Real*)array_data(out_array);
+  Eigen::Map<MatrixXRscipy>(out_data, dims[0], dims[1]) = ($1);
+
+  $result = SWIG_Python_AppendOutput($result, out_array);
+  
+}
+
+%typemap(out,
+         fragment="NumPy_Fragments") 
+         MatrixXC {
+  int dims[] = {($1).rows(), ($1).cols()};
+  PyObject * out_array = PyArray_FromDims(2, dims, PyArray_CFLOAT);
+  
+  if (out_array == NULL){
+    PyErr_SetString(PyExc_ValueError,
+                    "Unable to create the output array.");
+    
+    return NULL;
+  }
+  
+  Complex* out_data = (Complex*)array_data(out_array);
+  Eigen::Map<MatrixXCscipy>(out_data, dims[0], dims[1]) = ($1);
+
+  $result = SWIG_Python_AppendOutput($result, out_array);
+  
+}
+
+%typemap(out,
+         fragment="NumPy_Fragments") 
+         MatrixXI {
+  int dims[] = {($1).rows(), ($1).cols()};
+  PyObject * out_array = PyArray_FromDims(2, dims, PyArray_INT);
+  
+  if (out_array == NULL){
+    PyErr_SetString(PyExc_ValueError,
+                    "Unable to create the output array.");
+    
+    return NULL;
+  }
+  
+  Integer* out_data = (Integer*)array_data(out_array);
+  Eigen::Map<MatrixXIscipy>(out_data, dims[0], dims[1]) = ($1);
+
+  $result = SWIG_Python_AppendOutput($result, out_array);
+  
+}
