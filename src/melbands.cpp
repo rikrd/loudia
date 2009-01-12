@@ -180,7 +180,8 @@ MatrixXR MelBands::linearToMelGreenwood1990(MatrixXR linearFreq) {
 }
 
 MatrixXR MelBands::melToLinearGreenwood1990(MatrixXR melFreq) {
-  return 165.4 * ((2.1 * melFreq).cwise().exp().cwise() - 1.0);
+  DEBUG("MELBANDS: Scaling (Greenwood 1990) melFreq: " << melFreq);
+  return 165.4 * ((melFreq * 2.1).cwise().exp().cwise() - 1.0);
 }
 
 
@@ -220,7 +221,7 @@ MatrixXR MelBands::melToLinearStevens1937(MatrixXR melFreq) {
  *
  */
 Real MelBands::linearToMelFant1968(Real linearFreq) {
-  return (1000.0 / log(2.0)) * log(1.0 + linearFreq/1000.0);
+  return (1000.0 / log(2.0)) * log(1.0 + linearFreq / 1000.0);
 }
 
 Real MelBands::melToLinearFant1968(Real melFreq) {
@@ -238,4 +239,20 @@ MatrixXR MelBands::melToLinearFant1968(MatrixXR melFreq) {
 void MelBands::reset(){
   // Initial values
   _bands.reset();
+}
+
+MatrixXI MelBands::starts() const {
+  return _bands.starts();
+}
+
+std::vector<MatrixXR> MelBands::weights() const {
+  return _bands.weights();
+}
+
+MatrixXR MelBands::weight(int band) const {
+  return _bands.weight( band );
+}
+
+int MelBands::bands() const {
+  return _bands.bands();
 }

@@ -25,7 +25,7 @@
 #include "bands.h"
 
 class MelBands {
-protected:
+public:
   Real _lowFreq;
   Real _highFreq;
   int _numBands;
@@ -60,6 +60,14 @@ public:
   void process(MatrixXR spectrum, MatrixXR* bands);
   
   void reset();
+
+  std::vector<MatrixXR> weights() const;
+
+  MatrixXR weight(int band) const;
+
+  MatrixXI starts() const;
+
+  int bands() const;
 };
 
 #endif  /* MELBANDS_H */

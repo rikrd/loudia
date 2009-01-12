@@ -55,7 +55,11 @@ public:
 
   std::vector<MatrixXR> weights() const;
 
+  MatrixXR weight(int band) const;
+
   MatrixXI starts() const;
+
+  int bands() const;
 
   void setStartsWeights(MatrixXI starts, std::vector<MatrixXR> weights);
 };
