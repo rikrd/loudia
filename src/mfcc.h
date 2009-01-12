@@ -22,19 +22,8 @@
 #include "typedefs.h"
 #include "debug.h"
 
-#include <Eigen/Core>
-#include <Eigen/Array>
-#include <iostream>
-
 #include "melbands.h"
 #include "dct.h"
-
-
-
-//using namespace std;
-
-// import most common Eigen types 
-//using namespace Eigen;
 
 class MFCC {
 protected:
