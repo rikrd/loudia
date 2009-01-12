@@ -41,13 +41,13 @@ protected:
   MatrixXR linearToMelGreenwood1990(MatrixXR linearFreq);
   MatrixXR melToLinearGreenwood1990(MatrixXR melFreq);
 
-  Real linearToMelRealStevens1937(Real linearFreq);
-  Real melToLinearRealStevens1937(Real melFreq);
+  Real linearToMelStevens1937(Real linearFreq);
+  Real melToLinearStevens1937(Real melFreq);
   MatrixXR linearToMelStevens1937(MatrixXR linearFreq);
   MatrixXR melToLinearStevens1937(MatrixXR melFreq);
 
-  Real linearToMelRealFant1968(Real linearFreq);
-  Real melToLinearRealFant1968(Real melFreq);
+  Real linearToMelFant1968(Real linearFreq);
+  Real melToLinearFant1968(Real melFreq);
   MatrixXR linearToMelFant1968(MatrixXR linearFreq);
   MatrixXR melToLinearFant1968(MatrixXR melFreq);
 

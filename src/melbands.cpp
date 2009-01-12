@@ -61,8 +61,8 @@ MelBands::MelBands(Real lowFreq, Real highFreq, int numBands, Real samplerate, i
 void MelBands::setup(){
   DEBUG("MELBANDS: Setting up...");
     
-  Real highMel = linearToMelRealStevens1937(_highFreq);
-  Real lowMel = linearToMelRealStevens1937(_lowFreq);
+  Real highMel = linearToMelGreenwood1990(_highFreq);
+  Real lowMel = linearToMelGreenwood1990(_lowFreq);
   
   DEBUG("MELBANDS: lowMel: " << lowMel << ", highMel: " << highMel);
 
@@ -74,7 +74,7 @@ void MelBands::setup(){
   for (int i=0; i<starts.rows(); i++) {
     starts(i, 0) = (Real(i) * stepMel + lowMel);
   }
-  MatrixXR startsLinear = melToLinearStevens1937(starts) * stepSpectrum;
+  MatrixXR startsLinear = melToLinearGreenwood1990(starts) * stepSpectrum;
 
   // center Mel frequencies of filters
   MatrixXR centers(_numBands, 1);
@@ -82,7 +82,7 @@ void MelBands::setup(){
     centers(i, 0) = (Real(i + 1) * stepMel + lowMel);
   }
 
-  MatrixXR centersLinear = melToLinearStevens1937(centers) * stepSpectrum;
+  MatrixXR centersLinear = melToLinearGreenwood1990(centers) * stepSpectrum;
 
   // stop Mel frequencies of filters
   MatrixXR stops(_numBands, 1);
@@ -90,7 +90,7 @@ void MelBands::setup(){
     stops(i, 0) = (Real(i + 2) * stepMel + lowMel);
   }
 
-  MatrixXR stopsLinear = melToLinearStevens1937(stops) * stepSpectrum;
+  MatrixXR stopsLinear = melToLinearGreenwood1990(stops) * stepSpectrum;
   
   // start bins of filters
   MatrixXi startBins = startsLinear.unaryExpr(CwiseCeilOp<Real>());
@@ -193,11 +193,11 @@ MatrixXR MelBands::melToLinearGreenwood1990(MatrixXR melFreq) {
  * Journal of the Acoustical Society of America, 8 (3), 185-190.
  *
  */
-Real MelBands::linearToMelRealStevens1937(Real linearFreq) {
+Real MelBands::linearToMelStevens1937(Real linearFreq) {
   return log((linearFreq / 700.0) + 1.0) * 1127.01048;
 }
 
-Real MelBands::melToLinearRealStevens1937(Real melFreq) {
+Real MelBands::melToLinearStevens1937(Real melFreq) {
   return (exp(melFreq / 1127.01048) - 1.0) * 700.0;
 }
 
@@ -219,11 +219,11 @@ MatrixXR MelBands::melToLinearStevens1937(MatrixXR melFreq) {
  * In B. Malmberg (Ed.), Manual of phonetics (pp. 173-177). Amsterdam: North-Holland.
  *
  */
-Real MelBands::linearToMelRealFant1968(Real linearFreq) {
+Real MelBands::linearToMelFant1968(Real linearFreq) {
   return (1000.0 / log(2.0)) * log(1.0 + linearFreq/1000.0);
 }
 
-Real MelBands::melToLinearRealFant1968(Real melFreq) {
+Real MelBands::melToLinearFant1968(Real melFreq) {
   return 1000.0 * (exp(melFreq * log(2.0) / 1000.0) - 1.0);
 }
 
