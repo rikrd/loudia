@@ -32,7 +32,7 @@ protected:
   MatrixXR _trajPositions, _trajMagnitudes;
   MatrixXR _pastTrajPositions, _pastTrajMagnitudes;
   
-  void createTrajectory(Real peakPos, Real peakMag,
+  bool createTrajectory(Real peakPos, Real peakMag,
                         MatrixXR* pastTrajPositions, MatrixXR* pastTrajMagnitudes,
                         MatrixXR* trajPositions, MatrixXR* trajMagnitudes,
                         int row);

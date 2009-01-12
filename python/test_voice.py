@@ -57,9 +57,13 @@ pylab.ion()
 if 'peak_mags' in all_processes:
     minPeakWidth = 8 # bins for Hamming
     peaker = ricaudio.PeakDetect( plotSize / 3, minPeakWidth )
+    tracker = ricaudio.PeakContinue( plotSize / 3, 3 )
+
+trajsLocs = []
+trajsMags = []
 
 for frame in stream:
-    fft = frame['fft'][:plotSize]
+    fft = scipy.array(frame['fft'][:plotSize], dtype = 'f4' )
     spec =  20.0 / scipy.log(10.0) * scipy.log(abs(fft) + 1e-7)
 
     if set(['phase', 'peak_phases']) | all_processes:
@@ -69,7 +73,12 @@ for frame in stream:
         fft = scipy.reshape(fft, (1, plotSize))
         peakLocs, peakMags =  peaker.process( fft )
         peakLocs = scipy.array(peakLocs, dtype = 'i4')
+        trajLocs, trajMags = tracker.process( fft, scipy.array(peakLocs, dtype='f4'), scipy.array(peakMags, dtype='f4') )
 
+        trajsLocs.append( trajLocs[0,:] )
+        trajsMags.append( trajMags[0,:] )
+
+    """ 
     for subplot, processes in subplots.items():
         pylab.subplot(subplotCount, 1, subplot)
         pylab.gca().clear()
@@ -95,7 +104,14 @@ for frame in stream:
             
         if 'peak_phases' in processes:
             pylab.scatter(peakLocs[0,:], phase[peakLocs[0,:]], c='r')
-
+    """
             
             
 pylab.ioff()
+
+
+trajsLocs = scipy.array( trajsLocs )
+trajsMags = scipy.array( trajsMags )
+pylab.plot( trajsLocs )
+
+pylab.show()

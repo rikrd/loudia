@@ -74,7 +74,7 @@ void PeakContinue::process(MatrixXC fft,
     for ( int i = 0 ; i < _pastTrajPositions.cols(); i++  ) {
 
       int posRow, posCol;
-      Real minFreqBinChange = (peakPositions.row(row).cwise() - _pastTrajPositions(row, i)).minCoeff(&posRow, &posCol);
+      Real minFreqBinChange = (peakPositions.row(row).cwise() - _pastTrajPositions(row, i)).cwise().abs().minCoeff(&posRow, &posCol);
       
       if (minFreqBinChange <= _maxFreqBinChange) {
         // A matching peak has been found
@@ -91,7 +91,9 @@ void PeakContinue::process(MatrixXC fft,
         DEBUG("PEAKCONTINUE: Processing 'No matching peaks' minFreqBinChange: " << minFreqBinChange);
         
         _pastTrajPositions(0, i) = numeric_limits<Real>::infinity();
-        _pastTrajMagnitudes(0, i) = numeric_limits<Real>::infinity();
+        //_pastTrajMagnitudes(0, i) = numeric_limits<Real>::infinity();
+        _pastTrajMagnitudes(0, i) = 0.0;
+
       }
       
     }
@@ -102,10 +104,14 @@ void PeakContinue::process(MatrixXC fft,
       Real mag = peakMagnitudes(row, i);
       
       if( ! isinf( pos ) ){
-        createTrajectory(pos, mag, 
-                         &_pastTrajPositions, &_pastTrajMagnitudes,
-                         trajPositions, trajMagnitudes,
-                         row);
+        bool created = createTrajectory(pos, mag, 
+                                        &_pastTrajPositions, &_pastTrajMagnitudes,
+                                        trajPositions, trajMagnitudes,
+                                        row);
+        
+        if (! created ){
+          DEBUG("PEAKCONTINUE: Processing the trajectory could not be created");
+        }
       }
       
     }
@@ -115,7 +121,7 @@ void PeakContinue::process(MatrixXC fft,
   DEBUG("PEAKCONTINUE: Finished Processing");
 }
 
-void PeakContinue::createTrajectory(Real peakPos, Real peakMag,
+bool PeakContinue::createTrajectory(Real peakPos, Real peakMag,
                                     MatrixXR* pastTrajPositions, MatrixXR* pastTrajMagnitudes,
                                     MatrixXR* trajPositions, MatrixXR* trajMagnitudes,
                                     int row) {
@@ -124,18 +130,21 @@ void PeakContinue::createTrajectory(Real peakPos, Real peakMag,
   Real maxPos = (*pastTrajPositions).row(row).maxCoeff(&maxRow, &maxCol);
 
   if ( isinf( maxPos ) ) {
-    DEBUG("MAXCOL: " << maxCol);
-    DEBUG("ROW: " << row);
+    //DEBUG("MAXCOL: " << maxCol);
+    //DEBUG("ROW: " << row);
     
     (*pastTrajPositions)(0, maxCol) = peakPos;
     (*pastTrajMagnitudes)(0, maxCol) = peakMag;
 
-    DEBUG("Past: ");
+    //DEBUG("Past: ");
 
     (*trajPositions)(row, maxCol) = peakPos;
     (*trajMagnitudes)(row, maxCol) = peakMag;
-    
+
+    return true;
   }
+
+  return false;
 }
 
 void PeakContinue::reset(){
