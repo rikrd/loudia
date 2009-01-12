@@ -9,11 +9,11 @@ import scipy
 filename = sys.argv[1]
 
 frameSize = 1024 / 44100.0
-frameStep = 512 / 44100.0
+frameStep = 256 / 44100.0
 
-fftSize = 1024
+fftSize = 2048
 
-analysisLimit = 10.0
+analysisLimit = 100.0
 
 # Creation of the pipeline        
 stream = pyricaudio.sndfilereader({'filename': filename,
@@ -31,7 +31,7 @@ stream = pyricaudio.sndfilereader({'filename': filename,
 
 stream = pyricaudio.window_ricaudio(stream, {'inputKey': 'samplesMono',
                                              'outputKey': 'windowed',
-                                             'windowType': 'hann'})
+                                             'windowType': 'blackmanharris'})
 
 stream = pyricaudio.fft_ricaudio(stream, {'inputKey': 'windowed',
                                           'outputKey': 'fft',
@@ -55,9 +55,10 @@ print subplots
 pylab.ion()
 
 if 'peak_mags' in all_processes:
-    minPeakWidth = 8 # bins for Hamming
+    minPeakWidth = 6 # bins for Hamming
     peaker = ricaudio.PeakDetect( plotSize / 3, minPeakWidth )
-    tracker = ricaudio.PeakContinue( plotSize / 3, 3 )
+    peakInterp = ricaudio.PeakInterpolate( )
+    tracker = ricaudio.PeakContinue( plotSize / 3, 4 )
 
 trajsLocs = []
 trajsMags = []
@@ -72,8 +73,13 @@ for frame in stream:
     if set(['peak_mags', 'peak_phases']) | all_processes:
         fft = scipy.reshape(fft, (1, plotSize))
         peakLocs, peakMags =  peaker.process( fft )
-        peakLocs = scipy.array(peakLocs, dtype = 'i4')
-        trajLocs, trajMags = tracker.process( fft, scipy.array(peakLocs, dtype='f4'), scipy.array(peakMags, dtype='f4') )
+        peakiLocs, peakiMags = peakInterp.process( fft,
+                                                   scipy.array(peakLocs, dtype='f4'),
+                                                   scipy.array(peakMags, dtype='f4'))
+        
+        trajLocs, trajMags = tracker.process( fft,
+                                              scipy.array(peakiLocs, dtype='f4'),
+                                              scipy.array(peakiMags, dtype='f4') )
 
         trajsLocs.append( trajLocs[0,:] )
         trajsMags.append( trajMags[0,:] )
@@ -109,9 +115,61 @@ for frame in stream:
             
 pylab.ioff()
 
-
+"""
 trajsLocs = scipy.array( trajsLocs )
 trajsMags = scipy.array( trajsMags )
-pylab.plot( trajsLocs )
 
+
+def extractTrajs(trajsLocs, trajsMags):
+    trajs = []
+    
+    for col in range(trajsLocs.shape[1]):
+        inTrack = False
+        trackInds = []
+        trackMags = []
+        trackPos = []
+        
+        for row in range(trajsLocs.shape[0]):
+            if not trajsMags[row, col] == 0:
+                inTrack = True
+                
+                trackInds.append( row )
+                trackMags.append( trajsMags[row, col] )
+                trackPos.append( trajsLocs[row, col] )
+            else:
+                if inTrack:
+                    
+                    trackInds = scipy.array(trackMags)
+                    trackMags = scipy.array(trackMags)
+                    trackPos = scipy.array(trackPos)
+                    trajs.append((trackInds, trackPos, trackMags))
+
+                inTrack = False
+                    
+                trackInds = []
+                trackMags = []
+                trackPos = []
+
+
+        if inTrack:
+            trackInds = scipy.array(trackMags)
+            trackMags = scipy.array(trackMags)
+            trackPos = scipy.array(trackPos)
+            trajs.append((trackInds, trackPos, trackMags))
+
+        
+
+    print len(trajs)
+    return trajs
+
+
+trajs = extractTrajs(trajsLocs, trajsMags)
+
+pylab.figure(2)
+for trajInds, trajPos, trajMags in trajs:
+    pylab.hold( True )
+    pylab.scatter( trajInds, trajPos )
+"""
+
+pylab.plot( trajsLocs )
 pylab.show()

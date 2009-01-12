@@ -78,7 +78,7 @@ void PeakContinue::process(MatrixXC fft,
       
       if (minFreqBinChange <= _maxFreqBinChange) {
         // A matching peak has been found
-        DEBUG("PEAKCONTINUE: Processing 'Matching peak' minFreqBinChange: " << minFreqBinChange);
+        DEBUG("PEAKCONTINUE: Processing 'Matching peak: " << posCol << "' minFreqBinChange: " << minFreqBinChange);
 
         (*trajPositions)(row, i) = peakPositions(row, posCol);
         (*trajMagnitudes)(row, i) = peakMagnitudes(row, posCol);
@@ -90,8 +90,12 @@ void PeakContinue::process(MatrixXC fft,
         // No matching peak has been found
         DEBUG("PEAKCONTINUE: Processing 'No matching peaks' minFreqBinChange: " << minFreqBinChange);
         
-        _pastTrajPositions(0, i) = numeric_limits<Real>::infinity();
+        //_pastTrajPositions(0, i) = numeric_limits<Real>::infinity();
         //_pastTrajMagnitudes(0, i) = numeric_limits<Real>::infinity();
+        (*trajPositions)(row, i) = _pastTrajPositions(0, i);
+        (*trajMagnitudes)(row, i) = 0.0;
+
+
         _pastTrajMagnitudes(0, i) = 0.0;
 
       }
