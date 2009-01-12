@@ -65,48 +65,52 @@ void PeakContinue::process(MatrixXC fft,
   (*trajPositions).resize(fft.rows(), _numTrajectories);
   (*trajMagnitudes).resize(fft.rows(), _numTrajectories);
   
-  (*trajPositions).set(MatrixXR::Constant(fft.rows(), _numTrajectories, -1));
-  (*trajMagnitudes).set(MatrixXR::Constant(fft.rows(), _numTrajectories, -1));
+  (*trajPositions).set(MatrixXR::Constant(fft.rows(), _numTrajectories, -1.0));
+  (*trajMagnitudes).set(MatrixXR::Constant(fft.rows(), _numTrajectories, -120.0));
 
   for ( int row = 0 ; row < fft.rows(); row++ ) {
 
     // Find the closest peak to each of the trajectories
     for ( int i = 0 ; i < _pastTrajPositions.cols(); i++  ) {
-
-      int posRow, posCol;
-      Real minFreqBinChange = (peakPositions.row(row).cwise() - _pastTrajPositions(row, i)).cwise().abs().minCoeff(&posRow, &posCol);
       
-      if (minFreqBinChange <= _maxFreqBinChange) {
-        // A matching peak has been found
-        DEBUG("PEAKCONTINUE: Processing 'Matching peak: " << posCol << "' minFreqBinChange: " << minFreqBinChange);
-
-        (*trajPositions)(row, i) = peakPositions(row, posCol);
-        (*trajMagnitudes)(row, i) = peakMagnitudes(row, posCol);
+      if( ! isinf( _pastTrajPositions(row, i) ) ) {
         
-        peakPositions(row, posCol) = numeric_limits<Real>::infinity();
-        peakMagnitudes(row, posCol) = numeric_limits<Real>::infinity();
-
-      } else {
-        // No matching peak has been found
-        DEBUG("PEAKCONTINUE: Processing 'No matching peaks' minFreqBinChange: " << minFreqBinChange);
+        int posRow, posCol;
+        Real minFreqBinChange = (peakPositions.row(row).cwise() - _pastTrajPositions(row, i)).cwise().abs().minCoeff(&posRow, &posCol);
         
-        //_pastTrajPositions(0, i) = numeric_limits<Real>::infinity();
-        //_pastTrajMagnitudes(0, i) = numeric_limits<Real>::infinity();
-        (*trajPositions)(row, i) = _pastTrajPositions(0, i);
-        (*trajMagnitudes)(row, i) = 0.0;
+        if (minFreqBinChange <= _maxFreqBinChange) {
+          // A matching peak has been found
+          DEBUG("PEAKCONTINUE: Processing 'Matching peak: " << posCol << "' minFreqBinChange: " << minFreqBinChange);
+          
+          (*trajPositions)(row, i) = peakPositions(row, posCol);
+          (*trajMagnitudes)(row, i) = peakMagnitudes(row, posCol);
+          
+          _pastTrajPositions(0, i) = (*trajPositions)(row, i);
+          _pastTrajMagnitudes(0, i) = (*trajMagnitudes)(row, i);
 
-
-        _pastTrajMagnitudes(0, i) = 0.0;
-
+          peakPositions(row, posCol) = numeric_limits<Real>::infinity();
+          peakMagnitudes(row, posCol) = numeric_limits<Real>::infinity();
+          
+        } else {
+          // No matching peak has been found
+          DEBUG("PEAKCONTINUE: Processing 'No matching peaks' minFreqBinChange: " << minFreqBinChange);
+          
+          //_pastTrajPositions(0, i) = numeric_limits<Real>::infinity();
+          //_pastTrajMagnitudes(0, i) = numeric_limits<Real>::infinity();
+          (*trajPositions)(row, i) = _pastTrajPositions(0, i);
+          (*trajMagnitudes)(row, i) = -120.0;
+          
+          _pastTrajMagnitudes(0, i) = -120.0;
+          
+        }
       }
-      
     }
-
+      
     // Find those peaks that haven't been assigned and create new trajectories
     for ( int i = 0; i < peakPositions.cols(); i++ ) {    
       Real pos = peakPositions(row, i);
       Real mag = peakMagnitudes(row, i);
-      
+        
       if( ! isinf( pos ) ){
         bool created = createTrajectory(pos, mag, 
                                         &_pastTrajPositions, &_pastTrajMagnitudes,
@@ -116,10 +120,8 @@ void PeakContinue::process(MatrixXC fft,
         if (! created ){
           DEBUG("PEAKCONTINUE: Processing the trajectory could not be created");
         }
-      }
-      
+      }  
     }
-    
   }
   
   DEBUG("PEAKCONTINUE: Finished Processing");

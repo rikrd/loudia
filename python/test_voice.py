@@ -8,12 +8,12 @@ import scipy
 
 filename = sys.argv[1]
 
-frameSize = 1024 / 44100.0
-frameStep = 256 / 44100.0
+frameSize = 2048 / 44100.0
+frameStep = 512 / 44100.0
 
 fftSize = 2048
 
-analysisLimit = 100.0
+analysisLimit = 1000.0
 
 # Creation of the pipeline        
 stream = pyricaudio.sndfilereader({'filename': filename,
@@ -39,6 +39,7 @@ stream = pyricaudio.fft_ricaudio(stream, {'inputKey': 'windowed',
                                           'fftLength': fftSize})
 
 
+interactivePlotting = False
 
 subplots = {1 : ['mag', 'peak_mags'],
             2 : ['phase', 'peak_phases']}
@@ -55,16 +56,18 @@ print subplots
 pylab.ion()
 
 if 'peak_mags' in all_processes:
-    minPeakWidth = 6 # bins for Hamming
-    peaker = ricaudio.PeakDetect( plotSize / 3, minPeakWidth )
+    minPeakWidth = 4 # bins for Hamming
+    maxFreqBinChange = 1 * fftSize / (frameSize * 44100)
+    
+    peaker = ricaudio.PeakDetect( 12, minPeakWidth )
     peakInterp = ricaudio.PeakInterpolate( )
-    tracker = ricaudio.PeakContinue( plotSize / 3, 4 )
+    tracker = ricaudio.PeakContinue( plotSize / 12, maxFreqBinChange )
 
 trajsLocs = []
 trajsMags = []
 
 for frame in stream:
-    fft = scipy.array(frame['fft'][:plotSize], dtype = 'f4' )
+    fft = scipy.array(frame['fft'][:plotSize])
     spec =  20.0 / scipy.log(10.0) * scipy.log(abs(fft) + 1e-7)
 
     if set(['phase', 'peak_phases']) | all_processes:
@@ -81,36 +84,40 @@ for frame in stream:
                                               scipy.array(peakiLocs, dtype='f4'),
                                               scipy.array(peakiMags, dtype='f4') )
 
+        
         trajsLocs.append( trajLocs[0,:] )
         trajsMags.append( trajMags[0,:] )
 
-    """ 
-    for subplot, processes in subplots.items():
-        pylab.subplot(subplotCount, 1, subplot)
-        pylab.gca().clear()
-        pylab.gca().set_autoscale_on(False)
-        
-        if 'mag' in processes:       
-            pylab.gca().set_xlim([0, plotSize])
-            pylab.gca().set_ylim([-100, 40])
-        
-            pylab.plot(spec)
-            
-            
-        if 'peak_mags' in processes:            
-            pylab.scatter(peakLocs[0,:], spec[peakLocs[0,:]], c='r')
-            
-            
-        if 'phase' in processes:           
-            pylab.gca().set_xlim([0, plotSize])
-            pylab.gca().set_ylim([-scipy.pi, scipy.pi])
-            
-            pylab.plot(phase)
+        peakPos = peakLocs[peakLocs > 0]
+        peakMags = peakMags[peakLocs > 0]
 
-            
-        if 'peak_phases' in processes:
-            pylab.scatter(peakLocs[0,:], phase[peakLocs[0,:]], c='r')
-    """
+    if interactivePlotting:
+        for subplot, processes in subplots.items():
+            pylab.subplot(subplotCount, 1, subplot)
+            pylab.gca().clear()
+            pylab.gca().set_autoscale_on(False)
+
+            if 'mag' in processes:       
+                pylab.gca().set_xlim([0, plotSize])
+                pylab.gca().set_ylim([-100, 40])
+
+                pylab.plot(spec)
+
+
+            if 'peak_mags' in processes:
+                pylab.scatter(peakPos, spec[scipy.array(peakPos, dtype='i4')], c='r')
+
+
+            if 'phase' in processes:           
+                pylab.gca().set_xlim([0, plotSize])
+                pylab.gca().set_ylim([-scipy.pi, scipy.pi])
+
+                pylab.plot(phase)
+
+
+            if 'peak_phases' in processes:
+                pylab.scatter(peakPos, phase[scipy.array(peakPos, dtype='i4')], c='r')
+    
             
             
 pylab.ioff()
@@ -171,5 +178,9 @@ for trajInds, trajPos, trajMags in trajs:
     pylab.scatter( trajInds, trajPos )
 """
 
+pylab.figure()
 pylab.plot( trajsLocs )
+
+pylab.figure()
+pylab.plot( trajsMags )
 pylab.show()
