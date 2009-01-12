@@ -18,8 +18,8 @@ f_c = m.melToLinearGreenwood1990( l )
 print scipy.allclose(f_c, f_m)
 
 f_m = [33.3]
-l = m.linearToMelGreenwood1990( f_m )
-f_c = m.melToLinearGreenwood1990( l )
+l = m.linearToMelMatrixGreenwood1990( f_m )
+f_c = m.melToLinearMatrixGreenwood1990( l )
 
 print scipy.allclose(f_c, f_m)
 

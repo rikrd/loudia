@@ -197,7 +197,13 @@
 %typemap(out,
          fragment="NumPy_Fragments") 
          MatrixXR {
+
+  cout << "AAAAAAAAAAAAAAAAAAAAAAAaaa" << endl;
+  cout << $1 << endl;
+  cout << "BBBBBBBBBBBBBBBBBBBBBBBbbb" << endl;
+
   int dims[] = {($1).rows(), ($1).cols()};
+
   PyObject * out_array = PyArray_FromDims(2, dims, PyArray_FLOAT);
   
   if (out_array == NULL){
@@ -210,13 +216,14 @@
   Real* out_data = (Real*)array_data(out_array);
   Eigen::Map<MatrixXRscipy>(out_data, dims[0], dims[1]) = ($1);
 
-  $result = SWIG_Python_AppendOutput($result, out_array);
+  $result = out_array;
   
 }
 
 %typemap(out,
          fragment="NumPy_Fragments") 
          MatrixXC {
+
   int dims[] = {($1).rows(), ($1).cols()};
   PyObject * out_array = PyArray_FromDims(2, dims, PyArray_CFLOAT);
   
@@ -230,13 +237,14 @@
   Complex* out_data = (Complex*)array_data(out_array);
   Eigen::Map<MatrixXCscipy>(out_data, dims[0], dims[1]) = ($1);
 
-  $result = SWIG_Python_AppendOutput($result, out_array);
+  $result = out_array;
   
 }
 
 %typemap(out,
          fragment="NumPy_Fragments") 
          MatrixXI {
+
   int dims[] = {($1).rows(), ($1).cols()};
   PyObject * out_array = PyArray_FromDims(2, dims, PyArray_INT);
   
@@ -250,6 +258,6 @@
   Integer* out_data = (Integer*)array_data(out_array);
   Eigen::Map<MatrixXIscipy>(out_data, dims[0], dims[1]) = ($1);
 
-  $result = SWIG_Python_AppendOutput($result, out_array);
+  $result = out_array;
   
 }
