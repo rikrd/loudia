@@ -36,6 +36,11 @@ protected:
 
   void triangleWindow(MatrixXR* window, Real start, Real stop, Real center = -1, Real height = Real(1.0));
 
+  Real linearToMelGreenwood1990(Real linearFreq);
+  Real melToLinearGreenwood1990(Real melFreq);
+  MatrixXR linearToMelGreenwood1990(MatrixXR linearFreq);
+  MatrixXR melToLinearGreenwood1990(MatrixXR melFreq);
+
   Real linearToMelRealStevens1937(Real linearFreq);
   Real melToLinearRealStevens1937(Real melFreq);
   MatrixXR linearToMelStevens1937(MatrixXR linearFreq);

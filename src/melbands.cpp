@@ -60,8 +60,10 @@ MelBands::MelBands(Real lowFreq, Real highFreq, int numBands, Real samplerate, i
 
 void MelBands::setup(){
   DEBUG("MELBANDS: Setting up...");
+    
   Real highMel = linearToMelRealStevens1937(_highFreq);
   Real lowMel = linearToMelRealStevens1937(_lowFreq);
+  
   DEBUG("MELBANDS: lowMel: " << lowMel << ", highMel: " << highMel);
 
   Real stepMel = (highMel - lowMel) / (_numBands + 1.0);
@@ -154,6 +156,33 @@ void MelBands::triangleWindow(MatrixXR* window, Real start, Real stop, Real cent
   
   DEBUG("MELBANDS: Triangle window created: [" << (*window).transpose() << "]");
 }
+
+
+/**
+ *
+ * Mel scales computed using the Greenwood function:
+ *
+ * Greenwood, DD. (1990)
+ * A cochlear frequency-position function for several species - 29 years later,
+ * Journal of the Acoustical Society of America, vol. 87, pp. 2592-2605.
+ *
+ */
+Real MelBands::linearToMelGreenwood1990(Real linearFreq) {
+  return log10((linearFreq / 165.4) + 1.0) / 2.1;
+}
+
+Real MelBands::melToLinearGreenwood1990(Real melFreq) {
+  return 165.4 * (pow(10.0, 2.1 * melFreq) - 1.0);
+}
+
+MatrixXR MelBands::linearToMelGreenwood1990(MatrixXR linearFreq) {
+  return ((linearFreq / 165.4).cwise() + 1.0).cwise().log() / (2.1 * log(10.0));
+}
+
+MatrixXR MelBands::melToLinearGreenwood1990(MatrixXR melFreq) {
+  return 165.4 * ((2.1 * melFreq).cwise().exp().cwise() - 1.0);
+}
+
 
 /**
  *
