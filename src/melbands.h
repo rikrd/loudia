@@ -22,18 +22,7 @@
 #include "typedefs.h"
 #include "debug.h"
 
-#include <Eigen/Core>
-#include <Eigen/Array>
-#include <iostream>
-
 #include "bands.h"
-
-
-
-//using namespace std;
-
-// import most common Eigen types 
-//using namespace Eigen;
 
 class MelBands {
 protected:
