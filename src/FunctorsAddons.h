@@ -44,6 +44,44 @@ struct ei_functor_traits<ei_scalar_floor_op<Scalar> >
 
 /**
  *
+ * expN(Scalar under) operator used for clipping
+ *
+ */
+template<typename Scalar> struct ei_scalar_exp_n_op {
+  // FIXME default copy constructors seems bugged with std::complex<>
+  inline ei_scalar_exp_n_op(const ei_scalar_exp_n_op& other) : m_base(other.m_base) { }
+  inline ei_scalar_exp_n_op(const Scalar& base) : m_base(base) {}
+  inline Scalar operator() (const Scalar& a) const { 
+    return ei_pow(m_base, a); 
+  }
+  const Scalar m_base;
+};
+template<typename Scalar>
+struct ei_functor_traits<ei_scalar_exp_n_op<Scalar> >
+{ enum { Cost = 5 * NumTraits<Scalar>::MulCost, PacketAccess = false }; };
+
+
+/**
+ *
+ * logN(Scalar under) operator used for clipping
+ *
+ */
+template<typename Scalar> struct ei_scalar_log_n_op {
+  // FIXME default copy constructors seems bugged with std::complex<>
+  inline ei_scalar_log_n_op(const ei_scalar_log_n_op& other) : m_log_base(other.m_log_base) { }
+  inline ei_scalar_log_n_op(const Scalar& base) : m_log_base(ei_log(base)) {}
+  inline Scalar operator() (const Scalar& a) const { 
+    return ei_log(a) / m_log_base; 
+  }
+  const Scalar m_log_base;
+};
+template<typename Scalar>
+struct ei_functor_traits<ei_scalar_log_n_op<Scalar> >
+{ enum { Cost = 5 * NumTraits<Scalar>::MulCost, PacketAccess = false }; };
+
+
+/**
+ *
  * clipUnder(Scalar under) operator used for clipping
  *
  */
