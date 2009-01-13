@@ -96,17 +96,12 @@ vector<MatrixXR> Bands::weights() const {
   return _weights;
 }
 
-MatrixXR Bands::weight(int band) const {
-  DEBUG("BANDS: weights.size(): " << _weights.size());
-  
-  return _weights[ band ];
+void Bands::bandWeights(int band, MatrixXR* bandWeights) const {
+  (*bandWeights).set( _weights[ band ] );
 }
 
-MatrixXi Bands::starts() const {
-  DEBUG("BANDS: _starts: ");
-  DEBUG(_starts);
-
-  return _starts;
+void Bands::starts(MatrixXI* result) const {
+  (*result).set(_starts);
 }
 
 void Bands::setStartsWeights(MatrixXI starts, std::vector<MatrixXR> weights) {

@@ -243,16 +243,16 @@ void MelBands::reset(){
   _bands.reset();
 }
 
-MatrixXI MelBands::starts() const {
-  return _bands.starts();
+void MelBands::starts(MatrixXI* result) const {
+  return _bands.starts( result );
 }
 
 std::vector<MatrixXR> MelBands::weights() const {
   return _bands.weights();
 }
 
-MatrixXR MelBands::weight(int band) const {
-  return _bands.weight( band );
+void MelBands::bandWeights(int band, MatrixXR* bandWeights) const {
+  return _bands.bandWeights( band, bandWeights );
 }
 
 int MelBands::bands() const {

@@ -168,6 +168,33 @@
 }
 
 %typemap(in, numinputs = 0) 
+         MatrixXI* (MatrixXI temp) {
+
+  $1 = &temp;
+
+}
+
+%typemap(argout) 
+         MatrixXI* {
+
+  // prepare resulting array
+  int dims[] = {(*$1).rows(), (*$1).cols()};
+  PyObject * out_array = PyArray_FromDims(2, dims, PyArray_INT);
+
+  if (out_array == NULL){
+    PyErr_SetString(PyExc_ValueError,
+                    "Unable to create the output array.");
+    
+    return NULL;
+  }
+  
+  Integer* out_data = (Integer*)array_data(out_array);
+  Eigen::Map<MatrixXIscipy>(out_data, dims[0], dims[1]) = (*$1);
+
+  $result = SWIG_Python_AppendOutput($result, out_array);
+}
+
+%typemap(in, numinputs = 0) 
          MatrixXC* (MatrixXC temp) {
 
   $1 = &temp;
