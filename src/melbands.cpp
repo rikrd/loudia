@@ -178,7 +178,7 @@ Real MelBands::melToLinearGreenwood1990(Real melFreq) {
 void MelBands::linearToMelMatrixGreenwood1990(MatrixXR linearFreq, MatrixXR* melFreq) {
   DEBUG("MELBANDS: Scaling (Greenwood 1990) linearFreq: " << linearFreq);
 
-  (*melFreq).set(((linearFreq / 165.4).cwise() + 1.0).cwise().log() / (2.1 * log(10.0)));
+  (*melFreq).set(((linearFreq / 165.4).cwise() + 1.0).cwise().logN(10.0) / 2.1);
 }
 
 void MelBands::melToLinearMatrixGreenwood1990(MatrixXR melFreq, MatrixXR* linearFreq) {
