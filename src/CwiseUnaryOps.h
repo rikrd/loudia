@@ -17,4 +17,12 @@ struct CwiseAngleOp {
   const Scalar operator()(const Scalar& x) const { return atan2(x.imag(), x.real()); }
 };
 
+
+template<typename Scalar>
+struct CwiseExpOp {
+  CwiseExpOp(const Scalar& other) : m_other(other){}
+  const Scalar operator()(const Scalar& x) const { return pow(m_other, x); }
+  Scalar m_other;
+};
+
 #endif // CWISEUNARYOPS_H
