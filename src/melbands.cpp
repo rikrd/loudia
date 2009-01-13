@@ -19,26 +19,12 @@
 #include "typedefs.h"
 #include "debug.h"
 
-#include <Eigen/Core>
-#include <Eigen/Array>
-#include <iostream>
 #include <cmath>
 #include <vector>
 
 #include "melbands.h"
 
-
-
-
-
 using namespace std;
-
-// define a custom template unary functor
-template<typename Scalar>
-struct CwiseCeilOp {
-  CwiseCeilOp(){}
-  const Scalar operator()(const Scalar& x) const { return ceil(x); }
-};
 
 // import most common Eigen types 
 using namespace Eigen;
@@ -67,8 +53,10 @@ MelBands::MelBands(Real lowFreq, Real highFreq, int numBands, Real samplerate, i
 
 void MelBands::setup(){
   DEBUG("MELBANDS: Setting up...");
-  Real highMel = linearToMelRealStevens1937(_highFreq);
-  Real lowMel = linearToMelRealStevens1937(_lowFreq);
+    
+  Real highMel = linearToMelGreenwood1990(_highFreq);
+  Real lowMel = linearToMelGreenwood1990(_lowFreq);
+  
   DEBUG("MELBANDS: lowMel: " << lowMel << ", highMel: " << highMel);
 
   Real stepMel = (highMel - lowMel) / (_numBands + 1.0);
@@ -79,7 +67,10 @@ void MelBands::setup(){
   for (int i=0; i<starts.rows(); i++) {
     starts(i, 0) = (Real(i) * stepMel + lowMel);
   }
-  MatrixXR startsLinear = melToLinearStevens1937(starts) * stepSpectrum;
+
+  MatrixXR startsLinear;
+  melToLinearMatrixGreenwood1990(starts, &startsLinear);
+  startsLinear *= stepSpectrum;
 
   // center Mel frequencies of filters
   MatrixXR centers(_numBands, 1);
@@ -87,7 +78,9 @@ void MelBands::setup(){
     centers(i, 0) = (Real(i + 1) * stepMel + lowMel);
   }
 
-  MatrixXR centersLinear = melToLinearStevens1937(centers) * stepSpectrum;
+  MatrixXR centersLinear;
+  melToLinearMatrixGreenwood1990(centers, &centersLinear);
+  centersLinear *= stepSpectrum;
 
   // stop Mel frequencies of filters
   MatrixXR stops(_numBands, 1);
@@ -95,13 +88,15 @@ void MelBands::setup(){
     stops(i, 0) = (Real(i + 2) * stepMel + lowMel);
   }
 
-  MatrixXR stopsLinear = melToLinearStevens1937(stops) * stepSpectrum;
+  MatrixXR stopsLinear;
+  melToLinearMatrixGreenwood1990(stops, &stopsLinear);
+  stopsLinear *= stepSpectrum;
   
   // start bins of filters
-  MatrixXi startBins = startsLinear.unaryExpr(CwiseCeilOp<Real>());
+  MatrixXi startBins = startsLinear.cwise().ceil();
 
   // stop bins of filters
-  MatrixXi stopBins = stopsLinear.unaryExpr(CwiseCeilOp<Real>());
+  MatrixXi stopBins = stopsLinear.cwise().ceil();
 
   std::vector<MatrixXR> weights;
 
@@ -162,6 +157,37 @@ void MelBands::triangleWindow(MatrixXR* window, Real start, Real stop, Real cent
   DEBUG("MELBANDS: Triangle window created: [" << (*window).transpose() << "]");
 }
 
+
+/**
+ *
+ * Mel scales computed using the Greenwood function:
+ *
+ * Greenwood, DD. (1990)
+ * A cochlear frequency-position function for several species - 29 years later,
+ * Journal of the Acoustical Society of America, vol. 87, pp. 2592-2605.
+ *
+ */
+Real MelBands::linearToMelGreenwood1990(Real linearFreq) {
+  return log10((linearFreq / 165.4) + 1.0) / 2.1;
+}
+
+Real MelBands::melToLinearGreenwood1990(Real melFreq) {
+  return 165.4 * (pow(10.0, 2.1 * melFreq) - 1.0);
+}
+
+void MelBands::linearToMelMatrixGreenwood1990(MatrixXR linearFreq, MatrixXR* melFreq) {
+  DEBUG("MELBANDS: Scaling (Greenwood 1990) linearFreq: " << linearFreq);
+
+  (*melFreq).set(((linearFreq / 165.4).cwise() + 1.0).cwise().logN(10.0) / 2.1);
+}
+
+void MelBands::melToLinearMatrixGreenwood1990(MatrixXR melFreq, MatrixXR* linearFreq) {
+  DEBUG("MELBANDS: Scaling (Greenwood 1990) melFreq: " << melFreq);
+
+  (*linearFreq).set(165.4 * ((melFreq * 2.1).cwise().exp().cwise() - 1.0));
+}
+
+
 /**
  *
  * Mel scales computed using the original formula proposed by:
@@ -171,20 +197,20 @@ void MelBands::triangleWindow(MatrixXR* window, Real start, Real stop, Real cent
  * Journal of the Acoustical Society of America, 8 (3), 185-190.
  *
  */
-Real MelBands::linearToMelRealStevens1937(Real linearFreq) {
+Real MelBands::linearToMelStevens1937(Real linearFreq) {
   return log((linearFreq / 700.0) + 1.0) * 1127.01048;
 }
 
-Real MelBands::melToLinearRealStevens1937(Real melFreq) {
+Real MelBands::melToLinearStevens1937(Real melFreq) {
   return (exp(melFreq / 1127.01048) - 1.0) * 700.0;
 }
 
-MatrixXR MelBands::linearToMelStevens1937(MatrixXR linearFreq) {
-  return ((linearFreq / 700.0).cwise() + 1.0).cwise().log() * 1127.01048;
+void MelBands::linearToMelMatrixStevens1937(MatrixXR linearFreq, MatrixXR* melFreq) {
+  (*melFreq).set(((linearFreq / 700.0).cwise() + 1.0).cwise().log() * 1127.01048);
 }
 
-MatrixXR MelBands::melToLinearStevens1937(MatrixXR melFreq) {
-  return ((melFreq / 1127.01048).cwise().exp().cwise() - 1.0) * 700.0;
+void MelBands::melToLinearMatrixStevens1937(MatrixXR melFreq, MatrixXR* linearFreq) {
+  (*linearFreq).set(((melFreq / 1127.01048).cwise().exp().cwise() - 1.0) * 700.0);
 }
 
 
@@ -197,23 +223,39 @@ MatrixXR MelBands::melToLinearStevens1937(MatrixXR melFreq) {
  * In B. Malmberg (Ed.), Manual of phonetics (pp. 173-177). Amsterdam: North-Holland.
  *
  */
-Real MelBands::linearToMelRealFant1968(Real linearFreq) {
-  return (1000.0 / log(2.0)) * log(1.0 + linearFreq/1000.0);
+Real MelBands::linearToMelFant1968(Real linearFreq) {
+  return (1000.0 / log(2.0)) * log(1.0 + linearFreq / 1000.0);
 }
 
-Real MelBands::melToLinearRealFant1968(Real melFreq) {
+Real MelBands::melToLinearFant1968(Real melFreq) {
   return 1000.0 * (exp(melFreq * log(2.0) / 1000.0) - 1.0);
 }
 
-MatrixXR MelBands::linearToMelFant1968(MatrixXR linearFreq) {
-  return (1000.0 / log(2.0)) * ((linearFreq / 1000.0).cwise() + 1.0).cwise().log();
+void MelBands::linearToMelMatrixFant1968(MatrixXR linearFreq, MatrixXR* melFreq) {
+  (*melFreq).set((1000.0 / log(2.0)) * ((linearFreq / 1000.0).cwise() + 1.0).cwise().log());
 }
 
-MatrixXR MelBands::melToLinearFant1968(MatrixXR melFreq) {
-  return 1000.0 * ((melFreq * log(2.0) / 1000.0).cwise().exp().cwise() - 1.0);
+void MelBands::melToLinearMatrixFant1968(MatrixXR melFreq, MatrixXR* linearFreq) {
+  (*linearFreq).set(1000.0 * ((melFreq * log(2.0) / 1000.0).cwise().exp().cwise() - 1.0));
 }
 
 void MelBands::reset(){
   // Initial values
   _bands.reset();
+}
+
+void MelBands::starts(MatrixXI* result) const {
+  return _bands.starts( result );
+}
+
+std::vector<MatrixXR> MelBands::weights() const {
+  return _bands.weights();
+}
+
+void MelBands::bandWeights(int band, MatrixXR* bandWeights) const {
+  return _bands.bandWeights( band, bandWeights );
+}
+
+int MelBands::bands() const {
+  return _bands.bands();
 }

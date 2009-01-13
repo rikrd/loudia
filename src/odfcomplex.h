@@ -1,5 +1,5 @@
 /*                                                         
-** Copyright (C) 2008 Ricard Marxer <email@ricardmarxer.com>
+** Copyright (C) 2008 Ricard Marxer <email@ricardmarxer.com.com>
 **                                                                  
 ** This program is free software; you can redistribute it and/or modify
 ** it under the terms of the GNU General Public License as published by
@@ -16,58 +16,43 @@
 ** Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */                                                                          
 
-#ifndef DCT_H
-#define DCT_H
+#ifndef ODFCOMPLEX_H
+#define ODFCOMPLEX_H
 
 #include "typedefs.h"
 #include "debug.h"
 
-#include <Eigen/Core>
-#include <Eigen/Array>
-#include <iostream>
+#include "unwrap.h"
 
-
-
-// import most common Eigen types 
-//using namespace Eigen;
-
-class DCT {
-public:
-  enum DCTType {
-    I = 0,
-    II = 1,
-    III = 2,
-    IV = 3,
-    OCTAVE = 4
-  };
-
+class ODFComplex {
 protected:
   // Internal parameters
-  int _inputLength;
-  int _dctLength;
-  Real _scale;
-
-  DCTType _dctType;
-
+  int _fftLength;
+  
   // Internal variables
-  MatrixXR _dctMatrix;
+  Unwrap _unwrap;
 
-  void type1Matrix(MatrixXR* dctMatrix);
-
-  void type2Matrix(MatrixXR* dctMatrix);
-
-  void typeOctaveMatrix(MatrixXR* dctMatrix);
+  MatrixXC _spectrum;
+  MatrixXC _unwrappedSpectrum;
+  MatrixXR _unwrappedAngle;
+  MatrixXC _spectrumPredict;
+  MatrixXR _predictionError;
+  
+  Real spectralDistanceEuclidean(MatrixXC spectrum, MatrixXR spectrumAbs, MatrixXR spectrumArg);
+  Real spectralDistanceEuclideanWeighted(MatrixXC spectrum, MatrixXR spectrumAbs, MatrixXR spectrumArg);
+  Real spectralDistanceHypot(MatrixXC spectrum, MatrixXR spectrumAbs, MatrixXR spectrumArg);
 
 public:
-  DCT(int inputLength, int dctLength, bool scale = false, DCTType dctType = OCTAVE);
+  ODFComplex(int fftLength);
 
-  ~DCT();
+  ~ODFComplex();
 
   void setup();
 
-  void process(MatrixXR input, MatrixXR* dctCoeffs);
+  void process(MatrixXC fft, MatrixXR* odfValue);
 
   void reset();
+
 };
 
-#endif  /* DCT_H */
+#endif  /* ODFCOMPLEX_H */

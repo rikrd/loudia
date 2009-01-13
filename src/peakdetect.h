@@ -16,58 +16,38 @@
 ** Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */                                                                          
 
-#ifndef DCT_H
-#define DCT_H
+#ifndef PEAKDETECT_H
+#define PEAKDETECT_H
 
 #include "typedefs.h"
 #include "debug.h"
 
-#include <Eigen/Core>
-#include <Eigen/Array>
 #include <iostream>
 
-
-
-// import most common Eigen types 
-//using namespace Eigen;
-
-class DCT {
-public:
-  enum DCTType {
-    I = 0,
-    II = 1,
-    III = 2,
-    IV = 3,
-    OCTAVE = 4
-  };
-
+class PeakDetect {
 protected:
   // Internal parameters
-  int _inputLength;
-  int _dctLength;
-  Real _scale;
-
-  DCTType _dctType;
-
+  int _numPeaks;
+  int _minPeakWidth;
+    
   // Internal variables
-  MatrixXR _dctMatrix;
-
-  void type1Matrix(MatrixXR* dctMatrix);
-
-  void type2Matrix(MatrixXR* dctMatrix);
-
-  void typeOctaveMatrix(MatrixXR* dctMatrix);
+  MatrixXR _magnitudes;
 
 public:
-  DCT(int inputLength, int dctLength, bool scale = false, DCTType dctType = OCTAVE);
+  PeakDetect(int numPeaks, int minPeakWidth = 0);
 
-  ~DCT();
+  ~PeakDetect();
 
   void setup();
 
-  void process(MatrixXR input, MatrixXR* dctCoeffs);
+  void process(MatrixXC fft, MatrixXR* peakPositions, MatrixXR* peakMagnitudes);
 
   void reset();
+
+  int numPeaks() const;
+
+  int minPeakWidth() const;
+
 };
 
-#endif  /* DCT_H */
+#endif  /* PEAKDETECT_H */

@@ -28,10 +28,6 @@
 #include "melbands.h"
 #include "dct.h"
 
-
-
-
-
 using namespace std;
 
 // import most common Eigen types 
@@ -88,7 +84,8 @@ void MFCC::process(MatrixXR spectrum, MatrixXR* mfccCoeffs){
     // On desensitizing the Mel-Cepstrum to spurious spectral components for Robust Speech Recognition
     // in Acoustics, Speech, and Signal Processing, 2005. Proceedings. 
     // IEEE International Conference on, vol. 1, 2005, pp. 529–532.
-    _bands = ((_bands.cwise() + _minSpectrum).cwise().log() / log(10.0)).cwise().pow(_power);
+    _bands = (_bands.cwise() + _minSpectrum).cwise().log() / log(10.0);
+    _bands = _bands.cwise().pow(_power);
     
     DEBUG("MFCC: Processing DCT");
     // Process the DCT

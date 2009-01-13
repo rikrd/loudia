@@ -17,6 +17,8 @@
 */                                                                          
 
 #define EIGEN_MATRIXBASE_PLUGIN "MatrixBaseAddons.h"
+#define EIGEN_CWISE_PLUGIN "CwiseAddons.h"
+#define EIGEN_FUNCTORS_PLUGIN "FunctorsAddons.h"
 
 #include <Eigen/Core>
 #include <Eigen/Array>
@@ -37,7 +39,7 @@ int main() {
   
   cout << "The maxed matrix:" << endl;
 
-  cout << m.max(0.4) << endl;
+  cout << m.cwise().clipUnder(0.4) << endl;
 
   cout << "-----------Test 2-------------" << endl;
 
@@ -47,7 +49,7 @@ int main() {
   
   cout << "The maxed first row:" << endl;
 
-  cout << m.row(0).max(0.4) << endl;
+  cout << m.row(0).cwise().clipUnder(0.4) << endl;
 
   cout << "-----------Test 3-------------" << endl;
 
@@ -57,6 +59,6 @@ int main() {
   
   cout << "The maxed first row, binary op:" << endl;
 
-  cout << (m.row(0) + n.row(0)).max(0.4) << endl;
+  cout << (m.row(0) + n.row(0)).cwise().clipUnder(0.4) << endl;
 
 }

@@ -21,52 +21,50 @@
 
 #include <cmath>
 
-#include "peakpick.h"
+#include "peakdetect.h"
 
 using namespace std;
 
 // import most common Eigen types 
 using namespace Eigen;
 
-PeakPick::PeakPick(int numPeaks) {
-  DEBUG("PEAKPICK: Constructor numPeaks: " << numPeaks);
+PeakDetect::PeakDetect(int numPeaks, int minPeakWidth) {
+  DEBUG("PEAKDETECT: Constructor numPeaks: " << numPeaks << ", minPeakWidth: " << minPeakWidth);
   
   _numPeaks = numPeaks;
+  _minPeakWidth = minPeakWidth;
 
   setup();
-  DEBUG("PEAKPICK: Constructed");
+  DEBUG("PEAKDETECT: Constructed");
 }
 
-PeakPick::~PeakPick() {
+PeakDetect::~PeakDetect() {
   // TODO: Here we should free the buffers
   // but I don't know how to do that with MatrixXR and MatrixXR
   // I'm sure Nico will...
 }
 
 
-void PeakPick::setup(){
+void PeakDetect::setup(){
   // Prepare the buffers
-  DEBUG("PEAKPICK: Setting up...");
+  DEBUG("PEAKDETECT: Setting up...");
 
   reset();
-  DEBUG("PEAKPICK: Finished set up...");
+
+  DEBUG("PEAKDETECT: Finished set up...");
 }
 
 
-void PeakPick::process(MatrixXC fft, MatrixXR* peakPositions, MatrixXR* peakMagnitudes){
-  DEBUG("PEAKPICK: Processing");
+void PeakDetect::process(MatrixXC fft, MatrixXR* peakPositions, MatrixXR* peakMagnitudes){
+  DEBUG("PEAKDETECT: Processing");
   int peakIndex;
   
-  Real magnitude;
-  Real pastMagnitude;
-  Real postMagnitude;
-
   int numPeaks = _numPeaks;
   if(numPeaks == -1){
     numPeaks = fft.cols();
   }
 
-  DEBUG("PEAKPICK: Processing, fft.shape: (" << fft.rows() << ", " << fft.cols() << ")");
+  DEBUG("PEAKDETECT: Processing, fft.shape: (" << fft.rows() << ", " << fft.cols() << ")");
 
   (*peakPositions).resize(fft.rows(), numPeaks);
   (*peakPositions).setConstant(-1);
@@ -76,39 +74,46 @@ void PeakPick::process(MatrixXC fft, MatrixXR* peakPositions, MatrixXR* peakMagn
 
   _magnitudes.set(fft.cwise().abs());
 
-  DEBUG("PEAKPICK: Processing, _magnitudes.shape: (" << _magnitudes.rows() << ", " << _magnitudes.cols() << ")");
+  DEBUG("PEAKDETECT: Processing, _magnitudes.shape: (" << _magnitudes.rows() << ", " << _magnitudes.cols() << ")");
 
-
-  for ( int j = 0 ; j < _magnitudes.rows(); j++){
+  int maxRow;
+  int maxCol;
+  RowXR band(_minPeakWidth);
+  
+  for ( int i = 0 ; i < _magnitudes.rows(); i++){
     peakIndex = 0;
     
-    magnitude = 0;
-    pastMagnitude = 0;
-    postMagnitude = 0;
-  
-    for ( int i = -1; i < _magnitudes.row(j).cols() - 1; i++) {
+    band.setZero();
+
+    for ( int j = (_minPeakWidth / 2); j < _magnitudes.row(i).cols() - (_minPeakWidth / 2); j++) {
       if ( peakIndex >= _numPeaks ) {
         break;
       }
 
-      pastMagnitude = magnitude;
-      magnitude = postMagnitude;
-      postMagnitude = _magnitudes( j, i + 1 );
-      
-      if ((magnitude > pastMagnitude) && (magnitude >= postMagnitude)) {
-        (*peakMagnitudes)(j, peakIndex) = magnitude;
-        (*peakPositions)(j, peakIndex) = i;
+      int inf = j - (_minPeakWidth / 2);
+
+      band = _magnitudes.row(i).segment(inf, _minPeakWidth);
+
+      band.maxCoeff( &maxRow, &maxCol );
+
+      if ( maxCol == floor(_minPeakWidth / 2) ) {
+        (*peakMagnitudes)(i, peakIndex) = _magnitudes(i, j);
+        (*peakPositions)(i, peakIndex) = j;
         peakIndex ++;
       }
     }
   }
-  DEBUG("PEAKPICK: Finished Processing");
+  DEBUG("PEAKDETECT: Finished Processing");
 }
 
-void PeakPick::reset(){
+void PeakDetect::reset(){
   // Initial values
 }
 
-int PeakPick::numPeaks() const {
+int PeakDetect::numPeaks() const {
   return _numPeaks;
+}
+
+int PeakDetect::minPeakWidth() const {
+  return _minPeakWidth;
 }

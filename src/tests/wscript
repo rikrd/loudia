@@ -8,9 +8,6 @@ def set_options(opt):
 def configure(conf):
 	conf.check_tool('g++')
         
-	conf.env.append_value('CXXFLAGS', '-O3 -fPIC -msse2 -DRICAUDIO_DEBUG')
-        conf.env.append_value('LINKFLAGS', '-lfftw3f')
-
 def build(bld):
         obj = bld.new_task_gen(
                 features = ['cxx', 'cprogram'],

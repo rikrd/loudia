@@ -32,6 +32,8 @@
  * Given a matrix of polynomes (one per column)
  * returns a matrix of roots (a vector of roots per column)
  */
+using namespace std;
+
 void roots(MatrixXR poly, MatrixXC* result) {
   const int coeffs = poly.cols();
   
@@ -86,6 +88,29 @@ void reverseCols(MatrixXR* in) {
  * Convert from the b and a coefficients of an IIR filter to the
  * zeros, poles and gain of the filter
  */
+void rowCumsum(MatrixXR* in) { 
+  const int rows = (*in).rows();
+  
+  for(int i = 1; i < rows; i++ ){
+    (*in).row(i) += (*in).row(i-1);
+  }
+}
+
+
+void polar(MatrixXR mag, MatrixXR phase, MatrixXC* complex) {
+  if ((mag.rows() != phase.rows()) || (mag.cols() != phase.cols())) {
+    // Throw an error
+  }
+
+  (*complex).resize(mag.rows(), mag.cols());
+
+  for(int i = 0; i < mag.rows(); i++){
+    for(int j = 0; j < mag.cols(); j++){
+      (*complex)(i, j) = polar(mag(i, j), phase(i, j));
+    }
+  }
+}
+
 void coeffsToZpk(MatrixXR b, MatrixXR a, MatrixXC* zeros, MatrixXC* poles, Real* gain){
   // Return zero, pole, gain (z,p,k) representation from a numerator,
   // denominator representation of a linear filter.

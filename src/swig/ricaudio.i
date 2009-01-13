@@ -26,8 +26,12 @@ import_array();
 #include "meddis.h"
 #include "spectralreassignment.h"
 #include "peakpick.h"
+#include "peakdetect.h"
 #include "peakinterpolate.h"
 #include "chebyshev.h"
+#include "unwrap.h"
+#include "odfcomplex.h"
+#include "onsetcomplex.h"
 
 #include "utils.h"
 %}
@@ -45,9 +49,12 @@ import_array();
 %include "meddis.h"
 %include "spectralreassignment.h"
 %include "peakpick.h"
+%include "peakdetect.h"
 %include "peakinterpolate.h"
 %include "chebyshev.h"
-
 %include "utils.h"
+%include "unwrap.h"
+%include "odfcomplex.h"
+%include "onsetcomplex.h"
 
 %module ricaudio

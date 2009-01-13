@@ -21,12 +21,16 @@
 #define TYPEDEFS_H
 
 #define EIGEN_MATRIXBASE_PLUGIN "MatrixBaseAddons.h"
+#define EIGEN_CWISE_PLUGIN "CwiseAddons.h"
+#define EIGEN_FUNCTORS_PLUGIN "FunctorsAddons.h"
+
+//#define EIGEN_DEFAULT_TO_ROW_MAJOR
 
 #include "debug.h"
 
+#include <cmath>
 #include <Eigen/Core>
 #include <Eigen/Array>
-#include <cmath>
 
 // Types for scalar values
 typedef int Integer;
@@ -48,8 +52,8 @@ typedef Eigen::Matrix< Real, Eigen::Dynamic, Eigen::Dynamic > MatrixXR;
 typedef Eigen::Matrix< Complex, Eigen::Dynamic, Eigen::Dynamic > MatrixXC;
 
 // Types for mapping Scipy matrices (these are RowMajor)
-typedef Eigen::Matrix< Integer, Eigen::Dynamic, Eigen::Dynamic, Eigen::Matrix_RowMajor, Eigen::Dynamic, Eigen::Dynamic > MatrixXIscipy;
-typedef Eigen::Matrix< Real, Eigen::Dynamic, Eigen::Dynamic, Eigen::Matrix_RowMajor, Eigen::Dynamic, Eigen::Dynamic > MatrixXRscipy;
-typedef Eigen::Matrix< Complex, Eigen::Dynamic, Eigen::Dynamic, Eigen::Matrix_RowMajor, Eigen::Dynamic, Eigen::Dynamic > MatrixXCscipy;
+typedef Eigen::Matrix< Integer, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor, Eigen::Dynamic, Eigen::Dynamic > MatrixXIscipy;
+typedef Eigen::Matrix< Real, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor, Eigen::Dynamic, Eigen::Dynamic > MatrixXRscipy;
+typedef Eigen::Matrix< Complex, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor, Eigen::Dynamic, Eigen::Dynamic > MatrixXCscipy;
 
 #endif // TYPEDEFS_H

@@ -21,12 +21,35 @@
 
 #include "typedefs.h"
 
+
+/**
+ * Given a matrix of polynomes (one per column)
+ * returns a matrix of roots (a vector of roots per column)
+ */
 void roots(MatrixXR poly, MatrixXC* result);
 
-void reverseCols(MatrixXC* in);
 
+/**
+ * Reverse in place the order of the columns
+ */
+void reverseCols(MatrixXC* in);
 void reverseCols(MatrixXR* in);
 
+
+/**
+ * Calculate inplace the cumulative sum
+ */
+void rowCumsum(MatrixXR* in);
+
+/**
+ * Create a matrix of complex numbers given the polar coordinates
+ */
+void polar(MatrixXR mag, MatrixXR phase, MatrixXC* complex);
+
+/**
+ * Convert from the b and a coefficients of an IIR filter to the
+ * zeros, poles and gain of the filter
+ */
 void coeffsToZpk(MatrixXR b, MatrixXR a, MatrixXC* zeros, MatrixXC* poles, Real* gain);
 
 #endif  /* UTILS_H */

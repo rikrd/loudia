@@ -16,58 +16,64 @@
 ** Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */                                                                          
 
-#ifndef DCT_H
-#define DCT_H
-
 #include "typedefs.h"
 #include "debug.h"
 
-#include <Eigen/Core>
-#include <Eigen/Array>
-#include <iostream>
+#include <cmath>
+#include "unwrap.h"
+#include "utils.h"
 
-
+using namespace std;
 
 // import most common Eigen types 
-//using namespace Eigen;
+using namespace Eigen;
 
-class DCT {
-public:
-  enum DCTType {
-    I = 0,
-    II = 1,
-    III = 2,
-    IV = 3,
-    OCTAVE = 4
-  };
+Unwrap::Unwrap(int inputLength) {
+  DEBUG("Unwrap: Construction inputLength: " << inputLength);
 
-protected:
-  // Internal parameters
-  int _inputLength;
-  int _dctLength;
-  Real _scale;
+  _inputLength = inputLength;
 
-  DCTType _dctType;
+  setup();
+}
 
-  // Internal variables
-  MatrixXR _dctMatrix;
+Unwrap::~Unwrap(){}
 
-  void type1Matrix(MatrixXR* dctMatrix);
+void Unwrap::setup(){
+  // Prepare the buffers
+  DEBUG("Unwrap: Setting up...");
+  
+  reset();
+  DEBUG("Unwrap: Finished setup.");
+}
 
-  void type2Matrix(MatrixXR* dctMatrix);
+void Unwrap::process(MatrixXR input, MatrixXR* unwrapped){
+  const int rows = input.rows();
+  const int cols = input.cols();
 
-  void typeOctaveMatrix(MatrixXR* dctMatrix);
+  (*unwrapped).resize(rows, cols);
+  
+  if(input.rows() <= 1){
+    (*unwrapped) = input;
+  }
 
-public:
-  DCT(int inputLength, int dctLength, bool scale = false, DCTType dctType = OCTAVE);
+  _diff.resize(rows, cols);
+  _upsteps.resize(rows, cols);
+  _downsteps.resize(rows, cols);
+  _shift.resize(rows, cols);  
 
-  ~DCT();
+  _diff << MatrixXR::Zero(1, cols), input.block(0, 0, rows-1, cols) - input.block(1, 0, rows-1, cols);
+  
+  _upsteps = (_diff.cwise() > M_PI).cast<Real>();
+  _downsteps = (_diff.cwise() < -M_PI).cast<Real>();
 
-  void setup();
+  rowCumsum(&_upsteps);
+  rowCumsum(&_downsteps);
 
-  void process(MatrixXR input, MatrixXR* dctCoeffs);
+  _shift =  _upsteps - _downsteps;
 
-  void reset();
-};
+  (*unwrapped) = input + (2.0 * M_PI * _shift);
+}
 
-#endif  /* DCT_H */
+void Unwrap::reset(){
+  // Initial values
+}

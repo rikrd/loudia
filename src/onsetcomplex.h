@@ -1,5 +1,5 @@
 /*                                                         
-** Copyright (C) 2008 Ricard Marxer <email@ricardmarxer.com>
+** Copyright (C) 2008 Ricard Marxer <email@ricardmarxer.com.com>
 **                                                                  
 ** This program is free software; you can redistribute it and/or modify
 ** it under the terms of the GNU General Public License as published by
@@ -16,58 +16,43 @@
 ** Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */                                                                          
 
-#ifndef DCT_H
-#define DCT_H
+#ifndef ONSETCOMPLEX_H
+#define ONSETCOMPLEX_H
 
 #include "typedefs.h"
 #include "debug.h"
 
-#include <Eigen/Core>
-#include <Eigen/Array>
-#include <iostream>
+#include "window.h"
+#include "fft.h"
+#include "odfcomplex.h"
 
-
-
-// import most common Eigen types 
-//using namespace Eigen;
-
-class DCT {
-public:
-  enum DCTType {
-    I = 0,
-    II = 1,
-    III = 2,
-    IV = 3,
-    OCTAVE = 4
-  };
-
+class OnsetComplex {
 protected:
   // Internal parameters
-  int _inputLength;
-  int _dctLength;
-  Real _scale;
-
-  DCTType _dctType;
-
+  int _frameLength;
+  int _fftLength;
+  bool _zeroPhase;
+  Window::WindowType _windowType;
+  
   // Internal variables
-  MatrixXR _dctMatrix;
+  Window _window;
+  FFT _fft;
+  ODFComplex _odf;
 
-  void type1Matrix(MatrixXR* dctMatrix);
-
-  void type2Matrix(MatrixXR* dctMatrix);
-
-  void typeOctaveMatrix(MatrixXR* dctMatrix);
-
+  MatrixXR _windowed;
+  MatrixXC _ffted;
+  
 public:
-  DCT(int inputLength, int dctLength, bool scale = false, DCTType dctType = OCTAVE);
+  OnsetComplex(int frameLength, int fftLength, Window::WindowType windowType = Window::RECTANGULAR, bool zeroPhase = true);
 
-  ~DCT();
+  ~OnsetComplex();
 
   void setup();
 
-  void process(MatrixXR input, MatrixXR* dctCoeffs);
+  void process(MatrixXR samples, MatrixXR* odfValue);
 
   void reset();
+
 };
 
-#endif  /* DCT_H */
+#endif  /* ONSETCOMPLEX_H */

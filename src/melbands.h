@@ -22,21 +22,12 @@
 #include "typedefs.h"
 #include "debug.h"
 
-#include <Eigen/Core>
-#include <Eigen/Array>
-#include <iostream>
+#include <Eigen/StdVector>
 
 #include "bands.h"
 
-
-
-//using namespace std;
-
-// import most common Eigen types 
-//using namespace Eigen;
-
 class MelBands {
-protected:
+public:
   Real _lowFreq;
   Real _highFreq;
   int _numBands;
@@ -47,15 +38,20 @@ protected:
 
   void triangleWindow(MatrixXR* window, Real start, Real stop, Real center = -1, Real height = Real(1.0));
 
-  Real linearToMelRealStevens1937(Real linearFreq);
-  Real melToLinearRealStevens1937(Real melFreq);
-  MatrixXR linearToMelStevens1937(MatrixXR linearFreq);
-  MatrixXR melToLinearStevens1937(MatrixXR melFreq);
+  Real linearToMelGreenwood1990(Real linearFreq);
+  Real melToLinearGreenwood1990(Real melFreq);
+  void linearToMelMatrixGreenwood1990(MatrixXR linearFreq, MatrixXR* melFreq);
+  void melToLinearMatrixGreenwood1990(MatrixXR melFreq, MatrixXR* linearFreq);
 
-  Real linearToMelRealFant1968(Real linearFreq);
-  Real melToLinearRealFant1968(Real melFreq);
-  MatrixXR linearToMelFant1968(MatrixXR linearFreq);
-  MatrixXR melToLinearFant1968(MatrixXR melFreq);
+  Real linearToMelStevens1937(Real linearFreq);
+  Real melToLinearStevens1937(Real melFreq);
+  void linearToMelMatrixStevens1937(MatrixXR linearFreq, MatrixXR* melFreq);
+  void melToLinearMatrixStevens1937(MatrixXR melFreq, MatrixXR* linearFreq);
+
+  Real linearToMelFant1968(Real linearFreq);
+  Real melToLinearFant1968(Real melFreq);
+  void linearToMelMatrixFant1968(MatrixXR linearFreq, MatrixXR* melFreq);
+  void melToLinearMatrixFant1968(MatrixXR melFreq, MatrixXR* linearFreq);
 
 
 public:
@@ -66,6 +62,14 @@ public:
   void process(MatrixXR spectrum, MatrixXR* bands);
   
   void reset();
+
+  std::vector<MatrixXR> weights() const;
+
+  void bandWeights(int band, MatrixXR* bandWeights) const;
+
+  void starts(MatrixXI* result) const;
+
+  int bands() const;
 };
 
 #endif  /* MELBANDS_H */
