@@ -61,9 +61,71 @@ void roots(MatrixXR poly, MatrixXC* result) {
 void poly(MatrixXR roots, MatrixXC* result) {
   const int nroots = roots.cols();
   
+  MatrixXC newA;
+  MatrixXC a = MatrixXR::Zero(1, 1);
+  MatrixXR b(1, 2);
+
+  for ( int i = 0; i < nroots; i++) {
+    b << 1 , -roots(0, i);
+    convolve(a, b, &newA);
+    a.set(newA);
+  }
+  
   // Prepare the output
   (*result).resize(1, nroots + 1);
 }
+
+
+/**
+ * Given two row matrices 
+ * returns the convolution of both
+ */
+void convolve(MatrixXC a, MatrixXC b, MatrixXC* c) {
+  const int asize = a.cols();
+  const int bsize = b.cols();
+
+  const int csize = asize + bsize - 1;
+  
+  const int rows = a.rows();
+
+  if ( b.rows() != rows ) {
+    // Throw an error the two inputs must have the same number of rows
+  }
+
+  // Prepare the output
+  (*c).resize( rows, csize );
+
+  Complex s;
+
+  int acol = 0;
+  int bcol = 0;
+  for ( int row = 0 ; row < rows ; row++ ) {
+
+    for ( int ccol = 0 ; ccol < csize ; ccol++ ) {
+      s = 0.0;
+      
+      int n_lo = 0 > (ccol - bsize + 1) ? 0 : ccol - bsize + 1;
+      
+      int n_hi = asize - 1 < ccol ? asize - 1 : ccol;
+      
+      acol = n_lo;
+      
+      bcol = ccol - n_lo;
+      
+      for ( int n = n_lo ; n <= n_hi ; n++ ) {
+        s += a(row, acol) * b(row, bcol);
+        
+        acol++;
+        
+        bcol--;
+        
+      }
+      
+      (*c)(row, ccol) = s;
+    }
+  }
+}
+
 
 /**
  * Reverse in place the order of the columns

@@ -30,6 +30,13 @@ void roots(MatrixXR poly, MatrixXC* result);
 
 
 /**
+ * Given two row matrices 
+ * returns the convolution of both
+ */
+void convolve(MatrixXC a, MatrixXC b, MatrixXC* c);
+
+
+/**
  * Reverse in place the order of the columns
  */
 void reverseCols(MatrixXC* in);
