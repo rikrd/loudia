@@ -29,9 +29,9 @@ using namespace std;
 // import most common Eigen types 
 using namespace Eigen;
 
-MelBands::MelBands(Real lowFreq, Real highFreq, int numBands, Real samplerate, int spectrumLength) 
+MelBands::MelBands(Real lowFreq, Real highFreq, int numBands, Real samplerate, int fftLength) 
 {
-  DEBUG("MELBANDS: Constructor lowFreq: " << lowFreq << ", highFreq: " << highFreq << ", numBands: " << numBands << ", samplerate: " << samplerate << ", spectrumLength: " << spectrumLength);
+  DEBUG("MELBANDS: Constructor lowFreq: " << lowFreq << ", highFreq: " << highFreq << ", numBands: " << numBands << ", samplerate: " << samplerate << ", fftLength: " << fftLength);
 
   if ( lowFreq >= highFreq ) {
     // Throw an exception
@@ -41,7 +41,7 @@ MelBands::MelBands(Real lowFreq, Real highFreq, int numBands, Real samplerate, i
     // Throw an exception
   }
   
-  _spectrumLength = spectrumLength;
+  _fftLength = fftLength;
   _samplerate = samplerate;
   _lowFreq = lowFreq;
   _highFreq = highFreq;
@@ -60,7 +60,7 @@ void MelBands::setup(){
   DEBUG("MELBANDS: lowMel: " << lowMel << ", highMel: " << highMel);
 
   Real stepMel = (highMel - lowMel) / (_numBands + 1.0);
-  Real stepSpectrum = Real(_spectrumLength) / _samplerate;
+  Real stepSpectrum = Real(_fftLength) / _samplerate;
   
   // start Mel frequencies of filters
   MatrixXR starts(_numBands, 1);
@@ -72,16 +72,6 @@ void MelBands::setup(){
   melToLinearMatrixGreenwood1990(starts, &startsLinear);
   startsLinear *= stepSpectrum;
 
-  // center Mel frequencies of filters
-  MatrixXR centers(_numBands, 1);
-  for (int i=0; i<centers.rows(); i++) {
-    centers(i, 0) = (Real(i + 1) * stepMel + lowMel);
-  }
-
-  MatrixXR centersLinear;
-  melToLinearMatrixGreenwood1990(centers, &centersLinear);
-  centersLinear *= stepSpectrum;
-
   // stop Mel frequencies of filters
   MatrixXR stops(_numBands, 1);
   for (int i=0; i<stops.rows(); i++) {
@@ -91,6 +81,17 @@ void MelBands::setup(){
   MatrixXR stopsLinear;
   melToLinearMatrixGreenwood1990(stops, &stopsLinear);
   stopsLinear *= stepSpectrum;
+
+
+  // center Mel frequencies of filters
+  MatrixXR centers(_numBands, 1);
+  for (int i=0; i<centers.rows(); i++) {
+    centers(i, 0) = (Real(i + 1) * stepMel + lowMel);
+  }
+
+  MatrixXR centersLinear = startsLinear + (stopsLinear - startsLinear) / 2.0;
+  //melToLinearMatrixGreenwood1990(centers, &centersLinear);
+  //centersLinear *= stepSpectrum;
   
   // start bins of filters
   MatrixXi startBins = startsLinear.cwise().ceil();
@@ -127,7 +128,7 @@ void MelBands::setup(){
   DEBUG("MELBANDS: Finished set up...");
 }
 
-void MelBands::process(MatrixXR spectrum, MatrixXR* bands) {
+void MelBands::process(MatrixXR spectrum, MatrixXR* bands) {  
   _bands.process(spectrum, bands);
 }
 
@@ -178,13 +179,13 @@ Real MelBands::melToLinearGreenwood1990(Real melFreq) {
 void MelBands::linearToMelMatrixGreenwood1990(MatrixXR linearFreq, MatrixXR* melFreq) {
   DEBUG("MELBANDS: Scaling (Greenwood 1990) linearFreq: " << linearFreq);
 
-  (*melFreq).set(((linearFreq / 165.4).cwise() + 1.0).cwise().logN(10.0) / 2.1);
+  (*melFreq).set(((linearFreq / 165.4).cwise() + 1.0).cwise().logN(10) / 2.1);
 }
 
 void MelBands::melToLinearMatrixGreenwood1990(MatrixXR melFreq, MatrixXR* linearFreq) {
   DEBUG("MELBANDS: Scaling (Greenwood 1990) melFreq: " << melFreq);
 
-  (*linearFreq).set(165.4 * ((melFreq * 2.1).cwise().exp().cwise() - 1.0));
+  (*linearFreq).set(165.4 * ((melFreq * 2.1).cwise().expN(10.0).cwise() - 1.0));
 }
 
 

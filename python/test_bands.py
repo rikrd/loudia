@@ -4,7 +4,7 @@ import pylab
 import scipy
 
 lowFreq = 133.0
-highFreq = 22050.0
+highFreq = 20050.0
 nBands = 34
 samplerate = 44100.0
 spectralLength = 2048
