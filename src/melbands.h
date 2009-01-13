@@ -38,18 +38,18 @@ public:
 
   Real linearToMelGreenwood1990(Real linearFreq);
   Real melToLinearGreenwood1990(Real melFreq);
-  MatrixXR linearToMelMatrixGreenwood1990(MatrixXR linearFreq);
-  MatrixXR melToLinearMatrixGreenwood1990(MatrixXR melFreq);
+  void linearToMelMatrixGreenwood1990(MatrixXR linearFreq, MatrixXR* melFreq);
+  void melToLinearMatrixGreenwood1990(MatrixXR melFreq, MatrixXR* linearFreq);
 
   Real linearToMelStevens1937(Real linearFreq);
   Real melToLinearStevens1937(Real melFreq);
-  MatrixXR linearToMelMatrixStevens1937(MatrixXR linearFreq);
-  MatrixXR melToLinearMatrixStevens1937(MatrixXR melFreq);
+  void linearToMelMatrixStevens1937(MatrixXR linearFreq, MatrixXR* melFreq);
+  void melToLinearMatrixStevens1937(MatrixXR melFreq, MatrixXR* linearFreq);
 
   Real linearToMelFant1968(Real linearFreq);
   Real melToLinearFant1968(Real melFreq);
-  MatrixXR linearToMelMatrixFant1968(MatrixXR linearFreq);
-  MatrixXR melToLinearMatrixFant1968(MatrixXR melFreq);
+  void linearToMelMatrixFant1968(MatrixXR linearFreq, MatrixXR* melFreq);
+  void melToLinearMatrixFant1968(MatrixXR melFreq, MatrixXR* linearFreq);
 
 
 public:

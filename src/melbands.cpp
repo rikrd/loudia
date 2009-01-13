@@ -74,7 +74,10 @@ void MelBands::setup(){
   for (int i=0; i<starts.rows(); i++) {
     starts(i, 0) = (Real(i) * stepMel + lowMel);
   }
-  MatrixXR startsLinear = melToLinearMatrixGreenwood1990(starts) * stepSpectrum;
+
+  MatrixXR startsLinear;
+  melToLinearMatrixGreenwood1990(starts, &startsLinear);
+  startsLinear *= stepSpectrum;
 
   // center Mel frequencies of filters
   MatrixXR centers(_numBands, 1);
@@ -82,7 +85,9 @@ void MelBands::setup(){
     centers(i, 0) = (Real(i + 1) * stepMel + lowMel);
   }
 
-  MatrixXR centersLinear = melToLinearMatrixGreenwood1990(centers) * stepSpectrum;
+  MatrixXR centersLinear;
+  melToLinearMatrixGreenwood1990(centers, &centersLinear);
+  centersLinear *= stepSpectrum;
 
   // stop Mel frequencies of filters
   MatrixXR stops(_numBands, 1);
@@ -90,7 +95,9 @@ void MelBands::setup(){
     stops(i, 0) = (Real(i + 2) * stepMel + lowMel);
   }
 
-  MatrixXR stopsLinear = melToLinearMatrixGreenwood1990(stops) * stepSpectrum;
+  MatrixXR stopsLinear;
+  melToLinearMatrixGreenwood1990(stops, &stopsLinear);
+  stopsLinear *= stepSpectrum;
   
   // start bins of filters
   MatrixXi startBins = startsLinear.unaryExpr(CwiseCeilOp<Real>());
@@ -175,15 +182,16 @@ Real MelBands::melToLinearGreenwood1990(Real melFreq) {
   return 165.4 * (pow(10.0, 2.1 * melFreq) - 1.0);
 }
 
-MatrixXR MelBands::linearToMelMatrixGreenwood1990(MatrixXR linearFreq) {
+void MelBands::linearToMelMatrixGreenwood1990(MatrixXR linearFreq, MatrixXR* melFreq) {
   DEBUG("MELBANDS: Scaling (Greenwood 1990) linearFreq: " << linearFreq);
 
-  return ((linearFreq / 165.4).cwise() + 1.0).cwise().log() / (2.1 * log(10.0));
+  (*melFreq).set(((linearFreq / 165.4).cwise() + 1.0).cwise().log() / (2.1 * log(10.0)));
 }
 
-MatrixXR MelBands::melToLinearMatrixGreenwood1990(MatrixXR melFreq) {
+void MelBands::melToLinearMatrixGreenwood1990(MatrixXR melFreq, MatrixXR* linearFreq) {
   DEBUG("MELBANDS: Scaling (Greenwood 1990) melFreq: " << melFreq);
-  return 165.4 * ((melFreq * 2.1).cwise().exp().cwise() - 1.0);
+
+  (*linearFreq).set(165.4 * ((melFreq * 2.1).cwise().exp().cwise() - 1.0));
 }
 
 
@@ -204,12 +212,12 @@ Real MelBands::melToLinearStevens1937(Real melFreq) {
   return (exp(melFreq / 1127.01048) - 1.0) * 700.0;
 }
 
-MatrixXR MelBands::linearToMelMatrixStevens1937(MatrixXR linearFreq) {
-  return ((linearFreq / 700.0).cwise() + 1.0).cwise().log() * 1127.01048;
+void MelBands::linearToMelMatrixStevens1937(MatrixXR linearFreq, MatrixXR* melFreq) {
+  (*melFreq).set(((linearFreq / 700.0).cwise() + 1.0).cwise().log() * 1127.01048);
 }
 
-MatrixXR MelBands::melToLinearMatrixStevens1937(MatrixXR melFreq) {
-  return ((melFreq / 1127.01048).cwise().exp().cwise() - 1.0) * 700.0;
+void MelBands::melToLinearMatrixStevens1937(MatrixXR melFreq, MatrixXR* linearFreq) {
+  (*linearFreq).set(((melFreq / 1127.01048).cwise().exp().cwise() - 1.0) * 700.0);
 }
 
 
@@ -230,12 +238,12 @@ Real MelBands::melToLinearFant1968(Real melFreq) {
   return 1000.0 * (exp(melFreq * log(2.0) / 1000.0) - 1.0);
 }
 
-MatrixXR MelBands::linearToMelMatrixFant1968(MatrixXR linearFreq) {
-  return (1000.0 / log(2.0)) * ((linearFreq / 1000.0).cwise() + 1.0).cwise().log();
+void MelBands::linearToMelMatrixFant1968(MatrixXR linearFreq, MatrixXR* melFreq) {
+  (*melFreq).set((1000.0 / log(2.0)) * ((linearFreq / 1000.0).cwise() + 1.0).cwise().log());
 }
 
-MatrixXR MelBands::melToLinearMatrixFant1968(MatrixXR melFreq) {
-  return 1000.0 * ((melFreq * log(2.0) / 1000.0).cwise().exp().cwise() - 1.0);
+void MelBands::melToLinearMatrixFant1968(MatrixXR melFreq, MatrixXR* linearFreq) {
+  (*linearFreq).set(1000.0 * ((melFreq * log(2.0) / 1000.0).cwise().exp().cwise() - 1.0));
 }
 
 void MelBands::reset(){
