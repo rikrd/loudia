@@ -32,7 +32,7 @@ public:
   Real _highFreq;
   int _numBands;
   Real _samplerate;
-  int _spectrumLength;
+  int _fftLength;
   
   Bands _bands;
 
@@ -55,7 +55,7 @@ public:
 
 
 public:
-  MelBands(Real lowFreq, Real highFreq, int numBands, Real samplerate, int spectrumLength);
+  MelBands(Real lowFreq, Real highFreq, int numBands, Real samplerate, int fftLength);
 
   void setup();
 
