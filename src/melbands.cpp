@@ -26,13 +26,6 @@
 
 using namespace std;
 
-// define a custom template unary functor
-template<typename Scalar>
-struct CwiseCeilOp {
-  CwiseCeilOp(){}
-  const Scalar operator()(const Scalar& x) const { return ceil(x); }
-};
-
 // import most common Eigen types 
 using namespace Eigen;
 
@@ -100,10 +93,10 @@ void MelBands::setup(){
   stopsLinear *= stepSpectrum;
   
   // start bins of filters
-  MatrixXi startBins = startsLinear.unaryExpr(CwiseCeilOp<Real>());
+  MatrixXi startBins = startsLinear.cwise().ceil();
 
   // stop bins of filters
-  MatrixXi stopBins = stopsLinear.unaryExpr(CwiseCeilOp<Real>());
+  MatrixXi stopBins = stopsLinear.cwise().ceil();
 
   std::vector<MatrixXR> weights;
 
