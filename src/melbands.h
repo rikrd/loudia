@@ -22,6 +22,8 @@
 #include "typedefs.h"
 #include "debug.h"
 
+#include <Eigen/StdVector>
+
 #include "bands.h"
 
 class MelBands {
