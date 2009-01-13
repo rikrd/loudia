@@ -10,6 +10,12 @@ struct CwiseMaxOp {
   Scalar m_other;
 };
 
+template<typename Scalar>
+struct CwiseCeilOp {
+  CwiseCeilOp(){}
+  const Scalar operator()(const Scalar& x) const { return ceil(x); }
+};
+
 
 template<typename Scalar>
 struct CwiseAngleOp {
