@@ -67,7 +67,7 @@ void ODFComplex::process(MatrixXC fft, MatrixXR* odfValue) {
   
   _spectrum = fft.block(0, 0, fft.rows(), (int)ceil(_fftLength / 2.0));
 
-  _unwrap.process(_spectrum.angle().real().cast<Real>(), &_unwrappedAngle);
+  _unwrap.process(_spectrum.cwise().angle().real().cast<Real>(), &_unwrappedAngle);
   
   (*odfValue)(0, 0) = spectralDistanceEuclidean(_spectrum, _spectrum.cwise().abs(), _unwrappedAngle);
   
