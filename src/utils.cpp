@@ -58,29 +58,38 @@ void roots(MatrixXR poly, MatrixXC* result) {
  * Given a matrix of roots (a vector of roots per column)
  * returns a matrix of polynomes (a polynome per vector of roots)
  */
-void poly(MatrixXR roots, MatrixXC* result) {
+template<typename InMatrixType>
+void poly(InMatrixType roots, InMatrixType* result) {
   const int nroots = roots.cols();
-  
-  MatrixXC newA;
-  MatrixXC a = MatrixXR::Zero(1, 1);
-  MatrixXR b(1, 2);
+
+  // Prepare the output
+  (*result).resize(1, 1);
+  (*result).setZero();
+  (*result)(0, 0) = 1.0;
+
+  //InMatrixType newA;
+  //InMatrixType a = InMatrixType::Zero(1, nroots + 1);
+  InMatrixType b(1, 2);
 
   for ( int i = 0; i < nroots; i++) {
     b << 1 , -roots(0, i);
-    convolve(a, b, &newA);
-    a.set(newA);
+    convolve(*result, b, result);
+    //a.set(newA);
   }
-  
-  // Prepare the output
-  (*result).resize(1, nroots + 1);
+
+  //(*result) = a;
 }
 
+void poly(MatrixXC roots, MatrixXC* result) {
+  return poly<MatrixXC>(roots, result);
+}
 
 /**
  * Given two row matrices 
  * returns the convolution of both
  */
-void convolve(MatrixXC a, MatrixXC b, MatrixXC* c) {
+template<typename InMatrixType>
+void convolve(InMatrixType a, InMatrixType b, InMatrixType* c) {
   const int asize = a.cols();
   const int bsize = b.cols();
 
@@ -90,12 +99,14 @@ void convolve(MatrixXC a, MatrixXC b, MatrixXC* c) {
 
   if ( b.rows() != rows ) {
     // Throw an error the two inputs must have the same number of rows
+    DEBUG("ERROR: the two inputs must have the same number of rows");
+    return;
   }
 
   // Prepare the output
   (*c).resize( rows, csize );
-
-  Complex s;
+  
+  typename InMatrixType::Scalar s;
 
   int acol = 0;
   int bcol = 0;
@@ -126,6 +137,13 @@ void convolve(MatrixXC a, MatrixXC b, MatrixXC* c) {
   }
 }
 
+void convolve(MatrixXC a, MatrixXC b, MatrixXC* c) {
+  return convolve<MatrixXC>(a, b, c);
+}
+
+void convolve(MatrixXR a, MatrixXR b, MatrixXR* c) {
+  return convolve<MatrixXR>(a, b, c);
+}
 
 /**
  * Reverse in place the order of the columns

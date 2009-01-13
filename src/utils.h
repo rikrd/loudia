@@ -28,12 +28,18 @@
  */
 void roots(MatrixXR poly, MatrixXC* result);
 
+/**
+ * Given a matrix of roots (a vector of roots per column)
+ * returns a matrix of polynomes (a polynome per vector of roots)
+ */
+void poly(MatrixXC roots, MatrixXC* result);
 
 /**
  * Given two row matrices 
  * returns the convolution of both
  */
 void convolve(MatrixXC a, MatrixXC b, MatrixXC* c);
+//void convolve(MatrixXR a, MatrixXR b, MatrixXR* c);
 
 
 /**
