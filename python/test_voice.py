@@ -8,10 +8,10 @@ import scipy
 
 filename = sys.argv[1]
 
-frameSize = 2048 / 44100.0
-frameStep = 512 / 44100.0
+frameSize = 1024 / 44100.0
+frameStep = 256 / 44100.0
 
-fftSize = 2048
+fftSize = 1024
 
 analysisLimit = 1000.0
 
@@ -56,9 +56,9 @@ print subplots
 pylab.ion()
 
 if 'peak_mags' in all_processes:
-    maxPeakCount = 48
-    maxTrajCount = 48
-    silentFrames = 10
+    maxPeakCount = 20
+    maxTrajCount = 20
+    silentFrames = 3
     minPeakWidth = 12 # bins for Hamming
     maxFreqBinChange = 4 * fftSize / (frameSize * 44100)
     
