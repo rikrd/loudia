@@ -56,12 +56,14 @@ print subplots
 pylab.ion()
 
 if 'peak_mags' in all_processes:
+    maxPeakCount = fftSize / 3
+    maxTrajCount = fftSize / 3
     minPeakWidth = 12 # bins for Hamming
     maxFreqBinChange = 4 * fftSize / (frameSize * 44100)
     
-    peaker = ricaudio.PeakDetect( 10, minPeakWidth )
+    peaker = ricaudio.PeakDetect( maxPeakCount, minPeakWidth )
     peakInterp = ricaudio.PeakInterpolate( )
-    tracker = ricaudio.PeakContinue( plotSize / 12, maxFreqBinChange )
+    tracker = ricaudio.PeakContinue( maxTrajCount, maxFreqBinChange )
 
 trajsLocs = []
 trajsMags = []
