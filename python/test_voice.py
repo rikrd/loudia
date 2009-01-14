@@ -56,14 +56,15 @@ print subplots
 pylab.ion()
 
 if 'peak_mags' in all_processes:
-    maxPeakCount = fftSize / 3
-    maxTrajCount = fftSize / 3
+    maxPeakCount = 48
+    maxTrajCount = 48
+    silentFrames = 10
     minPeakWidth = 12 # bins for Hamming
     maxFreqBinChange = 4 * fftSize / (frameSize * 44100)
     
     peaker = ricaudio.PeakDetect( maxPeakCount, minPeakWidth )
     peakInterp = ricaudio.PeakInterpolate( )
-    tracker = ricaudio.PeakContinue( maxTrajCount, maxFreqBinChange )
+    tracker = ricaudio.PeakContinue( maxTrajCount, maxFreqBinChange, silentFrames )
 
 trajsLocs = []
 trajsMags = []
@@ -185,6 +186,7 @@ for trajInds, trajPos, trajMags in trajs:
 """
 trajsLocs = scipy.array( trajsLocs )
 trajsMags = scipy.array( trajsMags )
+trajsMags = trajsMags.sum(axis = 1)
 
 print trajsLocs.shape
 

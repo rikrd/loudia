@@ -28,12 +28,12 @@ using namespace std;
 // import most common Eigen types 
 using namespace Eigen;
 
-PeakContinue::PeakContinue(int numTrajectories, Real maxFreqBinChange) {
+PeakContinue::PeakContinue(int numTrajectories, Real maxFreqBinChange, int silentFrames) {
   DEBUG("PEAKCONTINUE: Constructor");
   
   _numTrajectories = numTrajectories;
   _maxFreqBinChange = maxFreqBinChange;
-  _silentFrames = 10;
+  _silentFrames = silentFrames;
   
   setup();
   

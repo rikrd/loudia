@@ -40,7 +40,7 @@ protected:
     
 
 public:
-  PeakContinue(int numTrajectories, Real maxFreqBinChange);
+  PeakContinue(int numTrajectories, Real maxFreqBinChange, int silentFrames);
 
   ~PeakContinue();
 
