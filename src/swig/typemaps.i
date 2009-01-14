@@ -109,11 +109,11 @@
          const MatrixXC & (MatrixXC temp) {
 
     int newObject;
-    PyArrayObject * in_array = obj_to_array_contiguous_allow_conversion($input, PyArray_FLOAT, &newObject);
+    PyArrayObject * in_array = obj_to_array_contiguous_allow_conversion($input, PyArray_CFLOAT, &newObject);
 
     if( in_array == NULL ){
       PyErr_SetString(PyExc_ValueError,
-                      "array must be of type float (dtype = 'float32')");
+                      "array must be of type float (dtype = scipy.complex64)");
       
       return NULL;
     }
