@@ -19,11 +19,6 @@
 #include "typedefs.h"
 #include "debug.h"
 
-#include <Eigen/Core>
-#include <Eigen/Array>
-#include <iostream>
-#include <cmath>
-
 #include "aok.h"
 
 using namespace std;
@@ -116,7 +111,7 @@ void AOK::setup(){
 void AOK::process(MatrixXC frames, MatrixXR* timeFreqRep){
   outct = 0;
 
-  (*timeFreqRep).resize(frames.rows() / tstep, _fftSize);
+  timeFreqRep->resize(frames.rows() / tstep, _fftSize);
   
   // fliplr the frames
   for(int i = 0; i < slen / 2; i++){
@@ -179,7 +174,7 @@ void AOK::process(MatrixXC frames, MatrixXR* timeFreqRep){
         */
         itemp = fftlen/2 + fstep;
         int col = 0;				/* print output slice	*/
-        //DEBUG("AOK: Processing, (*timeFreqRep).shape: " << (*timeFreqRep).rows() << ", " << (*timeFreqRep).cols());
+        //DEBUG("AOK: Processing, timeFreqRep->shape: " << timeFreqRep->rows() << ", " << timeFreqRep->cols());
         for (int i=itemp; i < fftlen; i=i+fstep)
           {
             //DEBUG("AOK: Processing, row: " << row << ", col: " << col << ", i: " << i);
