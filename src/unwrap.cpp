@@ -46,7 +46,7 @@ void Unwrap::setup(){
   DEBUG("Unwrap: Finished setup.");
 }
 
-void Unwrap::process(MatrixXR input, MatrixXR* unwrapped){
+void Unwrap::process(const MatrixXR& input, MatrixXR* unwrapped){
   const int rows = input.rows();
   const int cols = input.cols();
 

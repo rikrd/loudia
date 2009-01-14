@@ -66,7 +66,7 @@ void FFT::setup(){
 }
 
 template<typename FrameMatrixType>
-void FFT::process(FrameMatrixType frames, MatrixXC* ffts){
+void FFT::process(const FrameMatrixType& frames, MatrixXC* ffts){
   (*ffts).resize(frames.rows(), _fftSize);
 
   for (int i = 0; i < frames.rows(); i++){    
@@ -99,11 +99,11 @@ void FFT::process(FrameMatrixType frames, MatrixXC* ffts){
   }
 }
 
-void FFT::process(MatrixXR frames, MatrixXC* ffts){
+void FFT::process(const MatrixXR& frames, MatrixXC* ffts){
   process<MatrixXR>(frames, ffts);
 }
 
-void FFT::process(MatrixXC frames, MatrixXC* ffts){
+void FFT::process(const MatrixXC& frames, MatrixXC* ffts){
   process<MatrixXC>(frames, ffts);
 }
 

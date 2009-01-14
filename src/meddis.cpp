@@ -72,7 +72,7 @@ void Meddis::setup(){
   DEBUG("MEDDIS: Set up finished.");
 }
 
-void Meddis::process(MatrixXR samples, MatrixXR* output){
+void Meddis::process(const MatrixXR& samples, MatrixXR* output){
   // Process will be called with a matrix where columns will be channels
   // and rows will be the time axis
   MatrixXR  row, limitedSt, replenish, eject, loss, reuptake, reprocess;
@@ -82,11 +82,11 @@ void Meddis::process(MatrixXR samples, MatrixXR* output){
   for (uint i = 0; i < samples.rows(); ++i) {
     row.set(samples.row(i));
   
-    limitedSt.set(row.cwise() + A).max(0.0);
+    limitedSt.set(row.cwise() + A).cwise().clipUnder(0.0);
 
     kt.set((limitedSt * gdt).cwise() / (limitedSt.cwise() + B));
 
-    replenish.set(ydt * ((-q).cwise() + M)).max(0.0);
+    replenish.set(ydt * ((-q).cwise() + M)).cwise().clipUnder(0.0);
     eject.set(kt.cwise() * q);
     loss.set(ldt * c);
     reuptake.set(rdt * c);
@@ -101,7 +101,7 @@ void Meddis::process(MatrixXR samples, MatrixXR* output){
     (*output).row(i) = h * c;
     
     if(_substractSpont){
-      (*output).row(i) = ((*output).row(i) - spont.row(0)).max(0.0);
+      (*output).row(i) = ((*output).row(i) - spont.row(0)).cwise().clipUnder(0.0);
     }
   } // for each row
 }

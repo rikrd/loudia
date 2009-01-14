@@ -22,19 +22,8 @@
 #include "typedefs.h"
 #include "debug.h"
 
-#include <Eigen/Core>
-#include <Eigen/Array>
-#include <iostream>
-
 #include "melbands.h"
 #include "dct.h"
-
-
-
-//using namespace std;
-
-// import most common Eigen types 
-//using namespace Eigen;
 
 class MFCC {
 protected:
@@ -43,7 +32,7 @@ protected:
   Real _highFreq;
   int _numBands;
   Real _samplerate;
-  int _spectrumLength;
+  int _fftLength;
 
   int _numCoeffs;
   
@@ -58,13 +47,13 @@ protected:
   MatrixXR _coeffs;
 
 public:
-  MFCC(Real lowFreq, Real highFreq, int numBands, Real samplerate, int spectrumLength, int numCoeffs, Real minSpectrum = 1e-10, Real power = 1.0);
+  MFCC(Real lowFreq, Real highFreq, int numBands, Real samplerate, int fftLength, int numCoeffs, Real minSpectrum = 1e-10, Real power = 1.0);
 
   ~MFCC();
 
   void setup();
 
-  void process(MatrixXR spectrum, MatrixXR* mfccCoeffs);
+  void process(const MatrixXR& spectrum, MatrixXR* mfccCoeffs);
 
   void reset();
 

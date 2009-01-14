@@ -22,50 +22,54 @@
 #include "typedefs.h"
 #include "debug.h"
 
-#include <Eigen/Core>
-#include <Eigen/Array>
-#include <iostream>
+#include <Eigen/StdVector>
 
 #include "bands.h"
 
-
-
-//using namespace std;
-
-// import most common Eigen types 
-//using namespace Eigen;
-
 class MelBands {
-protected:
+public:
   Real _lowFreq;
   Real _highFreq;
   int _numBands;
   Real _samplerate;
-  int _spectrumLength;
+  int _fftLength;
   
   Bands _bands;
 
   void triangleWindow(MatrixXR* window, Real start, Real stop, Real center = -1, Real height = Real(1.0));
 
-  Real linearToMelRealStevens1937(Real linearFreq);
-  Real melToLinearRealStevens1937(Real melFreq);
-  MatrixXR linearToMelStevens1937(MatrixXR linearFreq);
-  MatrixXR melToLinearStevens1937(MatrixXR melFreq);
+  Real linearToMelGreenwood1990(Real linearFreq);
+  Real melToLinearGreenwood1990(Real melFreq);
+  void linearToMelMatrixGreenwood1990(const MatrixXR& linearFreq, MatrixXR* melFreq);
+  void melToLinearMatrixGreenwood1990(const MatrixXR& melFreq, MatrixXR* linearFreq);
 
-  Real linearToMelRealFant1968(Real linearFreq);
-  Real melToLinearRealFant1968(Real melFreq);
-  MatrixXR linearToMelFant1968(MatrixXR linearFreq);
-  MatrixXR melToLinearFant1968(MatrixXR melFreq);
+  Real linearToMelStevens1937(Real linearFreq);
+  Real melToLinearStevens1937(Real melFreq);
+  void linearToMelMatrixStevens1937(const MatrixXR& linearFreq, MatrixXR* melFreq);
+  void melToLinearMatrixStevens1937(const MatrixXR& melFreq, MatrixXR* linearFreq);
+
+  Real linearToMelFant1968(Real linearFreq);
+  Real melToLinearFant1968(Real melFreq);
+  void linearToMelMatrixFant1968(const MatrixXR& linearFreq, MatrixXR* melFreq);
+  void melToLinearMatrixFant1968(const MatrixXR& melFreq, MatrixXR* linearFreq);
 
 
 public:
-  MelBands(Real lowFreq, Real highFreq, int numBands, Real samplerate, int spectrumLength);
+  MelBands(Real lowFreq, Real highFreq, int numBands, Real samplerate, int fftLength);
 
   void setup();
 
-  void process(MatrixXR spectrum, MatrixXR* bands);
+  void process(const MatrixXR& spectrum, MatrixXR* bands);
   
   void reset();
+
+  std::vector<MatrixXR> weights() const;
+
+  void bandWeights(int band, MatrixXR* bandWeights) const;
+
+  void starts(MatrixXI* result) const;
+
+  int bands() const;
 };
 
 #endif  /* MELBANDS_H */

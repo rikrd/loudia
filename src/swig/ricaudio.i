@@ -35,6 +35,8 @@ import_array();
 #include "odfcomplex.h"
 #include "onsetcomplex.h"
 
+#include "utils.h"
+
 using namespace std;
 %}
 
@@ -57,5 +59,7 @@ using namespace std;
 %include "unwrap.h"
 %include "odfcomplex.h"
 %include "onsetcomplex.h"
+
+%include "utils.h"
 
 %module ricaudio

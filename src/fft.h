@@ -47,15 +47,15 @@ protected:
   fftwf_plan _fftplan;
   
   template <typename FrameMatrixType>
-  void process(FrameMatrixType frames, MatrixXC* fft);
+  void process(const FrameMatrixType& frames, MatrixXC* fft);
 
 
 public:
   FFT(int frameSize, int fftSize, bool zeroPhase = true);
   ~FFT();
   
-  void process(MatrixXC frames, MatrixXC* fft);
-  void process(MatrixXR frames, MatrixXC* fft);
+  void process(const MatrixXC& frames, MatrixXC* fft);
+  void process(const MatrixXR& frames, MatrixXC* fft);
   
   void setup();
   void reset();

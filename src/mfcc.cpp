@@ -33,14 +33,14 @@ using namespace std;
 // import most common Eigen types 
 using namespace Eigen;
 
-MFCC::MFCC(Real lowFreq, Real highFreq, int numBands, Real samplerate, int spectrumLength, int numCoeffs, Real minSpectrum, Real power) : _melbands(lowFreq, highFreq, numBands, samplerate, spectrumLength), _dct(numBands, numCoeffs) {
-  DEBUG("MFCC: Constructor lowFreq: " << lowFreq << ", highFreq: " << highFreq << ", numBands: " << numBands << ", samplerate: "<< samplerate << ", spectrumLength: " << spectrumLength << ", numCoeffs: " << numCoeffs);
+MFCC::MFCC(Real lowFreq, Real highFreq, int numBands, Real samplerate, int fftLength, int numCoeffs, Real minSpectrum, Real power) : _melbands(lowFreq, highFreq, numBands, samplerate, fftLength), _dct(numBands, numCoeffs) {
+  DEBUG("MFCC: Constructor lowFreq: " << lowFreq << ", highFreq: " << highFreq << ", numBands: " << numBands << ", samplerate: "<< samplerate << ", fftLength: " << fftLength << ", numCoeffs: " << numCoeffs);
   
   _lowFreq = lowFreq;
   _highFreq = highFreq;
   _numBands = numBands;
   _samplerate = samplerate;
-  _spectrumLength = spectrumLength;
+  _fftLength = fftLength;
 
   _numCoeffs = numCoeffs;
 
@@ -69,7 +69,7 @@ void MFCC::setup(){
 }
 
 
-void MFCC::process(MatrixXR spectrum, MatrixXR* mfccCoeffs){
+void MFCC::process(const MatrixXR& spectrum, MatrixXR* mfccCoeffs){
   DEBUG("MFCC: Processing Melbands");
 
   (*mfccCoeffs).resize(spectrum.rows(), _numCoeffs);

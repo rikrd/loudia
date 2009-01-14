@@ -21,14 +21,16 @@
 #define TYPEDEFS_H
 
 #define EIGEN_MATRIXBASE_PLUGIN "MatrixBaseAddons.h"
+#define EIGEN_CWISE_PLUGIN "CwiseAddons.h"
+#define EIGEN_FUNCTORS_PLUGIN "FunctorsAddons.h"
 
 //#define EIGEN_DEFAULT_TO_ROW_MAJOR
 
 #include "debug.h"
 
+#include <cmath>
 #include <Eigen/Core>
 #include <Eigen/Array>
-#include <cmath>
 
 // Types for scalar values
 typedef int Integer;

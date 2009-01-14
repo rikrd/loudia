@@ -77,7 +77,7 @@ void Bands::setup(){
 }
 
 
-void Bands::process(MatrixXR spectrum, MatrixXR* bands){
+void Bands::process(const MatrixXR& spectrum, MatrixXR* bands){
 
   (*bands).resize(spectrum.rows(), _starts.rows());
 
@@ -96,11 +96,19 @@ vector<MatrixXR> Bands::weights() const {
   return _weights;
 }
 
-MatrixXi Bands::starts() const {
-  return _starts;
+void Bands::bandWeights(int band, MatrixXR* bandWeights) const {
+  (*bandWeights).set( _weights[ band ] );
 }
 
-void Bands::setStartsWeights(MatrixXI starts, std::vector<MatrixXR> weights) {
+void Bands::starts(MatrixXI* result) const {
+  (*result).set(_starts);
+}
+
+void Bands::setStartsWeights(const MatrixXI& starts, std::vector<MatrixXR> weights) {
   _weights = weights;
   _starts.set(starts);
+}
+
+int Bands::bands() const {
+  return _starts.rows();
 }

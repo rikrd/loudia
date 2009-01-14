@@ -59,13 +59,13 @@ protected:
   void typeOctaveMatrix(MatrixXR* dctMatrix);
 
 public:
-  DCT(int inputLength, int dctLength, bool scale = false, DCTType dctType = II);
+  DCT(int inputLength, int dctLength, bool scale = false, DCTType dctType = OCTAVE);
 
   ~DCT();
 
   void setup();
 
-  void process(MatrixXR input, MatrixXR* dctCoeffs);
+  void process(const MatrixXR& input, MatrixXR* dctCoeffs);
 
   void reset();
 };

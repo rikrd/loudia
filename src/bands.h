@@ -49,15 +49,19 @@ public:
 
   void setup();
 
-  void process(MatrixXR spectrum, MatrixXR* bands);
+  void process(const MatrixXR&  spectrum, MatrixXR* bands);
 
   void reset();
 
   std::vector<MatrixXR> weights() const;
 
-  MatrixXI starts() const;
+  void bandWeights(int band, MatrixXR* bandWeights) const;
 
-  void setStartsWeights(MatrixXI starts, std::vector<MatrixXR> weights);
+  void starts(MatrixXI* result) const;
+
+  int bands() const;
+
+  void setStartsWeights(const MatrixXI& starts, std::vector<MatrixXR> weights);
 };
 
 #endif  /* BANDS_H */

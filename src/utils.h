@@ -26,7 +26,7 @@
  * Given a matrix of polynomes (one per column)
  * returns a matrix of roots (a vector of roots per column)
  */
-void roots(MatrixXR poly, MatrixXC* result);
+void roots(const MatrixXR& poly, MatrixXC* result);
 
 
 /**
@@ -44,12 +44,12 @@ void rowCumsum(MatrixXR* in);
 /**
  * Create a matrix of complex numbers given the polar coordinates
  */
-void polar(MatrixXR mag, MatrixXR phase, MatrixXC* complex);
+void polar(const MatrixXR& mag, const MatrixXR& phase, MatrixXC* complex);
 
 /**
  * Convert from the b and a coefficients of an IIR filter to the
  * zeros, poles and gain of the filter
  */
-void coeffsToZpk(MatrixXR b, MatrixXR a, MatrixXC* zeros, MatrixXC* poles, Real* gain);
+void coeffsToZpk(const MatrixXR& b, const MatrixXR& a, MatrixXC* zeros, MatrixXC* poles, Real* gain);
 
 #endif  /* UTILS_H */

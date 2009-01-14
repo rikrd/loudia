@@ -49,7 +49,7 @@ public:
 
   void setup();
 
-  void process(MatrixXR samples, MatrixXR* odfValue);
+  void process(const MatrixXR& samples, MatrixXR* odfValue);
 
   void reset();
 

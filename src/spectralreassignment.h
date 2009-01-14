@@ -63,17 +63,17 @@ protected:
   MatrixXR _reassignFreq;
 
   template<class F, class W, class ScalarW>
-  void process(F frames, W* reassigned, W* fft);
+  void process(const F& frames, W* reassigned, W* fft);
  
 public: 
   SpectralReassignment(int frameSize, int fftSize, Real samplerate, Window::WindowType windowType = Window::RECTANGULAR);
   ~SpectralReassignment();
   
-  void process(MatrixXC frames, MatrixXC* reassigned, MatrixXC* fft);
-  void process(MatrixXR frames, MatrixXC* reassigned, MatrixXC* fft);
+  void process(const MatrixXC& frames, MatrixXC* reassigned, MatrixXC* fft);
+  void process(const MatrixXR& frames, MatrixXC* reassigned, MatrixXC* fft);
 
-  void process(MatrixXC frames, MatrixXC* reassigned);
-  void process(MatrixXR frames, MatrixXC* reassigned);
+  void process(const MatrixXC& frames, MatrixXC* reassigned);
+  void process(const MatrixXR& frames, MatrixXC* reassigned);
   
   void setup();
   void reset();
