@@ -33,6 +33,7 @@ PeakContinue::PeakContinue(int numTrajectories, Real maxFreqBinChange) {
   
   _numTrajectories = numTrajectories;
   _maxFreqBinChange = maxFreqBinChange;
+  _silentFrames = 10;
   
   setup();
   
@@ -98,12 +99,29 @@ void PeakContinue::process(const MatrixXC& fft,
           // No matching peak has been found
           DEBUG("PEAKCONTINUE: Processing 'No matching peaks' minFreqBinChange: " << minFreqBinChange);
           
-          //_pastTrajPositions(0, i) = numeric_limits<Real>::infinity();
-          //_pastTrajMagnitudes(0, i) = numeric_limits<Real>::infinity();
-          (*trajPositions)(row, i) = _pastTrajPositions(0, i);
-          (*trajMagnitudes)(row, i) = -120.0;
+          if ( _pastTrajMagnitudes(0, i) <= (-120.0 - _silentFrames) ) {
+
+            // The trajectory has been silent too long (resetting it)
+
+            _pastTrajMagnitudes(0, i) = numeric_limits<Real>::infinity();
+            _pastTrajPositions(0, i) = numeric_limits<Real>::infinity();
+
+          } else if ( _pastTrajMagnitudes(0, i) <= -120.0 ) {
+
+            // The trajectory has been silent for one more frame
+
+            _pastTrajMagnitudes(0, i) -= 1;
+
+          } else {
+
+            // The first frame the trajectory is silent
+
+            _pastTrajMagnitudes(0, i) = -120.0;
+            
+          }
           
-          _pastTrajMagnitudes(0, i) = -120.0;
+          (*trajPositions)(row, i) = isinf(_pastTrajPositions(0, i)) ? -1 : _pastTrajPositions(0, i);
+          (*trajMagnitudes)(row, i) = -120.0;
           
         }
       }

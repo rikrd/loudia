@@ -27,6 +27,7 @@ protected:
   // Internal parameters
   int _numTrajectories;
   Real _maxFreqBinChange;
+  int _silentFrames;
 
   // Internal variables
   MatrixXR _trajPositions, _trajMagnitudes;
