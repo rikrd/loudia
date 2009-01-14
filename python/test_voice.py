@@ -57,19 +57,20 @@ pylab.ion()
 
 if 'peak_mags' in all_processes:
     minPeakWidth = 12 # bins for Hamming
-    maxFreqBinChange = 1 * fftSize / (frameSize * 44100)
+    maxFreqBinChange = 4 * fftSize / (frameSize * 44100)
     
-    peaker = ricaudio.PeakDetect( 50, minPeakWidth )
+    peaker = ricaudio.PeakDetect( 10, minPeakWidth )
     peakInterp = ricaudio.PeakInterpolate( )
     tracker = ricaudio.PeakContinue( plotSize / 12, maxFreqBinChange )
 
 trajsLocs = []
 trajsMags = []
+specs = []
 
 for frame in stream:
     fft = scipy.array(frame['fft'][:plotSize], dtype = scipy.complex64)
     mag =  scipy.array(abs(fft), dtype = 'f4')
-    spec =  20.0 / scipy.log(10.0) * scipy.log(abs(fft) + 1e-7)
+    spec =  20.0 / scipy.log( 10.0 ) * scipy.log( abs( fft ) + 1e-7)
 
     if set(['phase', 'peak_phases']) | all_processes:
         phase =  scipy.angle( fft )
@@ -88,6 +89,8 @@ for frame in stream:
         
         trajsLocs.append( trajLocs[0,:] )
         trajsMags.append( trajMags[0,:] )
+
+        specs.append( spec )
 
         peakPos = peakLocs[peakLocs > 0]
         peakMags = peakMags[peakLocs > 0]
@@ -178,10 +181,20 @@ for trajInds, trajPos, trajMags in trajs:
     pylab.hold( True )
     pylab.scatter( trajInds, trajPos )
 """
+trajsLocs = scipy.array( trajsLocs )
+trajsMags = scipy.array( trajsMags )
+
+print trajsLocs.shape
 
 pylab.figure()
 pylab.plot( trajsLocs )
 
 pylab.figure()
 pylab.plot( trajsMags )
+
+pylab.figure()
+pylab.hold(True)
+pylab.imshow( scipy.array( specs ).T, aspect = 'equal' )
+pylab.plot( trajsLocs )
+
 pylab.show()

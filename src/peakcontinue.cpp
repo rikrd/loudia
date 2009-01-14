@@ -70,7 +70,7 @@ void PeakContinue::process(const MatrixXC& fft,
 
   MatrixXR currPeakPositions = peakPositions;
   MatrixXR currPeakMagnitudes = peakMagnitudes;
-
+  
   for ( int row = 0 ; row < fft.rows(); row++ ) {
 
     // Find the closest peak to each of the trajectories
@@ -85,10 +85,6 @@ void PeakContinue::process(const MatrixXC& fft,
           // A matching peak has been found
           DEBUG("PEAKCONTINUE: Processing 'Matching peak: " << posCol << "' minFreqBinChange: " << minFreqBinChange);
           
-          if ( isinf( currPeakMagnitudes(row, posCol) ) ) {
-            cout << "ERROR !!!!!!!!!!!!" << endl;
-          }
-
           (*trajPositions)(row, i) = currPeakPositions(row, posCol);
           (*trajMagnitudes)(row, i) = currPeakMagnitudes(row, posCol);
           
