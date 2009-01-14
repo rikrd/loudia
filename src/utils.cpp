@@ -53,7 +53,7 @@ void roots(const MatrixXR& poly, MatrixXC* result) {
  * Given a matrix of roots (a vector of roots per column)
  * returns a matrix of polynomes (a polynome per vector of roots)
  */
-void poly(MatrixXR roots, MatrixXC* result) {
+void poly(const MatrixXR&  roots, MatrixXC* result) {
   const int nroots = roots.cols();
   
   // Prepare the output
@@ -85,7 +85,7 @@ void rowCumsum(MatrixXR* in) {
 }
 
 
-void polar(MatrixXR mag, MatrixXR phase, MatrixXC* complex) {
+void polar(const MatrixXR&  mag, const MatrixXR&  phase, MatrixXC* complex) {
   if ((mag.rows() != phase.rows()) || (mag.cols() != phase.cols())) {
     // Throw an error
   }
@@ -99,7 +99,7 @@ void polar(MatrixXR mag, MatrixXR phase, MatrixXC* complex) {
   }
 }
 
-void coeffsToZpk(MatrixXR b, MatrixXR a, MatrixXC* zeros, MatrixXC* poles, Real* gain){
+void coeffsToZpk(const MatrixXR&  b, const MatrixXR&  a, MatrixXC* zeros, MatrixXC* poles, Real* gain){
   // Return zero, pole, gain (z,p,k) representation from a numerator,
   // denominator representation of a linear filter.
   (*gain) = b(0, 0);

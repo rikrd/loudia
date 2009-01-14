@@ -59,7 +59,7 @@ void ODFComplex::setup() {
 }
 
 
-void ODFComplex::process(MatrixXC fft, MatrixXR* odfValue) {
+void ODFComplex::process(const MatrixXC& fft, MatrixXR* odfValue) {
   DEBUG("ODFComplex: Processing windowed");
 
   (*odfValue).resize(1, 1);
@@ -74,7 +74,7 @@ void ODFComplex::process(MatrixXC fft, MatrixXR* odfValue) {
   DEBUG("ODFComplex: Finished Processing");
 }
 
-Real ODFComplex::spectralDistanceEuclidean(MatrixXC spectrum, MatrixXR spectrumAbs, MatrixXR spectrumArg) {
+Real ODFComplex::spectralDistanceEuclidean(const MatrixXC& spectrum, const MatrixXR& spectrumAbs, const MatrixXR& spectrumArg) {
   const int rows = spectrum.rows();
   const int cols = spectrum.cols();
   
@@ -94,7 +94,7 @@ Real ODFComplex::spectralDistanceEuclidean(MatrixXC spectrum, MatrixXR spectrumA
   return _predictionError.sum() / (cols-1) * sqrt(2.0);
 }
 
-Real ODFComplex::spectralDistanceEuclideanWeighted(MatrixXC spectrum, MatrixXR spectrumAbs, MatrixXR spectrumArg) {
+Real ODFComplex::spectralDistanceEuclideanWeighted(const MatrixXC& spectrum, const MatrixXR& spectrumAbs, const MatrixXR& spectrumArg) {
   const int rows = spectrum.rows();
   const int cols = spectrum.cols();
   
@@ -114,7 +114,7 @@ Real ODFComplex::spectralDistanceEuclideanWeighted(MatrixXC spectrum, MatrixXR s
   return _predictionError.sum() / (cols-1);
 }
 
-Real ODFComplex::spectralDistanceHypot(MatrixXC spectrum, MatrixXR spectrumAbs, MatrixXR spectrumArg) {
+Real ODFComplex::spectralDistanceHypot(const MatrixXC& spectrum, const MatrixXR& spectrumAbs, const MatrixXR& spectrumArg) {
   const int rows = spectrum.rows();
   const int cols = spectrum.cols();
   

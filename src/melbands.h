@@ -40,18 +40,18 @@ public:
 
   Real linearToMelGreenwood1990(Real linearFreq);
   Real melToLinearGreenwood1990(Real melFreq);
-  void linearToMelMatrixGreenwood1990(MatrixXR linearFreq, MatrixXR* melFreq);
-  void melToLinearMatrixGreenwood1990(MatrixXR melFreq, MatrixXR* linearFreq);
+  void linearToMelMatrixGreenwood1990(const MatrixXR& linearFreq, MatrixXR* melFreq);
+  void melToLinearMatrixGreenwood1990(const MatrixXR& melFreq, MatrixXR* linearFreq);
 
   Real linearToMelStevens1937(Real linearFreq);
   Real melToLinearStevens1937(Real melFreq);
-  void linearToMelMatrixStevens1937(MatrixXR linearFreq, MatrixXR* melFreq);
-  void melToLinearMatrixStevens1937(MatrixXR melFreq, MatrixXR* linearFreq);
+  void linearToMelMatrixStevens1937(const MatrixXR& linearFreq, MatrixXR* melFreq);
+  void melToLinearMatrixStevens1937(const MatrixXR& melFreq, MatrixXR* linearFreq);
 
   Real linearToMelFant1968(Real linearFreq);
   Real melToLinearFant1968(Real melFreq);
-  void linearToMelMatrixFant1968(MatrixXR linearFreq, MatrixXR* melFreq);
-  void melToLinearMatrixFant1968(MatrixXR melFreq, MatrixXR* linearFreq);
+  void linearToMelMatrixFant1968(const MatrixXR& linearFreq, MatrixXR* melFreq);
+  void melToLinearMatrixFant1968(const MatrixXR& melFreq, MatrixXR* linearFreq);
 
 
 public:
@@ -59,7 +59,7 @@ public:
 
   void setup();
 
-  void process(MatrixXR spectrum, MatrixXR* bands);
+  void process(const MatrixXR& spectrum, MatrixXR* bands);
   
   void reset();
 

@@ -70,7 +70,7 @@ public:
 
   void setup();
 
-  void process(MatrixXC frames, MatrixXR* timeFreqRep);
+  void process(const MatrixXC& frames, MatrixXR* timeFreqRep);
 
   void reset();
 

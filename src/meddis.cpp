@@ -72,7 +72,7 @@ void Meddis::setup(){
   DEBUG("MEDDIS: Set up finished.");
 }
 
-void Meddis::process(MatrixXR samples, MatrixXR* output){
+void Meddis::process(const MatrixXR& samples, MatrixXR* output){
   // Process will be called with a matrix where columns will be channels
   // and rows will be the time axis
   MatrixXR  row, limitedSt, replenish, eject, loss, reuptake, reprocess;

@@ -59,8 +59,8 @@ void PeakInterpolate::setup(){
 }
 
 
-void PeakInterpolate::process(MatrixXC fft,
-                              MatrixXR peakPositions, MatrixXR peakMagnitudes,
+void PeakInterpolate::process(const MatrixXC& fft,
+                              const MatrixXR& peakPositions, const MatrixXR& peakMagnitudes,
                               MatrixXR* peakPositionsInterp, MatrixXR* peakMagnitudesInterp){
   
   DEBUG("PEAKINTERPOLATE: Processing");  

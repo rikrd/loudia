@@ -42,8 +42,8 @@ public:
 
   void setup();
 
-  void process(MatrixXC fft, 
-               MatrixXR peakPositions, MatrixXR peakMagnitudes,
+  void process(const MatrixXC& fft, 
+               const MatrixXR& peakPositions, const MatrixXR& peakMagnitudes,
                MatrixXR* peakPositionsInterp, MatrixXR* peakMagnitudesInterp);
 
   void reset();

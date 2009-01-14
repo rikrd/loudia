@@ -71,7 +71,7 @@ void OnsetComplex::setup() {
 }
 
 
-void OnsetComplex::process(MatrixXR samples, MatrixXR* odfValue) {
+void OnsetComplex::process(const MatrixXR& samples, MatrixXR* odfValue) {
   DEBUG("OnsetComplex: Processing windowed");
  
   _window.process(samples, &_windowed);

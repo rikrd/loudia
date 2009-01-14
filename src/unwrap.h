@@ -38,7 +38,7 @@ public:
 
   void setup();
 
-  void process(MatrixXR theta, MatrixXR* unwrapped);
+  void process(const MatrixXR& theta, MatrixXR* unwrapped);
 
   void reset();
 };

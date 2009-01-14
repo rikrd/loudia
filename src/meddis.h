@@ -74,7 +74,7 @@ public:
 
   void setup();
 
-  void process(MatrixXR data, MatrixXR* output);
+  void process(const MatrixXR& data, MatrixXR* output);
 
   int channels() const;
 

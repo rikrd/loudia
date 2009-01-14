@@ -47,13 +47,13 @@ protected:
   MatrixXR _samples;
 
 public:
-  Filter(MatrixXR b, MatrixXR a, int channels);
+  Filter(const MatrixXR& b, const MatrixXR& a, int channels);
 
   ~Filter();
 
   void setup();
 
-  void process(MatrixXR samples, MatrixXR* output);
+  void process(const MatrixXR& samples, MatrixXR* output);
 
   void reset();
 

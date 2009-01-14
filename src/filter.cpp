@@ -33,8 +33,8 @@ using namespace std;
 // import most common Eigen types 
 using namespace Eigen;
 
-Filter::Filter(MatrixXR b,
-               MatrixXR a,
+Filter::Filter(const MatrixXR& b,
+               const MatrixXR& a,
                int channels) : _a(max(b.rows(), a.rows()), channels), _b(max(b.rows(), a.rows()), channels), _z(max(b.rows(), a.rows()), channels){
 
   DEBUG("FILTER: Constructor channels:" << channels);
@@ -129,7 +129,7 @@ void Filter::setup(){
 }
 
 
-void Filter::process(MatrixXR samples, MatrixXR* output){
+void Filter::process(const MatrixXR& samples, MatrixXR* output){
   // Process will be called with a matrix where columns will be channels
   // and rows will be the time axis
 

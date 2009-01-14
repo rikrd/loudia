@@ -69,7 +69,7 @@ void MFCC::setup(){
 }
 
 
-void MFCC::process(MatrixXR spectrum, MatrixXR* mfccCoeffs){
+void MFCC::process(const MatrixXR& spectrum, MatrixXR* mfccCoeffs){
   DEBUG("MFCC: Processing Melbands");
 
   (*mfccCoeffs).resize(spectrum.rows(), _numCoeffs);

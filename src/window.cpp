@@ -178,7 +178,7 @@ MatrixXR Window::blackmanNuttall(int length){
 }
 
 template<typename FrameMatrixType, typename WindowedMatrixType>
-void Window::process(FrameMatrixType frames, WindowedMatrixType* windowedFrames){
+void Window::process(const FrameMatrixType& frames, WindowedMatrixType* windowedFrames){
   (*windowedFrames).resize(frames.rows(), _frameSize);
 
   for (int i = 0; i < frames.rows(); i++){
@@ -188,15 +188,15 @@ void Window::process(FrameMatrixType frames, WindowedMatrixType* windowedFrames)
 
 }
 
-void Window::process(MatrixXC frames, MatrixXC* windowedFrames){
+void Window::process(const MatrixXC& frames, MatrixXC* windowedFrames){
   process<MatrixXC, MatrixXC>(frames, windowedFrames);
 }
 
-void Window::process(MatrixXR frames, MatrixXC* windowedFrames){
+void Window::process(const MatrixXR& frames, MatrixXC* windowedFrames){
   process<MatrixXR, MatrixXC>(frames, windowedFrames);
 }
 
-void Window::process(MatrixXR frames, MatrixXR* windowedFrames){
+void Window::process(const MatrixXR& frames, MatrixXR* windowedFrames){
   process<MatrixXR, MatrixXR>(frames, windowedFrames);
 }
 

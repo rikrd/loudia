@@ -137,7 +137,7 @@
     }
 
     // prepare the input array  
-    Real* in_data = (Real*)array_data(in_array);
+    Complex* in_data = (Complex*)array_data(in_array);
     Eigen::Map<MatrixXCscipy> in_matrix(in_data, in_rows, in_cols);
 
     $1 = &temp;
