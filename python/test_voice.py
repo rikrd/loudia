@@ -56,10 +56,10 @@ print subplots
 pylab.ion()
 
 if 'peak_mags' in all_processes:
-    minPeakWidth = 4 # bins for Hamming
+    minPeakWidth = 12 # bins for Hamming
     maxFreqBinChange = 1 * fftSize / (frameSize * 44100)
     
-    peaker = ricaudio.PeakDetect( 12, minPeakWidth )
+    peaker = ricaudio.PeakDetect( 50, minPeakWidth )
     peakInterp = ricaudio.PeakInterpolate( )
     tracker = ricaudio.PeakContinue( plotSize / 12, maxFreqBinChange )
 
@@ -67,11 +67,12 @@ trajsLocs = []
 trajsMags = []
 
 for frame in stream:
-    fft = scipy.array(frame['fft'][:plotSize])
+    fft = scipy.array(frame['fft'][:plotSize], dtype = scipy.complex64)
+    mag =  scipy.array(abs(fft), dtype = 'f4')
     spec =  20.0 / scipy.log(10.0) * scipy.log(abs(fft) + 1e-7)
 
     if set(['phase', 'peak_phases']) | all_processes:
-        phase =  scipy.angle(fft)
+        phase =  scipy.angle( fft )
 
     if set(['peak_mags', 'peak_phases']) | all_processes:
         fft = scipy.reshape(fft, (1, plotSize))
