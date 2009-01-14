@@ -26,7 +26,7 @@
  * Given a matrix of polynomes (one per column)
  * returns a matrix of roots (a vector of roots per column)
  */
-void roots(MatrixXR poly, MatrixXC* result);
+void roots(const MatrixXR& poly, MatrixXC* result);
 
 
 /**

@@ -29,7 +29,7 @@
 
 using namespace std;
 
-void roots(MatrixXR poly, MatrixXC* result) {
+void roots(const MatrixXR& poly, MatrixXC* result) {
   const int coeffs = poly.cols();
   
   if ( coeffs <= 1 ) {
