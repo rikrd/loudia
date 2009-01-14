@@ -64,15 +64,15 @@ protected:
   MatrixXR blackmanNuttall(int length);
 
   template<typename FrameMatrixType, typename WindowedMatrixType>
-  void process(FrameMatrixType frames, WindowedMatrixType* windowedFrames);
+  void process(const FrameMatrixType& frames, WindowedMatrixType* windowedFrames);
  
 public: 
   Window(int frameSize, WindowType windowType = RECTANGULAR);
   ~Window();
   
-  void process(MatrixXC frames, MatrixXC* windowedFrames);
-  void process(MatrixXR frames, MatrixXR* windowedFrames);
-  void process(MatrixXR frames, MatrixXC* windowedFrames);
+  void process(const MatrixXC& frames, MatrixXC* windowedFrames);
+  void process(const MatrixXR& frames, MatrixXR* windowedFrames);
+  void process(const MatrixXR& frames, MatrixXC* windowedFrames);
   
   void setup();
   void reset();

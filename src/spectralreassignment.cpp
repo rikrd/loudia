@@ -128,7 +128,7 @@ void SpectralReassignment::setup(){
 
 
 template<class F, class W, class ScalarW>
-void SpectralReassignment::process(F frames, W* reassigned, W* fft){
+void SpectralReassignment::process(const F& frames, W* reassigned, W* fft){
 
   (*reassigned).resize(frames.rows(), _fftSize);
   (*fft).resize(frames.rows(), _fftSize);
@@ -180,19 +180,19 @@ void SpectralReassignment::process(F frames, W* reassigned, W* fft){
   }
 }
 
-void SpectralReassignment::process(MatrixXC frames, MatrixXC* reassigned, MatrixXC* fft){
+void SpectralReassignment::process(const MatrixXC& frames, MatrixXC* reassigned, MatrixXC* fft){
   process<MatrixXC, MatrixXC, Complex>(frames, reassigned, fft);
 }
 
-void SpectralReassignment::process(MatrixXR frames, MatrixXC* reassigned, MatrixXC* fft){
+void SpectralReassignment::process(const MatrixXR& frames, MatrixXC* reassigned, MatrixXC* fft){
   process<MatrixXR, MatrixXC, Complex>(frames, reassigned, fft);
 }
 
-void SpectralReassignment::process(MatrixXC frames, MatrixXC* reassigned){
+void SpectralReassignment::process(const MatrixXC& frames, MatrixXC* reassigned){
   process<MatrixXC, MatrixXC, Complex>(frames, reassigned, &_fft);
 }
 
-void SpectralReassignment::process(MatrixXR frames, MatrixXC* reassigned){
+void SpectralReassignment::process(const MatrixXR& frames, MatrixXC* reassigned){
   process<MatrixXR, MatrixXC, Complex>(frames, reassigned, &_fft);
 }
 

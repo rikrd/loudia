@@ -53,7 +53,7 @@ void PeakPick::setup(){
 }
 
 
-void PeakPick::process(MatrixXC fft, MatrixXR* peakPositions, MatrixXR* peakMagnitudes){
+void PeakPick::process(const MatrixXC& fft, MatrixXR* peakPositions, MatrixXR* peakMagnitudes){
   DEBUG("PEAKPICK: Processing");
   int peakIndex;
   

@@ -57,4 +57,6 @@ import_array();
 %include "odfcomplex.h"
 %include "onsetcomplex.h"
 
+%include "utils.h"
+
 %module ricaudio

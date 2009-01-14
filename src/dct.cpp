@@ -120,7 +120,7 @@ void DCT::typeOctaveMatrix(MatrixXR* dctMatrix) {
   (*dctMatrix).col(0).setConstant( norm * sqrt(0.5) );
 }
 
-void DCT::process(MatrixXR input, MatrixXR* dctCoeffs){
+void DCT::process(const MatrixXR& input, MatrixXR* dctCoeffs){
   (*dctCoeffs).resize(input.rows(), _dctLength);
   
   for ( int i = 0 ; i < input.rows(); i++) {

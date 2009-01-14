@@ -55,7 +55,7 @@ void PeakDetect::setup(){
 }
 
 
-void PeakDetect::process(MatrixXC fft, MatrixXR* peakPositions, MatrixXR* peakMagnitudes){
+void PeakDetect::process(const MatrixXC& fft, MatrixXR* peakPositions, MatrixXR* peakMagnitudes){
   DEBUG("PEAKDETECT: Processing");
   int peakIndex;
   

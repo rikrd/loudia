@@ -34,7 +34,7 @@
  */
 using namespace std;
 
-void roots(MatrixXR poly, MatrixXC* result) {
+void roots(const MatrixXR& poly, MatrixXC* result) {
   const int coeffs = poly.cols();
   
   if ( coeffs <= 1 ) {
@@ -59,7 +59,7 @@ void roots(MatrixXR poly, MatrixXC* result) {
  * returns a matrix of polynomes (a polynome per vector of roots)
  */
 template<typename InMatrixType>
-void poly(InMatrixType roots, InMatrixType* result) {
+void poly(const InMatrixType& roots, InMatrixType* result) {
   const int nroots = roots.cols();
 
   // Prepare the output
@@ -80,7 +80,7 @@ void poly(InMatrixType roots, InMatrixType* result) {
   //(*result) = a;
 }
 
-void poly(MatrixXC roots, MatrixXC* result) {
+void poly(const MatrixXC& roots, MatrixXC* result) {
   return poly<MatrixXC>(roots, result);
 }
 
@@ -89,7 +89,7 @@ void poly(MatrixXC roots, MatrixXC* result) {
  * returns the convolution of both
  */
 template<typename InMatrixType>
-void convolve(InMatrixType a, InMatrixType b, InMatrixType* c) {
+void convolve(const InMatrixType& a, const InMatrixType& b, InMatrixType* c) {
   const int asize = a.cols();
   const int bsize = b.cols();
 
@@ -137,11 +137,11 @@ void convolve(InMatrixType a, InMatrixType b, InMatrixType* c) {
   }
 }
 
-void convolve(MatrixXC a, MatrixXC b, MatrixXC* c) {
+void convolve(const MatrixXC& a, const MatrixXC& b, MatrixXC* c) {
   return convolve<MatrixXC>(a, b, c);
 }
 
-void convolve(MatrixXR a, MatrixXR b, MatrixXR* c) {
+void convolve(const MatrixXR& a, const MatrixXR& b, MatrixXR* c) {
   return convolve<MatrixXR>(a, b, c);
 }
 
@@ -177,7 +177,7 @@ void rowCumsum(MatrixXR* in) {
 }
 
 
-void polar(MatrixXR mag, MatrixXR phase, MatrixXC* complex) {
+void polar(const MatrixXR&  mag, const MatrixXR&  phase, MatrixXC* complex) {
   if ((mag.rows() != phase.rows()) || (mag.cols() != phase.cols())) {
     // Throw an error
   }
@@ -191,7 +191,7 @@ void polar(MatrixXR mag, MatrixXR phase, MatrixXC* complex) {
   }
 }
 
-void coeffsToZpk(MatrixXR b, MatrixXR a, MatrixXC* zeros, MatrixXC* poles, Real* gain){
+void coeffsToZpk(const MatrixXR&  b, const MatrixXR&  a, MatrixXC* zeros, MatrixXC* poles, Real* gain){
   // Return zero, pole, gain (z,p,k) representation from a numerator,
   // denominator representation of a linear filter.
   (*gain) = b(0, 0);

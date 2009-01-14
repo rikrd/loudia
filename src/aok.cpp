@@ -19,11 +19,6 @@
 #include "typedefs.h"
 #include "debug.h"
 
-#include <Eigen/Core>
-#include <Eigen/Array>
-#include <iostream>
-#include <cmath>
-
 #include "aok.h"
 
 using namespace std;
@@ -113,22 +108,24 @@ void AOK::setup(){
 }
 
 
-void AOK::process(MatrixXC frames, MatrixXR* timeFreqRep){
+void AOK::process(const MatrixXC& frames, MatrixXR* timeFreqRep){
   outct = 0;
 
-  (*timeFreqRep).resize(frames.rows() / tstep, _fftSize);
+  timeFreqRep->resize(frames.rows() / tstep, _fftSize);
   
-  // fliplr the frames
+  MatrixXC framesFlipped = frames;
+
+  // fliplr the framesFlipped
   for(int i = 0; i < slen / 2; i++){
-    frames.col(i).swap(frames.col(slen - 1 - i));
+    framesFlipped.col(i).swap(framesFlipped.col(slen - 1 - i));
   }
 
-  for ( int row = 0; row < frames.rows(); row++) {  /*  for each temporal frame of samples  */
+  for ( int row = 0; row < framesFlipped.rows(); row++) {  /*  for each temporal frame of samples  */
     //DEBUG("AOK: Processing, row="<<row);
     // Fill in the input vectors
     //DEBUG("AOK: Processing, setting the xr and xi C arrays, ii="<<ii);
-    Eigen::Map<MatrixXR>(xr, 1, frames.cols()) = frames.row(row).real();
-    Eigen::Map<MatrixXR>(xi, 1, frames.cols()) = frames.row(row).imag();
+    Eigen::Map<MatrixXR>(xr, 1, framesFlipped.cols()) = framesFlipped.row(row).real();
+    Eigen::Map<MatrixXR>(xi, 1, framesFlipped.cols()) = framesFlipped.row(row).imag();
     //DEBUG("AOK: Processing, finished setting the xr and xi C arrays");
     
     rectaf(xr, xi, nlag, nraf, rar, rai, rarN, raiN, rectafr, rectafi);
@@ -179,7 +176,7 @@ void AOK::process(MatrixXC frames, MatrixXR* timeFreqRep){
         */
         itemp = fftlen/2 + fstep;
         int col = 0;				/* print output slice	*/
-        //DEBUG("AOK: Processing, (*timeFreqRep).shape: " << (*timeFreqRep).rows() << ", " << (*timeFreqRep).cols());
+        //DEBUG("AOK: Processing, timeFreqRep->shape: " << timeFreqRep->rows() << ", " << timeFreqRep->cols());
         for (int i=itemp; i < fftlen; i=i+fstep)
           {
             //DEBUG("AOK: Processing, row: " << row << ", col: " << col << ", i: " << i);

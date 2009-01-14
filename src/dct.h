@@ -65,7 +65,7 @@ public:
 
   void setup();
 
-  void process(MatrixXR input, MatrixXR* dctCoeffs);
+  void process(const MatrixXR& input, MatrixXR* dctCoeffs);
 
   void reset();
 };

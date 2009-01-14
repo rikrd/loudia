@@ -53,7 +53,7 @@ public:
 
   void setup();
 
-  void process(MatrixXR spectrum, MatrixXR* mfccCoeffs);
+  void process(const MatrixXR& spectrum, MatrixXR* mfccCoeffs);
 
   void reset();
 
