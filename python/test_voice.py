@@ -39,7 +39,7 @@ stream = pyricaudio.fft_ricaudio(stream, {'inputKey': 'windowed',
                                           'fftLength': fftSize})
 
 
-interactivePlotting = False
+interactivePlotting = True
 
 subplots = {1 : ['mag', 'peak_mags'],
             2 : ['phase', 'peak_phases']}
@@ -60,9 +60,10 @@ if 'peak_mags' in all_processes:
     maxTrajCount = 20
     silentFrames = 3
     minPeakWidth = 12 # bins for Hamming
+    minPeakContrast = 0.01
     maxFreqBinChange = 4 * fftSize / (frameSize * 44100)
     
-    peaker = ricaudio.PeakDetect( maxPeakCount, minPeakWidth )
+    peaker = ricaudio.PeakDetect( maxPeakCount, minPeakWidth, minPeakContrast )
     peakInterp = ricaudio.PeakInterpolate( )
     tracker = ricaudio.PeakContinue( maxTrajCount, maxFreqBinChange, silentFrames )
 
@@ -112,7 +113,8 @@ for frame in stream:
 
 
             if 'peak_mags' in processes:
-                pylab.scatter(peakPos, spec[scipy.array(peakPos, dtype='i4')], c='r')
+                if not (peakPos == -1).all():
+                    pylab.scatter(peakPos, spec[scipy.array(peakPos, dtype='i4')], c='r')
 
 
             if 'phase' in processes:           
@@ -123,7 +125,8 @@ for frame in stream:
 
 
             if 'peak_phases' in processes:
-                pylab.scatter(peakPos, phase[scipy.array(peakPos, dtype='i4')], c='r')
+                if not (peakPos == -1).all():
+                    pylab.scatter(peakPos, phase[scipy.array(peakPos, dtype='i4')], c='r')
     
             
             
@@ -198,7 +201,7 @@ pylab.plot( trajsMags )
 
 pylab.figure()
 pylab.hold(True)
-pylab.imshow( scipy.array( specs ).T, aspect = 'equal' )
+pylab.imshow( scipy.array( specs ).T, aspect = 'auto' )
 pylab.plot( trajsLocs )
 
 pylab.show()
