@@ -8,17 +8,20 @@ import scipy
 
 filename = sys.argv[1]
 
-frameSize = 1024 / 44100.0
-frameStep = 256 / 44100.0
+frameSize = 1024 
+frameStep = 256
 
-fftSize = 1024
+frameSizeTime = frameSize / 44100.0
+frameStepTime = frameStep / 44100.0
+
+fftSize = 2048
 
 analysisLimit = 1000.0
 
 # Creation of the pipeline        
 stream = pyricaudio.sndfilereader({'filename': filename,
-                                   'windowSizeInTime': frameSize,
-                                   'windowStepInTime': frameStep,
+                                   'windowSizeInTime': frameSizeTime,
+                                   'windowStepInTime': frameStepTime,
                                    'encodingKey': 'encoding',
                                    'channelCountKey': 'channelCount',
                                    'samplesOriginalKey': 'samples',
@@ -58,10 +61,10 @@ pylab.ion()
 if 'peak_mags' in all_processes:
     maxPeakCount = 20
     maxTrajCount = 20
-    silentFrames = 11
-    minPeakWidth = 4 # bins for Hamming
+    silentFrames = 3
+    minPeakWidth = 9 * int(fftSize / frameSize) # bins for Hamming
     minPeakContrast = 0.01
-    maxFreqBinChange = 2 * fftSize / (frameSize * 44100)
+    maxFreqBinChange = 2 * int(fftSize / frameSize)
     
     peaker = ricaudio.PeakDetect( maxPeakCount, minPeakWidth, minPeakContrast )
     peakInterp = ricaudio.PeakInterpolate( )
