@@ -49,10 +49,6 @@ void roots(const MatrixXR& poly, MatrixXC* result) {
   (*result) = Eigen::EigenSolver<MatrixXR>(companion).eigenvalues();
 }
 
-/**
- * Given a matrix of roots (a vector of roots per column)
- * returns a matrix of polynomes (a polynome per vector of roots)
- */
 void poly(const MatrixXR&  roots, MatrixXC* result) {
   const int nroots = roots.cols();
   
@@ -100,14 +96,29 @@ void polar(const MatrixXR&  mag, const MatrixXR&  phase, MatrixXC* complex) {
 }
 
 void coeffsToZpk(const MatrixXR&  b, const MatrixXR&  a, MatrixXC* zeros, MatrixXC* poles, Real* gain){
-  // Return zero, pole, gain (z,p,k) representation from a numerator,
-  // denominator representation of a linear filter.
   (*gain) = b(0, 0);
   MatrixXR bTemp = b;
   bTemp /= b(0, 0);
   roots(bTemp, zeros);
   roots(a, poles);
 }
+
+void asinc(int M, int T, const MatrixXR& x, MatrixXR* y) {
+  y->resize(x.rows(), x.cols());
+
+  (*y) = (M * M_PI * T * x).cwise().sin().cwise() / (M_PI * T * x).cwise().sin();
+  
+  (*y).cwise().isnan().select(1, (*y));
+  // TODO: are there any nans here?
+}
+
+
+void hamming(Real position, Real magnitude, int windowSize, MatrixXR* spectrum) {
+  const int ncols = spectrum->cols();
+  const int begin = ceil(position - 4);
+  const int end = floor(position + 4);  
+}
+
 
 /*
 void zpkToCoeffs(MatrixXC zeros, MatrixXC poles, Real gain, MatrixXC* b, MatrixXC* a):

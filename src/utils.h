@@ -52,4 +52,16 @@ void polar(const MatrixXR& mag, const MatrixXR& phase, MatrixXC* complex);
  */
 void coeffsToZpk(const MatrixXR& b, const MatrixXR& a, MatrixXC* zeros, MatrixXC* poles, Real* gain);
 
+/**
+ * Calculate the aliased cardinal sine defined as:
+ *   
+ *   asinc(M, T, x) = sin(M * pi * x * T) / sin(pi * x * T)
+ */
+void asinc(int M, int T, const MatrixXR& x, MatrixXR* y);
+
+/**
+ * Calculate the Fourier transform of a hamming window
+ */
+void hammingSpectral(Real position, Real magnitude, int windowSize, MatrixXR* spectrum);
+
 #endif  /* UTILS_H */
