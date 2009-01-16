@@ -34,7 +34,7 @@ stream = pyricaudio.sndfilereader({'filename': filename,
 
 stream = pyricaudio.window_ricaudio(stream, {'inputKey': 'samplesMono',
                                              'outputKey': 'windowed',
-                                             'windowType': 'hann'})
+                                             'windowType': 'hamming'})
 
 stream = pyricaudio.fft_ricaudio(stream, {'inputKey': 'windowed',
                                           'outputKey': 'fft',
@@ -43,6 +43,8 @@ stream = pyricaudio.fft_ricaudio(stream, {'inputKey': 'windowed',
 
 
 interactivePlotting = False
+plotSpectrumTrajs = True
+plotTrajs = False
 
 subplots = {1 : ['mag', 'peak_mags'],
             2 : ['phase', 'peak_phases']}
@@ -62,7 +64,7 @@ if 'peak_mags' in all_processes:
     maxPeakCount = 20
     maxTrajCount = 20
     silentFrames = 3
-    minPeakWidth = 4 * int(fftSize / frameSize) # bins for Hamming
+    minPeakWidth = 2 * int(fftSize / frameSize) # bins for Hamming
     minPeakContrast = 0.01
     maxFreqBinChange = 2 * int(fftSize / frameSize)
     
@@ -185,30 +187,30 @@ def extractTrajs(trajsLocs, trajsMags):
 
 trajs = extractTrajs(trajsLocs, trajsMags)
 
-"""
-pylab.figure(2)
-for trajInds, trajPos, trajMags in trajs:
-    pylab.hold( True )
-    pylab.plot( trajInds, trajPos )
 
-trajsLocs = scipy.array( trajsLocs )
-trajsMags = scipy.array( trajsMags )
-trajsMags = trajsMags.sum(axis = 1)
+if plotTrajs:
+    pylab.figure()
+    for trajInds, trajPos, trajMags in trajs:
+        pylab.hold( True )
+        pylab.plot( trajInds, trajPos )
 
-print trajsLocs.shape
+if False:
+    pylab.figure()
+    trajsLocs = scipy.array( trajsLocs )
+    pylab.plot( trajsLocs )
 
-pylab.figure()
-pylab.plot( trajsLocs )
+if False:
+    pylab.figure()
+    trajsMags = scipy.array( trajsMags )
+    trajsMags = trajsMags.sum(axis = 1)
+    pylab.plot( trajsMags )
 
-pylab.figure()
-pylab.plot( trajsMags )
-"""
-
-pylab.figure()
-pylab.hold(True)
-pylab.imshow( scipy.array( specs ).T, aspect = 'auto' )
-for trajInds, trajPos, trajMags in trajs:
-    pylab.hold( True )
-    pylab.plot( trajInds, trajPos, c='black' )
-
+if plotSpectrumTrajs:
+    pylab.figure()
+    pylab.hold(True)
+    pylab.imshow( scipy.array( specs ).T, aspect = 'auto' )
+    for trajInds, trajPos, trajMags in trajs:
+        pylab.hold( True )
+        pylab.plot( trajInds, trajPos, c='black' )
+        
 pylab.show()
