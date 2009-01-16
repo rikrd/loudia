@@ -34,7 +34,7 @@ stream = pyricaudio.sndfilereader({'filename': filename,
 
 stream = pyricaudio.window_ricaudio(stream, {'inputKey': 'samplesMono',
                                              'outputKey': 'windowed',
-                                             'windowType': 'blackmanharris'})
+                                             'windowType': 'hann'})
 
 stream = pyricaudio.fft_ricaudio(stream, {'inputKey': 'windowed',
                                           'outputKey': 'fft',
@@ -62,7 +62,7 @@ if 'peak_mags' in all_processes:
     maxPeakCount = 20
     maxTrajCount = 20
     silentFrames = 3
-    minPeakWidth = 9 * int(fftSize / frameSize) # bins for Hamming
+    minPeakWidth = 4 * int(fftSize / frameSize) # bins for Hamming
     minPeakContrast = 0.01
     maxFreqBinChange = 2 * int(fftSize / frameSize)
     
@@ -135,7 +135,7 @@ for frame in stream:
             
 pylab.ioff()
 
-"""
+
 trajsLocs = scipy.array( trajsLocs )
 trajsMags = scipy.array( trajsMags )
 
@@ -150,7 +150,7 @@ def extractTrajs(trajsLocs, trajsMags):
         trackPos = []
         
         for row in range(trajsLocs.shape[0]):
-            if not trajsMags[row, col] == 0:
+            if not trajsMags[row, col] == -120:
                 inTrack = True
                 
                 trackInds.append( row )
@@ -159,7 +159,7 @@ def extractTrajs(trajsLocs, trajsMags):
             else:
                 if inTrack:
                     
-                    trackInds = scipy.array(trackMags)
+                    trackInds = scipy.array(trackInds)
                     trackMags = scipy.array(trackMags)
                     trackPos = scipy.array(trackPos)
                     trajs.append((trackInds, trackPos, trackMags))
@@ -172,7 +172,7 @@ def extractTrajs(trajsLocs, trajsMags):
 
 
         if inTrack:
-            trackInds = scipy.array(trackMags)
+            trackInds = scipy.array(trackInds)
             trackMags = scipy.array(trackMags)
             trackPos = scipy.array(trackPos)
             trajs.append((trackInds, trackPos, trackMags))
@@ -185,11 +185,12 @@ def extractTrajs(trajsLocs, trajsMags):
 
 trajs = extractTrajs(trajsLocs, trajsMags)
 
+"""
 pylab.figure(2)
 for trajInds, trajPos, trajMags in trajs:
     pylab.hold( True )
-    pylab.scatter( trajInds, trajPos )
-"""
+    pylab.plot( trajInds, trajPos )
+
 trajsLocs = scipy.array( trajsLocs )
 trajsMags = scipy.array( trajsMags )
 trajsMags = trajsMags.sum(axis = 1)
@@ -201,10 +202,13 @@ pylab.plot( trajsLocs )
 
 pylab.figure()
 pylab.plot( trajsMags )
+"""
 
 pylab.figure()
 pylab.hold(True)
 pylab.imshow( scipy.array( specs ).T, aspect = 'auto' )
-pylab.plot( trajsLocs, c='black' )
+for trajInds, trajPos, trajMags in trajs:
+    pylab.hold( True )
+    pylab.plot( trajInds, trajPos, c='black' )
 
 pylab.show()
