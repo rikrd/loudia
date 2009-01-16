@@ -57,11 +57,21 @@ void coeffsToZpk(const MatrixXR& b, const MatrixXR& a, MatrixXC* zeros, MatrixXC
  *   
  *   asinc(M, T, x) = sin(M * pi * x * T) / sin(pi * x * T)
  */
-void asinc(int M, int T, const MatrixXR& x, MatrixXR* y);
+Real asinc(int M, Real omega);
 
 /**
  * Calculate the Fourier transform of a hamming window
  */
-void hammingSpectral(Real position, Real magnitude, int windowSize, MatrixXR* spectrum);
+void raisedCosTransform(Real position, Real magnitude, 
+                        int windowSize, int fftSize,
+                        int mainLobeBandwith, Real alpha, Real beta, MatrixXR* spectrum);
+
+void hannTransform(Real position, Real magnitude, 
+                   int windowSize, int fftSize,
+                   int mainLobeBandwith, MatrixXR* spectrum);
+
+void hammingTransform(Real position, Real magnitude, 
+                      int windowSize, int fftSize,
+                      int mainLobeBandwith, MatrixXR* spectrum);
 
 #endif  /* UTILS_H */

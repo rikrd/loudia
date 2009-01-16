@@ -103,21 +103,48 @@ void coeffsToZpk(const MatrixXR&  b, const MatrixXR&  a, MatrixXC* zeros, Matrix
   roots(a, poles);
 }
 
-void asinc(int M, int T, const MatrixXR& x, MatrixXR* y) {
-  y->resize(x.rows(), x.cols());
+Real asinc(int M, Real omega) {
+  return sin(M * omega / 2.0) / sin(omega / 2.0);
+}
 
-  (*y) = (M * M_PI * T * x).cwise().sin().cwise() / (M_PI * T * x).cwise().sin();
+
+void raisedCosTransform(Real position, Real magnitude, 
+                        int windowSize, int fftSize,
+                        int mainLobeBandwith, Real alpha, Real beta, MatrixXR* spectrum) {
   
-  (*y).cwise().isnan().select(1, (*y));
-  // TODO: are there any nans here?
-}
+  const int begin = max(ceil(position - mainLobeBandwith / 2.0), 0.0);
+  const int end = min(floor(position + mainLobeBandwith / 2.0), fftSize - 1.0);
 
-
-void hamming(Real position, Real magnitude, int windowSize, MatrixXR* spectrum) {
+  spectrum->resize(1, end - begin);
   const int ncols = spectrum->cols();
-  const int begin = ceil(position - 4);
-  const int end = floor(position + 4);  
+  
+  const Real omegaM = 2 * M_PI / fftSize;
+
+  for ( int row = 0; row < spectrum->rows(); row++ ) { 
+    for ( int i = begin; i < end + 1; i++ ) {
+      Real omega = 2.0 * M_PI * i / fftSize;
+      (*spectrum)(row, i-begin) += magnitude * windowSize * (alpha * asinc(windowSize, omega) + beta * (asinc(windowSize, omega - omegaM) + asinc(windowSize, omega + omegaM)));
+    }
+  }
 }
+
+void hannTransform(Real position, Real magnitude, 
+                   int windowSize, int fftSize,
+                   int mainLobeBandwith, MatrixXR* spectrum) {
+
+  raisedCosTransform(position, magnitude, windowSize, fftSize, mainLobeBandwith, 0.5, 0.5, spectrum);
+
+}
+
+
+void hammingTransform(Real position, Real magnitude, 
+                      int windowSize, int fftSize,
+                      int mainLobeBandwith, MatrixXR* spectrum) {
+
+  raisedCosTransform(position, magnitude, windowSize, fftSize, mainLobeBandwith, 0.53836, 0.46164, spectrum);
+
+}
+
 
 
 /*
