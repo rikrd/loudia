@@ -6,6 +6,18 @@ import pylab
 import sys
 import scipy
 
+
+interactivePlotting = False
+
+plotSpectrumTrajs = True
+
+plotTrajs = True
+
+plotMags = False
+
+plotLocs = False
+
+
 filename = sys.argv[1]
 
 frameSize = 1024 
@@ -42,9 +54,6 @@ stream = pyricaudio.fft_ricaudio(stream, {'inputKey': 'windowed',
                                           'fftLength': fftSize})
 
 
-interactivePlotting = False
-plotSpectrumTrajs = True
-plotTrajs = False
 
 subplots = {1 : ['mag', 'peak_mags'],
             2 : ['phase', 'peak_phases']}
@@ -65,7 +74,7 @@ if 'peak_mags' in all_processes:
     maxTrajCount = 20
     silentFrames = 3
     minPeakWidth = 2 * int(fftSize / frameSize) # bins for Hamming
-    minPeakContrast = 0.01
+    minPeakContrast = 0.1
     maxFreqBinChange = 2 * int(fftSize / frameSize)
     
     peaker = ricaudio.PeakDetect( maxPeakCount, minPeakWidth, minPeakContrast )
@@ -194,12 +203,12 @@ if plotTrajs:
         pylab.hold( True )
         pylab.plot( trajInds, trajPos )
 
-if False:
+if plotLocs:
     pylab.figure()
     trajsLocs = scipy.array( trajsLocs )
     pylab.plot( trajsLocs )
 
-if False:
+if plotMags:
     pylab.figure()
     trajsMags = scipy.array( trajsMags )
     trajsMags = trajsMags.sum(axis = 1)
