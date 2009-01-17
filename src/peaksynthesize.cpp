@@ -62,8 +62,12 @@ void PeakSynthesize::process(const MatrixXR& trajPositions, const MatrixXR& traj
   
   DEBUG("PEAKSYNTHESIZE: Processing");
   
-  spectrum->resize(trajPositions.rows(), _fftSize);
-  
+  spectrum->resize(trajPositions.rows(), _fftSize/2.0);
+  spectrum->setZero();
+
+  MatrixXR trajMags;
+  dbToMag(trajMagnitudes, &trajMags);
+
   for ( int row = 0 ; row < spectrum->rows(); row++ ) {
   
     for ( int i = 0; i < trajPositions.cols(); i++ ) {
@@ -80,23 +84,29 @@ void PeakSynthesize::process(const MatrixXR& trajPositions, const MatrixXR& traj
 
         case Window::HANN:
         case Window::HANNING:
-          hannTransform(trajPositions(row, i), trajMagnitudes(row, i), 
+          hannTransform(trajPositions(row, i), trajMags(row, i), 
                         _windowSize, _fftSize, 
                         &windowTransform, &begin, &end);
           break;
           
         case Window::HAMMING:
-          hammingTransform(trajPositions(row, i), trajMagnitudes(row, i), 
+          hammingTransform(trajPositions(row, i), trajMags(row, i), 
                            _windowSize, _fftSize, 
                            &windowTransform, &begin, &end);
           break;
 
         default:
+          DEBUG("ERROR: Unknown type of window");
           // Throw ValueError unknown window type
           break;
 
         }
-        spectrum->block(0, begin, 1, end) += windowTransform.row(0);        
+
+        cout << "begin: " << begin << endl;
+        cout << "end: " << end << endl;
+        cout << "windowTransform:" << endl;
+        cout << windowTransform << endl;
+        spectrum->block(0, begin, 1, end - begin) += windowTransform.row(0);        
       }
     }
   }

@@ -89,4 +89,7 @@ void hammingTransform(Real position, Real magnitude,
                       int windowSize, int fftSize,
                       MatrixXR* spectrum, int* begin, int* end, int mainLobeBandwith = 4);
 
+void dbToMag(MatrixXR db, MatrixXR* mag);
+void magToDb(MatrixXR mag, MatrixXR* db, Real minMag = 0.0001 );
+
 #endif  /* UTILS_H */
