@@ -21,31 +21,30 @@
 %apply float { Real };
 
 %typecheck(SWIG_TYPECHECK_INTEGER)
-	 int, short, long,
- 	 unsigned int, unsigned short, unsigned long,
-	 signed char, unsigned char,
-	 long long, unsigned long long,
-	 const int &, const short &, const long &,
- 	 const unsigned int &, const unsigned short &, const unsigned long &,
-	 const long long &, const unsigned long long &,
-	 enum SWIGTYPE,
-         bool, const bool & 
+	   int, short, long,
+ 	   unsigned int, unsigned short, unsigned long,
+	   signed char, unsigned char,
+	   long long, unsigned long long,
+	   const int &, const short &, const long &,
+ 	   const unsigned int &, const unsigned short &, const unsigned long &,
+	   const long long &, const unsigned long long &,
+	   enum SWIGTYPE,
+           bool, const bool & 
 {
   $1 = (PyInt_Check($input) || PyLong_Check($input)) ? 1 : 0;
 }
 
 
-%typemap(typecheck,
-         prefedence = SWIG_TYPECHECK_FLOAT) 
-         Real, 
-         const Real,
-         Real & {
+%typecheck(SWIG_TYPECHECK_FLOAT) 
+           Real,
+           const Real,
+           Real & {
 
   $1 = (PyFloat_Check($input) || PyInt_Check($input) || PyLong_Check($input)) ? 1 : 0;
 
 }
 
-%typemap(typecheck) 
+%typecheck(SWIG_TYPECHECK_FLOAT_ARRAY) 
          MatrixXR, 
          MatrixXR *,
          const MatrixXR,
@@ -54,7 +53,7 @@
   $1 = type_match(array_type($input), PyArray_FLOAT);
 }
 
-%typemap(typecheck) 
+%typecheck(SWIG_TYPECHECK_FLOAT_ARRAY) 
          MatrixXC,
          MatrixXC *,
          const MatrixXC,
@@ -304,3 +303,31 @@
 
   $result = SWIG_Python_AppendOutput($result, out_array);
 }
+
+%typemap(in, numinputs = 0) 
+         Real* (Real temp) {
+
+  $1 = &temp;
+
+}
+
+%typemap(argout) 
+         Real* {
+
+  $result = SWIG_Python_AppendOutput($result, Py_BuildValue("f", $1));
+}
+
+
+%typemap(in, numinputs = 0) 
+         int* (int temp) {
+
+  $1 = &temp;
+
+}
+
+%typemap(argout) 
+         int* {
+
+  $result = SWIG_Python_AppendOutput($result, Py_BuildValue("i", $1));
+}
+
