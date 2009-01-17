@@ -62,7 +62,7 @@ void PeakSynthesize::process(const MatrixXR& trajPositions, const MatrixXR& traj
   
   DEBUG("PEAKSYNTHESIZE: Processing");
   
-  spectrum->resize(trajPositions.rows(), _fftSize/2.0);
+  spectrum->resize(trajPositions.rows(), ceil(_fftSize/2.0));
   spectrum->setZero();
 
   MatrixXR trajMags;
@@ -101,12 +101,8 @@ void PeakSynthesize::process(const MatrixXR& trajPositions, const MatrixXR& traj
           break;
 
         }
-
-        cout << "begin: " << begin << endl;
-        cout << "end: " << end << endl;
-        cout << "windowTransform:" << endl;
-        cout << windowTransform << endl;
-        spectrum->block(0, begin, 1, end - begin) += windowTransform.row(0);        
+        
+        spectrum->block(0, begin, 1, windowTransform.cols()) += windowTransform.row(0);        
       }
     }
   }

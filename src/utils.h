@@ -65,31 +65,32 @@ Real asinc(int M, Real omega);
 void raisedCosTransform(Real position, Real magnitude, 
                         int windowSize, int fftSize,
                         Real alpha, Real beta, 
-                        MatrixXR* spectrum, int* begin, int* end, int mainLobeBandwith);
+                        MatrixXR* spectrum, int* begin, int* end, int bandwidth);
 
 void raisedCosTransform(Real position, Real magnitude, 
                         int windowSize, int fftSize,
                         Real alpha, Real beta, 
-                        MatrixXR* spectrum, int mainLobeBandwith);
+                        MatrixXR* spectrum, int bandwidth);
 
 void hannTransform(Real position, Real magnitude, 
                    int windowSize, int fftSize,
-                   MatrixXR* spectrum, int mainLobeBandwith = 4);
+                   MatrixXR* spectrum, int bandwidth = 4);
 
 void hannTransform(Real position, Real magnitude, 
                    int windowSize, int fftSize,
-                   MatrixXR* spectrum, int* begin, int* end, int mainLobeBandwith = 4);
+                   MatrixXR* spectrum, int* begin, int* end, int bandwidth = 4);
 
 
 void hammingTransform(Real position, Real magnitude, 
                       int windowSize, int fftSize,
-                      MatrixXR* spectrum, int mainLobeBandwith = 4);
+                      MatrixXR* spectrum, int bandwidth = 4);
 
 void hammingTransform(Real position, Real magnitude, 
                       int windowSize, int fftSize,
-                      MatrixXR* spectrum, int* begin, int* end, int mainLobeBandwith = 4);
+                      MatrixXR* spectrum, int* begin, int* end, int bandwidth = 4);
 
 void dbToMag(MatrixXR db, MatrixXR* mag);
+
 void magToDb(MatrixXR mag, MatrixXR* db, Real minMag = 0.0001 );
 
 #endif  /* UTILS_H */
