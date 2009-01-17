@@ -117,19 +117,22 @@ void raisedCosTransform(Real position, Real magnitude,
 
   (*begin) = max((position - bandwidth / 2.0), 0.0);
   (*end) = min(ceil(position + bandwidth / 2.0 + 1), fftSize/2.0);
-
-  spectrum->resize(1, end - begin);
   
+  if ( end <= begin ) {
+    DEBUG("ERROR: end must be higher than begin");
+    // Throw a ValueError end must be higher than begin
+  }
+  
+  spectrum->resize(1, (*end) - (*begin));
+
   const Real omegaM = 2.0 * M_PI / fftSize;
   
-  for ( int row = 0; row < spectrum->rows(); row++ ) { 
-    for ( int i = (*begin); i < (*end); i++ ) {
-      
-      Real omega = 2.0 * M_PI * (i - position) / fftSize;
-
-      (*spectrum)(row, i - (*begin)) = magnitude * abs(alpha * asinc(windowSize, omega) + beta * (asinc(windowSize, omega - omegaM) + asinc(windowSize, omega + omegaM)));
-
-    }
+  for ( int i = (*begin); i < (*end); i++ ) {
+    
+    Real omega = 2.0 * M_PI * (i - position) / fftSize;
+    
+    (*spectrum)(0, i - (*begin)) = magnitude * abs(alpha * asinc(windowSize, omega) + beta * (asinc(windowSize, omega - omegaM) + asinc(windowSize, omega + omegaM)));
+    
   }
 }
 
