@@ -11,6 +11,10 @@ interactivePlotting = False
 
 plotSpectrumTrajs = True
 
+plotDetSpecSynth = True
+
+plotDetSpecDiff = True
+
 plotTrajs = True
 
 plotMags = False
@@ -76,14 +80,17 @@ if 'peak_mags' in all_processes:
     minPeakWidth = 2 * int(fftSize / frameSize) # bins for Hamming
     minPeakContrast = 0.1
     maxFreqBinChange = 2 * int(fftSize / frameSize)
+    windowType = ricaudio.Window.HAMMING
     
     peaker = ricaudio.PeakDetect( maxPeakCount, minPeakWidth, minPeakContrast )
     peakInterp = ricaudio.PeakInterpolate( )
     tracker = ricaudio.PeakContinue( maxTrajCount, maxFreqBinChange, silentFrames )
+    peakSynth = ricaudio.PeakSynthesize( frameSize, fftSize, windowType )
 
 trajsLocs = []
 trajsMags = []
 specs = []
+specsSynth = []
 
 for frame in stream:
     fft = scipy.array(frame['fft'][:plotSize], dtype = scipy.complex64)
@@ -104,6 +111,11 @@ for frame in stream:
                                               scipy.array(peakiLocs, dtype='f4'),
                                               scipy.array(peakiMags, dtype='f4') )
 
+        specSynth = peakSynth.process( trajLocs,
+                                       trajMags )
+
+
+        specsSynth.append( ricaudio.magToDb(specSynth[0,:plotSize])[0,:] )
         
         trajsLocs.append( trajLocs[0,:] )
         trajsMags.append( trajMags[0,:] )
@@ -197,6 +209,18 @@ def extractTrajs(trajsLocs, trajsMags):
 trajs = extractTrajs(trajsLocs, trajsMags)
 
 
+specsSynth = scipy.array( specsSynth )
+specs = scipy.array( specs )
+specsDiff = abs(specs - specsSynth)
+
+if plotDetSpecSynth:
+    pylab.figure()
+    pylab.imshow( specsSynth.T )
+
+if plotDetSpecDiff:
+    pylab.figure()
+    pylab.imshow( specsDiff.T )
+
 if plotTrajs:
     pylab.figure()
     for trajInds, trajPos, trajMags in trajs:
@@ -217,7 +241,7 @@ if plotMags:
 if plotSpectrumTrajs:
     pylab.figure()
     pylab.hold(True)
-    pylab.imshow( scipy.array( specs ).T, aspect = 'auto' )
+    pylab.imshow( specs.T, aspect = 'auto' )
     for trajInds, trajPos, trajMags in trajs:
         pylab.hold( True )
         pylab.plot( trajInds, trajPos, c='black' )
