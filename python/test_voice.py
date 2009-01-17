@@ -75,8 +75,8 @@ print subplots
 pylab.ion()
 
 if 'peak_mags' in all_processes:
-    maxPeakCount = 20
-    maxTrajCount = 20
+    maxPeakCount = 40
+    maxTrajCount = 40
     silentFrames = 3
     minPeakWidth = 2 * int(fftSize / frameSize) # bins for Hamming
     minPeakContrast = 0.1
