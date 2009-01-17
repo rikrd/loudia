@@ -113,19 +113,18 @@ void raisedCosTransform(Real position, Real magnitude,
                         int mainLobeBandwith, Real alpha, Real beta, MatrixXR* spectrum) {
   
   const int begin = max((position - mainLobeBandwith / 2.0), 0.0);
-  const int end = min((position + mainLobeBandwith / 2.0), fftSize/2 - 1.0);
+  const int end = min(ceil(position + mainLobeBandwith / 2.0 + 1), fftSize/2.0);
 
   spectrum->resize(1, end - begin);
-  spectrum->setZero();
   
   const Real omegaM = 2.0 * M_PI / fftSize;
   
   for ( int row = 0; row < spectrum->rows(); row++ ) { 
-    for ( int i = begin; i < end + 1; i++ ) {
+    for ( int i = begin; i < end; i++ ) {
       
       Real omega = 2.0 * M_PI * (i - position) / fftSize;
 
-      (*spectrum)(row, i-begin) += magnitude * abs(alpha * asinc(windowSize, omega) + beta * (asinc(windowSize, omega - omegaM) + asinc(windowSize, omega + omegaM)));
+      (*spectrum)(row, i-begin) = magnitude * abs(alpha * asinc(windowSize, omega) + beta * (asinc(windowSize, omega - omegaM) + asinc(windowSize, omega + omegaM)));
 
     }
   }
