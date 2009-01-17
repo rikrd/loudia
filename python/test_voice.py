@@ -214,10 +214,6 @@ specsSynth = scipy.array( specsSynth )
 specs = scipy.array( specs )
 specsDiff = abs(specs - specsSynth)
 
-
-pylab.figure()
-pylab.plot(odfValue)
-
 if plotDetSpecSynth:
     pylab.figure()
     pylab.imshow( specsSynth.T )
@@ -258,5 +254,7 @@ if plotOdf:
         val = odf.process(specsDiff[i:i+3,:])[0,0]
         odfValue.append(val)
 
+    pylab.figure()
+    pylab.plot(odfValue)
         
 pylab.show()
