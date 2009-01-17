@@ -16,32 +16,36 @@
 ** Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */                                                                          
 
-#ifndef PEAKINTERPOLATE_H
-#define PEAKINTERPOLATE_H
+#ifndef PEAKSYNTHESIZE_H
+#define PEAKSYNTHESIZE_H
 
 #include "typedefs.h"
 #include "debug.h"
 
-class PeakInterpolate {
+#include "window.h"
+
+class PeakSynthesize {
 protected:
   // Internal parameters
-    
+  int _windowSize;
+  Window::WindowType _windowType;
+
+  int _fftSize;
+
   // Internal variables
-  MatrixXR _magnitudes;
 
 public:
-  PeakInterpolate();
+  PeakSynthesize(int windowSize, int fftSize, Window::WindowType windowType = Window::RECTANGULAR);
 
-  ~PeakInterpolate();
+  ~PeakSynthesize();
 
   void setup();
 
-  void process(const MatrixXC& fft, 
-               const MatrixXR& peakPositions, const MatrixXR& peakMagnitudes,
-               MatrixXR* peakPositionsInterp, MatrixXR* peakMagnitudesInterp);
+  void process(const MatrixXR& trajPositions, const MatrixXR& trajMagnitudes,
+               MatrixXR* spectrum);
 
   void reset();
 
 };
 
-#endif  /* PEAKINTERPOLATE_H */
+#endif  /* PEAKSYNTHESIZE_H */

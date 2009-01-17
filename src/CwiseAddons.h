@@ -19,6 +19,11 @@ floor() const
   return _expression(); 
 }
 
+inline const EIGEN_CWISE_UNOP_RETURN_TYPE(ei_scalar_isnan_op)
+isnan() const
+{ 
+  return _expression(); 
+}
 
 inline const EIGEN_CWISE_UNOP_RETURN_TYPE(ei_scalar_exp_n_op)
 expN(const Scalar& base) const

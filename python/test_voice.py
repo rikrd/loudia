@@ -6,19 +6,38 @@ import pylab
 import sys
 import scipy
 
+
+interactivePlotting = False
+
+plotSpectrumTrajs = True
+
+plotDetSpecSynth = True
+
+plotDetSpecDiff = True
+
+plotTrajs = True
+
+plotMags = False
+
+plotLocs = False
+
+
 filename = sys.argv[1]
 
-frameSize = 1024 / 44100.0
-frameStep = 512 / 44100.0
+frameSize = 1024 
+frameStep = 256
 
-fftSize = 1024
+frameSizeTime = frameSize / 44100.0
+frameStepTime = frameStep / 44100.0
 
-analysisLimit = 10.0
+fftSize = 2048
+
+analysisLimit = 1000.0
 
 # Creation of the pipeline        
 stream = pyricaudio.sndfilereader({'filename': filename,
-                                   'windowSizeInTime': frameSize,
-                                   'windowStepInTime': frameStep,
+                                   'windowSizeInTime': frameSizeTime,
+                                   'windowStepInTime': frameStepTime,
                                    'encodingKey': 'encoding',
                                    'channelCountKey': 'channelCount',
                                    'samplesOriginalKey': 'samples',
@@ -31,7 +50,7 @@ stream = pyricaudio.sndfilereader({'filename': filename,
 
 stream = pyricaudio.window_ricaudio(stream, {'inputKey': 'samplesMono',
                                              'outputKey': 'windowed',
-                                             'windowType': 'hann'})
+                                             'windowType': 'hamming'})
 
 stream = pyricaudio.fft_ricaudio(stream, {'inputKey': 'windowed',
                                           'outputKey': 'fft',
@@ -55,47 +74,176 @@ print subplots
 pylab.ion()
 
 if 'peak_mags' in all_processes:
-    minPeakWidth = 8 # bins for Hamming
-    peaker = ricaudio.PeakDetect( plotSize / 3, minPeakWidth )
+    maxPeakCount = 20
+    maxTrajCount = 20
+    silentFrames = 3
+    minPeakWidth = 2 * int(fftSize / frameSize) # bins for Hamming
+    minPeakContrast = 0.1
+    maxFreqBinChange = 2 * int(fftSize / frameSize)
+    windowType = ricaudio.Window.HAMMING
+    
+    peaker = ricaudio.PeakDetect( maxPeakCount, minPeakWidth, minPeakContrast )
+    peakInterp = ricaudio.PeakInterpolate( )
+    tracker = ricaudio.PeakContinue( maxTrajCount, maxFreqBinChange, silentFrames )
+    peakSynth = ricaudio.PeakSynthesize( frameSize, fftSize, windowType )
+
+trajsLocs = []
+trajsMags = []
+specs = []
+specsSynth = []
 
 for frame in stream:
-    fft = frame['fft'][:plotSize]
-    spec =  20.0 / scipy.log(10.0) * scipy.log(abs(fft) + 1e-7)
+    fft = scipy.array(frame['fft'][:plotSize], dtype = scipy.complex64)
+    mag =  scipy.array(abs(fft), dtype = 'f4')
+    spec =  20.0 / scipy.log( 10.0 ) * scipy.log( abs( fft ) + 1e-7)
 
     if set(['phase', 'peak_phases']) | all_processes:
-        phase =  scipy.angle(fft)
+        phase =  scipy.angle( fft )
 
     if set(['peak_mags', 'peak_phases']) | all_processes:
         fft = scipy.reshape(fft, (1, plotSize))
         peakLocs, peakMags =  peaker.process( fft )
-        peakLocs = scipy.array(peakLocs, dtype = 'i4')
-
-    for subplot, processes in subplots.items():
-        pylab.subplot(subplotCount, 1, subplot)
-        pylab.gca().clear()
-        pylab.gca().set_autoscale_on(False)
+        peakiLocs, peakiMags = peakInterp.process( fft,
+                                                   scipy.array(peakLocs, dtype='f4'),
+                                                   scipy.array(peakMags, dtype='f4'))
         
-        if 'mag' in processes:       
-            pylab.gca().set_xlim([0, plotSize])
-            pylab.gca().set_ylim([-100, 40])
+        trajLocs, trajMags = tracker.process( fft,
+                                              scipy.array(peakiLocs, dtype='f4'),
+                                              scipy.array(peakiMags, dtype='f4') )
+
+        specSynth = peakSynth.process( trajLocs,
+                                       trajMags )
+
+
+        specsSynth.append( ricaudio.magToDb(specSynth[0,:plotSize])[0,:] )
         
-            pylab.plot(spec)
-            
-            
-        if 'peak_mags' in processes:            
-            pylab.scatter(peakLocs[0,:], spec[peakLocs[0,:]], c='r')
-            
-            
-        if 'phase' in processes:           
-            pylab.gca().set_xlim([0, plotSize])
-            pylab.gca().set_ylim([-scipy.pi, scipy.pi])
-            
-            pylab.plot(phase)
+        trajsLocs.append( trajLocs[0,:] )
+        trajsMags.append( trajMags[0,:] )
 
-            
-        if 'peak_phases' in processes:
-            pylab.scatter(peakLocs[0,:], phase[peakLocs[0,:]], c='r')
+        specs.append( spec )
 
+        peakPos = peakLocs[peakLocs > 0]
+        peakMags = peakMags[peakLocs > 0]
+
+    if interactivePlotting:
+        for subplot, processes in subplots.items():
+            pylab.subplot(subplotCount, 1, subplot)
+            pylab.gca().clear()
+            pylab.gca().set_autoscale_on(False)
+
+            if 'mag' in processes:       
+                pylab.gca().set_xlim([0, plotSize])
+                pylab.gca().set_ylim([-100, 40])
+
+                pylab.plot(spec)
+
+
+            if 'peak_mags' in processes:
+                if not (peakPos == -1).all():
+                    pylab.scatter(peakPos, spec[scipy.array(peakPos, dtype='i4')], c='r')
+
+
+            if 'phase' in processes:           
+                pylab.gca().set_xlim([0, plotSize])
+                pylab.gca().set_ylim([-scipy.pi, scipy.pi])
+
+                pylab.plot(phase)
+
+
+            if 'peak_phases' in processes:
+                if not (peakPos == -1).all():
+                    pylab.scatter(peakPos, phase[scipy.array(peakPos, dtype='i4')], c='r')
+    
             
             
 pylab.ioff()
+
+
+trajsLocs = scipy.array( trajsLocs )
+trajsMags = scipy.array( trajsMags )
+
+
+def extractTrajs(trajsLocs, trajsMags):
+    trajs = []
+    
+    for col in range(trajsLocs.shape[1]):
+        inTrack = False
+        trackInds = []
+        trackMags = []
+        trackPos = []
+        
+        for row in range(trajsLocs.shape[0]):
+            if not trajsMags[row, col] == -120:
+                inTrack = True
+                
+                trackInds.append( row )
+                trackMags.append( trajsMags[row, col] )
+                trackPos.append( trajsLocs[row, col] )
+            else:
+                if inTrack:
+                    
+                    trackInds = scipy.array(trackInds)
+                    trackMags = scipy.array(trackMags)
+                    trackPos = scipy.array(trackPos)
+                    trajs.append((trackInds, trackPos, trackMags))
+
+                inTrack = False
+                    
+                trackInds = []
+                trackMags = []
+                trackPos = []
+
+
+        if inTrack:
+            trackInds = scipy.array(trackInds)
+            trackMags = scipy.array(trackMags)
+            trackPos = scipy.array(trackPos)
+            trajs.append((trackInds, trackPos, trackMags))
+
+        
+
+    print len(trajs)
+    return trajs
+
+
+trajs = extractTrajs(trajsLocs, trajsMags)
+
+
+specsSynth = scipy.array( specsSynth )
+specs = scipy.array( specs )
+specsDiff = abs(specs - specsSynth)
+
+if plotDetSpecSynth:
+    pylab.figure()
+    pylab.imshow( specsSynth.T )
+
+if plotDetSpecDiff:
+    pylab.figure()
+    pylab.imshow( specsDiff.T )
+
+if plotTrajs:
+    pylab.figure()
+    for trajInds, trajPos, trajMags in trajs:
+        pylab.hold( True )
+        pylab.plot( trajInds, trajPos )
+
+if plotLocs:
+    pylab.figure()
+    trajsLocs = scipy.array( trajsLocs )
+    pylab.plot( trajsLocs )
+
+if plotMags:
+    pylab.figure()
+    trajsMags = scipy.array( trajsMags )
+    trajsMags = trajsMags.sum(axis = 1)
+    pylab.plot( trajsMags )
+
+if plotSpectrumTrajs:
+    pylab.figure()
+    pylab.hold(True)
+    pylab.imshow( specs.T, aspect = 'auto' )
+    for trajInds, trajPos, trajMags in trajs:
+        pylab.hold( True )
+        pylab.plot( trajInds, trajPos, c='black' )
+        
+pylab.show()

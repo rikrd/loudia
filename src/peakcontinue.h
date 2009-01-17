@@ -16,32 +16,42 @@
 ** Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */                                                                          
 
-#ifndef PEAKINTERPOLATE_H
-#define PEAKINTERPOLATE_H
+#ifndef PEAKCONTINUE_H
+#define PEAKCONTINUE_H
 
 #include "typedefs.h"
 #include "debug.h"
 
-class PeakInterpolate {
+class PeakContinue {
 protected:
   // Internal parameters
-    
+  int _numTrajectories;
+  Real _maxFreqBinChange;
+  int _silentFrames;
+
   // Internal variables
-  MatrixXR _magnitudes;
+  MatrixXR _trajPositions, _trajMagnitudes;
+  MatrixXR _pastTrajPositions, _pastTrajMagnitudes;
+  
+  bool createTrajectory(Real peakPos, Real peakMag,
+                        MatrixXR* pastTrajPositions, MatrixXR* pastTrajMagnitudes,
+                        MatrixXR* trajPositions, MatrixXR* trajMagnitudes,
+                        int row);
+    
 
 public:
-  PeakInterpolate();
+  PeakContinue(int numTrajectories, Real maxFreqBinChange, int silentFrames);
 
-  ~PeakInterpolate();
+  ~PeakContinue();
 
   void setup();
 
   void process(const MatrixXC& fft, 
                const MatrixXR& peakPositions, const MatrixXR& peakMagnitudes,
-               MatrixXR* peakPositionsInterp, MatrixXR* peakMagnitudesInterp);
+               MatrixXR* trajPositions, MatrixXR* trajMagnitudes);
 
   void reset();
 
 };
 
-#endif  /* PEAKINTERPOLATE_H */
+#endif  /* PEAKCONTINUE_H */

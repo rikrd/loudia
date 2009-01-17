@@ -65,4 +65,45 @@ void polar(const MatrixXR& mag, const MatrixXR& phase, MatrixXC* complex);
  */
 void coeffsToZpk(const MatrixXR& b, const MatrixXR& a, MatrixXC* zeros, MatrixXC* poles, Real* gain);
 
+/**
+ * Calculate the aliased cardinal sine defined as:
+ *   
+ *   asinc(M, T, x) = sin(M * pi * x * T) / sin(pi * x * T)
+ */
+Real asinc(int M, Real omega);
+
+/**
+ * Calculate the Fourier transform of a hamming window
+ */
+void raisedCosTransform(Real position, Real magnitude, 
+                        int windowSize, int fftSize,
+                        Real alpha, Real beta, 
+                        MatrixXR* spectrum, int* begin, int* end, int bandwidth);
+
+void raisedCosTransform(Real position, Real magnitude, 
+                        int windowSize, int fftSize,
+                        Real alpha, Real beta, 
+                        MatrixXR* spectrum, int bandwidth);
+
+void hannTransform(Real position, Real magnitude, 
+                   int windowSize, int fftSize,
+                   MatrixXR* spectrum, int bandwidth = 4);
+
+void hannTransform(Real position, Real magnitude, 
+                   int windowSize, int fftSize,
+                   MatrixXR* spectrum, int* begin, int* end, int bandwidth = 4);
+
+
+void hammingTransform(Real position, Real magnitude, 
+                      int windowSize, int fftSize,
+                      MatrixXR* spectrum, int bandwidth = 4);
+
+void hammingTransform(Real position, Real magnitude, 
+                      int windowSize, int fftSize,
+                      MatrixXR* spectrum, int* begin, int* end, int bandwidth = 4);
+
+void dbToMag(MatrixXR db, MatrixXR* mag);
+
+void magToDb(MatrixXR mag, MatrixXR* db, Real minMag = 0.0001 );
+
 #endif  /* UTILS_H */

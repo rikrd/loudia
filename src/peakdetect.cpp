@@ -28,11 +28,12 @@ using namespace std;
 // import most common Eigen types 
 using namespace Eigen;
 
-PeakDetect::PeakDetect(int numPeaks, int minPeakWidth) {
+PeakDetect::PeakDetect(int numPeaks, int minPeakWidth, Real minPeakContrast) {
   DEBUG("PEAKDETECT: Constructor numPeaks: " << numPeaks << ", minPeakWidth: " << minPeakWidth);
   
   _numPeaks = numPeaks;
   _minPeakWidth = minPeakWidth;
+  _minPeakContrast = minPeakContrast;
 
   setup();
   DEBUG("PEAKDETECT: Constructed");
@@ -78,13 +79,13 @@ void PeakDetect::process(const MatrixXC& fft, MatrixXR* peakPositions, MatrixXR*
 
   int maxRow;
   int maxCol;
-  RowXR band(_minPeakWidth);
+
+  Real maxVal;
+  Real minVal;
   
   for ( int i = 0 ; i < _magnitudes.rows(); i++){
     peakIndex = 0;
     
-    band.setZero();
-
     for ( int j = (_minPeakWidth / 2); j < _magnitudes.row(i).cols() - (_minPeakWidth / 2); j++) {
       if ( peakIndex >= _numPeaks ) {
         break;
@@ -92,14 +93,19 @@ void PeakDetect::process(const MatrixXC& fft, MatrixXR* peakPositions, MatrixXR*
 
       int inf = j - (_minPeakWidth / 2);
 
-      band = _magnitudes.row(i).segment(inf, _minPeakWidth);
-
-      band.maxCoeff( &maxRow, &maxCol );
-
+      maxVal = _magnitudes.row(i).segment(inf, _minPeakWidth).maxCoeff( &maxRow, &maxCol );
+      
       if ( maxCol == floor(_minPeakWidth / 2) ) {
-        (*peakMagnitudes)(i, peakIndex) = _magnitudes(i, j);
-        (*peakPositions)(i, peakIndex) = j;
-        peakIndex ++;
+
+        minVal = _magnitudes.row(i).segment(inf, _minPeakWidth).minCoeff();
+
+        if ( maxVal - minVal >= _minPeakContrast ) {
+
+          (*peakMagnitudes)(i, peakIndex) = _magnitudes(i, j);
+          (*peakPositions)(i, peakIndex) = j;          
+          peakIndex ++;
+          
+        }
       }
     }
   }

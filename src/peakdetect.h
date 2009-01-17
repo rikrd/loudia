@@ -29,12 +29,13 @@ protected:
   // Internal parameters
   int _numPeaks;
   int _minPeakWidth;
+  Real _minPeakContrast;
     
   // Internal variables
   MatrixXR _magnitudes;
 
 public:
-  PeakDetect(int numPeaks, int minPeakWidth = 0);
+  PeakDetect(int numPeaks, int minPeakWidth = 0, Real minPeakContrast = 0);
 
   ~PeakDetect();
 

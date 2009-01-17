@@ -44,6 +44,20 @@ struct ei_functor_traits<ei_scalar_floor_op<Scalar> >
 
 /**
  *
+ * isnan() operator
+ *
+ */
+template<typename Scalar> struct ei_scalar_isnan_op EIGEN_EMPTY_STRUCT {
+  inline const Scalar operator() (const Scalar& a) const { return std::isnan(a); }
+};
+
+template<typename Scalar>
+struct ei_functor_traits<ei_scalar_isnan_op<Scalar> >
+{ enum { Cost = 5 * NumTraits<Scalar>::MulCost, PacketAccess = false }; };
+
+
+/**
+ *
  * expN(Scalar under) operator used for clipping
  *
  */

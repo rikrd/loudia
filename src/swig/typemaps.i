@@ -21,31 +21,30 @@
 %apply float { Real };
 
 %typecheck(SWIG_TYPECHECK_INTEGER)
-	 int, short, long,
- 	 unsigned int, unsigned short, unsigned long,
-	 signed char, unsigned char,
-	 long long, unsigned long long,
-	 const int &, const short &, const long &,
- 	 const unsigned int &, const unsigned short &, const unsigned long &,
-	 const long long &, const unsigned long long &,
-	 enum SWIGTYPE,
-         bool, const bool & 
+	   int, short, long,
+ 	   unsigned int, unsigned short, unsigned long,
+	   signed char, unsigned char,
+	   long long, unsigned long long,
+	   const int &, const short &, const long &,
+ 	   const unsigned int &, const unsigned short &, const unsigned long &,
+	   const long long &, const unsigned long long &,
+	   enum SWIGTYPE,
+           bool, const bool & 
 {
   $1 = (PyInt_Check($input) || PyLong_Check($input)) ? 1 : 0;
 }
 
 
-%typemap(typecheck,
-         prefedence = SWIG_TYPECHECK_FLOAT) 
-         Real, 
-         const Real,
-         Real & {
+%typecheck(SWIG_TYPECHECK_FLOAT) 
+           Real,
+           const Real,
+           Real & {
 
   $1 = (PyFloat_Check($input) || PyInt_Check($input) || PyLong_Check($input)) ? 1 : 0;
 
 }
 
-%typemap(typecheck) 
+%typecheck(SWIG_TYPECHECK_FLOAT_ARRAY) 
          MatrixXR, 
          MatrixXR *,
          const MatrixXR,
@@ -54,7 +53,7 @@
   $1 = type_match(array_type($input), PyArray_FLOAT);
 }
 
-%typemap(typecheck) 
+%typecheck(SWIG_TYPECHECK_FLOAT_ARRAY) 
          MatrixXC,
          MatrixXC *,
          const MatrixXC,
@@ -314,70 +313,20 @@
 
 %typemap(argout) 
          Real* {
-  // prepare resulting array
-  $result = SWIG_Python_AppendOutput($result, Py_BuildValue("f", *$1));
- }
 
-%typemap(out,
-         fragment="NumPy_Fragments") 
-         MatrixXR {
-
-  int dims[] = {($1).rows(), ($1).cols()};
-
-  PyObject * out_array = PyArray_FromDims(2, dims, PyArray_FLOAT);
-  
-  if (out_array == NULL){
-    PyErr_SetString(PyExc_ValueError,
-                    "Unable to create the output array.");
-    
-    return NULL;
-  }
-  
-  Real* out_data = (Real*)array_data(out_array);
-  Eigen::Map<MatrixXRscipy>(out_data, dims[0], dims[1]) = ($1);
-
-  $result = out_array;
-  
+  $result = SWIG_Python_AppendOutput($result, Py_BuildValue("f", $1));
 }
 
-%typemap(out,
-         fragment="NumPy_Fragments") 
-         MatrixXC {
 
-  int dims[] = {($1).rows(), ($1).cols()};
-  PyObject * out_array = PyArray_FromDims(2, dims, PyArray_CFLOAT);
-  
-  if (out_array == NULL){
-    PyErr_SetString(PyExc_ValueError,
-                    "Unable to create the output array.");
-    
-    return NULL;
-  }
-  
-  Complex* out_data = (Complex*)array_data(out_array);
-  Eigen::Map<MatrixXCscipy>(out_data, dims[0], dims[1]) = ($1);
+%typemap(in, numinputs = 0) 
+         int* (int temp) {
 
-  $result = out_array;
-  
+  $1 = &temp;
+
 }
 
-%typemap(out,
-         fragment="NumPy_Fragments") 
-         MatrixXI {
+%typemap(argout) 
+         int* {
 
-  int dims[] = {($1).rows(), ($1).cols()};
-  PyObject * out_array = PyArray_FromDims(2, dims, PyArray_INT);
-  
-  if (out_array == NULL){
-    PyErr_SetString(PyExc_ValueError,
-                    "Unable to create the output array.");
-    
-    return NULL;
-  }
-  
-  Integer* out_data = (Integer*)array_data(out_array);
-  Eigen::Map<MatrixXIscipy>(out_data, dims[0], dims[1]) = ($1);
-
-  $result = out_array;
-  
+  $result = SWIG_Python_AppendOutput($result, Py_BuildValue("i", $1));
 }

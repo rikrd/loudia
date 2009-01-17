@@ -192,13 +192,112 @@ void polar(const MatrixXR&  mag, const MatrixXR&  phase, MatrixXC* complex) {
 }
 
 void coeffsToZpk(const MatrixXR&  b, const MatrixXR&  a, MatrixXC* zeros, MatrixXC* poles, Real* gain){
-  // Return zero, pole, gain (z,p,k) representation from a numerator,
-  // denominator representation of a linear filter.
   (*gain) = b(0, 0);
   MatrixXR bTemp = b;
   bTemp /= b(0, 0);
   roots(bTemp, zeros);
   roots(a, poles);
+}
+
+Real asinc(int M, Real omega) {
+  return omega == 0 ? M : sin(M * omega / 2.0) / sin(omega / 2.0) ;
+}
+
+
+void raisedCosTransform(Real position, Real magnitude, 
+                        int windowSize, int fftSize,
+                        Real alpha, Real beta, 
+                        MatrixXR* spectrum, int* begin, int* end, int bandwidth) {
+  
+  (*begin) = max((position - bandwidth / 2.0), 0.0);
+  (*end) = min(ceil(position + bandwidth / 2.0 + 1), fftSize/2.0);
+  
+  if ( end <= begin ) {
+    DEBUG("ERROR: end must be higher than begin");
+    // Throw a ValueError end must be higher than begin
+  }
+  
+  spectrum->resize(1, (*end) - (*begin));
+
+  const Real omegaM = 2.0 * M_PI / fftSize;
+  
+  for ( int i = (*begin); i < (*end); i++ ) {
+    
+    Real omega = 2.0 * M_PI * (i - position) / fftSize;
+    
+    (*spectrum)(0, i - (*begin)) = magnitude * abs(alpha * asinc(windowSize, omega) + beta * (asinc(windowSize, omega - omegaM) + asinc(windowSize, omega + omegaM)));
+    
+  }
+}
+
+void raisedCosTransform(Real position, Real magnitude, 
+                        int windowSize, int fftSize,
+                        Real alpha, Real beta, 
+                        MatrixXR* spectrum, int bandwidth) {
+  int begin, end;
+
+  return raisedCosTransform(position, magnitude, 
+                            windowSize, fftSize,
+                            alpha, beta, 
+                            spectrum, &begin, &end, bandwidth);
+
+}
+
+void hannTransform(Real position, Real magnitude, 
+                   int windowSize, int fftSize,
+                   MatrixXR* spectrum, int* begin, int* end, int bandwidth) {
+
+  return hannTransform(position, magnitude,
+                       windowSize, fftSize,
+                       spectrum, begin, end, bandwidth);
+  
+}
+
+void hannTransform(Real position, Real magnitude, 
+                   int windowSize, int fftSize,
+                   MatrixXR* spectrum, int bandwidth) {
+
+  int begin, end;
+
+  return hannTransform(position, magnitude, 
+                       windowSize, fftSize, 
+                       spectrum, &begin, &end, bandwidth);
+  
+}
+
+
+void hammingTransform(Real position, Real magnitude, 
+                      int windowSize, int fftSize,
+                      MatrixXR* spectrum, int* begin, int* end, int bandwidth) {
+
+  return raisedCosTransform(position, magnitude,
+                            windowSize, fftSize,
+                            0.53836, 0.46164,
+                            spectrum, begin, end, bandwidth);
+
+}
+
+void hammingTransform(Real position, Real magnitude, 
+                      int windowSize, int fftSize,
+                      MatrixXR* spectrum, int bandwidth) {
+  
+  int begin, end;
+  
+  return hammingTransform(position, magnitude,
+                          windowSize, fftSize,
+                          spectrum, &begin, &end, bandwidth);
+
+}
+
+
+void dbToMag(MatrixXR db, MatrixXR* mag) {
+  mag->resize(db.rows(), db.cols());
+  (*mag) = (db / 20.0).cwise().expN(10.0);
+}
+
+void magToDb(MatrixXR mag, MatrixXR* db, Real minMag) {
+  db->resize(mag.rows(), mag.cols());
+  (*db) = 20.0 * mag.cwise().clipUnder( minMag ).cwise().logN( 10.0 );
 }
 
 /*
