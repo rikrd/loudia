@@ -104,7 +104,7 @@ void coeffsToZpk(const MatrixXR&  b, const MatrixXR&  a, MatrixXC* zeros, Matrix
 }
 
 Real asinc(int M, Real omega) {
-  return sin(M * omega / 2.0) / sin(omega / 2.0);
+  return omega == 0 ? M : sin(M * omega / 2.0) / sin(omega / 2.0) ;
 }
 
 
@@ -112,18 +112,21 @@ void raisedCosTransform(Real position, Real magnitude,
                         int windowSize, int fftSize,
                         int mainLobeBandwith, Real alpha, Real beta, MatrixXR* spectrum) {
   
-  const int begin = max(ceil(position - mainLobeBandwith / 2.0), 0.0);
-  const int end = min(floor(position + mainLobeBandwith / 2.0), fftSize - 1.0);
+  const int begin = max((position - mainLobeBandwith / 2.0), 0.0);
+  const int end = min((position + mainLobeBandwith / 2.0), fftSize/2 - 1.0);
 
   spectrum->resize(1, end - begin);
-  const int ncols = spectrum->cols();
+  spectrum->setZero();
   
-  const Real omegaM = 2 * M_PI / fftSize;
-
+  const Real omegaM = 2.0 * M_PI / fftSize;
+  
   for ( int row = 0; row < spectrum->rows(); row++ ) { 
     for ( int i = begin; i < end + 1; i++ ) {
-      Real omega = 2.0 * M_PI * i / fftSize;
-      (*spectrum)(row, i-begin) += magnitude * windowSize * (alpha * asinc(windowSize, omega) + beta * (asinc(windowSize, omega - omegaM) + asinc(windowSize, omega + omegaM)));
+      
+      Real omega = 2.0 * M_PI * (i - position) / fftSize;
+
+      (*spectrum)(row, i-begin) += magnitude * abs(alpha * asinc(windowSize, omega) + beta * (asinc(windowSize, omega - omegaM) + asinc(windowSize, omega + omegaM)));
+
     }
   }
 }
