@@ -20,15 +20,19 @@
 #include "debug.h"
 
 #include "peaksynthesize.h"
+#include "utils.h"
 
 using namespace std;
 
 // import most common Eigen types 
 using namespace Eigen;
 
-PeakSynthesize::PeakSynthesize(int fftSize) {
+PeakSynthesize::PeakSynthesize(int windowSize, int fftSize, Window::WindowType windowType) {
   DEBUG("PEAKSYNTHESIZE: Constructor");
   
+  _windowSize = windowSize;
+  _windowType = windowType;
+
   _fftSize = fftSize;
 
   setup();
@@ -66,8 +70,33 @@ void PeakSynthesize::process(const MatrixXR& trajPositions, const MatrixXR& traj
       
       // If the position is -1 do nothing since it means it is nothing
       if( trajPositions(row, i) != -1 ){
-        
-        
+        MatrixXR windowTransform;
+        int begin, end;
+
+        switch(_windowType){
+
+        case Window::RECTANGULAR:
+          // TODO: Implement this window transform
+
+        case Window::HANN:
+        case Window::HANNING:
+          hannTransform(trajPositions(row, i), trajMagnitudes(row, i), 
+                        _windowSize, _fftSize, 
+                        &windowTransform, &begin, &end);
+          break;
+          
+        case Window::HAMMING:
+          hammingTransform(trajPositions(row, i), trajMagnitudes(row, i), 
+                           _windowSize, _fftSize, 
+                           &windowTransform, &begin, &end);
+          break;
+
+        default:
+          // Throw ValueError unknown window type
+          break;
+
+        }
+        spectrum->block(0, begin, 1, end) += windowTransform.row(0);        
       }
     }
   }

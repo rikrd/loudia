@@ -22,15 +22,20 @@
 #include "typedefs.h"
 #include "debug.h"
 
+#include "window.h"
+
 class PeakSynthesize {
 protected:
   // Internal parameters
+  int _windowSize;
+  Window::WindowType _windowType;
+
   int _fftSize;
 
   // Internal variables
 
 public:
-  PeakSynthesize(int fftSize);
+  PeakSynthesize(int windowSize, int fftSize, Window::WindowType windowType = Window::RECTANGULAR);
 
   ~PeakSynthesize();
 

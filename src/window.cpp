@@ -86,7 +86,7 @@ void Window::setup(){
     break;
     
   default:
-    // Throw assertion unknown window type
+    // Throw ValueError unknown window type
     break;
   }
   

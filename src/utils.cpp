@@ -110,43 +110,87 @@ Real asinc(int M, Real omega) {
 
 void raisedCosTransform(Real position, Real magnitude, 
                         int windowSize, int fftSize,
-                        int mainLobeBandwith, Real alpha, Real beta, MatrixXR* spectrum) {
+                        Real alpha, Real beta, 
+                        MatrixXR* spectrum, int* begin, int* end, int mainLobeBandwidth) {
   
-  const int begin = max((position - mainLobeBandwith / 2.0), 0.0);
-  const int end = min(ceil(position + mainLobeBandwith / 2.0 + 1), fftSize/2.0);
+  const int bandwidth = mainLobeBandwidth * fftSize / windowSize;
+
+  (*begin) = max((position - bandwidth / 2.0), 0.0);
+  (*end) = min(ceil(position + bandwidth / 2.0 + 1), fftSize/2.0);
 
   spectrum->resize(1, end - begin);
   
   const Real omegaM = 2.0 * M_PI / fftSize;
   
   for ( int row = 0; row < spectrum->rows(); row++ ) { 
-    for ( int i = begin; i < end; i++ ) {
+    for ( int i = (*begin); i < (*end); i++ ) {
       
       Real omega = 2.0 * M_PI * (i - position) / fftSize;
 
-      (*spectrum)(row, i-begin) = magnitude * abs(alpha * asinc(windowSize, omega) + beta * (asinc(windowSize, omega - omegaM) + asinc(windowSize, omega + omegaM)));
+      (*spectrum)(row, i - (*begin)) = magnitude * abs(alpha * asinc(windowSize, omega) + beta * (asinc(windowSize, omega - omegaM) + asinc(windowSize, omega + omegaM)));
 
     }
   }
 }
 
+void raisedCosTransform(Real position, Real magnitude, 
+                        int windowSize, int fftSize,
+                        Real alpha, Real beta, 
+                        MatrixXR* spectrum, int mainLobeBandwidth) {
+  int begin, end;
+
+  return raisedCosTransform(position, magnitude, 
+                            windowSize, fftSize,
+                            alpha, beta, 
+                            spectrum, &begin, &end, mainLobeBandwidth);
+
+}
+
 void hannTransform(Real position, Real magnitude, 
                    int windowSize, int fftSize,
-                   int mainLobeBandwith, MatrixXR* spectrum) {
+                   MatrixXR* spectrum, int* begin, int* end, int mainLobeBandwidth) {
 
-  raisedCosTransform(position, magnitude, windowSize, fftSize, mainLobeBandwith, 0.5, 0.5, spectrum);
+  return hannTransform(position, magnitude,
+                       windowSize, fftSize,
+                       spectrum, begin, end, mainLobeBandwidth);
+  
+}
 
+void hannTransform(Real position, Real magnitude, 
+                   int windowSize, int fftSize,
+                   MatrixXR* spectrum, int mainLobeBandwidth) {
+
+  int begin, end;
+
+  return hannTransform(position, magnitude, 
+                       windowSize, fftSize, 
+                       spectrum, &begin, &end, mainLobeBandwidth);
+  
 }
 
 
 void hammingTransform(Real position, Real magnitude, 
                       int windowSize, int fftSize,
-                      int mainLobeBandwith, MatrixXR* spectrum) {
+                      MatrixXR* spectrum, int* begin, int* end, int mainLobeBandwidth) {
 
-  raisedCosTransform(position, magnitude, windowSize, fftSize, mainLobeBandwith, 0.53836, 0.46164, spectrum);
+  return raisedCosTransform(position, magnitude,
+                            windowSize, fftSize,
+                            0.53836, 0.46164,
+                            spectrum, begin, end, mainLobeBandwidth);
 
 }
 
+void hammingTransform(Real position, Real magnitude, 
+                      int windowSize, int fftSize,
+                      MatrixXR* spectrum, int mainLobeBandwidth) {
+  
+  int begin, end;
+  
+  return hammingTransform(position, magnitude,
+                          windowSize, fftSize,
+                          spectrum, &begin, &end, mainLobeBandwidth);
+
+}
 
 
 /*

@@ -64,14 +64,29 @@ Real asinc(int M, Real omega);
  */
 void raisedCosTransform(Real position, Real magnitude, 
                         int windowSize, int fftSize,
-                        int mainLobeBandwith, Real alpha, Real beta, MatrixXR* spectrum);
+                        Real alpha, Real beta, 
+                        MatrixXR* spectrum, int* begin, int* end, int mainLobeBandwith);
+
+void raisedCosTransform(Real position, Real magnitude, 
+                        int windowSize, int fftSize,
+                        Real alpha, Real beta, 
+                        MatrixXR* spectrum, int mainLobeBandwith);
 
 void hannTransform(Real position, Real magnitude, 
                    int windowSize, int fftSize,
-                   int mainLobeBandwith, MatrixXR* spectrum);
+                   MatrixXR* spectrum, int mainLobeBandwith = 4);
+
+void hannTransform(Real position, Real magnitude, 
+                   int windowSize, int fftSize,
+                   MatrixXR* spectrum, int* begin, int* end, int mainLobeBandwith = 4);
+
 
 void hammingTransform(Real position, Real magnitude, 
                       int windowSize, int fftSize,
-                      int mainLobeBandwith, MatrixXR* spectrum);
+                      MatrixXR* spectrum, int mainLobeBandwith = 4);
+
+void hammingTransform(Real position, Real magnitude, 
+                      int windowSize, int fftSize,
+                      MatrixXR* spectrum, int* begin, int* end, int mainLobeBandwith = 4);
 
 #endif  /* UTILS_H */
