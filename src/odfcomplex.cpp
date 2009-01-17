@@ -63,11 +63,17 @@ void ODFComplex::process(const MatrixXC& fft, MatrixXR* odfValue) {
   DEBUG("ODFComplex: Processing windowed");
 
   (*odfValue).resize(1, 1);
-  _spectrum.resize(fft.rows(), (int)ceil(_fftLength / 2.0));
+  _spectrum.resize(fft.rows(), min((int)ceil(_fftLength / 2.0), fft.cols()));
+
+  DEBUG("ODFComplex: Spectrum resized fft.rows(): " << fft.rows() << " (int)ceil(_fftLength / 2.0): " << (int)ceil(_fftLength / 2.0));
   
-  _spectrum = fft.block(0, 0, fft.rows(), (int)ceil(_fftLength / 2.0));
+  _spectrum = fft.block(0, 0, fft.rows(), min((int)ceil(_fftLength / 2.0), fft.cols()));
+
+  DEBUG("ODFComplex: Specturum halved");
 
   _unwrap.process(_spectrum.cwise().angle().real().cast<Real>(), &_unwrappedAngle);
+
+  DEBUG("ODFComplex: Processing unwrapped");
   
   (*odfValue)(0, 0) = spectralDistanceEuclidean(_spectrum, _spectrum.cwise().abs(), _unwrappedAngle);
   

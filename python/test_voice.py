@@ -21,6 +21,7 @@ plotMags = False
 
 plotLocs = False
 
+plotOdf = True
 
 filename = sys.argv[1]
 
@@ -213,6 +214,10 @@ specsSynth = scipy.array( specsSynth )
 specs = scipy.array( specs )
 specsDiff = abs(specs - specsSynth)
 
+
+pylab.figure()
+pylab.plot(odfValue)
+
 if plotDetSpecSynth:
     pylab.figure()
     pylab.imshow( specsSynth.T )
@@ -245,5 +250,13 @@ if plotSpectrumTrajs:
     for trajInds, trajPos, trajMags in trajs:
         pylab.hold( True )
         pylab.plot( trajInds, trajPos, c='black' )
+
+if plotOdf:
+    odf = ricaudio.ODFComplex( fftSize )
+    odfValue = []
+    for i in range(specsDiff.shape[0] - 10):
+        val = odf.process(specsDiff[i:i+3,:])[0,0]
+        odfValue.append(val)
+
         
 pylab.show()
