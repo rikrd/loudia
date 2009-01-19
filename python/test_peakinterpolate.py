@@ -55,5 +55,6 @@ pylab.hold(True)
 pylab.plot(scipy.angle(r_sine_fft[0,:]))
 pylab.hold(True)
 pylab.scatter(r_sine_peakpos[0,:], r_sine_peakphasei[0,:])
+pylab.scatter(r_sine_peakposi[0,:], r_sine_peakphasei[0,:], c='r')
 
 pylab.show()
