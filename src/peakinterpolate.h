@@ -22,12 +22,16 @@
 #include "typedefs.h"
 #include "debug.h"
 
+#include "unwrap.h"
+
 class PeakInterpolate {
 protected:
   // Internal parameters
     
   // Internal variables
   MatrixXR _magnitudes;
+  MatrixXR _phases;
+  Unwrap _unwrapper;
 
 public:
   PeakInterpolate();
@@ -37,8 +41,8 @@ public:
   void setup();
 
   void process(const MatrixXC& fft, 
-               const MatrixXR& peakPositions, const MatrixXR& peakMagnitudes,
-               MatrixXR* peakPositionsInterp, MatrixXR* peakMagnitudesInterp);
+               const MatrixXR& peakPositions, const MatrixXR& peakMagnitudes, const MatrixXR& peakPhases,
+               MatrixXR* peakPositionsInterp, MatrixXR* peakMagnitudesInterp, MatrixXR* peakPhasesInterp);
 
   void reset();
 

@@ -194,14 +194,18 @@ void hammingTransform(Real position, Real magnitude,
 }
 
 
-void dbToMag(MatrixXR db, MatrixXR* mag) {
+void dbToMag(const MatrixXR& db, MatrixXR* mag) {
   mag->resize(db.rows(), db.cols());
   (*mag) = (db / 20.0).cwise().expN(10.0);
 }
 
-void magToDb(MatrixXR mag, MatrixXR* db, Real minMag) {
+void magToDb(const MatrixXR& mag, MatrixXR* db, Real minMag) {
   db->resize(mag.rows(), mag.cols());
   (*db) = 20.0 * mag.cwise().clipUnder( minMag ).cwise().logN( 10.0 );
+}
+
+void unwrap(const MatrixXR& phases, MatrixXR* unwrapped) {
+  return;
 }
 
 /*
