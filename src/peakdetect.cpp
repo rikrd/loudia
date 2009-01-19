@@ -108,7 +108,7 @@ void PeakDetect::process(const MatrixXC& fft,
 
           (*peakMagnitudes)(i, peakIndex) = _magnitudes(i, j);
           (*peakPhases)(i, peakIndex) = _phases(i, j);
-          (*peakPositions)(i, peakIndex) = j;          
+          (*peakPositions)(i, peakIndex) = j;
           peakIndex ++;
           
         }

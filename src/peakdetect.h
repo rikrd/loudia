@@ -36,7 +36,7 @@ protected:
   MatrixXR _phases;
 
 public:
-  PeakDetect(int numPeaks, int minPeakWidth = 0, Real minPeakContrast = 0);
+  PeakDetect(int numPeaks, int minPeakWidth = 3, Real minPeakContrast = 0);
 
   ~PeakDetect();
 
