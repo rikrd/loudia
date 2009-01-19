@@ -22,7 +22,7 @@
 #include "typedefs.h"
 #include "debug.h"
 
-#include "unwrap.h"
+#include "utils.h"
 
 class PeakInterpolate {
 protected:
@@ -31,7 +31,6 @@ protected:
   // Internal variables
   MatrixXR _magnitudes;
   MatrixXR _phases;
-  Unwrap _unwrapper;
 
 public:
   PeakInterpolate();

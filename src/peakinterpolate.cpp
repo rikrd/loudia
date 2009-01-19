@@ -26,11 +26,11 @@ using namespace std;
 // import most common Eigen types 
 using namespace Eigen;
 
-PeakInterpolate::PeakInterpolate() : _unwrapper(1) {
+PeakInterpolate::PeakInterpolate() {
   DEBUG("PEAKINTERPOLATE: Constructor");
   
-
   setup();
+
   DEBUG("PEAKINTERPOLATE: Constructed");
 }
 
@@ -44,8 +44,6 @@ PeakInterpolate::~PeakInterpolate() {
 void PeakInterpolate::setup(){
   // Prepare the buffers
   DEBUG("PEAKINTERPOLATE: Setting up...");
-
-  _unwrapper.setup();
 
   reset();
 
@@ -67,11 +65,7 @@ void PeakInterpolate::process(const MatrixXC& fft,
   (*peakPhasesInterp).resize(fft.rows(), peakPositions.cols());
   
   _magnitudes.set(fft.cwise().abs());
-
-  _phases.set(fft.cwise().angle().real().transpose());
-  MatrixXR phasesTemp;
-  _unwrapper.process(_phases, &phasesTemp);
-  _phases.set(phasesTemp.transpose());
+  unwrap(fft.cwise().angle().real(), &_phases);
   
   for ( int row = 0 ; row < _magnitudes.rows(); row++ ) {
   
@@ -120,14 +114,14 @@ void PeakInterpolate::process(const MatrixXC& fft,
         (*peakMagnitudesInterp)(row, i) = mag - 0.25 * (leftMag - rightMag) * interpFactor;
 
         // Calculate the interpolated phase
-        Real leftPhase = peakPhases(row, floor((*peakPositionsInterp)(row, i)));
-        Real rightPhase = peakPhases(row, floor((*peakPositionsInterp)(row, i)) + 1);
+        Real leftPhase = _phases(row, floor((*peakPositionsInterp)(row, i)));
+        Real rightPhase = _phases(row, floor((*peakPositionsInterp)(row, i)) + 1);
         
         interpFactor = (interpFactor >= 0) ? interpFactor : interpFactor + 1;
 
         Real diffPhase = (rightPhase - leftPhase);
         
-        (*peakPhasesInterp)(row, i) = leftPhase + interpFactor * diffPhase;
+        (*peakPhasesInterp)(row, i) = (leftPhase + interpFactor * diffPhase);
       }
 
     }

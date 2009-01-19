@@ -40,6 +40,7 @@ void reverseCols(MatrixXR* in);
  * Calculate inplace the cumulative sum
  */
 void rowCumsum(MatrixXR* in);
+void colCumsum(MatrixXR* in);
 
 /**
  * Create a matrix of complex numbers given the polar coordinates
