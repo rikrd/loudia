@@ -58,6 +58,26 @@ struct ei_functor_traits<ei_scalar_isnan_op<Scalar> >
 
 /**
  *
+ * modN(Scalar divisor) operator used for getting the remainder
+ *
+ */
+template<typename Scalar> struct ei_scalar_mod_n_op {
+  // FIXME default copy constructors seems bugged with std::complex<>
+  inline ei_scalar_mod_n_op(const ei_scalar_mod_n_op& other) : m_divisor(other.m_divisor) { }
+  inline ei_scalar_mod_n_op(const Scalar& divisor) : m_divisor(divisor) {}
+  inline Scalar operator() (const Scalar& a) const { 
+    Scalar div = a/m_divisor;
+    return (div - floor(div)) * m_divisor; 
+  }
+  const Scalar m_divisor;
+};
+template<typename Scalar>
+struct ei_functor_traits<ei_scalar_mod_n_op<Scalar> >
+{ enum { Cost = 5 * NumTraits<Scalar>::MulCost, PacketAccess = false }; };
+
+
+/**
+ *
  * expN(Scalar under) operator used for clipping
  *
  */

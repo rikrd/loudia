@@ -126,6 +126,9 @@ void PeakInterpolate::process(const MatrixXC& fft,
 
     }
   }
+
+  // Calculate the princarg() of the phase: remap to (-pi pi]
+  (*peakPhasesInterp) = ((*peakPhasesInterp).cwise() != -1).select(((*peakPhasesInterp).cwise() + M_PI).cwise().modN(-2.0 * M_PI).cwise() + M_PI, (*peakPhasesInterp));
   
   DEBUG("PEAKINTERPOLATE: Finished Processing");
 }
