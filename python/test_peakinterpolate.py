@@ -32,6 +32,8 @@ r_sine_fft = fft.process(r_sine_windowed)
 r_sine_fft = r_sine_fft[:,:scipy.ceil(r_sine_fft.shape[1]/2)]
 r_sine_peakpos, r_sine_peakmag, r_sine_peakphase = peaks.process(r_sine_fft)
 r_sine_peakposi, r_sine_peakmagi, r_sine_peakphasei = peaksi.process(r_sine_fft, r_sine_peakpos, r_sine_peakmag, r_sine_peakphase)
+
+r_sine_peakphasei[r_sine_peakphasei != -1] = ((r_sine_peakphasei[r_sine_peakphasei != -1] + scipy.pi) % (-2*scipy.pi)) + (scipy.pi)
 # -------------------------------------------------------- #
 
 print r_sine_fft
