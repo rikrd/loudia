@@ -30,8 +30,8 @@ using namespace std;
 using namespace Eigen;
 
 ODF::ODF(int fftLength, ODFType odfType) :
-  _fftLength(fftLength),
-  _odfType(odfType)
+  _odfType(odfType),
+  _fftLength(fftLength)
 {
   switch(_odfType) {
 

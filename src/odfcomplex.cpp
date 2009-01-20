@@ -32,9 +32,9 @@ using namespace std;
 using namespace Eigen;
 
 ODFComplex::ODFComplex(int fftLength) :
-  _unwrap((int)(fftLength / 2.0)),
+  ODFBase(),
   _fftLength(fftLength),
-  ODFBase()
+  _unwrap((int)(fftLength / 2.0))
 {
   
   DEBUG("ODFComplex: Constructor fftLength: " << _fftLength);

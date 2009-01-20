@@ -28,15 +28,11 @@ protected:
 
   // Internal variables
 public:
-  ODFBase();
-
-  ~ODFBase();
-
-  void setup();
-
-  void process(const MatrixXC& fft, MatrixXR* odfValue);
-
-  void reset();
+  virtual void setup() = 0;
+  
+  virtual void process(const MatrixXC& fft, MatrixXR* odfValue) = 0;
+  
+  virtual void reset() = 0;
 
 };
 
