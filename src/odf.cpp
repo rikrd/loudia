@@ -30,8 +30,8 @@ using namespace std;
 using namespace Eigen;
 
 ODF::ODF(int fftLength, ODFType odfType) :
-  _odfType(odfType),
-  _fftLength(fftLength)
+  _fftLength(fftLength),
+  _odfType(odfType)
 {
   switch(_odfType) {
 
@@ -48,6 +48,7 @@ ODF::ODF(int fftLength, ODFType odfType) :
     break;
 
   case RECTIFIED_COMPLEX_DOMAIN:
+    _odf = new ODFComplex(_fftLength, true);
     break;
   }
   

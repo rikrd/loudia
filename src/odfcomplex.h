@@ -29,6 +29,7 @@ class ODFComplex : public ODFBase {
 protected:
   // Internal parameters
   int _fftLength;
+  bool _rectified;
   
   // Internal variables
   Unwrap _unwrap;
@@ -44,7 +45,7 @@ protected:
   Real spectralDistanceHypot(const MatrixXC& spectrum, const MatrixXR& spectrumAbs, const MatrixXR& spectrumArg);
 
 public:
-  ODFComplex(int fftLength);
+  ODFComplex(int fftLength, bool rectified = false);
 
   ~ODFComplex();
 

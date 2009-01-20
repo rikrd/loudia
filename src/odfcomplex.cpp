@@ -31,9 +31,10 @@ using namespace std;
 // import most common Eigen types 
 using namespace Eigen;
 
-ODFComplex::ODFComplex(int fftLength) :
+ODFComplex::ODFComplex(int fftLength, bool rectified) :
   ODFBase(),
   _fftLength(fftLength),
+  _rectified(rectified),
   _unwrap((int)(fftLength / 2.0))
 {
   
@@ -92,9 +93,14 @@ Real ODFComplex::spectralDistanceEuclidean(const MatrixXC& spectrum, const Matri
   polar(spectrumAbs.row(rows - 2), 2.0*spectrumArg.row(rows - 2) - spectrumArg.row(rows - 3), &_spectrumPredict);
   
   _predictionError = (_spectrumPredict.row(0) - spectrum.row(rows - 1)).cwise().abs();
-  
+
+  if (_rectified)
+    _predictionError = (_spectrumPredict.row(0).cwise().abs().cwise() <= spectrum.row(rows - 1).cwise().abs()).select(_predictionError, 0.0);
+
+  cout << _predictionError << endl;
+
   _predictionError(0,0) = 0.0;
-  
+
   return _predictionError.sum() / (cols-1) * sqrt(2.0);
 }
 
@@ -115,6 +121,9 @@ Real ODFComplex::spectralDistanceEuclideanWeighted(const MatrixXC& spectrum, con
 
   _predictionError(0,0) = 0.0;
   
+  if (_rectified)
+    _predictionError = (_spectrumPredict.row(0).cwise().abs().cwise() <= spectrum.row(rows - 1).cwise().abs()).select(_predictionError, 0.0);
+
   return _predictionError.sum() / (cols-1);
 }
 
@@ -136,6 +145,10 @@ Real ODFComplex::spectralDistanceHypot(const MatrixXC& spectrum, const MatrixXR&
 
   
   _predictionError(0,0) = 0.0;
+
+  if (_rectified)
+    _predictionError = (_spectrumPredict.row(0).cwise().abs().cwise() <= spectrum.row(rows - 1).cwise().abs()).select(_predictionError, 0.0);
+
   
   return _predictionError.sum() / (cols-1);
 }

@@ -40,7 +40,7 @@ logN(const Scalar& base) const
 
 
 inline const EIGEN_CWISE_UNOP_RETURN_TYPE(ei_scalar_clip_under_op)
-clipUnder(const Scalar& under) const
+clipUnder(const Scalar& under = 0) const
 {
   return EIGEN_CWISE_UNOP_RETURN_TYPE(ei_scalar_clip_under_op)(_expression(), ei_scalar_clip_under_op<Scalar>(under));
 }
