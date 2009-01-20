@@ -21,6 +21,7 @@
 
 #include "odf.h"
 #include "odfcomplex.h"
+#include "odfphase.h"
 
 #include "utils.h"
 
@@ -37,8 +38,17 @@ ODF::ODF(int fftLength, ODFType odfType) :
 
   case SPECTRAL_FLUX:
   case PHASE_DEVIATION:
+    _odf = new ODFPhase(_fftLength);
+    break;
+
   case WEIGHTED_PHASE_DEVIATION:
+    _odf = new ODFPhase(_fftLength, true);
+    break;
+
   case NORM_WEIGHTED_PHASE_DEVIATION:
+    _odf = new ODFPhase(_fftLength, true, true);
+    break;
+
   case MODIFIED_KULLBACK_LIEBLER:
     // Throw ImplementationError, ODF type not implemented yet
     break;

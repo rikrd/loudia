@@ -70,7 +70,7 @@ void ODFComplex::process(const MatrixXC& fft, MatrixXR* odfValue) {
 
   DEBUG("ODFComplex: Specturum halved");
 
-  _unwrap.process(_spectrum.cwise().angle().real().cast<Real>(), &_unwrappedAngle);
+  _unwrap.process(_spectrum.cwise().angle(), &_unwrappedAngle);
 
   DEBUG("ODFComplex: Processing unwrapped");
   

@@ -16,8 +16,8 @@
 ** Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */                                                                          
 
-#ifndef ODFCOMPLEX_H
-#define ODFCOMPLEX_H
+#ifndef ODFPHASE_H
+#define ODFPHASE_H
 
 #include "typedefs.h"
 #include "debug.h"
@@ -25,29 +25,27 @@
 #include "odfbase.h"
 #include "unwrap.h"
 
-class ODFComplex : public ODFBase {
+class ODFPhase : public ODFBase {
 protected:
   // Internal parameters
   int _fftLength;
-  bool _rectified;
+  bool _weighted;
+  bool _normalize;
   
   // Internal variables
   Unwrap _unwrap;
 
   MatrixXC _spectrum;
-  MatrixXC _unwrappedSpectrum;
   MatrixXR _unwrappedAngle;
-  MatrixXC _spectrumPredict;
-  MatrixXR _predictionError;
+  MatrixXR _phaseDiff;
+  MatrixXR _instFreq;
   
-  Real spectralDistanceEuclidean(const MatrixXC& spectrum, const MatrixXR& spectrumAbs, const MatrixXR& spectrumArg);
-  Real spectralDistanceEuclideanWeighted(const MatrixXC& spectrum, const MatrixXR& spectrumAbs, const MatrixXR& spectrumArg);
-  Real spectralDistanceHypot(const MatrixXC& spectrum, const MatrixXR& spectrumAbs, const MatrixXR& spectrumArg);
+  Real phaseDeviation(const MatrixXC& spectrum, const MatrixXR& spectrumArg);
 
 public:
-  ODFComplex(int fftLength, bool rectified = false);
+  ODFPhase(int fftLength, bool weighted = false, bool normalize = false);
 
-  ~ODFComplex();
+  ~ODFPhase();
 
   void setup();
 
@@ -57,4 +55,4 @@ public:
 
 };
 
-#endif  /* ODFCOMPLEX_H */
+#endif  /* ODFPHASE_H */
