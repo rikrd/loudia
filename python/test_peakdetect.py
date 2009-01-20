@@ -35,6 +35,7 @@ r_sine_peakpos, r_sine_peakmag, r_sine_peakphase = peaks.process(r_sine_fft)
 print r_sine_fft
 print r_sine_peakpos
 print r_sine_peakmag
+print r_sine_peakphase
 
 import pylab
 pylab.subplot(211)

@@ -65,7 +65,7 @@ void PeakInterpolate::process(const MatrixXC& fft,
   (*peakPhasesInterp).resize(fft.rows(), peakPositions.cols());
   
   _magnitudes.set(fft.cwise().abs());
-  unwrap(fft.cwise().angle().real(), &_phases);
+  unwrap(fft.cwise().angle(), &_phases);
   
   for ( int row = 0 ; row < _magnitudes.rows(); row++ ) {
   
