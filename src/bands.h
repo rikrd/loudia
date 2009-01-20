@@ -22,15 +22,7 @@
 #include "typedefs.h"
 #include "debug.h"
 
-#include <Eigen/Core>
-#include <Eigen/Array>
-#include <iostream>
 #include <vector>
-
-
-
-// import most common Eigen types 
-//using namespace Eigen;
 
 class Bands {
 protected:

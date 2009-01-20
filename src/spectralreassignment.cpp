@@ -19,16 +19,8 @@
 #include "typedefs.h"
 #include "debug.h"
 
-#include <Eigen/Core>
-#include <Eigen/Array>
-#include <iostream>
-#include <cmath>
-
 #include "window.h"
 #include "spectralreassignment.h"
-
-
-
 
 using namespace std;
 
@@ -71,8 +63,7 @@ void SpectralReassignment::setup(){
 
   // Create the freq vector
   DEBUG("SPECTRALREASSIGNMENT: Creating freq vector...");
-  Real freqstep = 2.0 * M_PI / _fftSize;
-
+  
   // The unit of the vectors is Frequency Bin fractions
   // TODO: Must rethink how the frequency vector is initialized
   // as we did for the time vector
