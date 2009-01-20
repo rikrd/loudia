@@ -20,6 +20,7 @@
 #include "debug.h"
 
 #include "odf.h"
+#include "odfcomplex.h"
 
 #include "utils.h"
 
@@ -33,6 +34,7 @@ ODF::ODF(int fftLength, ODFType odfType) :
   _odfType(odfType)
 {
   switch(_odfType) {
+
   case SPECTRAL_FLUX:
   case PHASE_DEVIATION:
   case WEIGHTED_PHASE_DEVIATION:
@@ -46,9 +48,9 @@ ODF::ODF(int fftLength, ODFType odfType) :
     break;
 
   case RECTIFIED_COMPLEX_DOMAIN:
-    _odf = new ODFComplex(_fftLength);
     break;
   }
+  
 }
 
 ODF::~ODF() {

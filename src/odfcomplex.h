@@ -25,7 +25,7 @@
 #include "odfbase.h"
 #include "unwrap.h"
 
-class ODFComplex : ODFBase {
+class ODFComplex : public ODFBase {
 protected:
   // Internal parameters
   int _fftLength;

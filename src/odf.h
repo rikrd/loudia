@@ -22,6 +22,8 @@
 #include "typedefs.h"
 #include "debug.h"
 
+#include "odfbase.h"
+
 class ODF {
 public:
   enum ODFType {

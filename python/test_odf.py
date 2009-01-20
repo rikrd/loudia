@@ -7,7 +7,7 @@ a = [[1,  2,  6,  4],
      [1,  2,  6,  4],
      [10,  20,  60,  40]]
 
-d = ricaudio.OnsetComplex(4, 16, ricaudio.Window.RECTANGULAR, False)
+d = ricaudio.ODF(4)
 
 print 'start ricaudio'
 #for i in range(10000):

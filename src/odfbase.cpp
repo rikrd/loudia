@@ -28,7 +28,7 @@ using namespace std;
 // import most common Eigen types 
 using namespace Eigen;
 
-ODFbase::ODFBase() {}
+ODFBase::ODFBase() {}
 
 ODFBase::~ODFBase() {}
 
