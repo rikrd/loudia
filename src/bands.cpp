@@ -16,17 +16,8 @@
 ** Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */                                                                          
 
-
-
-
-
 #include "typedefs.h"
 #include "debug.h"
-
-#include <Eigen/Core>
-#include <Eigen/Array>
-#include <iostream>
-#include <cmath>
 
 #include "bands.h"
 
@@ -45,7 +36,7 @@ Bands::Bands() : _starts(1, 1){
 Bands::Bands(MatrixXi starts, vector<MatrixXR> weights) {
   DEBUG("BANDS: Constructor starts: " << starts);
 
-  if ( starts.rows() != weights.size() ) {
+  if ( starts.rows() != (int)weights.size() ) {
     // Throw an exception
   }
 
@@ -54,7 +45,7 @@ Bands::Bands(MatrixXi starts, vector<MatrixXR> weights) {
   }
 
 
-  for (int i = 0; i < weights.size(); i++){
+  for (int i = 0; i < (int)weights.size(); i++){
     if ( weights[i].cols() != 1 ) {
       // Throw an exception
     }

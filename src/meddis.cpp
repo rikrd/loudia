@@ -79,7 +79,7 @@ void Meddis::process(const MatrixXR& samples, MatrixXR* output){
 
   (*output).resize(samples.rows(), _channels);
 
-  for (uint i = 0; i < samples.rows(); ++i) {
+  for (int i = 0; i < samples.rows(); ++i) {
     row.set(samples.row(i));
   
     limitedSt.set(row.cwise() + A).cwise().clipUnder(0.0);

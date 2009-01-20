@@ -64,6 +64,14 @@ void DCT::setup(){
     type2Matrix( &_dctMatrix );
     break;
 
+  case III:
+    // Throw ImplementationError not implemented yet
+    break;
+
+  case IV:
+    // Throw ImplementationError not implemented yet
+    break;
+
   case OCTAVE:
     typeOctaveMatrix( &_dctMatrix );
     break;
