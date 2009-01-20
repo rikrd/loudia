@@ -25,7 +25,7 @@ def build(bld):
                 features = 'cxx cshlib pyext',
                 source = 'ricaudio.i',
                 target = '_ricaudio',
-                swig_flags = '-c++ -python -Wall -I/home/rmarxer/dev/eigen2 -I..',
+                swig_flags = '-c++ -python -Wall -w509 -I/home/rmarxer/dev/eigen2 -I..',
                 swig_includes = '.. /home/rmarxer/dev/eigen2',
                 includes = '.. /home/rmarxer/dev/eigen2',
                 name         = 'pyricaudio',
