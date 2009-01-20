@@ -56,9 +56,9 @@ void PeakInterpolate::process(const MatrixXC& fft,
                               MatrixXR* peakPositionsInterp, MatrixXR* peakMagnitudesInterp, MatrixXR* peakPhasesInterp) {
   
   DEBUG("PEAKINTERPOLATE: Processing");  
-  Real leftMag;
-  Real rightMag;
-  Real mag;
+  Real leftMag, leftPhase;
+  Real rightMag, rightPhase;
+  Real mag, interpFactor;
   
   (*peakPositionsInterp).resize(fft.rows(), peakPositions.cols());
   (*peakMagnitudesInterp).resize(fft.rows(), peakPositions.cols());
@@ -108,22 +108,19 @@ void PeakInterpolate::process(const MatrixXC& fft,
         // Calculate the interpolated position
         (*peakPositionsInterp)(row, i) = peakPositions(row, i) + 0.5 * (leftMag - rightMag) / (leftMag - 2.0 * mag + rightMag);
 
-        Real interpFactor = ((*peakPositionsInterp)(row, i) - peakPositions(row, i));
+        interpFactor = ((*peakPositionsInterp)(row, i) - peakPositions(row, i));
 
         // Calculate the interpolated magnitude in dB
         (*peakMagnitudesInterp)(row, i) = mag - 0.25 * (leftMag - rightMag) * interpFactor;
 
         // Calculate the interpolated phase
-        Real leftPhase = _phases(row, floor((*peakPositionsInterp)(row, i)));
-        Real rightPhase = _phases(row, floor((*peakPositionsInterp)(row, i)) + 1);
+        leftPhase = _phases(row, floor((*peakPositionsInterp)(row, i)));
+        rightPhase = _phases(row, floor((*peakPositionsInterp)(row, i)) + 1);
         
         interpFactor = (interpFactor >= 0) ? interpFactor : interpFactor + 1;
-
-        Real diffPhase = (rightPhase - leftPhase);
         
-        (*peakPhasesInterp)(row, i) = (leftPhase + interpFactor * diffPhase);
+        (*peakPhasesInterp)(row, i) = (leftPhase + interpFactor * (rightPhase - leftPhase));
       }
-
     }
   }
 
