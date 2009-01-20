@@ -16,67 +16,35 @@
 ** Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */                                                                          
 
+#ifndef ODFMKL_H
+#define ODFMKL_H
+
 #include "typedefs.h"
 #include "debug.h"
 
-#include "odf.h"
-#include "odfcomplex.h"
-#include "odfphase.h"
-#include "odfmkl.h"
+#include "odfbase.h"
 
-#include "utils.h"
-
-using namespace std;
-
-// import most common Eigen types 
-using namespace Eigen;
-
-ODF::ODF(int fftLength, ODFType odfType) :
-  _fftLength(fftLength),
-  _odfType(odfType)
-{
-  switch(_odfType) {
-
-  case SPECTRAL_FLUX:
-  case PHASE_DEVIATION:
-    _odf = new ODFPhase(_fftLength);
-    break;
-
-  case WEIGHTED_PHASE_DEVIATION:
-    _odf = new ODFPhase(_fftLength, true);
-    break;
-
-  case NORM_WEIGHTED_PHASE_DEVIATION:
-    _odf = new ODFPhase(_fftLength, true, true);
-    break;
-
-  case MODIFIED_KULLBACK_LIEBLER:
-    _odf = new ODFMKL(_fftLength);
-    break;
-
-  case COMPLEX_DOMAIN:
-    _odf = new ODFComplex(_fftLength);
-    break;
-
-  case RECTIFIED_COMPLEX_DOMAIN:
-    _odf = new ODFComplex(_fftLength, true);
-    break;
-  }
+class ODFMKL : public ODFBase {
+protected:
+  // Internal parameters
+  int _fftLength;
+  Real _minSpectrum;
   
-}
+  // Internal variables
+  MatrixXC _spectrum;
+  MatrixXR _spectrumAbs;
 
-ODF::~ODF() {
-  delete _odf;  
-}
+public:
+  ODFMKL(int fftLength, Real _minSpectrum = 1e-7);
 
-void ODF::setup() {
-  _odf->setup();
-}
+  ~ODFMKL();
 
-void ODF::process(const MatrixXC& fft, MatrixXR* odfValue) {
-  _odf->process(fft, odfValue);
-}
+  void setup();
 
-void ODF::reset() {
-  _odf->reset();
-}
+  void process(const MatrixXC& fft, MatrixXR* odfValue);
+
+  void reset();
+
+};
+
+#endif  /* ODFMKL_H */

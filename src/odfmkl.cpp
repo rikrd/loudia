@@ -19,9 +19,6 @@
 #include "typedefs.h"
 #include "debug.h"
 
-#include "odf.h"
-#include "odfcomplex.h"
-#include "odfphase.h"
 #include "odfmkl.h"
 
 #include "utils.h"
@@ -31,52 +28,49 @@ using namespace std;
 // import most common Eigen types 
 using namespace Eigen;
 
-ODF::ODF(int fftLength, ODFType odfType) :
+ODFMKL::ODFMKL(int fftLength, Real minSpectrum) :
+  ODFBase(),
   _fftLength(fftLength),
-  _odfType(odfType)
+  _minSpectrum(minSpectrum)
 {
-  switch(_odfType) {
-
-  case SPECTRAL_FLUX:
-  case PHASE_DEVIATION:
-    _odf = new ODFPhase(_fftLength);
-    break;
-
-  case WEIGHTED_PHASE_DEVIATION:
-    _odf = new ODFPhase(_fftLength, true);
-    break;
-
-  case NORM_WEIGHTED_PHASE_DEVIATION:
-    _odf = new ODFPhase(_fftLength, true, true);
-    break;
-
-  case MODIFIED_KULLBACK_LIEBLER:
-    _odf = new ODFMKL(_fftLength);
-    break;
-
-  case COMPLEX_DOMAIN:
-    _odf = new ODFComplex(_fftLength);
-    break;
-
-  case RECTIFIED_COMPLEX_DOMAIN:
-    _odf = new ODFComplex(_fftLength, true);
-    break;
-  }
   
+  DEBUG("ODFMKL: Constructor fftLength: " << _fftLength);
+  
+  setup();
 }
 
-ODF::~ODF() {
-  delete _odf;  
+ODFMKL::~ODFMKL() {}
+
+
+void ODFMKL::setup() {
+  // Prepare the buffers
+  DEBUG("ODFMKL: Setting up...");
+
+  reset();
+
+  DEBUG("ODFMKL: Finished set up...");
 }
 
-void ODF::setup() {
-  _odf->setup();
+
+void ODFMKL::process(const MatrixXC& fft, MatrixXR* odfValue) {
+  DEBUG("ODFMKL: Processing windowed");
+  const int rows = fft.rows();
+  const int cols = fft.cols();
+
+  (*odfValue).resize(1, 1);
+  _spectrum.resize(rows, min((int)ceil(_fftLength / 2.0), cols));
+
+  DEBUG("ODFMKL: Spectrum resized rows: " << rows << " (int)ceil(_fftLength / 2.0): " << (int)ceil(_fftLength / 2.0));
+  
+  _spectrum = fft.block(0, 0, rows, min((int)ceil(_fftLength / 2.0), cols));
+  
+  _spectrumAbs.set(_spectrum.cwise().abs());
+
+  (*odfValue)(0, 0) = (_spectrumAbs.block(1, 0, rows-1, cols).cwise() * (_spectrumAbs.block(1, 0, rows-1, cols).cwise() / (_spectrumAbs.block(0, 0, rows-1, cols).cwise() + _minSpectrum)).cwise().clipUnder(_minSpectrum).cwise().logN(2.0)).sum() / cols;
+  
+  DEBUG("ODFMKL: Finished Processing");
 }
 
-void ODF::process(const MatrixXC& fft, MatrixXR* odfValue) {
-  _odf->process(fft, odfValue);
-}
-
-void ODF::reset() {
-  _odf->reset();
+void ODFMKL::reset() {
+  // Initial values
 }
