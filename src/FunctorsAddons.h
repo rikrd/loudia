@@ -8,7 +8,8 @@
  *
  */
 template<typename Scalar> struct ei_scalar_angle_op EIGEN_EMPTY_STRUCT {
-  inline const Scalar operator() (const Scalar& a) const { return atan2(a.imag(), a.real()); }
+  typedef typename NumTraits<Scalar>::Real result_type;
+  inline const result_type operator() (const Scalar& a) const { return atan2(a.imag(), a.real()); }
 };
 
 template<typename Scalar>
