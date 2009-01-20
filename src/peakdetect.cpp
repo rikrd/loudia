@@ -56,7 +56,8 @@ void PeakDetect::setup(){
 }
 
 
-void PeakDetect::process(const MatrixXC& fft, MatrixXR* peakPositions, MatrixXR* peakMagnitudes){
+void PeakDetect::process(const MatrixXC& fft, 
+                         MatrixXR* peakPositions, MatrixXR* peakMagnitudes, MatrixXR* peakPhases){
   DEBUG("PEAKDETECT: Processing");
   int peakIndex;
   
@@ -73,7 +74,11 @@ void PeakDetect::process(const MatrixXC& fft, MatrixXR* peakPositions, MatrixXR*
   (*peakMagnitudes).resize(fft.rows(), numPeaks);
   (*peakMagnitudes).setConstant(-1);
 
+  (*peakPhases).resize(fft.rows(), numPeaks);
+  (*peakPhases).setConstant(-1);
+
   _magnitudes.set(fft.cwise().abs());
+  _phases.set(fft.cwise().angle());
 
   DEBUG("PEAKDETECT: Processing, _magnitudes.shape: (" << _magnitudes.rows() << ", " << _magnitudes.cols() << ")");
 
@@ -102,7 +107,8 @@ void PeakDetect::process(const MatrixXC& fft, MatrixXR* peakPositions, MatrixXR*
         if ( maxVal - minVal >= _minPeakContrast ) {
 
           (*peakMagnitudes)(i, peakIndex) = _magnitudes(i, j);
-          (*peakPositions)(i, peakIndex) = j;          
+          (*peakPhases)(i, peakIndex) = _phases(i, j);
+          (*peakPositions)(i, peakIndex) = j;
           peakIndex ++;
           
         }

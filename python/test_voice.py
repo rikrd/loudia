@@ -75,8 +75,8 @@ print subplots
 pylab.ion()
 
 if 'peak_mags' in all_processes:
-    maxPeakCount = 20
-    maxTrajCount = 20
+    maxPeakCount = 40
+    maxTrajCount = 40
     silentFrames = 3
     minPeakWidth = 2 * int(fftSize / frameSize) # bins for Hamming
     minPeakContrast = 0.1
@@ -103,10 +103,11 @@ for frame in stream:
 
     if set(['peak_mags', 'peak_phases']) | all_processes:
         fft = scipy.reshape(fft, (1, plotSize))
-        peakLocs, peakMags =  peaker.process( fft )
-        peakiLocs, peakiMags = peakInterp.process( fft,
-                                                   scipy.array(peakLocs, dtype='f4'),
-                                                   scipy.array(peakMags, dtype='f4'))
+        peakLocs, peakMags, peakPhases =  peaker.process( fft )
+        peakiLocs, peakiMags, peakiPhases = peakInterp.process( fft,
+                                                               scipy.array(peakLocs, dtype='f4'),
+                                                               scipy.array(peakMags, dtype='f4'),
+                                                               scipy.array(peakPhases, dtype='f4') )
         
         trajLocs, trajMags = tracker.process( fft,
                                               scipy.array(peakiLocs, dtype='f4'),

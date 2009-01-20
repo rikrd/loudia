@@ -40,6 +40,7 @@ void reverseCols(MatrixXR* in);
  * Calculate inplace the cumulative sum
  */
 void rowCumsum(MatrixXR* in);
+void colCumsum(MatrixXR* in);
 
 /**
  * Create a matrix of complex numbers given the polar coordinates
@@ -89,8 +90,10 @@ void hammingTransform(Real position, Real magnitude,
                       int windowSize, int fftSize,
                       MatrixXR* spectrum, int* begin, int* end, int bandwidth = 4);
 
-void dbToMag(MatrixXR db, MatrixXR* mag);
+void dbToMag(const MatrixXR& db, MatrixXR* mag);
 
-void magToDb(MatrixXR mag, MatrixXR* db, Real minMag = 0.0001 );
+void magToDb(const MatrixXR& mag, MatrixXR* db, Real minMag = 0.0001 );
+
+void unwrap(const MatrixXR& phases, MatrixXR* unwrapped);
 
 #endif  /* UTILS_H */
