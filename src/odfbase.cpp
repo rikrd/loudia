@@ -1,5 +1,5 @@
 /*                                                         
-** Copyright (C) 2008 Ricard Marxer <email@ricardmarxer.com.com>
+** Copyright (C) 2008 Ricard Marxer <email@ricardmarxer.com>
 **                                                                  
 ** This program is free software; you can redistribute it and/or modify
 ** it under the terms of the GNU General Public License as published by
@@ -16,44 +16,24 @@
 ** Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */                                                                          
 
-#ifndef ODFCOMPLEX_H
-#define ODFCOMPLEX_H
-
 #include "typedefs.h"
 #include "debug.h"
 
 #include "odfbase.h"
-#include "unwrap.h"
 
-class ODFComplex : ODFBase {
-protected:
-  // Internal parameters
-  int _fftLength;
-  
-  // Internal variables
-  Unwrap _unwrap;
+#include "utils.h"
 
-  MatrixXC _spectrum;
-  MatrixXC _unwrappedSpectrum;
-  MatrixXR _unwrappedAngle;
-  MatrixXC _spectrumPredict;
-  MatrixXR _predictionError;
-  
-  Real spectralDistanceEuclidean(const MatrixXC& spectrum, const MatrixXR& spectrumAbs, const MatrixXR& spectrumArg);
-  Real spectralDistanceEuclideanWeighted(const MatrixXC& spectrum, const MatrixXR& spectrumAbs, const MatrixXR& spectrumArg);
-  Real spectralDistanceHypot(const MatrixXC& spectrum, const MatrixXR& spectrumAbs, const MatrixXR& spectrumArg);
+using namespace std;
 
-public:
-  ODFComplex(int fftLength);
+// import most common Eigen types 
+using namespace Eigen;
 
-  ~ODFComplex();
+ODFbase::ODFBase() {}
 
-  void setup();
+ODFBase::~ODFBase() {}
 
-  void process(const MatrixXC& fft, MatrixXR* odfValue);
+void ODFBase::setup() {}
 
-  void reset();
+void ODFBase::process(const MatrixXC& fft, MatrixXR* odfValue) {}
 
-};
-
-#endif  /* ODFCOMPLEX_H */
+void ODFBase::reset() {}

@@ -34,6 +34,7 @@ import_array();
 #include "peaksynthesize.h"
 #include "unwrap.h"
 #include "odfcomplex.h"
+#include "odf.h"
 #include "onsetcomplex.h"
 
 #include "utils.h"
@@ -60,6 +61,7 @@ using namespace std;
 %include "peaksynthesize.h"
 %include "unwrap.h"
 %include "odfcomplex.h"
+%include "odf.h"
 %include "onsetcomplex.h"
 
 %include "utils.h"

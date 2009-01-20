@@ -1,5 +1,5 @@
 /*                                                         
-** Copyright (C) 2008 Ricard Marxer <email@ricardmarxer.com.com>
+** Copyright (C) 2008 Ricard Marxer <email@ricardmarxer.com>
 **                                                                  
 ** This program is free software; you can redistribute it and/or modify
 ** it under the terms of the GNU General Public License as published by
@@ -16,37 +16,36 @@
 ** Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */                                                                          
 
-#ifndef ODFCOMPLEX_H
-#define ODFCOMPLEX_H
+#ifndef ODF_H
+#define ODF_H
 
 #include "typedefs.h"
 #include "debug.h"
 
-#include "odfbase.h"
-#include "unwrap.h"
+class ODF {
+public:
+  enum ODFType {
+    SPECTRAL_FLUX = 0,
+    PHASE_DEVIATION = 1,
+    WEIGHTED_PHASE_DEVIATION = 2,
+    NORM_WEIGHTED_PHASE_DEVIATION = 3,
+    MODIFIED_KULLBACK_LIEBLER = 4,
+    COMPLEX_DOMAIN = 5,
+    RECTIFIED_COMPLEX_DOMAIN = 6
+  };
 
-class ODFComplex : ODFBase {
 protected:
   // Internal parameters
   int _fftLength;
+  ODFType _odfType;
   
   // Internal variables
-  Unwrap _unwrap;
-
-  MatrixXC _spectrum;
-  MatrixXC _unwrappedSpectrum;
-  MatrixXR _unwrappedAngle;
-  MatrixXC _spectrumPredict;
-  MatrixXR _predictionError;
-  
-  Real spectralDistanceEuclidean(const MatrixXC& spectrum, const MatrixXR& spectrumAbs, const MatrixXR& spectrumArg);
-  Real spectralDistanceEuclideanWeighted(const MatrixXC& spectrum, const MatrixXR& spectrumAbs, const MatrixXR& spectrumArg);
-  Real spectralDistanceHypot(const MatrixXC& spectrum, const MatrixXR& spectrumAbs, const MatrixXR& spectrumArg);
+  ODFBase* _odf;
 
 public:
-  ODFComplex(int fftLength);
-
-  ~ODFComplex();
+  ODF(int fftLength, ODFType odfType = COMPLEX_DOMAIN);
+  
+  ~ODF();
 
   void setup();
 
@@ -56,4 +55,4 @@ public:
 
 };
 
-#endif  /* ODFCOMPLEX_H */
+#endif  /* ODF_H */

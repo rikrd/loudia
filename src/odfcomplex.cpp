@@ -1,5 +1,5 @@
 /*                                                         
-** Copyright (C) 2008 Ricard Marxer <email@ricardmarxer.com.com>
+** Copyright (C) 2008 Ricard Marxer <email@ricardmarxer.com>
 **                                                                  
 ** This program is free software; you can redistribute it and/or modify
 ** it under the terms of the GNU General Public License as published by
@@ -31,20 +31,18 @@ using namespace std;
 // import most common Eigen types 
 using namespace Eigen;
 
-ODFComplex::ODFComplex(int fftLength) : _unwrap((int)(fftLength / 2.0)) {
+ODFComplex::ODFComplex(int fftLength) :
+  _unwrap((int)(fftLength / 2.0)),
+  _fftLength(fftLength),
+  ODFBase()
+{
   
-  DEBUG("ODFComplex: Constructor fftLength: " << fftLength);
-  
-  _fftLength = fftLength;
+  DEBUG("ODFComplex: Constructor fftLength: " << _fftLength);
   
   setup();
 }
 
-ODFComplex::~ODFComplex() {
-  // TODO: Here we should free the buffers
-  // but I don't know how to do that with MatrixXR and MatrixXR
-  // I'm sure Nico will...
-}
+ODFComplex::~ODFComplex() {}
 
 
 void ODFComplex::setup() {
@@ -85,7 +83,7 @@ Real ODFComplex::spectralDistanceEuclidean(const MatrixXC& spectrum, const Matri
   const int cols = spectrum.cols();
   
   if (rows < 3) {
-    // Throw not enough rows
+    // Throw ValueError not enough rows
   }
   
   _spectrumPredict.resize(1, cols);

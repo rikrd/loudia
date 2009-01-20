@@ -1,5 +1,5 @@
 /*                                                         
-** Copyright (C) 2008 Ricard Marxer <email@ricardmarxer.com.com>
+** Copyright (C) 2008 Ricard Marxer <email@ricardmarxer.com>
 **                                                                  
 ** This program is free software; you can redistribute it and/or modify
 ** it under the terms of the GNU General Public License as published by
@@ -16,44 +16,53 @@
 ** Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */                                                                          
 
-#ifndef ODFCOMPLEX_H
-#define ODFCOMPLEX_H
-
 #include "typedefs.h"
 #include "debug.h"
 
-#include "odfbase.h"
-#include "unwrap.h"
+#include "odf.h"
 
-class ODFComplex : ODFBase {
-protected:
-  // Internal parameters
-  int _fftLength;
-  
-  // Internal variables
-  Unwrap _unwrap;
+#include "utils.h"
 
-  MatrixXC _spectrum;
-  MatrixXC _unwrappedSpectrum;
-  MatrixXR _unwrappedAngle;
-  MatrixXC _spectrumPredict;
-  MatrixXR _predictionError;
-  
-  Real spectralDistanceEuclidean(const MatrixXC& spectrum, const MatrixXR& spectrumAbs, const MatrixXR& spectrumArg);
-  Real spectralDistanceEuclideanWeighted(const MatrixXC& spectrum, const MatrixXR& spectrumAbs, const MatrixXR& spectrumArg);
-  Real spectralDistanceHypot(const MatrixXC& spectrum, const MatrixXR& spectrumAbs, const MatrixXR& spectrumArg);
+using namespace std;
 
-public:
-  ODFComplex(int fftLength);
+// import most common Eigen types 
+using namespace Eigen;
 
-  ~ODFComplex();
+ODF::ODF(int fftLength, ODFType odfType) :
+  _fftLength(fftLength),
+  _odfType(odfType)
+{
+  switch(_odfType) {
+  case SPECTRAL_FLUX:
+  case PHASE_DEVIATION:
+  case WEIGHTED_PHASE_DEVIATION:
+  case NORM_WEIGHTED_PHASE_DEVIATION:
+  case MODIFIED_KULLBACK_LIEBLER:
+    // Throw ImplementationError, ODF type not implemented yet
+    break;
 
-  void setup();
+  case COMPLEX_DOMAIN:
+    _odf = new ODFComplex(_fftLength);
+    break;
 
-  void process(const MatrixXC& fft, MatrixXR* odfValue);
+  case RECTIFIED_COMPLEX_DOMAIN:
+    _odf = new ODFComplex(_fftLength);
+    break;
+  }
+}
 
-  void reset();
+ODF::~ODF() {
+  delete _odf;  
+}
 
-};
+void ODF::setup() {
+  _odf->setup();
+}
 
-#endif  /* ODFCOMPLEX_H */
+void ODF::process(const MatrixXC& fft, MatrixXR* odfValue) {
+  _odf->process(fft, odfValue);
+}
+
+void ODF::reset() {
+  _odf->reset();
+}
