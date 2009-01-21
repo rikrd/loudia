@@ -11,14 +11,15 @@ filename = sys.argv[1]
 samplerate = 44100
 
 frameSize = 1024 
-frameStep = 256
+frameStep = 512
 
 frameSizeTime = frameSize / 44100.0
 frameStepTime = frameStep / 44100.0
 
 fftSize = 2048
+plotSize = fftSize / 8
 
-analysisLimit = 1000.0
+analysisLimit = scipy.inf
 
 # Creation of the pipeline        
 stream = pyricaudio.sndfilereader({'filename': filename,
@@ -56,13 +57,15 @@ odfs = {}
 for frame in stream:
     fft = scipy.array(frame['fft'][:fftSize/2], dtype = scipy.complex64)
     mag =  scipy.array(abs(fft), dtype = 'f4')
-    spec =  20.0 / scipy.log( 10.0 ) * scipy.log( abs( fft ) + 1e-7)
+    spec =  20.0 / scipy.log( 10.0 ) * scipy.log( abs( fft ) + 1e-7)[:plotSize]
 
     ffts.append( fft )
     specs.append( spec )
 
 ffts = scipy.array( ffts )
 specs = scipy.array( specs )
+
+print ffts.shape
 
 subplots = len(odfNames) + 1
 
@@ -85,6 +88,7 @@ ax.set_yticklabels([])
 for i, (odfType, odfName) in enumerate(odfNames):
     odf = ricaudio.ODF( fftSize, odfType )
     odfValues = odf.process( ffts )
+    print odfValues.shape
 
     pylab.subplot(subplots, 1, i+2)
     pylab.plot(odfValues[:,0])
