@@ -65,8 +65,6 @@ for frame in stream:
 ffts = scipy.array( ffts )
 specs = scipy.array( specs )
 
-print ffts.shape
-
 subplots = len(odfNames) + 1
 
 pylab.figure()
@@ -87,8 +85,10 @@ ax.set_yticklabels([])
 # Create the ODF processors and process
 for i, (odfType, odfName) in enumerate(odfNames):
     odf = ricaudio.ODF( fftSize, odfType )
+
+    print 'Processing: %s...' % odfName
     odfValues = odf.process( ffts )
-    print odfValues.shape
+    print 'Finished'
 
     pylab.subplot(subplots, 1, i+2)
     pylab.plot(odfValues[:,0])
