@@ -19,11 +19,6 @@
 #include "typedefs.h"
 #include "debug.h"
 
-#include "odf.h"
-#include "odfcomplex.h"
-#include "odfphase.h"
-#include "odfmkl.h"
-#include "odfspectralflux.h"
 #include "odfhfc.h"
 
 #include "utils.h"
@@ -33,60 +28,53 @@ using namespace std;
 // import most common Eigen types 
 using namespace Eigen;
 
-ODF::ODF(int fftLength, ODFType odfType) :
-  _fftLength(fftLength),
-  _odfType(odfType)
+ODFHFC::ODFHFC(int fftLength) :
+  ODFBase(),
+  _fftLength(fftLength)
 {
-  switch(_odfType) {
+  
+  DEBUG("ODFHFC: Constructor fftLength: " << _fftLength);
+  
+  setup();
+}
 
-  case SPECTRAL_FLUX:
-    _odf = new ODFSpectralFlux(_fftLength);
-    break;
+ODFHFC::~ODFHFC() {}
 
-  case PHASE_DEVIATION:
-    _odf = new ODFPhase(_fftLength);
-    break;
 
-  case WEIGHTED_PHASE_DEVIATION:
-    _odf = new ODFPhase(_fftLength, true);
-    break;
+void ODFHFC::setup() {
+  // Prepare the buffers
+  DEBUG("ODFHFC: Setting up...");
 
-  case NORM_WEIGHTED_PHASE_DEVIATION:
-    _odf = new ODFPhase(_fftLength, true, true);
-    break;
+  // Create the vector with the weights (weights are the frequency bin indices)
+  const int halfFFTlen = (int)ceil(_fftLength / 2.0);
+  range(0, halfFFTlen, halfFFTlen, &_freqBin);
+  
+  reset();
 
-  case MODIFIED_KULLBACK_LIEBLER:
-    _odf = new ODFMKL(_fftLength);
-    break;
+  DEBUG("ODFHFC: Finished set up...");
+}
 
-  case COMPLEX_DOMAIN:
-    _odf = new ODFComplex(_fftLength);
-    break;
 
-  case RECTIFIED_COMPLEX_DOMAIN:
-    _odf = new ODFComplex(_fftLength, true);
-    break;
+void ODFHFC::process(const MatrixXC& fft, MatrixXR* odfValue) {
+  DEBUG("ODFHFC: Processing windowed");
+  const int rows = fft.rows();
+  const int cols = fft.cols();
+  const int halfCols = min((int)ceil(_fftLength / 2.0), cols);
+  
+  (*odfValue).resize(rows, 1);
+  _spectrumAbs.resize(rows, halfCols);
 
-  case HIGH_FREQUENCY_CONTENT:
-    _odf = new ODFHFC(_fftLength);
-    break;
+  DEBUG("ODFHFC: Spectrum resized rows: " << rows << " halfCols: " << halfCols);
+  
+  _spectrumAbs = fft.block(0, 0, rows, halfCols).cwise().abs();  
 
+  for (int row = 0; row < rows; row ++) {
+    (*odfValue).row(row) = _spectrumAbs.row(row) * _freqBin.block(0, 0, 1, halfCols).transpose() / halfCols;
   }
   
+  DEBUG("ODFHFC: Finished Processing");
 }
 
-ODF::~ODF() {
-  delete _odf;  
-}
-
-void ODF::setup() {
-  _odf->setup();
-}
-
-void ODF::process(const MatrixXC& fft, MatrixXR* odfValue) {
-  _odf->process(fft, odfValue);
-}
-
-void ODF::reset() {
-  _odf->reset();
+void ODFHFC::reset() {
+  // Initial values
 }

@@ -16,39 +16,27 @@
 ** Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */                                                                          
 
-#ifndef ODF_H
-#define ODF_H
+#ifndef ODFHFC_H
+#define ODFHFC_H
 
 #include "typedefs.h"
 #include "debug.h"
 
 #include "odfbase.h"
 
-class ODF {
-public:
-  enum ODFType {
-    SPECTRAL_FLUX = 0,
-    PHASE_DEVIATION = 1,
-    WEIGHTED_PHASE_DEVIATION = 2,
-    NORM_WEIGHTED_PHASE_DEVIATION = 3,
-    MODIFIED_KULLBACK_LIEBLER = 4,
-    COMPLEX_DOMAIN = 5,
-    RECTIFIED_COMPLEX_DOMAIN = 6,
-    HIGH_FREQUENCY_CONTENT = 7
-  };
-
+class ODFHFC : public ODFBase {
 protected:
   // Internal parameters
   int _fftLength;
-  ODFType _odfType;
   
   // Internal variables
-  ODFBase* _odf;
+  MatrixXR _spectrumAbs;
+  MatrixXR _freqBin;
 
 public:
-  ODF(int fftLength, ODFType odfType = COMPLEX_DOMAIN);
-  
-  ~ODF();
+  ODFHFC(int fftLength);
+
+  ~ODFHFC();
 
   void setup();
 
@@ -58,4 +46,4 @@ public:
 
 };
 
-#endif  /* ODF_H */
+#endif  /* ODFHFC_H */

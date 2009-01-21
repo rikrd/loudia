@@ -88,6 +88,15 @@ void colCumsum(MatrixXR* in) {
   }
 }
 
+void range(Real start, Real end, int steps, MatrixXR* in){
+  const Real step = (end - start) / steps;
+  
+  in->resize(1, steps);
+  
+  for (int i = 0; i<steps; i++) {
+    (*in)(0, i) = i*step + start;
+  }
+}
 
 void polar(const MatrixXR&  mag, const MatrixXR&  phase, MatrixXC* complex) {
   if ((mag.rows() != phase.rows()) || (mag.cols() != phase.cols())) {

@@ -43,6 +43,11 @@ void rowCumsum(MatrixXR* in);
 void colCumsum(MatrixXR* in);
 
 /**
+ * Calculate inplace range matrix
+ */
+void range(Real start, Real end, int steps, MatrixXR* in);
+
+/**
  * Create a matrix of complex numbers given the polar coordinates
  */
 void polar(const MatrixXR& mag, const MatrixXR& phase, MatrixXC* complex);
