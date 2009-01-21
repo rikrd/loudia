@@ -69,9 +69,12 @@ subplots = len(odfNames) + 1
 pylab.figure()
 pylab.hold(True)
 pylab.subplot(subplots, 1, 1)
+
 pylab.imshow( scipy.flipud(specs.T), aspect = 'auto' )
 pylab.title( 'Spectrogram' )
 ax = pylab.gca()
+
+ax.set_xticks( ax.get_xticks()[1:] )
 ticks = ax.get_xticks()
 ax.set_xticklabels(['%.2f' % (float(tick) * frameStep / samplerate) for tick in ticks])
 
@@ -93,5 +96,7 @@ for i, (odfType, odfName) in enumerate(odfNames):
     
     ax.set_xticklabels([])
     ax.set_yticklabels([])
+
+pylab.subplots_adjust(left = 0.05, right = 0.95, bottom = 0.05, top = 0.95, hspace=0.6)
         
 pylab.show()
