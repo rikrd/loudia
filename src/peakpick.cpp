@@ -74,7 +74,7 @@ void PeakPick::process(const MatrixXC& fft, MatrixXR* peakPositions, MatrixXR* p
   (*peakMagnitudes).resize(fft.rows(), numPeaks);
   (*peakMagnitudes).setConstant(-1);
 
-  _magnitudes.set(fft.cwise().abs());
+  _magnitudes = fft.cwise().abs();
 
   DEBUG("PEAKPICK: Processing, _magnitudes.shape: (" << _magnitudes.rows() << ", " << _magnitudes.cols() << ")");
 

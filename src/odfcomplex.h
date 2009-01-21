@@ -1,5 +1,5 @@
 /*                                                         
-** Copyright (C) 2008 Ricard Marxer <email@ricardmarxer.com.com>
+** Copyright (C) 2008 Ricard Marxer <email@ricardmarxer.com>
 **                                                                  
 ** This program is free software; you can redistribute it and/or modify
 ** it under the terms of the GNU General Public License as published by
@@ -22,12 +22,14 @@
 #include "typedefs.h"
 #include "debug.h"
 
+#include "odfbase.h"
 #include "unwrap.h"
 
-class ODFComplex {
+class ODFComplex : public ODFBase {
 protected:
   // Internal parameters
   int _fftLength;
+  bool _rectified;
   
   // Internal variables
   Unwrap _unwrap;
@@ -38,12 +40,10 @@ protected:
   MatrixXC _spectrumPredict;
   MatrixXR _predictionError;
   
-  Real spectralDistanceEuclidean(const MatrixXC& spectrum, const MatrixXR& spectrumAbs, const MatrixXR& spectrumArg);
-  Real spectralDistanceEuclideanWeighted(const MatrixXC& spectrum, const MatrixXR& spectrumAbs, const MatrixXR& spectrumArg);
-  Real spectralDistanceHypot(const MatrixXC& spectrum, const MatrixXR& spectrumAbs, const MatrixXR& spectrumArg);
+  void spectralDistanceEuclidean(const MatrixXC& spectrum, const MatrixXR& spectrumAbs, const MatrixXR& spectrumArg, MatrixXR* odfValues);
 
 public:
-  ODFComplex(int fftLength);
+  ODFComplex(int fftLength, bool rectified = false);
 
   ~ODFComplex();
 

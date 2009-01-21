@@ -33,6 +33,7 @@ import_array();
 #include "chebyshev.h"
 #include "unwrap.h"
 #include "odfcomplex.h"
+#include "odf.h"
 #include "onsetcomplex.h"
 
 #include "utils.h"
@@ -59,6 +60,7 @@ import_array();
 %include "utils.h"
 %include "unwrap.h"
 %include "odfcomplex.h"
+%include "odf.h"
 %include "onsetcomplex.h"
 
 %include "utils.h"

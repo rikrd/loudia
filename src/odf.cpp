@@ -16,44 +16,77 @@
 ** Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */                                                                          
 
-#ifndef BANDS_H
-#define BANDS_H
-
 #include "typedefs.h"
 #include "debug.h"
 
-#include <vector>
+#include "odf.h"
+#include "odfcomplex.h"
+#include "odfphase.h"
+#include "odfmkl.h"
+#include "odfspectralflux.h"
+#include "odfhfc.h"
 
-class Bands {
-protected:
-  // Internal parameters
-  MatrixXI _starts;
-  std::vector<MatrixXR> _weights;
+#include "utils.h"
 
-  // Internal variables
+using namespace std;
 
-public:
-  Bands();
+// import most common Eigen types 
+using namespace Eigen;
 
-  Bands(MatrixXI starts, std::vector<MatrixXR> weights);
+ODF::ODF(int fftLength, ODFType odfType) :
+  _fftLength(fftLength),
+  _odfType(odfType)
+{
+  switch(_odfType) {
 
-  ~Bands();
+  case SPECTRAL_FLUX:
+    _odf = new ODFSpectralFlux(_fftLength);
+    break;
 
-  void setup();
+  case PHASE_DEVIATION:
+    _odf = new ODFPhase(_fftLength);
+    break;
 
-  void process(const MatrixXR&  spectrum, MatrixXR* bands);
+  case WEIGHTED_PHASE_DEVIATION:
+    _odf = new ODFPhase(_fftLength, true);
+    break;
 
-  void reset();
+  case NORM_WEIGHTED_PHASE_DEVIATION:
+    _odf = new ODFPhase(_fftLength, true, true);
+    break;
 
-  std::vector<MatrixXR> weights() const;
+  case MODIFIED_KULLBACK_LIEBLER:
+    _odf = new ODFMKL(_fftLength);
+    break;
 
-  void bandWeights(int band, MatrixXR* bandWeights) const;
+  case COMPLEX_DOMAIN:
+    _odf = new ODFComplex(_fftLength);
+    break;
 
-  void starts(MatrixXI* result) const;
+  case RECTIFIED_COMPLEX_DOMAIN:
+    _odf = new ODFComplex(_fftLength, true);
+    break;
 
-  int bands() const;
+  case HIGH_FREQUENCY_CONTENT:
+    _odf = new ODFHFC(_fftLength);
+    break;
 
-  void setStartsWeights(const MatrixXI& starts, std::vector<MatrixXR> weights);
-};
+  }
+  
+}
 
-#endif  /* BANDS_H */
+ODF::~ODF() {
+  delete _odf;  
+}
+
+void ODF::setup() {
+  _odf->setup();
+}
+
+void ODF::process(const MatrixXC& fft, MatrixXR* odfValue) {
+  _odf->process(fft, odfValue);
+}
+
+void ODF::reset() {
+  _odf->reset();
+}

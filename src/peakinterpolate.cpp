@@ -29,8 +29,8 @@ using namespace Eigen;
 PeakInterpolate::PeakInterpolate() {
   DEBUG("PEAKINTERPOLATE: Constructor");
   
-
   setup();
+
   DEBUG("PEAKINTERPOLATE: Constructed");
 }
 
@@ -46,23 +46,26 @@ void PeakInterpolate::setup(){
   DEBUG("PEAKINTERPOLATE: Setting up...");
 
   reset();
+
   DEBUG("PEAKINTERPOLATE: Finished set up...");
 }
 
 
 void PeakInterpolate::process(const MatrixXC& fft,
-                              const MatrixXR& peakPositions, const MatrixXR& peakMagnitudes,
-                              MatrixXR* peakPositionsInterp, MatrixXR* peakMagnitudesInterp){
+                              const MatrixXR& peakPositions, const MatrixXR& peakMagnitudes, const MatrixXR& peakPhases,
+                              MatrixXR* peakPositionsInterp, MatrixXR* peakMagnitudesInterp, MatrixXR* peakPhasesInterp) {
   
   DEBUG("PEAKINTERPOLATE: Processing");  
-  Real leftMag;
-  Real rightMag;
-  Real mag;
+  Real leftMag, leftPhase;
+  Real rightMag, rightPhase;
+  Real mag, interpFactor;
   
   (*peakPositionsInterp).resize(fft.rows(), peakPositions.cols());
   (*peakMagnitudesInterp).resize(fft.rows(), peakPositions.cols());
-
-  _magnitudes.set(fft.cwise().abs());
+  (*peakPhasesInterp).resize(fft.rows(), peakPositions.cols());
+  
+  _magnitudes = fft.cwise().abs();
+  unwrap(fft.cwise().angle(), &_phases);
   
   for ( int row = 0 ; row < _magnitudes.rows(); row++ ) {
   
@@ -70,8 +73,9 @@ void PeakInterpolate::process(const MatrixXC& fft,
       
       // If the position is -1 do nothing since it means it is nothing
       if( peakPositions(row, i) == -1 ){
-        
-        (*peakMagnitudesInterp)(row, i) = peakMagnitudes(row, i); 
+
+        (*peakMagnitudesInterp)(row, i) = peakMagnitudes(row, i);         
+        (*peakPhasesInterp)(row, i) = peakPhases(row, i); 
         (*peakPositionsInterp)(row, i) = peakPositions(row, i);
         
       } else {
@@ -101,16 +105,27 @@ void PeakInterpolate::process(const MatrixXC& fft,
           
         }
                 
-        // Calculate the interpolated position in dB
+        // Calculate the interpolated position
         (*peakPositionsInterp)(row, i) = peakPositions(row, i) + 0.5 * (leftMag - rightMag) / (leftMag - 2.0 * mag + rightMag);
 
+        interpFactor = ((*peakPositionsInterp)(row, i) - peakPositions(row, i));
+
         // Calculate the interpolated magnitude in dB
-        (*peakMagnitudesInterp)(row, i) = mag - 0.25 * (leftMag - rightMag) * ((*peakPositionsInterp)(row, i) - peakPositions(row, i));
+        (*peakMagnitudesInterp)(row, i) = mag - 0.25 * (leftMag - rightMag) * interpFactor;
 
+        // Calculate the interpolated phase
+        leftPhase = _phases(row, floor((*peakPositionsInterp)(row, i)));
+        rightPhase = _phases(row, floor((*peakPositionsInterp)(row, i)) + 1);
+        
+        interpFactor = (interpFactor >= 0) ? interpFactor : interpFactor + 1;
+        
+        (*peakPhasesInterp)(row, i) = (leftPhase + interpFactor * (rightPhase - leftPhase));
       }
-
     }
   }
+
+  // Calculate the princarg() of the phase: remap to (-pi pi]
+  (*peakPhasesInterp) = ((*peakPhasesInterp).cwise() != -1).select(((*peakPhasesInterp).cwise() + M_PI).cwise().modN(-2.0 * M_PI).cwise() + M_PI, (*peakPhasesInterp));
   
   DEBUG("PEAKINTERPOLATE: Finished Processing");
 }

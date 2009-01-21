@@ -22,17 +22,6 @@
 #include "typedefs.h"
 #include "debug.h"
 
-#include <Eigen/Core>
-#include <Eigen/Array>
-#include <iostream>
-
-
-
-//using namespace std;
-
-// import most common Eigen types 
-//using namespace Eigen;
-
 class Window{
 public:
   enum WindowType {

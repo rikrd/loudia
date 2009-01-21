@@ -33,15 +33,17 @@ protected:
     
   // Internal variables
   MatrixXR _magnitudes;
+  MatrixXR _phases;
 
 public:
-  PeakDetect(int numPeaks, int minPeakWidth = 0, Real minPeakContrast = 0);
+  PeakDetect(int numPeaks, int minPeakWidth = 3, Real minPeakContrast = 0);
 
   ~PeakDetect();
 
   void setup();
 
-  void process(const MatrixXC& fft, MatrixXR* peakPositions, MatrixXR* peakMagnitudes);
+  void process(const MatrixXC& fft,
+               MatrixXR* peakPositions, MatrixXR* peakMagnitudes, MatrixXR* peakPhases);
 
   void reset();
 

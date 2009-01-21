@@ -176,6 +176,23 @@ void rowCumsum(MatrixXR* in) {
   }
 }
 
+void colCumsum(MatrixXR* in) { 
+  const int cols = (*in).cols();
+  
+  for(int i = 1; i < cols; i++ ){
+    (*in).col(i) += (*in).col(i-1);
+  }
+}
+
+void range(Real start, Real end, int steps, MatrixXR* in){
+  const Real step = (end - start) / steps;
+  
+  in->resize(1, steps);
+  
+  for (int i = 0; i<steps; i++) {
+    (*in)(0, i) = i*step + start;
+  }
+}
 
 void polar(const MatrixXR&  mag, const MatrixXR&  phase, MatrixXC* complex) {
   if ((mag.rows() != phase.rows()) || (mag.cols() != phase.cols())) {
@@ -290,14 +307,33 @@ void hammingTransform(Real position, Real magnitude,
 }
 
 
-void dbToMag(MatrixXR db, MatrixXR* mag) {
+void dbToMag(const MatrixXR& db, MatrixXR* mag) {
   mag->resize(db.rows(), db.cols());
   (*mag) = (db / 20.0).cwise().expN(10.0);
 }
 
-void magToDb(MatrixXR mag, MatrixXR* db, Real minMag) {
+void magToDb(const MatrixXR& mag, MatrixXR* db, Real minMag) {
   db->resize(mag.rows(), mag.cols());
   (*db) = 20.0 * mag.cwise().clipUnder( minMag ).cwise().logN( 10.0 );
+}
+
+void unwrap(const MatrixXR& phases, MatrixXR* unwrapped) {
+  const int nrows = phases.rows();
+  const int ncols = phases.cols();
+  
+  unwrapped->resize(nrows, ncols);
+  
+  MatrixXR diff(nrows, ncols);
+  diff << MatrixXR::Zero(nrows, 1), phases.block(0, 0, nrows, ncols - 1) - phases.block(0, 1, nrows, ncols - 1);
+
+  MatrixXR upsteps = (diff.cwise() > M_PI).cast<Real>();
+  MatrixXR downsteps = (diff.cwise() < -M_PI).cast<Real>();
+  
+  colCumsum(&upsteps);
+  colCumsum(&downsteps);
+  
+  (*unwrapped) = phases + (2.0 * M_PI * (upsteps - downsteps));
+  return;
 }
 
 /*

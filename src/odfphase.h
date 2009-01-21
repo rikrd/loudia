@@ -16,44 +16,43 @@
 ** Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */                                                                          
 
-#ifndef BANDS_H
-#define BANDS_H
+#ifndef ODFPHASE_H
+#define ODFPHASE_H
 
 #include "typedefs.h"
 #include "debug.h"
 
-#include <vector>
+#include "odfbase.h"
+#include "unwrap.h"
 
-class Bands {
+class ODFPhase : public ODFBase {
 protected:
   // Internal parameters
-  MatrixXI _starts;
-  std::vector<MatrixXR> _weights;
-
+  int _fftLength;
+  bool _weighted;
+  bool _normalize;
+  
   // Internal variables
+  Unwrap _unwrap;
+
+  MatrixXC _spectrum;
+  MatrixXR _unwrappedAngle;
+  MatrixXR _phaseDiff;
+  MatrixXR _instFreq;
+  
+  void phaseDeviation(const MatrixXC& spectrum, const MatrixXR& spectrumArg, MatrixXR* odfValue);
 
 public:
-  Bands();
+  ODFPhase(int fftLength, bool weighted = false, bool normalize = false);
 
-  Bands(MatrixXI starts, std::vector<MatrixXR> weights);
-
-  ~Bands();
+  ~ODFPhase();
 
   void setup();
 
-  void process(const MatrixXR&  spectrum, MatrixXR* bands);
+  void process(const MatrixXC& fft, MatrixXR* odfValue);
 
   void reset();
 
-  std::vector<MatrixXR> weights() const;
-
-  void bandWeights(int band, MatrixXR* bandWeights) const;
-
-  void starts(MatrixXI* result) const;
-
-  int bands() const;
-
-  void setStartsWeights(const MatrixXI& starts, std::vector<MatrixXR> weights);
 };
 
-#endif  /* BANDS_H */
+#endif  /* ODFPHASE_H */

@@ -25,6 +25,13 @@ isnan() const
   return _expression(); 
 }
 
+inline const EIGEN_CWISE_UNOP_RETURN_TYPE(ei_scalar_mod_n_op)
+modN(const Scalar& divisor) const
+{
+  return EIGEN_CWISE_UNOP_RETURN_TYPE(ei_scalar_mod_n_op)(_expression(), ei_scalar_mod_n_op<Scalar>(divisor));
+}
+
+
 inline const EIGEN_CWISE_UNOP_RETURN_TYPE(ei_scalar_exp_n_op)
 expN(const Scalar& base) const
 {
@@ -40,7 +47,7 @@ logN(const Scalar& base) const
 
 
 inline const EIGEN_CWISE_UNOP_RETURN_TYPE(ei_scalar_clip_under_op)
-clipUnder(const Scalar& under) const
+clipUnder(const Scalar& under = 0) const
 {
   return EIGEN_CWISE_UNOP_RETURN_TYPE(ei_scalar_clip_under_op)(_expression(), ei_scalar_clip_under_op<Scalar>(under));
 }

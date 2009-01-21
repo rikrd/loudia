@@ -16,44 +16,24 @@
 ** Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */                                                                          
 
-#ifndef BANDS_H
-#define BANDS_H
+#ifndef ODFBASE_H
+#define ODFBASE_H
 
 #include "typedefs.h"
 #include "debug.h"
 
-#include <vector>
-
-class Bands {
+class ODFBase {
 protected:
   // Internal parameters
-  MatrixXI _starts;
-  std::vector<MatrixXR> _weights;
 
   // Internal variables
-
 public:
-  Bands();
+  virtual void setup() = 0;
+  
+  virtual void process(const MatrixXC& fft, MatrixXR* odfValue) = 0;
+  
+  virtual void reset() = 0;
 
-  Bands(MatrixXI starts, std::vector<MatrixXR> weights);
-
-  ~Bands();
-
-  void setup();
-
-  void process(const MatrixXR&  spectrum, MatrixXR* bands);
-
-  void reset();
-
-  std::vector<MatrixXR> weights() const;
-
-  void bandWeights(int band, MatrixXR* bandWeights) const;
-
-  void starts(MatrixXI* result) const;
-
-  int bands() const;
-
-  void setStartsWeights(const MatrixXI& starts, std::vector<MatrixXR> weights);
 };
 
-#endif  /* BANDS_H */
+#endif  /* ODFBASE_H */

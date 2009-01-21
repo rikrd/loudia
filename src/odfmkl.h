@@ -16,44 +16,34 @@
 ** Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */                                                                          
 
-#ifndef BANDS_H
-#define BANDS_H
+#ifndef ODFMKL_H
+#define ODFMKL_H
 
 #include "typedefs.h"
 #include "debug.h"
 
-#include <vector>
+#include "odfbase.h"
 
-class Bands {
+class ODFMKL : public ODFBase {
 protected:
   // Internal parameters
-  MatrixXI _starts;
-  std::vector<MatrixXR> _weights;
-
+  int _fftLength;
+  Real _minSpectrum;
+  
   // Internal variables
+  MatrixXR _spectrumAbs;
 
 public:
-  Bands();
+  ODFMKL(int fftLength, Real _minSpectrum = 1e-7);
 
-  Bands(MatrixXI starts, std::vector<MatrixXR> weights);
-
-  ~Bands();
+  ~ODFMKL();
 
   void setup();
 
-  void process(const MatrixXR&  spectrum, MatrixXR* bands);
+  void process(const MatrixXC& fft, MatrixXR* odfValue);
 
   void reset();
 
-  std::vector<MatrixXR> weights() const;
-
-  void bandWeights(int band, MatrixXR* bandWeights) const;
-
-  void starts(MatrixXI* result) const;
-
-  int bands() const;
-
-  void setStartsWeights(const MatrixXI& starts, std::vector<MatrixXR> weights);
 };
 
-#endif  /* BANDS_H */
+#endif  /* ODFMKL_H */

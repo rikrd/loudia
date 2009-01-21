@@ -27,19 +27,28 @@ fft = ricaudio.FFT(frameSize, fftSize)
 peaks = ricaudio.PeakDetect(fftSize / 3, 4)
 
 r_sine_windowed = window.process(a_sine)
-r_sine_mag = fft.process(r_sine_windowed)
-r_sine_mag = r_sine_mag[:,:scipy.ceil(r_sine_mag.shape[1]/2)]
-r_sine_peakpos, r_sine_peakmag = peaks.process(r_sine_mag)
+r_sine_fft = fft.process(r_sine_windowed)
+r_sine_fft = r_sine_fft[:,:scipy.ceil(r_sine_fft.shape[1]/2)]
+r_sine_peakpos, r_sine_peakmag, r_sine_peakphase = peaks.process(r_sine_fft)
 # -------------------------------------------------------- #
 
-print r_sine_mag
+print r_sine_fft
 print r_sine_peakpos
 print r_sine_peakmag
+print r_sine_peakphase
 
 import pylab
+pylab.subplot(211)
 pylab.hold(True)
-pylab.plot(abs(r_sine_mag[0,:]))
+pylab.plot(abs(r_sine_fft[0,:]))
 pylab.hold(True)
 pylab.scatter(r_sine_peakpos[0,:], r_sine_peakmag[0,:])
+
+pylab.subplot(212)
+pylab.hold(True)
+pylab.plot(scipy.angle(r_sine_fft[0,:]))
+pylab.hold(True)
+pylab.scatter(r_sine_peakpos[0,:], r_sine_peakphase[0,:])
+
 
 pylab.show()

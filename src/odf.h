@@ -16,44 +16,46 @@
 ** Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */                                                                          
 
-#ifndef BANDS_H
-#define BANDS_H
+#ifndef ODF_H
+#define ODF_H
 
 #include "typedefs.h"
 #include "debug.h"
 
-#include <vector>
+#include "odfbase.h"
 
-class Bands {
+class ODF {
+public:
+  enum ODFType {
+    SPECTRAL_FLUX = 0,
+    HIGH_FREQUENCY_CONTENT = 1,
+    PHASE_DEVIATION = 2,
+    WEIGHTED_PHASE_DEVIATION = 3,
+    NORM_WEIGHTED_PHASE_DEVIATION = 4,
+    MODIFIED_KULLBACK_LIEBLER = 5,
+    COMPLEX_DOMAIN = 6,
+    RECTIFIED_COMPLEX_DOMAIN = 7
+  };
+
 protected:
   // Internal parameters
-  MatrixXI _starts;
-  std::vector<MatrixXR> _weights;
-
+  int _fftLength;
+  ODFType _odfType;
+  
   // Internal variables
+  ODFBase* _odf;
 
 public:
-  Bands();
-
-  Bands(MatrixXI starts, std::vector<MatrixXR> weights);
-
-  ~Bands();
+  ODF(int fftLength, ODFType odfType = COMPLEX_DOMAIN);
+  
+  ~ODF();
 
   void setup();
 
-  void process(const MatrixXR&  spectrum, MatrixXR* bands);
+  void process(const MatrixXC& fft, MatrixXR* odfValue);
 
   void reset();
 
-  std::vector<MatrixXR> weights() const;
-
-  void bandWeights(int band, MatrixXR* bandWeights) const;
-
-  void starts(MatrixXI* result) const;
-
-  int bands() const;
-
-  void setStartsWeights(const MatrixXI& starts, std::vector<MatrixXR> weights);
 };
 
-#endif  /* BANDS_H */
+#endif  /* ODF_H */

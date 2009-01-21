@@ -21,7 +21,7 @@
 
 #include <cmath>
 
-#include "odfcomplex.h"
+#include "odfphase.h"
 #include "unwrap.h"
 
 #include "utils.h"
@@ -31,35 +31,36 @@ using namespace std;
 // import most common Eigen types 
 using namespace Eigen;
 
-ODFComplex::ODFComplex(int fftLength, bool rectified) :
+ODFPhase::ODFPhase(int fftLength, bool weighted, bool normalize) :
   ODFBase(),
   _fftLength(fftLength),
-  _rectified(rectified),
+  _weighted(weighted),
+  _normalize(normalize),
   _unwrap((int)(fftLength / 2.0))
 {
   
-  DEBUG("ODFComplex: Constructor fftLength: " << _fftLength);
+  DEBUG("ODFPhase: Constructor fftLength: " << _fftLength);
   
   setup();
 }
 
-ODFComplex::~ODFComplex() {}
+ODFPhase::~ODFPhase() {}
 
 
-void ODFComplex::setup() {
+void ODFPhase::setup() {
   // Prepare the buffers
-  DEBUG("ODFComplex: Setting up...");
+  DEBUG("ODFPhase: Setting up...");
 
   _unwrap.setup();
 
   reset();
 
-  DEBUG("ODFComplex: Finished set up...");
+  DEBUG("ODFPhase: Finished set up...");
 }
 
 
-void ODFComplex::process(const MatrixXC& fft, MatrixXR* odfValue) {
-  DEBUG("ODFComplex: Processing windowed");
+void ODFPhase::process(const MatrixXC& fft, MatrixXR* odfValue) {
+  DEBUG("ODFPhase: Processing windowed");
   const int rows = fft.rows();
   const int cols = fft.cols();
   const int halfCols = min((int)ceil(_fftLength / 2.0), cols);
@@ -69,45 +70,43 @@ void ODFComplex::process(const MatrixXC& fft, MatrixXR* odfValue) {
   }
 
   (*odfValue).resize(rows - 2, 1);
-  _spectrum.resize(rows, halfCols);
 
-  DEBUG("ODFComplex: Spectrum resized rows: " << rows << " halfCols: " << halfCols);
+  DEBUG("ODFPhase: Spectrum resized rows: " << rows << " halfCols: " << halfCols);
   
   _spectrum = fft.block(0, 0, rows, halfCols);
 
-  DEBUG("ODFComplex: Specturum halved");
+  DEBUG("ODFPhase: Specturum halved");
 
   _unwrap.process(_spectrum.cwise().angle(), &_unwrappedAngle);
 
-  DEBUG("ODFComplex: Processing unwrapped");
+  DEBUG("ODFPhase: Processing unwrapped");
   
-  spectralDistanceEuclidean(_spectrum, _spectrum.cwise().abs(), _unwrappedAngle, odfValue);
+  phaseDeviation(_spectrum, _unwrappedAngle, odfValue);
   
-  DEBUG("ODFComplex: Finished Processing");
+  DEBUG("ODFPhase: Finished Processing");
 }
 
-void ODFComplex::spectralDistanceEuclidean(const MatrixXC& spectrum, const MatrixXR& spectrumAbs, const MatrixXR& spectrumArg, MatrixXR* odfValue) {
+void ODFPhase::phaseDeviation(const MatrixXC& spectrum, const MatrixXR& spectrumArg, MatrixXR* odfValue) {
   const int rows = spectrum.rows();
   const int cols = spectrum.cols();
   
-  _spectrumPredict.resize(rows - 2, cols);
-  _predictionError.resize(rows - 2, cols);
+  _phaseDiff = spectrumArg.block(1, 0, rows - 1, cols) - spectrumArg.block(0, 0, rows - 1, cols);
+  _instFreq = _phaseDiff.block(1, 0, rows - 2, cols) - _phaseDiff.block(0, 0, rows - 2, cols);
 
-  polar(spectrumAbs.block(1, 0, rows - 2, cols), 2.0 * spectrumArg.block(1, 0, rows - 2, cols) - spectrumArg.block(0, 0, rows - 2, cols), &_spectrumPredict);
-  
-  _predictionError = (_spectrumPredict - spectrum.block(0, 0, rows - 2, cols)).cwise().abs();
+  if (_weighted)
+    _instFreq.cwise() *= spectrum.block(2, 0, rows - 2, cols).cwise().abs();
 
-  if (_rectified) {
-    _predictionError = (_spectrumPredict.cwise().abs().cwise() <= spectrum.block(0, 0, rows - 2, cols).cwise().abs()).select(_predictionError, 0.0);
+  if (_normalize) {
+    (*odfValue) = _instFreq.rowwise().sum().cwise() / (cols * spectrum.block(2, 0, rows - 2, cols).cwise().abs().rowwise().sum());
+    return;
   }
   
-  //_predictionError.col(0) = 0.0;
-  
-  (*odfValue) = _predictionError.rowwise().sum() / cols;
+  (*odfValue) = _instFreq.rowwise().sum() / cols;
   return;
 }
 
-void ODFComplex::reset() {
+
+void ODFPhase::reset() {
   // Initial values
   _unwrap.reset();
 }

@@ -66,8 +66,8 @@ void PeakContinue::process(const MatrixXC& fft,
   (*trajPositions).resize(fft.rows(), _numTrajectories);
   (*trajMagnitudes).resize(fft.rows(), _numTrajectories);
   
-  (*trajPositions).set(MatrixXR::Constant(fft.rows(), _numTrajectories, -1.0));
-  (*trajMagnitudes).set(MatrixXR::Constant(fft.rows(), _numTrajectories, -120.0));
+  (*trajPositions) = MatrixXR::Constant(fft.rows(), _numTrajectories, -1.0);
+  (*trajMagnitudes) = MatrixXR::Constant(fft.rows(), _numTrajectories, -120.0);
 
   MatrixXR currPeakPositions = peakPositions;
   MatrixXR currPeakMagnitudes = peakMagnitudes;
@@ -181,7 +181,7 @@ void PeakContinue::reset(){
   }
 
   Real inf = numeric_limits<Real>::infinity();
-  _pastTrajPositions.set(MatrixXR::Constant(1, _numTrajectories, inf));
-  _pastTrajMagnitudes.set(MatrixXR::Constant(1, _numTrajectories, inf));
+  _pastTrajPositions = MatrixXR::Constant(1, _numTrajectories, inf);
+  _pastTrajMagnitudes = MatrixXR::Constant(1, _numTrajectories, inf);
 }
 

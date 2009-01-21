@@ -99,7 +99,7 @@
     Eigen::Map<MatrixXRscipy> in_matrix(in_data, in_rows, in_cols);
 
     $1 = &temp;
-    (*$1).set(in_matrix);
+    (*$1) = in_matrix;
 }
 
 
@@ -140,7 +140,7 @@
     Eigen::Map<MatrixXCscipy> in_matrix(in_data, in_rows, in_cols);
 
     $1 = &temp;
-    (*$1).set(in_matrix);
+    (*$1) = in_matrix;
 }
 
 
@@ -180,7 +180,7 @@
     Real* in_data = (Real*)array_data(in_array);
     Eigen::Map<MatrixXRscipy> in_matrix(in_data, in_rows, in_cols);
 
-    $1.set(in_matrix);
+    $1 = in_matrix;
 }
 
 %typemap(in,
@@ -220,7 +220,7 @@
 
     Eigen::Map<MatrixXCscipy> in_matrix(in_data, in_rows, in_cols);
 
-    $1.set(in_matrix);
+    $1 = in_matrix;
 }
 
 %typemap(in, numinputs = 0) 
