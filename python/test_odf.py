@@ -23,10 +23,10 @@ b5 = d5.process(a)
 b6 = d6.process(a)
 b7 = d7.process(a)
 
-print b1[:,0]
-print b2[:,0]
-print b3[:,0]
-print b4[:,0]
-print b5[:,0]
-print b6[:,0]
-print b7[:,0]
+print b1[:,0], ': complex domain'
+print b2[:,0], ': rectified complex domain'
+print b3[:,0], ': phase deviation'
+print b4[:,0], ': weighted phase deviation'
+print b5[:,0], ': normalized weighted phase deviation'
+print b6[:,0], ': spectral flux'
+print b7[:,0], ': modified kullback-liebler'

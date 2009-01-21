@@ -19,10 +19,6 @@
 #include "typedefs.h"
 #include "debug.h"
 
-#include "odf.h"
-#include "odfcomplex.h"
-#include "odfphase.h"
-#include "odfmkl.h"
 #include "odfspectralflux.h"
 
 #include "utils.h"
@@ -32,55 +28,48 @@ using namespace std;
 // import most common Eigen types 
 using namespace Eigen;
 
-ODF::ODF(int fftLength, ODFType odfType) :
-  _fftLength(fftLength),
-  _odfType(odfType)
+ODFSpectralFlux::ODFSpectralFlux(int fftLength) :
+  ODFBase(),
+  _fftLength(fftLength)
 {
-  switch(_odfType) {
-
-  case SPECTRAL_FLUX:
-    _odf = new ODFSpectralFlux(_fftLength);
-    break;
-
-  case PHASE_DEVIATION:
-    _odf = new ODFPhase(_fftLength);
-    break;
-
-  case WEIGHTED_PHASE_DEVIATION:
-    _odf = new ODFPhase(_fftLength, true);
-    break;
-
-  case NORM_WEIGHTED_PHASE_DEVIATION:
-    _odf = new ODFPhase(_fftLength, true, true);
-    break;
-
-  case MODIFIED_KULLBACK_LIEBLER:
-    _odf = new ODFMKL(_fftLength);
-    break;
-
-  case COMPLEX_DOMAIN:
-    _odf = new ODFComplex(_fftLength);
-    break;
-
-  case RECTIFIED_COMPLEX_DOMAIN:
-    _odf = new ODFComplex(_fftLength, true);
-    break;
-  }
   
+  DEBUG("ODFSpectralFlux: Constructor fftLength: " << _fftLength);
+  
+  setup();
 }
 
-ODF::~ODF() {
-  delete _odf;  
+ODFSpectralFlux::~ODFSpectralFlux() {}
+
+
+void ODFSpectralFlux::setup() {
+  // Prepare the buffers
+  DEBUG("ODFSpectralFlux: Setting up...");
+
+  reset();
+
+  DEBUG("ODFSpectralFlux: Finished set up...");
 }
 
-void ODF::setup() {
-  _odf->setup();
+
+void ODFSpectralFlux::process(const MatrixXC& fft, MatrixXR* odfValue) {
+  DEBUG("ODFSpectralFlux: Processing windowed");
+  const int rows = fft.rows();
+  const int cols = fft.cols();
+  
+  (*odfValue).resize(1,1);
+  _spectrum.resize(rows, min((int)ceil(_fftLength / 2.0), cols));
+  
+  DEBUG("ODFSpectralFlux: Spectrum resized rows: " << rows << " (int)ceil(_fftLength / 2.0): " << (int)ceil(_fftLength / 2.0));
+  
+  _spectrum = fft.block(0, 0, rows, min((int)ceil(_fftLength / 2.0), cols));
+  
+  _spectrumAbs.set(_spectrum.cwise().abs());
+
+  (*odfValue)(0, 0) = (_spectrumAbs.block(1, 0, rows-1, cols) - _spectrumAbs.block(1, 0, rows-1, cols)).cwise().clipUnder().sum() / cols;
+  
+  DEBUG("ODFSpectralFlux: Finished Processing");
 }
 
-void ODF::process(const MatrixXC& fft, MatrixXR* odfValue) {
-  _odf->process(fft, odfValue);
-}
-
-void ODF::reset() {
-  _odf->reset();
+void ODFSpectralFlux::reset() {
+  // Initial values
 }
