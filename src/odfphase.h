@@ -40,7 +40,7 @@ protected:
   MatrixXR _phaseDiff;
   MatrixXR _instFreq;
   
-  Real phaseDeviation(const MatrixXC& spectrum, const MatrixXR& spectrumArg);
+  void phaseDeviation(const MatrixXC& spectrum, const MatrixXR& spectrumArg, MatrixXR* odfValue);
 
 public:
   ODFPhase(int fftLength, bool weighted = false, bool normalize = false);

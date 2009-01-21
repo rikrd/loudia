@@ -5,7 +5,9 @@ import scipy
 
 a = [[10,  20,  6,  4],
      [100,  10,  13,  10],
-     [10,  100,  20,  0]]
+     [10,  100,  20,  0],
+     [200,  10,  13,  10],
+     [100,  210,  313,  510]]
 
 d1 = ricaudio.ODF(8, ricaudio.ODF.COMPLEX_DOMAIN)
 d2 = ricaudio.ODF(8, ricaudio.ODF.RECTIFIED_COMPLEX_DOMAIN)

@@ -40,9 +40,7 @@ protected:
   MatrixXC _spectrumPredict;
   MatrixXR _predictionError;
   
-  Real spectralDistanceEuclidean(const MatrixXC& spectrum, const MatrixXR& spectrumAbs, const MatrixXR& spectrumArg);
-  Real spectralDistanceEuclideanWeighted(const MatrixXC& spectrum, const MatrixXR& spectrumAbs, const MatrixXR& spectrumArg);
-  Real spectralDistanceHypot(const MatrixXC& spectrum, const MatrixXR& spectrumAbs, const MatrixXR& spectrumArg);
+  void spectralDistanceEuclidean(const MatrixXC& spectrum, const MatrixXR& spectrumAbs, const MatrixXR& spectrumArg, MatrixXR* odfValues);
 
 public:
   ODFComplex(int fftLength, bool rectified = false);

@@ -55,17 +55,24 @@ void ODFSpectralFlux::process(const MatrixXC& fft, MatrixXR* odfValue) {
   DEBUG("ODFSpectralFlux: Processing windowed");
   const int rows = fft.rows();
   const int cols = fft.cols();
+  const int halfCols = min((int)ceil(_fftLength / 2.0), cols);
   
-  (*odfValue).resize(1,1);
-  _spectrum.resize(rows, min((int)ceil(_fftLength / 2.0), cols));
+  if ( rows < 2 ) {
+    // Throw ValueError, it must have a minimum of 2 rows
+  }
+
+  (*odfValue).resize(rows - 1, 1);
+  (*odfValue).row(0).setZero();
   
   DEBUG("ODFSpectralFlux: Spectrum resized rows: " << rows << " (int)ceil(_fftLength / 2.0): " << (int)ceil(_fftLength / 2.0));
   
-  _spectrum = fft.block(0, 0, rows, min((int)ceil(_fftLength / 2.0), cols));
+  _spectrum.set(fft.block(0, 0, rows, halfCols));
   
   _spectrumAbs.set(_spectrum.cwise().abs());
-
-  (*odfValue)(0, 0) = (_spectrumAbs.block(1, 0, rows-1, cols) - _spectrumAbs.block(1, 0, rows-1, cols)).cwise().clipUnder().sum() / cols;
+  
+  (*odfValue) = (_spectrumAbs.block(1, 0, rows-1, halfCols) \
+                 - _spectrumAbs.block(0, 0, rows-1, halfCols)           \
+                 ).cwise().clipUnder().rowwise().sum() / halfCols;
   
   DEBUG("ODFSpectralFlux: Finished Processing");
 }

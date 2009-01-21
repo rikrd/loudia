@@ -60,13 +60,20 @@ void ODFComplex::setup() {
 
 void ODFComplex::process(const MatrixXC& fft, MatrixXR* odfValue) {
   DEBUG("ODFComplex: Processing windowed");
-
-  (*odfValue).resize(1, 1);
-  _spectrum.resize(fft.rows(), min((int)ceil(_fftLength / 2.0), fft.cols()));
-
-  DEBUG("ODFComplex: Spectrum resized fft.rows(): " << fft.rows() << " (int)ceil(_fftLength / 2.0): " << (int)ceil(_fftLength / 2.0));
+  const int rows = fft.rows();
+  const int cols = fft.cols();
+  const int halfCols = min((int)ceil(_fftLength / 2.0), cols);
   
-  _spectrum = fft.block(0, 0, fft.rows(), min((int)ceil(_fftLength / 2.0), fft.cols()));
+  if ( rows < 3 ) {
+    // Throw ValueError, it must have a minimum of 3 rows
+  }
+
+  (*odfValue).resize(rows - 2, 1);
+  _spectrum.resize(rows, halfCols);
+
+  DEBUG("ODFComplex: Spectrum resized rows: " << rows << " (int)ceil(_fftLength / 2.0): " << (int)ceil(_fftLength / 2.0));
+  
+  _spectrum = fft.block(0, 0, rows, halfCols);
 
   DEBUG("ODFComplex: Specturum halved");
 
@@ -74,85 +81,31 @@ void ODFComplex::process(const MatrixXC& fft, MatrixXR* odfValue) {
 
   DEBUG("ODFComplex: Processing unwrapped");
   
-  (*odfValue)(0, 0) = spectralDistanceEuclidean(_spectrum, _spectrum.cwise().abs(), _unwrappedAngle);
+  spectralDistanceEuclidean(_spectrum, _spectrum.cwise().abs(), _unwrappedAngle, odfValue);
   
   DEBUG("ODFComplex: Finished Processing");
 }
 
-Real ODFComplex::spectralDistanceEuclidean(const MatrixXC& spectrum, const MatrixXR& spectrumAbs, const MatrixXR& spectrumArg) {
+void ODFComplex::spectralDistanceEuclidean(const MatrixXC& spectrum, const MatrixXR& spectrumAbs, const MatrixXR& spectrumArg, MatrixXR* odfValue) {
   const int rows = spectrum.rows();
   const int cols = spectrum.cols();
   
-  if (rows < 3) {
-    // Throw ValueError not enough rows
+  _spectrumPredict.resize(rows - 2, cols);
+  _predictionError.resize(rows - 2, cols);
+
+  polar(spectrumAbs.block(1, 0, rows - 2, cols), 2.0 * spectrumArg.block(1, 0, rows - 2, cols) - spectrumArg.block(0, 0, rows - 2, cols), &_spectrumPredict);
+  
+  _predictionError = (_spectrumPredict - spectrum.block(0, 0, rows - 2, cols)).cwise().abs();
+
+  if (_rectified) {
+    _predictionError = (_spectrumPredict.cwise().abs().cwise() <= spectrum.block(0, 0, rows - 2, cols).cwise().abs()).select(_predictionError, 0.0);
   }
   
-  _spectrumPredict.resize(1, cols);
-  _predictionError.resize(1, cols);
-
-  polar(spectrumAbs.row(rows - 2), 2.0*spectrumArg.row(rows - 2) - spectrumArg.row(rows - 3), &_spectrumPredict);
+  //_predictionError.col(0) = 0.0;
   
-  _predictionError = (_spectrumPredict.row(0) - spectrum.row(rows - 1)).cwise().abs();
-
-  if (_rectified)
-    _predictionError = (_spectrumPredict.row(0).cwise().abs().cwise() <= spectrum.row(rows - 1).cwise().abs()).select(_predictionError, 0.0);
-
-  cout << _predictionError << endl;
-
-  _predictionError(0,0) = 0.0;
-
-  return _predictionError.sum() / (cols-1) * sqrt(2.0);
+  (*odfValue) = _predictionError.rowwise().sum() / cols;
+  return;
 }
-
-Real ODFComplex::spectralDistanceEuclideanWeighted(const MatrixXC& spectrum, const MatrixXR& spectrumAbs, const MatrixXR& spectrumArg) {
-  const int rows = spectrum.rows();
-  const int cols = spectrum.cols();
-  
-  if (rows < 3) {
-    // Throw not enough rows
-  }
-
-  _spectrumPredict.resize(1, cols);
-  _predictionError.resize(1, cols);
-
-  polar(spectrumAbs.row(rows - 2), 2.0*spectrumArg.row(rows - 2) - spectrumArg.row(rows - 3), &_spectrumPredict);
-
-  _predictionError = ((_spectrumPredict.row(0) - spectrum.row(rows - 1)) * spectrumAbs.row(rows - 1)).cwise().abs() / spectrumAbs.row(rows - 1).sum();
-
-  _predictionError(0,0) = 0.0;
-  
-  if (_rectified)
-    _predictionError = (_spectrumPredict.row(0).cwise().abs().cwise() <= spectrum.row(rows - 1).cwise().abs()).select(_predictionError, 0.0);
-
-  return _predictionError.sum() / (cols-1);
-}
-
-Real ODFComplex::spectralDistanceHypot(const MatrixXC& spectrum, const MatrixXR& spectrumAbs, const MatrixXR& spectrumArg) {
-  const int rows = spectrum.rows();
-  const int cols = spectrum.cols();
-  
-  if (rows < 3) {
-    // Throw not enough rows
-  }
-  
-  _spectrumPredict.resize(1, cols);
-  _predictionError.resize(1, cols);
-
-  polar(spectrumAbs.row(rows - 2), 2.0*spectrumArg.row(rows - 2) - spectrumArg.row(rows - 3), &_spectrumPredict);
-  
-  MatrixXR _predictionErrorReal = (_spectrumPredict.row(0) - spectrum.row(rows - 1)).real();
-  MatrixXR _predictionErrorImag = (_spectrumPredict.row(0) - spectrum.row(rows - 1)).imag();
-
-  
-  _predictionError(0,0) = 0.0;
-
-  if (_rectified)
-    _predictionError = (_spectrumPredict.row(0).cwise().abs().cwise() <= spectrum.row(rows - 1).cwise().abs()).select(_predictionError, 0.0);
-
-  
-  return _predictionError.sum() / (cols-1);
-}
-
 
 void ODFComplex::reset() {
   // Initial values

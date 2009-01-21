@@ -61,13 +61,19 @@ void ODFPhase::setup() {
 
 void ODFPhase::process(const MatrixXC& fft, MatrixXR* odfValue) {
   DEBUG("ODFPhase: Processing windowed");
-
-  (*odfValue).resize(1, 1);
-  _spectrum.resize(fft.rows(), min((int)ceil(_fftLength / 2.0), fft.cols()));
-
-  DEBUG("ODFPhase: Spectrum resized fft.rows(): " << fft.rows() << " (int)ceil(_fftLength / 2.0): " << (int)ceil(_fftLength / 2.0));
+  const int rows = fft.rows();
+  const int cols = fft.cols();
+  const int halfCols = min((int)ceil(_fftLength / 2.0), cols);
   
-  _spectrum = fft.block(0, 0, fft.rows(), min((int)ceil(_fftLength / 2.0), fft.cols()));
+  if ( rows < 3 ) {
+    // Throw ValueError, it must have a minimum of 3 rows
+  }
+
+  (*odfValue).resize(rows - 2, 1);
+
+  DEBUG("ODFPhase: Spectrum resized rows: " << rows << " (int)ceil(_fftLength / 2.0): " << (int)ceil(_fftLength / 2.0));
+  
+  _spectrum.set(fft.block(0, 0, rows, halfCols));
 
   DEBUG("ODFPhase: Specturum halved");
 
@@ -75,29 +81,28 @@ void ODFPhase::process(const MatrixXC& fft, MatrixXR* odfValue) {
 
   DEBUG("ODFPhase: Processing unwrapped");
   
-  (*odfValue)(0, 0) = phaseDeviation(_spectrum, _unwrappedAngle);
+  phaseDeviation(_spectrum, _unwrappedAngle, odfValue);
   
   DEBUG("ODFPhase: Finished Processing");
 }
 
-Real ODFPhase::phaseDeviation(const MatrixXC& spectrum, const MatrixXR& spectrumArg) {
+void ODFPhase::phaseDeviation(const MatrixXC& spectrum, const MatrixXR& spectrumArg, MatrixXR* odfValue) {
   const int rows = spectrum.rows();
   const int cols = spectrum.cols();
   
-  if (rows < 3) {
-    // Throw ValueError not enough rows
-  }
-
   _phaseDiff.set(spectrumArg.block(1, 0, rows - 1, cols) - spectrumArg.block(0, 0, rows - 1, cols));
   _instFreq.set(_phaseDiff.block(1, 0, rows - 2, cols) - _phaseDiff.block(0, 0, rows - 2, cols));
 
   if (_weighted)
     _instFreq.cwise() *= spectrum.block(2, 0, rows - 2, cols).cwise().abs();
 
-  if (_normalize)
-    return _instFreq.sum() / (cols * spectrum.cwise().abs().sum());
+  if (_normalize) {
+    (*odfValue) = _instFreq.rowwise().sum().cwise() / (cols * spectrum.block(2, 0, rows - 2, cols).cwise().abs().rowwise().sum());
+    return;
+  }
   
-  return _instFreq.sum() / cols;
+  (*odfValue) = _instFreq.rowwise().sum() / cols;
+  return;
 }
 
 

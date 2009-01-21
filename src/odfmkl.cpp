@@ -56,17 +56,25 @@ void ODFMKL::process(const MatrixXC& fft, MatrixXR* odfValue) {
   DEBUG("ODFMKL: Processing windowed");
   const int rows = fft.rows();
   const int cols = fft.cols();
-
-  (*odfValue).resize(1, 1);
-  _spectrum.resize(rows, min((int)ceil(_fftLength / 2.0), cols));
-
-  DEBUG("ODFMKL: Spectrum resized rows: " << rows << " (int)ceil(_fftLength / 2.0): " << (int)ceil(_fftLength / 2.0));
+  const int halfCols = min((int)ceil(_fftLength / 2.0), cols);
   
-  _spectrum = fft.block(0, 0, rows, min((int)ceil(_fftLength / 2.0), cols));
-  
-  _spectrumAbs.set(_spectrum.cwise().abs());
+  if ( rows < 2 ) {
+    // Throw ValueError, it must have a minimum of 2 rows
+  }
 
-  (*odfValue)(0, 0) = (_spectrumAbs.block(1, 0, rows-1, cols).cwise() * (_spectrumAbs.block(1, 0, rows-1, cols).cwise() / (_spectrumAbs.block(0, 0, rows-1, cols).cwise() + _minSpectrum)).cwise().clipUnder(_minSpectrum).cwise().logN(2.0)).sum() / cols;
+  (*odfValue).resize(rows - 1, 1);
+  _spectrum.resize(rows, halfCols);
+  _spectrumAbs.resize(rows, halfCols);
+
+  DEBUG("ODFMKL: Spectrum resized rows: " << rows << " halfCols: " << halfCols);
+  
+  _spectrum = fft.block(0, 0, rows, halfCols);
+  
+  _spectrumAbs = _spectrum.cwise().abs();
+
+  (*odfValue) = (_spectrumAbs.block(1, 0, rows-1, cols).cwise() \
+                 * (_spectrumAbs.block(1, 0, rows-1, cols).cwise() \
+                    / (_spectrumAbs.block(0, 0, rows-1, cols).cwise().clipUnder(_minSpectrum))).cwise().clipUnder(_minSpectrum).cwise().logN(2.0)).rowwise().sum() / cols;
   
   DEBUG("ODFMKL: Finished Processing");
 }
