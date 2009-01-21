@@ -8,6 +8,8 @@ import scipy
 
 filename = sys.argv[1]
 
+samplerate = 44100
+
 frameSize = 1024 
 frameStep = 256
 
@@ -69,7 +71,13 @@ pylab.hold(True)
 pylab.subplot(subplots, 1, 1)
 pylab.imshow( scipy.flipud(specs.T), aspect = 'auto' )
 pylab.title( 'Spectrogram' )
+ax = pylab.gca()
+ticks = ax.get_xticks()
+ax.set_xticklabels(['%.2f' % (float(tick) * frameStep / samplerate) for tick in ticks])
 
+ax.set_yticks([])
+ax.set_yticklabels([])
+    
 # Create the ODF processors and process
 for i, (odfType, odfName) in enumerate(odfNames):
     odf = ricaudio.ODF( fftSize, odfType )
@@ -78,5 +86,12 @@ for i, (odfType, odfName) in enumerate(odfNames):
     pylab.subplot(subplots, 1, i+2)
     pylab.plot(odfValues[:,0])
     pylab.title( odfName.replace('_', ' ').capitalize() )
+    ax = pylab.gca()
+    
+    ax.set_xticks([])
+    ax.set_yticks([])
+    
+    ax.set_xticklabels([])
+    ax.set_yticklabels([])
         
 pylab.show()
