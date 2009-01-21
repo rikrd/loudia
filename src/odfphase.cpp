@@ -71,7 +71,7 @@ void ODFPhase::process(const MatrixXC& fft, MatrixXR* odfValue) {
 
   (*odfValue).resize(rows - 2, 1);
 
-  DEBUG("ODFPhase: Spectrum resized rows: " << rows << " (int)ceil(_fftLength / 2.0): " << (int)ceil(_fftLength / 2.0));
+  DEBUG("ODFPhase: Spectrum resized rows: " << rows << " halfCols: " << halfCols);
   
   _spectrum.set(fft.block(0, 0, rows, halfCols));
 

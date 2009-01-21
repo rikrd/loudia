@@ -64,7 +64,7 @@ void ODFSpectralFlux::process(const MatrixXC& fft, MatrixXR* odfValue) {
   (*odfValue).resize(rows - 1, 1);
   (*odfValue).row(0).setZero();
   
-  DEBUG("ODFSpectralFlux: Spectrum resized rows: " << rows << " (int)ceil(_fftLength / 2.0): " << (int)ceil(_fftLength / 2.0));
+  DEBUG("ODFSpectralFlux: Spectrum resized rows: " << rows << " halfCols: " << halfCols);
   
   _spectrum.set(fft.block(0, 0, rows, halfCols));
   

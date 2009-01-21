@@ -71,7 +71,7 @@ void ODFComplex::process(const MatrixXC& fft, MatrixXR* odfValue) {
   (*odfValue).resize(rows - 2, 1);
   _spectrum.resize(rows, halfCols);
 
-  DEBUG("ODFComplex: Spectrum resized rows: " << rows << " (int)ceil(_fftLength / 2.0): " << (int)ceil(_fftLength / 2.0));
+  DEBUG("ODFComplex: Spectrum resized rows: " << rows << " halfCols: " << halfCols);
   
   _spectrum = fft.block(0, 0, rows, halfCols);
 

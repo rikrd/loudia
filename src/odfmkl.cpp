@@ -63,14 +63,11 @@ void ODFMKL::process(const MatrixXC& fft, MatrixXR* odfValue) {
   }
 
   (*odfValue).resize(rows - 1, 1);
-  _spectrum.resize(rows, halfCols);
   _spectrumAbs.resize(rows, halfCols);
 
   DEBUG("ODFMKL: Spectrum resized rows: " << rows << " halfCols: " << halfCols);
   
-  _spectrum = fft.block(0, 0, rows, halfCols);
-  
-  _spectrumAbs = _spectrum.cwise().abs();
+  _spectrumAbs = fft.block(0, 0, rows, halfCols).cwise().abs();
 
   (*odfValue) = (_spectrumAbs.block(1, 0, rows-1, cols).cwise() \
                  * (_spectrumAbs.block(1, 0, rows-1, cols).cwise() \

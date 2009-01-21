@@ -31,7 +31,6 @@ protected:
   Real _minSpectrum;
   
   // Internal variables
-  MatrixXC _spectrum;
   MatrixXR _spectrumAbs;
 
 public:
