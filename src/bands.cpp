@@ -88,16 +88,16 @@ vector<MatrixXR> Bands::weights() const {
 }
 
 void Bands::bandWeights(int band, MatrixXR* bandWeights) const {
-  (*bandWeights).set( _weights[ band ] );
+  (*bandWeights) =  _weights[ band ];
 }
 
 void Bands::starts(MatrixXI* result) const {
-  (*result).set(_starts);
+  (*result) = _starts;
 }
 
 void Bands::setStartsWeights(const MatrixXI& starts, std::vector<MatrixXR> weights) {
   _weights = weights;
-  _starts.set(starts);
+  _starts = starts;
 }
 
 int Bands::bands() const {

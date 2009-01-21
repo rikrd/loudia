@@ -98,8 +98,8 @@ void MFCC::process(const MatrixXR& spectrum, MatrixXR* mfccCoeffs){
 
 void MFCC::reset(){
   // Initial values
-  _bands.set(MatrixXR::Zero(1, _numBands));
-  _coeffs.set(MatrixXR::Zero(1, _numCoeffs));
+  _bands = MatrixXR::Zero(1, _numBands);
+  _coeffs = MatrixXR::Zero(1, _numCoeffs);
 
   _melbands.reset();
   _dct.reset();

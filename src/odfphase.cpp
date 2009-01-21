@@ -73,7 +73,7 @@ void ODFPhase::process(const MatrixXC& fft, MatrixXR* odfValue) {
 
   DEBUG("ODFPhase: Spectrum resized rows: " << rows << " halfCols: " << halfCols);
   
-  _spectrum.set(fft.block(0, 0, rows, halfCols));
+  _spectrum = fft.block(0, 0, rows, halfCols);
 
   DEBUG("ODFPhase: Specturum halved");
 
@@ -90,8 +90,8 @@ void ODFPhase::phaseDeviation(const MatrixXC& spectrum, const MatrixXR& spectrum
   const int rows = spectrum.rows();
   const int cols = spectrum.cols();
   
-  _phaseDiff.set(spectrumArg.block(1, 0, rows - 1, cols) - spectrumArg.block(0, 0, rows - 1, cols));
-  _instFreq.set(_phaseDiff.block(1, 0, rows - 2, cols) - _phaseDiff.block(0, 0, rows - 2, cols));
+  _phaseDiff = spectrumArg.block(1, 0, rows - 1, cols) - spectrumArg.block(0, 0, rows - 1, cols);
+  _instFreq = _phaseDiff.block(1, 0, rows - 2, cols) - _phaseDiff.block(0, 0, rows - 2, cols);
 
   if (_weighted)
     _instFreq.cwise() *= spectrum.block(2, 0, rows - 2, cols).cwise().abs();

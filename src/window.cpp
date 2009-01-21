@@ -36,7 +36,7 @@ Window::Window(int frameSize, Window::WindowType windowType) {
 
   _frameSize = frameSize;
   _windowType = windowType;
-  _window.set(MatrixXR::Ones(1, _frameSize));
+  _window = MatrixXR::Ones(1, _frameSize);
 
   setup();
   DEBUG("WINDOW: Constructed");
@@ -51,36 +51,36 @@ void Window::setup(){
   switch(_windowType){
 
   case RECTANGULAR:
-    _window.set(MatrixXR::Ones(1, _frameSize));
+    _window = MatrixXR::Ones(1, _frameSize);
     break;
 
   case HANN:
   case HANNING:
-    _window.set(hann(_frameSize));
+    _window = hann(_frameSize);
     break;
 
   case HAMMING:
-    _window.set(hamming(_frameSize));
+    _window = hamming(_frameSize);
     break;
 
   case COSINE:
-    _window.set(hamming(_frameSize));
+    _window = hamming(_frameSize);
     break;
     
   case BLACKMAN:
-    _window.set(blackman(_frameSize));
+    _window = blackman(_frameSize);
     break;
 
   case NUTTALL:
-    _window.set(nuttall(_frameSize));
+    _window = nuttall(_frameSize);
     break;
 
   case BLACKMANHARRIS:
-    _window.set(blackmanHarris(_frameSize));
+    _window = blackmanHarris(_frameSize);
     break;
 
   case BLACKMANNUTTALL:
-    _window.set(blackmanNuttall(_frameSize));
+    _window = blackmanNuttall(_frameSize);
     break;
   case CUSTOM:
     break;

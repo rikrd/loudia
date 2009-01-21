@@ -77,8 +77,8 @@ void PeakDetect::process(const MatrixXC& fft,
   (*peakPhases).resize(fft.rows(), numPeaks);
   (*peakPhases).setConstant(-1);
 
-  _magnitudes.set(fft.cwise().abs());
-  _phases.set(fft.cwise().angle());
+  _magnitudes = fft.cwise().abs();
+  _phases = fft.cwise().angle();
 
   DEBUG("PEAKDETECT: Processing, _magnitudes.shape: (" << _magnitudes.rows() << ", " << _magnitudes.cols() << ")");
 

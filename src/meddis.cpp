@@ -80,17 +80,17 @@ void Meddis::process(const MatrixXR& samples, MatrixXR* output){
   (*output).resize(samples.rows(), _channels);
 
   for (int i = 0; i < samples.rows(); ++i) {
-    row.set(samples.row(i));
+    row = samples.row(i);
   
-    limitedSt.set(row.cwise() + A).cwise().clipUnder(0.0);
+    limitedSt = (row.cwise() + A).cwise().clipUnder();
 
-    kt.set((limitedSt * gdt).cwise() / (limitedSt.cwise() + B));
+    kt = (limitedSt * gdt).cwise() / (limitedSt.cwise() + B);
 
-    replenish.set(ydt * ((-q).cwise() + M)).cwise().clipUnder(0.0);
-    eject.set(kt.cwise() * q);
-    loss.set(ldt * c);
-    reuptake.set(rdt * c);
-    reprocess.set(xdt * w);
+    replenish = ydt * ((-q).cwise() + M).cwise().clipUnder();
+    eject = kt.cwise() * q;
+    loss = ldt * c;
+    reuptake = rdt * c;
+    reprocess = xdt * w;
       
     q += replenish - eject + reprocess;
     c += eject - loss - reuptake;
