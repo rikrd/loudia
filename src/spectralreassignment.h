@@ -22,18 +22,8 @@
 #include "typedefs.h"
 #include "debug.h"
 
-#include <Eigen/Core>
-#include <Eigen/Array>
-#include <iostream>
-
 #include "window.h"
 #include "fft.h"
-
-
-//using namespace std;
-
-// import most common Eigen types 
-//using namespace Eigen;
 
 class SpectralReassignment{
 protected:
@@ -59,21 +49,13 @@ protected:
 
   MatrixXR _time;
   MatrixXR _freq;
-  MatrixXR _reassignTime;
-  MatrixXR _reassignFreq;
-
-  template<class F, class W, class ScalarW>
-  void process(const F& frames, W* reassigned, W* fft);
  
 public: 
   SpectralReassignment(int frameSize, int fftSize, Real samplerate, Window::WindowType windowType = Window::RECTANGULAR);
   ~SpectralReassignment();
   
-  void process(const MatrixXC& frames, MatrixXC* reassigned, MatrixXC* fft);
-  void process(const MatrixXR& frames, MatrixXC* reassigned, MatrixXC* fft);
-
-  void process(const MatrixXC& frames, MatrixXC* reassigned);
-  void process(const MatrixXR& frames, MatrixXC* reassigned);
+  void process(const MatrixXR& frames,
+               MatrixXC* fft, MatrixXR* reassignTime, MatrixXR* reassignFreq);
   
   void setup();
   void reset();
