@@ -64,6 +64,7 @@ pylab.hold(True)
 for name, scale in linearToMels:
     pylab.plot(scale(freqs)[0,:]/max(scale(freqs)[0,:]), label = name)
 
+pylab.title('Comparison of possible Mel Scales')
 pylab.legend()
 pylab.show()
 
