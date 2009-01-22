@@ -3,14 +3,17 @@
 import ricaudio
 from sepel.inputs import pyricaudio
 import pylab
-import sys, os
+import os, sys
 import scipy
 
 filename = sys.argv[1]
 
-onsetError = 50. # in ms
+# Accepted difference between the groundtruth
+# and the estimated onsets in milliseconds (ms)
+onsetError = 50.0
 
-samplerate = 44100
+# Samplerate of the file
+samplerate = 44100.0
 
 frameSize = 1024 
 frameStep = 512
