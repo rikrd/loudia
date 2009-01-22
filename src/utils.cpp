@@ -252,11 +252,15 @@ void freqz(const MatrixXR& b, const MatrixXR& a, const MatrixXR& w, MatrixXC* re
   
   MatrixXR k;
   range(0, coeffRows, coeffRows, &k);
-  
+ 
   MatrixXC complexW(nPoints, coeffRows);
-  complexW = (w.cast<Complex>().transpose() * Complex(0,-1)  * k).cwise().exp();
-  
+
   resp->resize(nPoints, coeffCols);
+
+  DEBUG("FREQZ: resp.shape: (" << resp->rows() << "," << resp->cols() << ")");
+  DEBUG("FREQZ: complexW.shape: (" << complexW.rows() << "," << complexW.cols() << ")");
+
+  complexW = (w.cast<Complex>().transpose() * Complex(0,-1)  * k).cwise().exp();
   
   for(int coeffCol = 0; coeffCol < coeffCols; coeffCol++ ) {
     resp->col(coeffCol) = ( complexW.block(0, 0, nPoints, b.rows()) * b.col(coeffCol) ).cwise() / \
