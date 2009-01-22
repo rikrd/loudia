@@ -105,6 +105,7 @@ pylab.plot(odfRoebel)
 
 drawOnsets()
 
+pylab.title( 'Axel Roebel''s Onset Detector' )
 ax = pylab.gca()
 
 ax.set_xticks([])
