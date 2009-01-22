@@ -23,39 +23,79 @@
 #include <vector>
 
 #include "melbands.h"
+#include "melscales.h"
 
 using namespace std;
 
 // import most common Eigen types 
 using namespace Eigen;
 
-MelBands::MelBands(Real lowFreq, Real highFreq, int numBands, Real samplerate, int fftLength) 
+MelBands::MelBands(Real lowFreq, Real highFreq, int numBands, Real samplerate, int fftLength, ScaleType scaleType) :
+  _lowFreq(lowFreq),
+  _highFreq(highFreq),
+  _numBands(numBands),
+  _samplerate(samplerate),
+  _fftLength(fftLength),
+  _scaleType(scaleType)
 {
-  DEBUG("MELBANDS: Constructor lowFreq: " << lowFreq << ", highFreq: " << highFreq << ", numBands: " << numBands << ", samplerate: " << samplerate << ", fftLength: " << fftLength);
+  
+  DEBUG("MELBANDS: Constructor lowFreq: " << _lowFreq << \
+        ", highFreq: " << _highFreq << \
+        ", numBands: " << _numBands << \
+        ", samplerate: " << _samplerate << \
+        ", fftLength: " << _fftLength << \
+        ", scaleType:" << _scaleType);
 
-  if ( lowFreq >= highFreq ) {
-    // Throw an exception
+  if ( _lowFreq >= _highFreq ) {
+    // Throw an exception, highFreq must be higher than lowFreq
   }
 
-  if ( numBands <= 0 ) {
-    // Throw an exception
+  if ( _numBands <= 0 ) {
+    // Throw an exception, numBands must be higher than 0
   }
   
-  _fftLength = fftLength;
-  _samplerate = samplerate;
-  _lowFreq = lowFreq;
-  _highFreq = highFreq;
-  _numBands = numBands;
-
   setup();
+  
   DEBUG("MELBANDS: Constructed");
+  
 }
 
 void MelBands::setup(){
   DEBUG("MELBANDS: Setting up...");
-    
-  Real highMel = linearToMelGreenwood1990(_highFreq);
-  Real lowMel = linearToMelGreenwood1990(_lowFreq);
+  
+  // Set the linearToMel and melToLinear functions
+  switch(_scaleType) {
+  case STEVENS:
+    _linearToMel = &linearToMelStevens1937;
+    _melToLinear = &melToLinearStevens1937;
+  
+    _linearToMelMatrix = &linearToMelMatrixStevens1937;
+    _melToLinearMatrix = &melToLinearMatrixStevens1937;
+
+    break;
+
+  case FANT:
+    _linearToMel = &linearToMelFant1968;
+    _melToLinear = &melToLinearFant1968;
+  
+    _linearToMelMatrix = &linearToMelMatrixFant1968;
+    _melToLinearMatrix = &melToLinearMatrixFant1968;
+
+    break;
+
+  case GREENWOOD:
+    _linearToMel = &linearToMelGreenwood1990;
+    _melToLinear = &melToLinearGreenwood1990;
+  
+    _linearToMelMatrix = &linearToMelMatrixGreenwood1990;
+    _melToLinearMatrix = &melToLinearMatrixGreenwood1990;
+
+    break;
+
+  }
+  
+  Real highMel = _linearToMel(_highFreq);
+  Real lowMel = _linearToMel(_lowFreq);
   
   DEBUG("MELBANDS: lowMel: " << lowMel << ", highMel: " << highMel);
 
@@ -69,7 +109,7 @@ void MelBands::setup(){
   }
 
   MatrixXR startsLinear;
-  melToLinearMatrixGreenwood1990(starts, &startsLinear);
+  _melToLinearMatrix(starts, &startsLinear);
   startsLinear *= stepSpectrum;
 
   // stop Mel frequencies of filters
@@ -79,7 +119,7 @@ void MelBands::setup(){
   }
 
   MatrixXR stopsLinear;
-  melToLinearMatrixGreenwood1990(stops, &stopsLinear);
+  _melToLinearMatrix(stops, &stopsLinear);
   stopsLinear *= stepSpectrum;
 
 
@@ -156,88 +196,6 @@ void MelBands::triangleWindow(MatrixXR* window, Real start, Real stop, Real cent
   }
   
   DEBUG("MELBANDS: Triangle window created: [" << (*window).transpose() << "]");
-}
-
-
-/**
- *
- * Mel scales computed using the Greenwood function:
- *
- * Greenwood, DD. (1990)
- * A cochlear frequency-position function for several species - 29 years later,
- * Journal of the Acoustical Society of America, vol. 87, pp. 2592-2605.
- *
- */
-Real MelBands::linearToMelGreenwood1990(Real linearFreq) {
-  return log10((linearFreq / 165.4) + 1.0) / 2.1;
-}
-
-Real MelBands::melToLinearGreenwood1990(Real melFreq) {
-  return 165.4 * (pow(10.0, 2.1 * melFreq) - 1.0);
-}
-
-void MelBands::linearToMelMatrixGreenwood1990(const MatrixXR& linearFreq, MatrixXR* melFreq) {
-  DEBUG("MELBANDS: Scaling (Greenwood 1990) linearFreq: " << linearFreq);
-
-  (*melFreq) = ((linearFreq / 165.4).cwise() + 1.0).cwise().logN(10) / 2.1;
-}
-
-void MelBands::melToLinearMatrixGreenwood1990(const MatrixXR& melFreq, MatrixXR* linearFreq) {
-  DEBUG("MELBANDS: Scaling (Greenwood 1990) melFreq: " << melFreq);
-
-  (*linearFreq) = 165.4 * ((melFreq * 2.1).cwise().expN(10.0).cwise() - 1.0);
-}
-
-
-/**
- *
- * Mel scales computed using the original formula proposed by:
- *
- * Stevens, Stanley Smith; Volkman; John; & Newman, Edwin. (1937). 
- * A scale for the measurement of the psychological magnitude of pitch.
- * Journal of the Acoustical Society of America, 8 (3), 185-190.
- *
- */
-Real MelBands::linearToMelStevens1937(Real linearFreq) {
-  return log((linearFreq / 700.0) + 1.0) * 1127.01048;
-}
-
-Real MelBands::melToLinearStevens1937(Real melFreq) {
-  return (exp(melFreq / 1127.01048) - 1.0) * 700.0;
-}
-
-void MelBands::linearToMelMatrixStevens1937(const MatrixXR& linearFreq, MatrixXR* melFreq) {
-  (*melFreq) = ((linearFreq / 700.0).cwise() + 1.0).cwise().log() * 1127.01048;
-}
-
-void MelBands::melToLinearMatrixStevens1937(const MatrixXR& melFreq, MatrixXR* linearFreq) {
-  (*linearFreq) = ((melFreq / 1127.01048).cwise().exp().cwise() - 1.0) * 700.0;
-}
-
-
-/**
- *
- * Mel scales computed using the formula proposed by:
- *  
- * Fant, Gunnar. (1968).
- * Analysis and synthesis of speech processes.
- * In B. Malmberg (Ed.), Manual of phonetics (pp. 173-177). Amsterdam: North-Holland.
- *
- */
-Real MelBands::linearToMelFant1968(Real linearFreq) {
-  return (1000.0 / log(2.0)) * log(1.0 + linearFreq / 1000.0);
-}
-
-Real MelBands::melToLinearFant1968(Real melFreq) {
-  return 1000.0 * (exp(melFreq * log(2.0) / 1000.0) - 1.0);
-}
-
-void MelBands::linearToMelMatrixFant1968(const MatrixXR& linearFreq, MatrixXR* melFreq) {
-  (*melFreq) = (1000.0 / log(2.0)) * ((linearFreq / 1000.0).cwise() + 1.0).cwise().log();
-}
-
-void MelBands::melToLinearMatrixFant1968(const MatrixXR& melFreq, MatrixXR* linearFreq) {
-  (*linearFreq) = 1000.0 * ((melFreq * log(2.0) / 1000.0).cwise().exp().cwise() - 1.0);
 }
 
 void MelBands::reset(){
