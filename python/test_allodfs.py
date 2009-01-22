@@ -76,8 +76,8 @@ if os.path.isfile(annotation):
 def drawOnsets():
     # Draw the onsets
     for onset in onsets:
-        pylab.axvline( x = onset, color = 'k')
-
+        pylab.axvline( x = onset, color = 'k', linewidth = 2, alpha = 0.5)
+        
 pylab.figure()
 pylab.hold(True)
 pylab.subplot(subplots, 1, 1)
