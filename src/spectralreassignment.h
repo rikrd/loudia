@@ -42,7 +42,6 @@ protected:
   MatrixXC _windowInteg;
   MatrixXC _windowDeriv;
 
-  MatrixXC _fft;
   MatrixXR _fftAbs2;
   MatrixXC _fftInteg;
   MatrixXC _fftDeriv;

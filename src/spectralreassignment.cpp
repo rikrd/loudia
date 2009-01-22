@@ -21,6 +21,7 @@
 
 #include "window.h"
 #include "spectralreassignment.h"
+#include "utils.h"
 
 using namespace std;
 
@@ -69,7 +70,7 @@ void SpectralReassignment::setup(){
   for(int i = 0; i < _time.rows(); i++){
     _time(i, 0) = (i - Real(_time.rows() - 1)/2.0);
   }
-
+  
   // Create the freq vector
   DEBUG("SPECTRALREASSIGNMENT: Creating freq vector...");
   
@@ -77,9 +78,7 @@ void SpectralReassignment::setup(){
   // TODO: Must rethink how the frequency vector is initialized
   // as we did for the time vector
   _freq.resize(1, _fftSize);
-  for(int i = 0; i < _freq.cols(); i++){
-    _freq(0, i) = i;
-  }
+  range(0, _fftSize, _fftSize, &_freq);
   
   // Calculate and set the time weighted window
   DEBUG("SPECTRALREASSIGNMENT: Calculate time weighted window...");
@@ -105,7 +104,6 @@ void SpectralReassignment::setup(){
   _windowDeriv.resize(1, _frameSize);
 
   // Create the necessary buffers for the FFT
-  _fft.resize(1, _fftSize);
   _fftAbs2.resize(1, _fftSize);
   _fftInteg.resize(1, _fftSize);
   _fftDeriv.resize(1, _fftSize);
@@ -133,8 +131,8 @@ void SpectralReassignment::process(const MatrixXR& frames,
   _fftAlgo.process(_windowDeriv, &_fftDeriv);
   
   // Create the reassignment operations
-  _fftAbs2 = _fft.cwise().abs2();
-  
+  _fftAbs2 = (*fft).cwise().abs2();  
+
   // Create the reassign operator matrix
   // TODO: check if the current timestamp is enough for a good reassignment
   // we might need for it to depend on past frames (if the reassignment of time
@@ -145,6 +143,9 @@ void SpectralReassignment::process(const MatrixXR& frames,
   // TODO: Check the unity of the freq reassignment, it may need to be normalized by something
   DEBUG("SPECTRALREASSIGNMENT: Processing: creating the freq reassignment operation...");
   (*reassignFreq) = _freq + ((_fftDeriv.cwise() * (*fft).conjugate()).cwise() / _fftAbs2.cast<Complex>()).imag();
+  
+  (*reassignTime) = ((*reassignTime).cwise().isnan()).select(0, (*reassignTime));
+  (*reassignFreq) = ((*reassignFreq).cwise().isnan()).select(0, (*reassignFreq));
   
   // Reassign the spectrum values
   // TODO: put this into a function and do it right

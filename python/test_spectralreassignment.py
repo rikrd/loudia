@@ -4,11 +4,11 @@
 import scipy
 import ricaudio
 
-fundamental = 440.0
-harmonics = 5
+fundamental = 1110.0
+harmonics = 10
 
-frameSize = 1024
-fftSize = 2048
+frameSize = 128
+fftSize = 4096
 samplerate = 44100.0
 
 a_zeros = scipy.array(scipy.zeros((1, frameSize)), dtype='f4')
@@ -22,7 +22,7 @@ for i in range(harmonics):
 a_sine += (a_random - 0.5) * 1.0
 
 # Ricaudio's solution # --------------------------------- #
-m = ricaudio.SpectralReassignment(frameSize, fftSize, samplerate, ricaudio.Window.RECTANGULAR)
+m = ricaudio.SpectralReassignment(frameSize, fftSize, samplerate, ricaudio.Window.BLACKMANHARRIS)
 
 r_zeros_fft, r_zeros_time, r_zeros_freq = m.process(a_zeros)
 r_ones_fft, r_ones_time, r_ones_freq = m.process(a_ones)
@@ -77,11 +77,20 @@ pylab.subplot(312)
 pylab.hold(True)
 pylab.plot(r_abs, label = 'Ricaudio')
 pylab.plot(s_abs, label = 'Scipy')
+pylab.legend()
 
 pylab.subplot(313)
 pylab.hold(True)
 pylab.plot(r_abs*r_ang/r_max, label = 'Ricaudio')
 pylab.plot(s_abs*s_ang/s_max, label = 'Scipy')
+pylab.legend()
 
+pylab.figure()
+pylab.subplot(211)
+pylab.plot(r_sine_time.T, label = 'Time Reqssignment')
+pylab.legend()
+
+pylab.subplot(212)
+pylab.plot(r_sine_freq.T, label = 'Frequency Reqssignment')
 pylab.legend()
 pylab.show()
