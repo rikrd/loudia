@@ -3,7 +3,7 @@
 import ricaudio
 from sepel.inputs import pyricaudio
 import pylab
-import sys
+import sys, os
 import scipy
 
 filename = sys.argv[1]
@@ -67,11 +67,25 @@ specs = scipy.array( specs )
 
 subplots = len(odfNames) + 1
 
+# Get the onsets
+annotation = os.path.splitext(filename)[0] + '.onset_annotated'
+onsets = []
+if os.path.isfile(annotation):
+    onsets = [int(float(o) * samplerate / frameStep) for o in open(annotation, 'r').readlines()]
+
+def drawOnsets():
+    # Draw the onsets
+    for onset in onsets:
+        pylab.axvline( x = onset, color = 'k')
+
 pylab.figure()
 pylab.hold(True)
 pylab.subplot(subplots, 1, 1)
 
 pylab.imshow( scipy.flipud(specs.T), aspect = 'auto' )
+
+drawOnsets()
+
 pylab.title( 'Spectrogram' )
 ax = pylab.gca()
 
@@ -92,6 +106,9 @@ for i, (odfType, odfName) in enumerate(odfNames):
 
     pylab.subplot(subplots, 1, i+2)
     pylab.plot(odfValues[:,0])
+
+    drawOnsets()
+
     pylab.title( odfName.replace('_', ' ').capitalize() )
     ax = pylab.gca()
     
