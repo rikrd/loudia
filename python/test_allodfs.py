@@ -8,6 +8,8 @@ import scipy
 
 filename = sys.argv[1]
 
+onsetError = 50. # in ms
+
 samplerate = 44100
 
 frameSize = 1024 
@@ -70,13 +72,19 @@ subplots = len(odfNames) + 1
 # Get the onsets
 annotation = os.path.splitext(filename)[0] + '.onset_annotated'
 onsets = []
-if os.path.isfile(annotation):
-    onsets = [int(float(o) * samplerate / frameStep) for o in open(annotation, 'r').readlines()]
 
+if os.path.isfile(annotation):
+    onsetsTimes = [float(o) for o in open(annotation, 'r').readlines()]
+    onsetsCenter = [int(o * samplerate / frameStep) for o in onsetsTimes]
+    onsetsLeft = [int((o - (onsetError / 1000.0)) * samplerate / frameStep) for o in onsetsTimes]
+    onsetsRight = [int((o + (onsetError / 1000.0)) * samplerate / frameStep) for o in onsetsTimes]
+    onsets = zip(onsetsLeft, onsetsCenter, onsetsRight)
+    
 def drawOnsets():
     # Draw the onsets
-    for onset in onsets:
-        pylab.axvline( x = onset, color = 'k', linewidth = 2, alpha = 0.5)
+    for onsetLeft, onsetCenter, onsetRight in onsets:
+        pylab.axvspan( xmin = onsetLeft, xmax = onsetRight, facecolor = 'green', linewidth = 0, alpha = 0.25)
+        pylab.axvline( x = onsetCenter, color = 'black', linewidth = 1.1)
         
 pylab.figure()
 pylab.hold(True)
