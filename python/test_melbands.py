@@ -34,12 +34,11 @@ for band in range(m.bands()):
 
     # Set the ticks units to radians per second
     ticks = ax.get_xticks()
-    ax.set_xticklabels(['%.2f' % (float(tick) * scipy.pi * 2.0 / spectrumSize) for tick in ticks])
+    ax.set_xticklabels(['%.2f' % (float(tick) / spectrumSize) for tick in ticks])
 
     # Set the title and labels
     pylab.title('Magnitude of the Frequency Response of a \n Mel Bands implementation')
-    pylab.xlabel('Normalized Frequency (rad/s)')
+    pylab.xlabel('Normalized Frequency')
     pylab.ylabel('|H(w)| (no unit)')
-
 
 pylab.show()

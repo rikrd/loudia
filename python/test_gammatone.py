@@ -115,12 +115,12 @@ ax = pylab.gca()
 ax.set_xlim([0, scipy.pi])
 
 # Set the ticks units to radians per second
-#ticks = ax.get_xticks()
-#ax.set_xticklabels(['%.2f' % (float(tick) * scipy.pi * 2.0 / spectrumSize) for tick in ticks])
+ticks = ax.get_xticks()
+ax.set_xticklabels(['%.2f' % (float(tick) / (scipy.pi * 2.0)) for tick in ticks])
 
 # Set the title and labels
 pylab.title('Magnitude of the Frequency Response of a \n Gammatone Filterbank implementation')
-pylab.xlabel('Normalized Frequency (rad/s)')
+pylab.xlabel('Normalized Frequency')
 pylab.ylabel('|H(w)| (no unit)')
 
 if plotAngle:
