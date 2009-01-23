@@ -3,7 +3,7 @@
 import ricaudio
 from sepel.inputs import pyricaudio
 import pylab
-import os, sys
+import os, sys, wave
 import scipy
 
 filename = sys.argv[1]
@@ -13,7 +13,9 @@ filename = sys.argv[1]
 onsetError = 50.0
 
 # Samplerate of the file
-samplerate = 44100.0
+wavfile = wave.open(filename,'r')
+samplerate = float(wavfile.getframerate())
+wavfile.close()
 
 frameSize = 1024 
 frameStep = 512
