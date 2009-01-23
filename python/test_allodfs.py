@@ -70,6 +70,7 @@ for frame in stream:
 ffts = scipy.array( ffts )
 specs = scipy.array( specs )
 
+frameCount = specs.shape[0] - 1
 subplots = len(odfNames) + 1
 
 # Get the onsets
@@ -106,6 +107,9 @@ ax.set_xticklabels(['%.2f' % (float(tick) * frameStep / samplerate) for tick in 
 
 ax.set_yticks([])
 ax.set_yticklabels([])
+
+ax.set_xlim([0, frameCount - 1])
+
     
 # Create the ODF processors and process
 for i, (odfType, odfName) in enumerate(odfNames):
@@ -122,7 +126,8 @@ for i, (odfType, odfName) in enumerate(odfNames):
 
     pylab.title( odfName.replace('_', ' ').capitalize() )
     ax = pylab.gca()
-    
+
+    ax.set_xlim([0, frameCount - 1])
     ax.set_xticks([])
     ax.set_yticks([])
     
