@@ -104,4 +104,6 @@ void unwrap(const MatrixXR& phases, MatrixXR* unwrapped);
 void freqz(const MatrixXR& b, const MatrixXR& a, const MatrixXR& w, MatrixXC* resp);
 void freqz(const MatrixXR& b, const MatrixXR& w, MatrixXC* resp);
 
+void derivate(const MatrixXR& a, MatrixXR* b);
+
 #endif  /* UTILS_H */

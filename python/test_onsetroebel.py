@@ -18,13 +18,13 @@ samplerate = float(wavfile.getframerate())
 wavfile.close()
 
 frameSize = 1024 
-frameStep = 512
+frameStep = 256
 
 frameSizeTime = frameSize / 44100.0
 frameStepTime = frameStep / 44100.0
 
-fftSize = 2048
-plotSize = fftSize / 8
+fftSize = 2048 * 2
+plotSize = fftSize / 4
 
 analysisLimit = scipy.inf
 
@@ -43,29 +43,36 @@ stream = pyricaudio.sndfilereader({'filename': filename,
 
 
 reassignment = ricaudio.SpectralReassignment(frameSize, fftSize, samplerate, ricaudio.Window.HAMMING)
+odfcog = ricaudio.ODFCOG(fftSize, 40, 8)
 
 specs = []
 times = []
 timesWeighted = []
+cogs = []
 
 for frame in stream:
     samples = scipy.array(frame['samplesMono'], dtype = 'f4')
-    fft, time, freq = reassignment.process(samples)
+    fft, time, freq = reassignment.process( samples )
+    cog = odfcog.process( fft )
+    
     spec =  20.0 / scipy.log( 10.0 ) * scipy.log( abs( fft ) + 1e-7)[0, :plotSize]
     time = time[0, :plotSize]
 
     specs.append( spec )
     times.append( time )
     timesWeighted.append( time * spec )
+    cogs.append( cog[0,0] )
     
 
 specs = scipy.array( specs )
+frameCount = specs.shape[0] - 1
+
 times = scipy.array( times )
 timesWeighted = scipy.array( timesWeighted )
+cogs = scipy.array( cogs )
 
-odfRoebel = times.sum(axis = 1) / plotSize
-
-
+odfRoebel = cogs
+odfRoebel = timesWeighted.clip(0).sum(axis = 1) / plotSize
 
 # Get the onsets
 annotation = os.path.splitext(filename)[0] + '.onset_annotated'
@@ -100,7 +107,10 @@ ax.set_xticklabels(['%.2f' % (float(tick) * frameStep / samplerate) for tick in 
 
 ax.set_yticks([])
 ax.set_yticklabels([])
-    
+
+ax.set_xlim([0, frameCount - 1])
+
+
 # Create the ODF processors and process
 pylab.subplot(2, 1, 2)
 pylab.plot(odfRoebel)
@@ -115,6 +125,8 @@ ax.set_yticks([])
 
 ax.set_xticklabels([])
 ax.set_yticklabels([])
+
+ax.set_xlim([0, frameCount - 1])
 
 pylab.subplots_adjust(left = 0.05, right = 0.95, bottom = 0.05, top = 0.95, hspace=0.6)
         

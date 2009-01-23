@@ -35,6 +35,7 @@ import_array();
 #include "unwrap.h"
 #include "odfcomplex.h"
 #include "odf.h"
+#include "odfcog.h"
 #include "onsetcomplex.h"
 
 #include "melscales.h"
@@ -63,6 +64,7 @@ using namespace std;
 %include "unwrap.h"
 %include "odfcomplex.h"
 %include "odf.h"
+%include "odfcog.h"
 %include "onsetcomplex.h"
 
 %include "melscales.h"

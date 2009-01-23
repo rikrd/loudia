@@ -25,6 +25,7 @@
 #include "odfmkl.h"
 #include "odfspectralflux.h"
 #include "odfhfc.h"
+#include "odfcog.h"
 
 #include "utils.h"
 
@@ -69,6 +70,10 @@ ODF::ODF(int fftLength, ODFType odfType) :
 
   case HIGH_FREQUENCY_CONTENT:
     _odf = new ODFHFC(_fftLength);
+    break;
+
+  case CENTER_OF_GRAVITY:
+    _odf = new ODFCOG(_fftLength);
     break;
 
   }

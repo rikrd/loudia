@@ -16,43 +16,46 @@
 ** Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */                                                                          
 
-#ifndef ONSETCOMPLEX_H
-#define ONSETCOMPLEX_H
+#ifndef ODFCOG_H
+#define ODFCOG_H
 
 #include "typedefs.h"
 #include "debug.h"
 
-#include "window.h"
-#include "fft.h"
-#include "odfcomplex.h"
+#include "odfbase.h"
+#include "peakdetect.h"
 
-class OnsetComplex {
+class ODFCOG : public ODFBase {
 protected:
   // Internal parameters
-  int _frameLength;
   int _fftLength;
-  bool _zeroPhase;
-  Window::WindowType _windowType;
+  int _peakCount;
+  int _bandwidth;
   
   // Internal variables
-  Window _window;
-  FFT _fft;
-  ODFComplex _odf;
+  MatrixXR _spectrumAbs2;
+  MatrixXR _spectrumArg;
+  MatrixXR _spectrumArgDeriv;
 
-  MatrixXR _windowed;
-  MatrixXC _ffted;
+  MatrixXR _peakPos;
+  MatrixXR _peakMag;
+  MatrixXR _peakArg;
+
+  MatrixXR _cog;
+
+  PeakDetect _peaker;
   
 public:
-  OnsetComplex(int frameLength, int fftLength, Window::WindowType windowType = Window::RECTANGULAR, bool zeroPhase = true);
+  ODFCOG(int fftLength, int bandwidth = 6, int peakCount = 40);
 
-  ~OnsetComplex();
+  ~ODFCOG();
 
   void setup();
 
-  void process(const MatrixXR& samples, MatrixXR* odfValue);
+  void process(const MatrixXC& fft, MatrixXR* odfValue);
 
   void reset();
 
 };
 
-#endif  /* ONSETCOMPLEX_H */
+#endif  /* ODFCOG_H */

@@ -23,7 +23,7 @@ frameStep = 512
 frameSizeTime = frameSize / 44100.0
 frameStepTime = frameStep / 44100.0
 
-fftSize = 2048
+fftSize = 2048*2
 plotSize = fftSize / 8
 
 analysisLimit = scipy.inf
