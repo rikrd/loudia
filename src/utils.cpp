@@ -336,6 +336,39 @@ void unwrap(const MatrixXR& phases, MatrixXR* unwrapped) {
   return;
 }
 
+void freqz(const MatrixXR& b, const MatrixXR& a, const MatrixXR& w, MatrixXC* resp) {
+  const int coeffRows = max(b.rows(), a.rows());
+  const int coeffCols = b.cols();
+  
+  if(coeffCols != a.cols()) {
+    // Throw ValueError, b must have the same cols as a
+  }
+  
+  const int nPoints = w.cols();
+  
+  MatrixXR k;
+  range(0, coeffRows, coeffRows, &k);
+ 
+  MatrixXC complexW(nPoints, coeffRows);
+
+  resp->resize(nPoints, coeffCols);
+
+  DEBUG("FREQZ: resp.shape: (" << resp->rows() << "," << resp->cols() << ")");
+  DEBUG("FREQZ: complexW.shape: (" << complexW.rows() << "," << complexW.cols() << ")");
+
+  complexW = (w.cast<Complex>().transpose() * Complex(0,-1)  * k).cwise().exp();
+  
+  for(int coeffCol = 0; coeffCol < coeffCols; coeffCol++ ) {
+    resp->col(coeffCol) = ( complexW.block(0, 0, nPoints, b.rows()) * b.col(coeffCol) ).cwise() / \
+      ( complexW.block(0, 0, nPoints, a.rows()) * a.col(coeffCol) );
+  }  
+}
+
+void freqz(const MatrixXR& b, const MatrixXR& w, MatrixXC* resp) {
+  MatrixXR a = MatrixXR::Ones(1,1);
+  freqz(b, a, w, resp);
+}
+
 /*
 void zpkToCoeffs(MatrixXC zeros, MatrixXC poles, Real gain, MatrixXC* b, MatrixXC* a):
     """Return polynomial transfer function representation from zeros

@@ -114,4 +114,7 @@ void magToDb(const MatrixXR& mag, MatrixXR* db, Real minMag = 0.0001 );
 
 void unwrap(const MatrixXR& phases, MatrixXR* unwrapped);
 
+void freqz(const MatrixXR& b, const MatrixXR& a, const MatrixXR& w, MatrixXC* resp);
+void freqz(const MatrixXR& b, const MatrixXR& w, MatrixXC* resp);
+
 #endif  /* UTILS_H */

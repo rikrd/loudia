@@ -32,7 +32,6 @@ s_random = scipy.fft(a_random, fftSize)
 s_sine = scipy.fft(a_sine, fftSize)
 # -------------------------------------------------------- #
 
-
 print scipy.allclose(r_zeros, s_zeros)
 print scipy.allclose(r_ones, s_ones)
 print scipy.allclose(r_random, s_random)

@@ -28,34 +28,34 @@
 
 class MelBands {
 public:
+  enum ScaleType {
+    STEVENS = 0,
+    FANT = 1,
+    GREENWOOD = 2
+  };
+
+protected:
   Real _lowFreq;
   Real _highFreq;
   int _numBands;
   Real _samplerate;
   int _fftLength;
-  
+  ScaleType _scaleType;
+
   Bands _bands;
 
+  Real (*_linearToMel)(Real linearFreq);
+  
+  Real (*_melToLinear)(Real melFreq);
+  
+  void (*_linearToMelMatrix)(const MatrixXR& linearFreq, MatrixXR* melFreq);
+  
+  void (*_melToLinearMatrix)(const MatrixXR& melFreq, MatrixXR* linearFreq);
+
   void triangleWindow(MatrixXR* window, Real start, Real stop, Real center = -1, Real height = Real(1.0));
-
-  Real linearToMelGreenwood1990(Real linearFreq);
-  Real melToLinearGreenwood1990(Real melFreq);
-  void linearToMelMatrixGreenwood1990(const MatrixXR& linearFreq, MatrixXR* melFreq);
-  void melToLinearMatrixGreenwood1990(const MatrixXR& melFreq, MatrixXR* linearFreq);
-
-  Real linearToMelStevens1937(Real linearFreq);
-  Real melToLinearStevens1937(Real melFreq);
-  void linearToMelMatrixStevens1937(const MatrixXR& linearFreq, MatrixXR* melFreq);
-  void melToLinearMatrixStevens1937(const MatrixXR& melFreq, MatrixXR* linearFreq);
-
-  Real linearToMelFant1968(Real linearFreq);
-  Real melToLinearFant1968(Real melFreq);
-  void linearToMelMatrixFant1968(const MatrixXR& linearFreq, MatrixXR* melFreq);
-  void melToLinearMatrixFant1968(const MatrixXR& melFreq, MatrixXR* linearFreq);
-
-
+  
 public:
-  MelBands(Real lowFreq, Real highFreq, int numBands, Real samplerate, int fftLength);
+  MelBands(Real lowFreq, Real highFreq, int numBands, Real samplerate, int fftLength, ScaleType scaleType = GREENWOOD);
 
   void setup();
 
@@ -70,6 +70,7 @@ public:
   void starts(MatrixXI* result) const;
 
   int bands() const;
+
 };
 
 #endif  /* MELBANDS_H */

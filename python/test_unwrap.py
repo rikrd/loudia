@@ -24,7 +24,4 @@ def fastunwrap(thetaArray, discont = scipy.pi):
 
 b2 = fastunwrap(a)
 
-print b1
-print b2
-
 print scipy.allclose(b1, b2)
