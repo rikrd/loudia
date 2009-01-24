@@ -80,10 +80,11 @@ void ODFCOG::process(const MatrixXC& fft, MatrixXR* odfValue) {
     for(int i = 0; i < _peakCount; i++){
       int start = max(0, (int)floor(_peakPos(row, i) - _bandwidth / 2));
       int end = min(halfCols, (int)ceil(_peakPos(row, i) + _bandwidth / 2));
-      
+      int bandwidth = end - start;
+
       if (_peakPos(row, i) != -1) {
         
-        _cog(row, i) = ((-_spectrumArgDeriv).block(row, start, 1, end).cwise() * _spectrumAbs2.block(row, start, 1, end)).sum() / _spectrumAbs2.block(row, start, 1, end).sum();
+        _cog(row, i) = ((-_spectrumArgDeriv).block(row, start, 1, bandwidth).cwise() * _spectrumAbs2.block(row, start, 1, bandwidth)).sum() / _spectrumAbs2.block(row, start, 1, bandwidth).sum();
 
       }
       

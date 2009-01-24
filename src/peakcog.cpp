@@ -33,7 +33,7 @@ PeakCOG::PeakCOG(int fftLength, int bandwidth) :
   _bandwidth(bandwidth)
 {
   
-  DEBUG("PeakCOG: Constructor fftLength: " << _fftLength);
+  DEBUG("PEAKCOG: Constructor fftLength: " << _fftLength);
   
   setup();
 }
@@ -43,24 +43,25 @@ PeakCOG::~PeakCOG() {}
 
 void PeakCOG::setup() {
   // Prepare the buffers
-  DEBUG("PeakCOG: Setting up...");
+  DEBUG("PEAKCOG: Setting up...");
  
   reset();
 
-  DEBUG("PeakCOG: Finished set up...");
+  DEBUG("PEAKCOG: Finished set up...");
 }
 
 
 void PeakCOG::process(const MatrixXC& fft, const MatrixXR& peakPos, MatrixXR* peakCog) {
-  DEBUG("PeakCOG: Processing windowed");
+  DEBUG("PEAKCOG: Processing windowed");
   const int rows = fft.rows();
   const int cols = fft.cols();
   const int halfCols = min((int)ceil(_fftLength / 2.0), cols);
   const int peakCount = peakPos.cols();
-
-  DEBUG("PeakCOG: Spectrum resized rows: " << rows << " halfCols: " << halfCols);
   
+  DEBUG("PEAKCOG: fft.shape " << fft.rows() << "," << fft.cols());
   _spectrumAbs2 = fft.block(0, 0, rows, halfCols).cwise().abs2();
+  DEBUG("PEAKCOG: Spectrum resized rows: " << rows << " halfCols: " << halfCols);
+    
   unwrap(fft.block(0, 0, rows, halfCols).cwise().angle(), &_spectrumArg);
   derivate(_spectrumArg, &_spectrumArgDeriv);
   
@@ -73,14 +74,15 @@ void PeakCOG::process(const MatrixXC& fft, const MatrixXR& peakPos, MatrixXR* pe
         int start = max(0, (int)floor(peakPos(row, i) - _bandwidth / 2));
         int end = min(halfCols, (int)ceil(peakPos(row, i) + _bandwidth / 2));
 
-        (*peakCog)(row, i) = ((-_spectrumArgDeriv).block(row, start, 1, end).cwise() * _spectrumAbs2.block(row, start, 1, end)).sum() / _spectrumAbs2.block(row, start, 1, end).sum();
-
+        if ( (end - start) > 0) {
+          (*peakCog)(row, i) = ((-_spectrumArgDeriv).block(row, start, 1, end-start).cwise() * _spectrumAbs2.block(row, start, 1, end-start)).sum() / _spectrumAbs2.block(row, start, 1, end-start).sum();
+        }
       }
       
     }
   }
   
-  DEBUG("PeakCOG: Finished Processing");
+  DEBUG("PEAKCOG: Finished Processing");
 }
 
 void PeakCOG::reset() {
