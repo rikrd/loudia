@@ -75,7 +75,7 @@ void ODFComplex::process(const MatrixXC& fft, MatrixXR* odfValue) {
   
   _spectrum = fft.block(0, 0, rows, halfCols);
 
-  DEBUG("ODFComplex: Specturum halved");
+  DEBUG("ODFComplex: Spectrum halved");
 
   _unwrap.process(_spectrum.cwise().angle(), &_unwrappedAngle);
 

@@ -16,43 +16,34 @@
 ** Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */                                                                          
 
-#ifndef ONSETCOMPLEX_H
-#define ONSETCOMPLEX_H
+#ifndef PEAKCOG_H
+#define PEAKCOG_H
 
 #include "typedefs.h"
 #include "debug.h"
 
-#include "window.h"
-#include "fft.h"
-#include "odfcomplex.h"
-
-class OnsetComplex {
+class PeakCOG {
 protected:
   // Internal parameters
-  int _frameLength;
   int _fftLength;
-  bool _zeroPhase;
-  Window::WindowType _windowType;
+  int _bandwidth;
   
   // Internal variables
-  Window _window;
-  FFT _fft;
-  ODFComplex _odf;
-
-  MatrixXR _windowed;
-  MatrixXC _ffted;
+  MatrixXR _spectrumAbs2;
+  MatrixXR _spectrumArg;
+  MatrixXR _spectrumArgDeriv;
   
 public:
-  OnsetComplex(int frameLength, int fftLength, Window::WindowType windowType = Window::RECTANGULAR, bool zeroPhase = true);
+  PeakCOG(int fftLength, int bandwidth = 6);
 
-  ~OnsetComplex();
+  ~PeakCOG();
 
   void setup();
 
-  void process(const MatrixXR& samples, MatrixXR* odfValue);
+  void process(const MatrixXC& fft, const MatrixXR& peakPos, MatrixXR* peakCog);
 
   void reset();
 
 };
 
-#endif  /* ONSETCOMPLEX_H */
+#endif  /* PEAKCOG_H */

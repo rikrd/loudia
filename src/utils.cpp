@@ -369,31 +369,12 @@ void freqz(const MatrixXR& b, const MatrixXR& w, MatrixXC* resp) {
   freqz(b, a, w, resp);
 }
 
-/*
-void zpkToCoeffs(MatrixXC zeros, MatrixXC poles, Real gain, MatrixXC* b, MatrixXC* a):
-    """Return polynomial transfer function representation from zeros
-    and poles
+void derivate(const MatrixXR& a, MatrixXR* b) {
+  const int rows = a.rows();
+  const int cols = a.cols();
+  
+  (*b).resize(rows, cols);
+  (*b).col(0).setZero();
 
-    Inputs:
-
-      z, p --- sequences representing the zeros and poles.
-      k --- system gain.
-
-    Outputs: (b,a)
-
-      b, a --- numerator and denominator polynomials.
-    """
-    z = atleast_1d(z)
-    k = atleast_1d(k)
-    if len(z.shape) > 1:
-        temp = poly(z[0])
-        b = zeros((z.shape[0], z.shape[1]+1), temp.dtype.char)
-        if len(k) == 1:
-            k = [k[0]]*z.shape[0]
-        for i in range(z.shape[0]):
-            b[i] = k[i] * poly(z[i])
-    else:
-        b = k * poly(z)
-    a = poly(p)
-    return b, a
-*/
+  (*b).block(0, 1, rows, cols - 1) = a.block(0, 1, rows, cols - 1) - a.block(0, 0, rows, cols - 1);
+}

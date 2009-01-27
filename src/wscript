@@ -14,7 +14,7 @@ def set_options(opt):
 
 def configure(conf):
 	conf.check_tool('compiler_cxx')
-
+        
 	#conf.env.append_value('CXXFLAGS', '-O3 -fPIC -msse2 -DNDEBUG')
 	conf.env.append_value('CXXFLAGS', '-Wall  -O3 -fPIC -msse2 -DRICAUDIO_DEBUG')
         conf.env.append_value('LINKFLAGS', '-lfftw3f')

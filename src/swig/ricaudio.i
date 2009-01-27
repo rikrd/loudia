@@ -27,6 +27,7 @@ import_array();
 #include "spectralreassignment.h"
 #include "peakpick.h"
 #include "peakdetect.h"
+#include "peakcog.h"
 #include "peakinterpolate.h"
 #include "peakcontinue.h"
 #include "peaksynthesize.h"
@@ -34,6 +35,7 @@ import_array();
 #include "unwrap.h"
 #include "odfcomplex.h"
 #include "odf.h"
+#include "odfcog.h"
 #include "onsetcomplex.h"
 
 #include "melscales.h"
@@ -54,6 +56,7 @@ import_array();
 %include "spectralreassignment.h"
 %include "peakpick.h"
 %include "peakdetect.h"
+%include "peakcog.h"
 %include "peakinterpolate.h"
 %include "peakcontinue.h"
 %include "peaksynthesize.h"
@@ -62,6 +65,7 @@ import_array();
 %include "unwrap.h"
 %include "odfcomplex.h"
 %include "odf.h"
+%include "odfcog.h"
 %include "onsetcomplex.h"
 
 %include "melscales.h"
