@@ -56,7 +56,7 @@ void LPC::process(const MatrixXR& frame, MatrixXR* lpcCoeffs, MatrixXR* reflecti
   const int rows = frame.rows();
   
   DEBUG("LPC: Processing autocorrelation");
-
+  
   correlate(frame, frame, &_acorr);
   
   DEBUG("LPC: Processing Levinson-Durbin recursion");
@@ -70,16 +70,16 @@ void LPC::process(const MatrixXR& frame, MatrixXR* lpcCoeffs, MatrixXR* reflecti
   
   (*reflectionCoeffs).setZero();
 
-  (*error).col(0) = _acorr.col(0);
+  (*error).col(0) = _acorr.block(0, _frameSize - 1, rows, _frameSize).col(0);
 
   for ( int row = 0; row < rows; row++) {  
     Real gamma;
     
     for ( int i = 1; i < _numCoeffs; i++ ) {
-      gamma = _acorr(row, i);
+      gamma = _acorr.block(0, _frameSize - 1, rows, _frameSize)(row, i);
 
       if ( i >= 2) {
-        gamma += ((*lpcCoeffs).row(row).segment(1, i-1) * _acorr.row(row).segment(1, i-1).transpose())(0,0);
+        gamma += ((*lpcCoeffs).row(row).segment(1, i-1) * _acorr.block(0, _frameSize - 1, rows, _frameSize).row(row).segment(1, i-1).transpose())(0,0);
       }
       
       (*reflectionCoeffs)(row, i-1) = - gamma / (*error)(row, 0);

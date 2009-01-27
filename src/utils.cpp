@@ -146,6 +146,8 @@ void convolve(const MatrixXR& a, const MatrixXR& b, MatrixXR* c) {
  */
 template<typename InMatrixType>
 void correlate(const InMatrixType& _a, const InMatrixType& _b, InMatrixType* c) {
+  // TODO: allow to calculate only one part of the correlation
+  //       like in the case of autocorrelation where only half is needed
   // a must be the shortest and b the longuest
   const InMatrixType& a(_a.cols() > _b.cols() ? _b : _a);
   const InMatrixType& b(_a.cols() > _b.cols() ? _a : _b);
