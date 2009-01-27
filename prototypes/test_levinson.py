@@ -87,7 +87,7 @@ def levinsonSymmetricConstrainA1(A, y, ncoeffs = scipy.inf):
     
     eps = A[0,0]
 
-    ref = scipy.zeros( ncoeffs -1 )
+    ref = scipy.zeros( ncoeffs - 1 )
     
     x = scipy.zeros( ncoeffs )
     x[0] = 1

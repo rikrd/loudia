@@ -19,11 +19,6 @@
 #include "typedefs.h"
 #include "debug.h"
 
-#include <Eigen/Core>
-#include <Eigen/Array>
-#include <iostream>
-#include <cmath>
-
 #include "mfcc.h"
 #include "melbands.h"
 #include "dct.h"
