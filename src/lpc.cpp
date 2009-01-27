@@ -56,20 +56,9 @@ void LPC::process(const MatrixXR& frame, MatrixXR* lpcCoeffs, MatrixXR* reflecti
   const int rows = frame.rows();
   
   DEBUG("LPC: Processing autocorrelation");
-  MatrixXR _paddedFrame;
-  MatrixXR _reverseFrame = frame;
-  reverseCols(&_reverseFrame);
-  _paddedFrame.resize(rows, 4*_frameSize - 2);
-  _paddedFrame.setZero();
-  _paddedFrame.block(0, _frameSize - 1, rows, _frameSize) = frame;
-  _paddedFrame.block(0, 2*_frameSize - 1, rows, _frameSize) = _reverseFrame;
-  
-  cout << _paddedFrame << endl;
 
-  convolve(_paddedFrame.transpose(), _paddedFrame.transpose(), &_acorr);
+  correlate(frame, frame, &_acorr);
   
-  cout << _acorr.transpose() << endl;
-
   DEBUG("LPC: Processing Levinson-Durbin recursion");
 
   (*lpcCoeffs).resize(rows, _numCoeffs);
@@ -81,16 +70,16 @@ void LPC::process(const MatrixXR& frame, MatrixXR* lpcCoeffs, MatrixXR* reflecti
   
   (*reflectionCoeffs).setZero();
 
-  (*error).col(0) = _acorr.row(0);
+  (*error).col(0) = _acorr.col(0);
 
   for ( int row = 0; row < rows; row++) {  
     Real gamma;
     
     for ( int i = 1; i < _numCoeffs; i++ ) {
-      gamma = _acorr(i, row);
+      gamma = _acorr(row, i);
 
       if ( i >= 2) {
-        gamma += ((*lpcCoeffs).row(row).segment(1, i-1) * _acorr.col(row).segment(1, i-1))(0,0);
+        gamma += ((*lpcCoeffs).row(row).segment(1, i-1) * _acorr.row(row).segment(1, i-1).transpose())(0,0);
       }
       
       (*reflectionCoeffs)(row, i-1) = - gamma / (*error)(row, 0);
