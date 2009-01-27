@@ -38,6 +38,7 @@ import_array();
 #include "odf.h"
 #include "odfcog.h"
 #include "onsetcomplex.h"
+#include "lpc.h"
 
 #include "melscales.h"
 #include "utils.h"
@@ -68,6 +69,7 @@ using namespace std;
 %include "odf.h"
 %include "odfcog.h"
 %include "onsetcomplex.h"
+%include "lpc.h"
 
 %include "melscales.h"
 %include "utils.h"

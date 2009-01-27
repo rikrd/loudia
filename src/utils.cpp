@@ -27,6 +27,11 @@
 
 #include "utils.h"
 
+
+/**
+ * Given a matrix of polynomes (one per column)
+ * returns a matrix of roots (a vector of roots per column)
+ */
 using namespace std;
 
 void roots(const MatrixXR& poly, MatrixXC* result) {
@@ -49,13 +54,100 @@ void roots(const MatrixXR& poly, MatrixXC* result) {
   (*result) = Eigen::EigenSolver<MatrixXR>(companion).eigenvalues();
 }
 
-void poly(const MatrixXR&  roots, MatrixXC* result) {
+/**
+ * Given a matrix of roots (a vector of roots per column)
+ * returns a matrix of polynomes (a polynome per vector of roots)
+ */
+template<typename InMatrixType>
+void poly(const InMatrixType& roots, InMatrixType* result) {
   const int nroots = roots.cols();
-  
+
   // Prepare the output
-  (*result).resize(1, nroots + 1);
+  (*result).resize(1, 1);
+  (*result).setZero();
+  (*result)(0, 0) = 1.0;
+
+  //InMatrixType newA;
+  //InMatrixType a = InMatrixType::Zero(1, nroots + 1);
+  InMatrixType b(1, 2);
+
+  for ( int i = 0; i < nroots; i++) {
+    b << 1 , -roots(0, i);
+    convolve(*result, b, result);
+    //a.set(newA);
+  }
+
+  //(*result) = a;
 }
 
+void poly(const MatrixXC& roots, MatrixXC* result) {
+  return poly<MatrixXC>(roots, result);
+}
+
+/**
+ * Given two row matrices 
+ * returns the convolution of both
+ */
+template<typename InMatrixType>
+void convolve(const InMatrixType& a, const InMatrixType& b, InMatrixType* c) {
+  const int asize = a.cols();
+  const int bsize = b.cols();
+
+  const int csize = asize + bsize - 1;
+  
+  const int rows = a.rows();
+
+  if ( b.rows() != rows ) {
+    // Throw an error the two inputs must have the same number of rows
+    DEBUG("ERROR: the two inputs must have the same number of rows");
+    return;
+  }
+
+  // Prepare the output
+  (*c).resize( rows, csize );
+  
+  typename InMatrixType::Scalar s;
+
+  int acol = 0;
+  int bcol = 0;
+  for ( int row = 0 ; row < rows ; row++ ) {
+
+    for ( int ccol = 0 ; ccol < csize ; ccol++ ) {
+      s = 0.0;
+      
+      int n_lo = 0 > (ccol - bsize + 1) ? 0 : ccol - bsize + 1;
+      
+      int n_hi = asize - 1 < ccol ? asize - 1 : ccol;
+      
+      acol = n_lo;
+      
+      bcol = ccol - n_lo;
+      
+      for ( int n = n_lo ; n <= n_hi ; n++ ) {
+        s += a(row, acol) * b(row, bcol);
+        
+        acol++;
+        
+        bcol--;
+        
+      }
+      
+      (*c)(row, ccol) = s;
+    }
+  }
+}
+
+void convolve(const MatrixXC& a, const MatrixXC& b, MatrixXC* c) {
+  return convolve<MatrixXC>(a, b, c);
+}
+
+void convolve(const MatrixXR& a, const MatrixXR& b, MatrixXR* c) {
+  return convolve<MatrixXR>(a, b, c);
+}
+
+/**
+ * Reverse in place the order of the columns
+ */
 void reverseCols(MatrixXC* in) { 
   const int cols = (*in).cols();
   
@@ -72,6 +164,10 @@ void reverseCols(MatrixXR* in) {
   }
 }
 
+/**
+ * Convert from the b and a coefficients of an IIR filter to the
+ * zeros, poles and gain of the filter
+ */
 void rowCumsum(MatrixXR* in) { 
   const int rows = (*in).rows();
   
