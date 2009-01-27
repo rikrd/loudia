@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 # Create input
+import pylab
 import scipy
 import ricaudio
 
@@ -11,9 +12,8 @@ signalSize = 2*frameSize
 fftSize = frameSize * (2**2)
 samplerate = 44100
 
-fundamental = 0.0100 * samplerate
-print fundamental
-harmonics = 2
+fundamental = 0.100 * samplerate
+harmonics = 20
 
 sine = scipy.zeros((signalSize, 1), dtype = 'f4')
 for i in range(harmonics):
@@ -22,15 +22,17 @@ for i in range(harmonics):
 sinenoise = scipy.array(sine + (scipy.random.random((signalSize, 1)) - 0.5) * 0.00125, dtype='f4')
 
 # Ricaudio's solution # --------------------------------- #
-bandwidth = 4
-peakCount = 10
-window = ricaudio.Window(frameSize, ricaudio.Window.HANNING)
+bandwidth = 8 * fftSize / frameSize
+peakCount = 20
+window = ricaudio.Window(frameSize, ricaudio.Window.BLACKMANHARRIS)
 fft = ricaudio.FFT(frameSize, fftSize)
 peaks = ricaudio.PeakDetect(peakCount, bandwidth)
 cogs = ricaudio.PeakCOG(fftSize, bandwidth)
 
 peakCogs = []
 peakPos = []
+pylab.ion()
+pylab.hold(False)
 for i in range((signalSize - frameSize)/frameStep):
     a_sine = sine[i*frameStep:(i*frameStep+frameSize)].T
   
@@ -40,15 +42,20 @@ for i in range((signalSize - frameSize)/frameStep):
     r_sine_peakpos, r_sine_peakmag, r_sine_peakphase = peaks.process(r_sine_fft)
     r_sine_peakcogs = cogs.process(r_sine_fft, r_sine_peakpos)
 
+    pylab.clf()
+    pylab.hold(True)
+    pylab.plot(abs(r_sine_fft[0,:]))
+    pylab.stem(r_sine_peakpos[0,:], abs(r_sine_fft[0,:])[scipy.array(r_sine_peakpos[0,:], dtype = 'i4')])
+
+    pylab.hold(False)
     peakPos.append(r_sine_peakpos[0,:])
     peakCogs.append(r_sine_peakcogs[0,:])
 # -------------------------------------------------------- #
-
+pylab.ioff()
 peakCogs = scipy.array(peakCogs)
 peakPos = scipy.array(peakPos)
 print peakPos[:10,:]
 
-import pylab
 pylab.figure()
 pylab.plot(peakCogs)
 pylab.show()

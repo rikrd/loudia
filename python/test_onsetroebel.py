@@ -26,6 +26,7 @@ frameStepTime = frameStep / 44100.0
 fftSize = 2048 * 2
 plotSize = fftSize / 4
 
+bandwidth = 4 * fftSize/frameSize
 analysisLimit = scipy.inf
 
 # Creation of the pipeline        
@@ -43,7 +44,7 @@ stream = pyricaudio.sndfilereader({'filename': filename,
 
 
 reassignment = ricaudio.SpectralReassignment(frameSize, fftSize, samplerate, ricaudio.Window.HAMMING)
-odfcog = ricaudio.ODFCOG(fftSize, 40, 8)
+odfcog = ricaudio.ODFCOG(fftSize, 40, bandwidth)
 
 specs = []
 times = []
