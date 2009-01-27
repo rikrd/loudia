@@ -80,6 +80,32 @@ def levinson2(A, y, ncoeffs = scipy.inf):
         
     return (x, scipy.sqrt(eps))
 
+
+def levinsonSymmetricConstrainA1(A, y, ncoeffs = scipy.inf):
+    A = scipy.array(A, dtype = 'f4')
+    ncoeffs = min(ncoeffs, A.shape[1])
+    
+    eps = A[0,0]
+
+    ref = scipy.zeros( ncoeffs -1 )
+    
+    x = scipy.zeros( ncoeffs )
+    x[0] = 1
+    
+    for i in range(1, ncoeffs):
+        gamma = A[0, i] + scipy.dot(A[0, 1:i], x[1:i])
+
+        ref[i-1] = - gamma / eps
+
+        eps *= (1 - ref[i-1]*scipy.conjugate(ref[i-1]))
+        
+        temp = scipy.conjugate(scipy.flipud(x[:i+1]))
+        
+        x[:i+1] += ref[i-1] * temp
+        x[i] = ref[i-1]
+        
+    return (x, scipy.sqrt(eps))
+
     
 x, error = levinson2(A, b)
 
@@ -90,6 +116,14 @@ print 'Expected A*x =', b
 print scipy.allclose(scipy.dot(A, x), b)
 
 x, error = levinson(A, b)
+
+print 'Final error =', error
+print 'Final solution x =', x
+print 'Final solution A*x =', scipy.dot(A, x)
+print 'Expected A*x =', b
+print scipy.allclose(scipy.dot(A, x), b)
+
+x, error = levinsonSymmetricConstrainA1(A, b)
 
 print 'Final error =', error
 print 'Final solution x =', x
