@@ -11,9 +11,9 @@ where A is a Toelpitz matrix.
 import scipy
 import scipy.linalg
 
-r = [1, 2, 3]
-A = scipy.linalg.toeplitz( r )
-b = scipy.array( [267, 184, 169] )
+r = [1, 0.5, 0.5, 0.25]
+A = scipy.linalg.toeplitz( r[:-1] )
+b = -scipy.array( r[1:] )
 
 def levinson(A, y, ncoeffs = scipy.inf):
     ncoeffs = min(ncoeffs, A.shape[1])
@@ -46,7 +46,7 @@ def levinson(A, y, ncoeffs = scipy.inf):
         
         x[:i+1] += ( y[i] - error ) * bs[-i-1:]
 
-    return (x, error)
+    return (x, den)
 
 
 def levinson2(A, y, ncoeffs = scipy.inf):
@@ -78,10 +78,18 @@ def levinson2(A, y, ncoeffs = scipy.inf):
         
         x[:(i+1)] += (ln / eps) * b[-(i+1):]
         
-    return (x, ln / eps)
+    return (x, scipy.sqrt(eps))
 
     
 x, error = levinson2(A, b)
+
+print 'Final error =', error
+print 'Final solution x =', x
+print 'Final solution A*x =', scipy.dot(A, x)
+print 'Expected A*x =', b
+print scipy.allclose(scipy.dot(A, x), b)
+
+x, error = levinson(A, b)
 
 print 'Final error =', error
 print 'Final solution x =', x
