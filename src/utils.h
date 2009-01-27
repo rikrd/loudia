@@ -43,6 +43,14 @@ void convolve(const MatrixXR& a, const MatrixXR& b, MatrixXR* c);
 
 
 /**
+ * Given two row matrices 
+ * returns the correlation of both
+ */
+void correlate(const MatrixXC& a, const MatrixXC& b, MatrixXC* c);
+void correlate(const MatrixXR& a, const MatrixXR& b, MatrixXR* c);
+
+
+/**
  * Reverse in place the order of the columns
  */
 void reverseCols(MatrixXC* in);

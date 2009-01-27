@@ -19,12 +19,6 @@
 #include "typedefs.h"
 #include "debug.h"
 
-#include <Eigen/Core>
-#include <Eigen/Array>
-#include <Eigen/QR> 
-
-#include <cmath>
-
 #include "utils.h"
 
 
@@ -51,7 +45,7 @@ void roots(const MatrixXR& poly, MatrixXC* result) {
   companion.row(0) = -poly.corner( Eigen::TopRight, 1, coeffs - 1 ) / poly(0, 0);
   
   // Get the eigen values
-  (*result) = Eigen::EigenSolver<MatrixXR>(companion).eigenvalues();
+  //(*result) = Eigen::EigenSolver<MatrixXR>(companion).eigenvalues();
 }
 
 /**
@@ -143,6 +137,56 @@ void convolve(const MatrixXC& a, const MatrixXC& b, MatrixXC* c) {
 
 void convolve(const MatrixXR& a, const MatrixXR& b, MatrixXR* c) {
   return convolve<MatrixXR>(a, b, c);
+}
+
+
+/**
+ * Given two row matrices 
+ * returns the correlation of both
+ */
+template<typename InMatrixType>
+void correlate(const InMatrixType& _a, const InMatrixType& _b, InMatrixType* c) {
+  // a must be the shortest and b the longuest
+  const InMatrixType& a(_a.cols() > _b.cols() ? _b : _a);
+  const InMatrixType& b(_a.cols() > _b.cols() ? _a : _b);
+  
+  const int asize = a.cols();
+  const int bsize = b.cols();
+
+  const int csize = asize + bsize - 1;
+  
+  const int rows = a.rows();
+
+  if ( b.rows() != rows ) {
+    // Throw an error the two inputs must have the same number of rows
+    DEBUG("ERROR: the two inputs must have the same number of rows");
+    return;
+  }
+
+  // Prepare the output
+  (*c).resize( rows, csize );
+  (*c).setZero();
+  
+  int minsize = min(asize, bsize);
+
+  for (int lag = - bsize + 1; lag < asize; lag++ ) {    
+    int astart = max(lag, 0);
+    int bstart = max(-lag, 0);
+    
+    int len = min(minsize - astart, lag + bsize - astart);
+    
+    if (len != 0){
+      (*c).col( csize - 1 - (lag + bsize - 1) ) = (a.block(0, astart, rows, len).cwise() * b.block(0, bstart, rows, len)).rowwise().sum();
+    }
+  }
+}
+
+void correlate(const MatrixXC& a, const MatrixXC& b, MatrixXC* c) {
+  return correlate<MatrixXC>(a, b, c);
+}
+
+void correlate(const MatrixXR& a, const MatrixXR& b, MatrixXR* c) {
+  return correlate<MatrixXR>(a, b, c);
 }
 
 /**
