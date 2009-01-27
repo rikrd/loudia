@@ -28,19 +28,6 @@
  */
 void roots(const MatrixXR& poly, MatrixXC* result);
 
-/**
- * Given a matrix of roots (a vector of roots per column)
- * returns a matrix of polynomes (a polynome per vector of roots)
- */
-void poly(const MatrixXC& roots, MatrixXC* result);
-
-/**
- * Given two row matrices 
- * returns the convolution of both
- */
-void convolve(const MatrixXC& a, const MatrixXC& b, MatrixXC* c);
-//void convolve(MatrixXR a, MatrixXR b, MatrixXR* c);
-
 
 /**
  * Reverse in place the order of the columns
@@ -116,5 +103,7 @@ void unwrap(const MatrixXR& phases, MatrixXR* unwrapped);
 
 void freqz(const MatrixXR& b, const MatrixXR& a, const MatrixXR& w, MatrixXC* resp);
 void freqz(const MatrixXR& b, const MatrixXR& w, MatrixXC* resp);
+
+void derivate(const MatrixXR& a, MatrixXR* b);
 
 #endif  /* UTILS_H */
