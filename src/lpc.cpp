@@ -33,6 +33,9 @@ LPC::LPC(int frameSize, int numCoeffs) :
 {
   DEBUG("LPC: Constructor frameSize: " << frameSize <<
         ", numCoeffs: " << numCoeffs);
+  if (_numCoeffs > _frameSize) {
+    // Thorw ValueError, the number of coefficients must be smaller or equal than the frame size.
+  }
   
   setup();
 }
