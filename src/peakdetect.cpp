@@ -34,6 +34,8 @@ struct peak{
   Real mag;
   Real phase;
   
+  // A peak is smaller (first in the list)
+  // if it's magnitude is larger
   bool operator <(peak const& other) const {
     return mag > other.mag;
   }
