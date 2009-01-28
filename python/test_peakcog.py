@@ -15,15 +15,17 @@ samplerate = 44100
 fundamental = 0.100 * samplerate
 harmonics = 20
 
+plotInteractive = False
+
 sine = scipy.zeros((signalSize, 1), dtype = 'f4')
 for i in range(harmonics):
     sine[beginSize:, 0] += scipy.array(scipy.cos(2 * scipy.pi * (i+1) * fundamental * scipy.arange(signalSize - beginSize) / samplerate), dtype='f4')
 
-sinenoise = scipy.array(sine + (scipy.random.random((signalSize, 1)) - 0.5) * 0.00125, dtype='f4')
+sinenoise = scipy.array(sine + (scipy.random.random((signalSize, 1)) - 0.5), dtype='f4')
 
 # Ricaudio's solution # --------------------------------- #
 bandwidth = 8 * fftSize / frameSize
-peakCount = 20
+peakCount = 4
 window = ricaudio.Window(frameSize, ricaudio.Window.BLACKMANHARRIS)
 fft = ricaudio.FFT(frameSize, fftSize)
 peaks = ricaudio.PeakDetect(peakCount, bandwidth)
@@ -31,10 +33,12 @@ cogs = ricaudio.PeakCOG(fftSize, bandwidth)
 
 peakCogs = []
 peakPos = []
-pylab.ion()
-pylab.hold(False)
+if plotInteractive:
+    pylab.ion()
+    pylab.hold(False)
+    
 for i in range((signalSize - frameSize)/frameStep):
-    a_sine = sine[i*frameStep:(i*frameStep+frameSize)].T
+    a_sine = sinenoise[i*frameStep:(i*frameStep+frameSize)].T
   
     r_sine_windowed = window.process(a_sine)
     r_sine_fft = fft.process(r_sine_windowed)
@@ -42,16 +46,20 @@ for i in range((signalSize - frameSize)/frameStep):
     r_sine_peakpos, r_sine_peakmag, r_sine_peakphase = peaks.process(r_sine_fft)
     r_sine_peakcogs = cogs.process(r_sine_fft, r_sine_peakpos)
 
-    pylab.clf()
-    pylab.hold(True)
-    pylab.plot(abs(r_sine_fft[0,:]))
-    pylab.stem(r_sine_peakpos[0,:], abs(r_sine_fft[0,:])[scipy.array(r_sine_peakpos[0,:], dtype = 'i4')])
-
-    pylab.hold(False)
+    if plotInteractive:
+        pylab.clf()
+        pylab.hold(True)
+        pylab.plot(abs(r_sine_fft[0,:]))
+        pylab.stem(r_sine_peakpos[0,:], abs(r_sine_fft[0,:])[scipy.array(r_sine_peakpos[0,:], dtype = 'i4')])
+        
+        pylab.hold(False)
+        
     peakPos.append(r_sine_peakpos[0,:])
     peakCogs.append(r_sine_peakcogs[0,:])
 # -------------------------------------------------------- #
-pylab.ioff()
+if plotInteractive:
+    pylab.ioff()
+    
 peakCogs = scipy.array(peakCogs)
 peakPos = scipy.array(peakPos)
 print peakPos[:10,:]
