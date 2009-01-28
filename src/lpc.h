@@ -31,6 +31,7 @@ protected:
   // Internal variables
   MatrixXR _temp;
   MatrixXR _acorr;
+  MatrixXR _fullAcorr;
 
 public:
   LPC(int frameSize, int numCoeffs);

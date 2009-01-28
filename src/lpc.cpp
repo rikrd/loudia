@@ -27,7 +27,10 @@ using namespace std;
 // import most common Eigen types 
 using namespace Eigen;
 
-LPC::LPC(int frameSize, int numCoeffs) : _frameSize(frameSize), _numCoeffs(numCoeffs) {
+LPC::LPC(int frameSize, int numCoeffs) : 
+  _frameSize(frameSize), 
+  _numCoeffs(numCoeffs)
+{
   DEBUG("LPC: Constructor frameSize: " << frameSize <<
         ", numCoeffs: " << numCoeffs);
   
@@ -54,11 +57,20 @@ void LPC::setup(){
 void LPC::process(const MatrixXR& frame, MatrixXR* lpcCoeffs, MatrixXR* reflectionCoeffs, MatrixXR* error){
   DEBUG("LPC: Processing...");
   const int rows = frame.rows();
+  const int cols = frame.cols();
   
+  if ( cols != _frameSize ) {
+    // Throw ValueError, the frames passed are the wrong size
+  }
+
   DEBUG("LPC: Processing autocorrelation");
   
-  correlate(frame, frame, &_acorr);
+  correlate(frame, frame, &_fullAcorr);
   
+  _acorr.resize(rows, _numCoeffs + 1);
+  _acorr.setZero();
+  _acorr.block(0, 0, rows, _numCoeffs) = _fullAcorr.block(0, _frameSize - 1, rows, _numCoeffs);
+
   DEBUG("LPC: Processing Levinson-Durbin recursion");
 
   (*lpcCoeffs).resize(rows, _numCoeffs);
@@ -70,26 +82,35 @@ void LPC::process(const MatrixXR& frame, MatrixXR* lpcCoeffs, MatrixXR* reflecti
   
   (*reflectionCoeffs).setZero();
 
-  (*error).col(0) = _acorr.block(0, _frameSize - 1, rows, _frameSize).col(0);
+  (*error).col(0) = _acorr.col(0);
 
   for ( int row = 0; row < rows; row++) {  
     Real gamma;
     
     for ( int i = 1; i < _numCoeffs; i++ ) {
-      gamma = _acorr.block(0, _frameSize - 1, rows, _frameSize)(row, i);
-
-      if ( i >= 2) {
-        gamma += ((*lpcCoeffs).row(row).segment(1, i-1) * _acorr.block(0, _frameSize - 1, rows, _frameSize).row(row).segment(1, i-1).transpose())(0,0);
+      gamma = _acorr(row, i);
+      
+      // TODO: fix this when Eigen allows reverse()
+      //if ( i >= 2) {
+        //gamma += ((*lpcCoeffs).row(row).segment(1, i-1) * _acorr.row(row).segment(1, i-1).transpose().reverse())(0,0);
+      //}
+      
+      for (int j = 1; j <= i-1; ++j) {
+        gamma += (*lpcCoeffs)(row, j) * _acorr(row, i-j);  
       }
       
       (*reflectionCoeffs)(row, i-1) = - gamma / (*error)(row, 0);
 
+      
       (*error)(row, 0) *= (1 - (*reflectionCoeffs)(row, i-1) * (*reflectionCoeffs).conjugate()(row, i-1));
       
-      _temp = (*lpcCoeffs).block(row, _numCoeffs-(i+1), 1, i+1);
-      reverseCols(&_temp);
-            
-      (*lpcCoeffs).block(row, 0, 1, i+1) += (*reflectionCoeffs)(row, i-1) * _temp.conjugate();
+      if(i >= 2){
+        _temp = (*lpcCoeffs).block(row, 1, 1, i-1);
+        reverseCols(&_temp);
+        
+        (*lpcCoeffs).block(row, 1, 1, i-1) += (*reflectionCoeffs)(row, i-1) * _temp.conjugate();
+      }
+      
       (*lpcCoeffs)(row, i) = (*reflectionCoeffs)(row, i-1);
     }
   }
