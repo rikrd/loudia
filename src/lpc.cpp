@@ -97,21 +97,19 @@ void LPC::process(const MatrixXR& frame, MatrixXR* lpcCoeffs, MatrixXR* reflecti
       //if ( i >= 2) {
         //gamma += ((*lpcCoeffs).row(row).segment(1, i-1) * _acorr.row(row).segment(1, i-1).transpose().reverse())(0,0);
       //}
-      
       for (int j = 1; j <= i-1; ++j) {
         gamma += (*lpcCoeffs)(row, j) * _acorr(row, i-j);  
       }
       
       (*reflectionCoeffs)(row, i-1) = - gamma / (*error)(row, 0);
-
       
       (*error)(row, 0) *= (1 - (*reflectionCoeffs)(row, i-1) * (*reflectionCoeffs).conjugate()(row, i-1));
       
       if(i >= 2){
-        _temp = (*lpcCoeffs).block(row, 1, 1, i-1);
+        _temp = (*lpcCoeffs).row(row).segment(1, i-1);
         reverseCols(&_temp);
         
-        (*lpcCoeffs).block(row, 1, 1, i-1) += (*reflectionCoeffs)(row, i-1) * _temp.conjugate();
+        (*lpcCoeffs).row(row).segment(1, i-1) += (*reflectionCoeffs)(row, i-1) * _temp.conjugate();
       }
       
       (*lpcCoeffs)(row, i) = (*reflectionCoeffs)(row, i-1);
