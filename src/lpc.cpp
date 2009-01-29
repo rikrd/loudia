@@ -31,8 +31,9 @@ LPC::LPC(int frameSize, int numCoeffs) :
   _frameSize(frameSize), 
   _numCoeffs(numCoeffs)
 {
-  DEBUG("LPC: Constructor frameSize: " << frameSize <<
-        ", numCoeffs: " << numCoeffs);
+  DEBUG("LPC: Constructor frameSize: " << frameSize 
+        << ", numCoeffs: " << numCoeffs);
+
   if (_numCoeffs > _frameSize) {
     // Thorw ValueError, the number of coefficients must be smaller or equal than the frame size.
   }
@@ -40,11 +41,7 @@ LPC::LPC(int frameSize, int numCoeffs) :
   setup();
 }
 
-LPC::~LPC() {
-  // TODO: Here we should free the buffers
-  // but I don't know how to do that with MatrixXR and MatrixXR
-  // I'm sure Nico will...
-}
+LPC::~LPC() {}
 
 
 void LPC::setup(){
@@ -80,12 +77,14 @@ void LPC::process(const MatrixXR& frame, MatrixXR* lpcCoeffs, MatrixXR* reflecti
   (*reflectionCoeffs).resize(rows, _numCoeffs - 1);
   (*error).resize(rows, 1);
   
+  // Initial values of the LPC coefficients
   (*lpcCoeffs).setZero();
   (*lpcCoeffs).col(0).setOnes();
   
-  (*reflectionCoeffs).setZero();
-
+  // Initial value of the Error
   (*error).col(0) = _acorr.col(0);
+
+  (*reflectionCoeffs).setZero();
 
   for ( int row = 0; row < rows; row++) {  
     Real gamma;
@@ -101,10 +100,13 @@ void LPC::process(const MatrixXR& frame, MatrixXR* lpcCoeffs, MatrixXR* reflecti
         gamma += (*lpcCoeffs)(row, j) * _acorr(row, i-j);  
       }
       
+      // Get the reflection coefficient
       (*reflectionCoeffs)(row, i-1) = - gamma / (*error)(row, 0);
-      
+
+      // Update the error      
       (*error)(row, 0) *= (1 - (*reflectionCoeffs)(row, i-1) * (*reflectionCoeffs).conjugate()(row, i-1));
       
+      // Update the LPC coefficients
       if(i >= 2){
         _temp = (*lpcCoeffs).row(row).segment(1, i-1);
         reverseCols(&_temp);
