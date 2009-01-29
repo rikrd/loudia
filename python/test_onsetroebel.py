@@ -42,8 +42,15 @@ stream = pyricaudio.sndfilereader({'filename': filename,
                                    'timestampEndKey': 'timestampEnd',
                                    'limit':analysisLimit})
 
+stream = pyricaudio.window_ricaudio(stream, {'inputKey': 'samplesMono',
+                                             'outputKey': 'windowed',
+                                             'windowType': 'hamming'})
 
-ffter = ricaudio.FFT(frameSize, fftSize, True)
+stream = pyricaudio.fft_ricaudio(stream, {'inputKey': 'windowed',
+                                          'outputKey': 'fft',
+                                          'zeroPhase': True,
+                                          'fftLength': fftSize})
+
 odfcog = ricaudio.ODFCOG(fftSize, 10, bandwidth)
 
 specs = []
@@ -51,11 +58,10 @@ cogs = []
 
 for frame in stream:
     samples = scipy.array(frame['samplesMono'], dtype = 'f4')
-    fft = ffter.process( samples )
-    fft = scipy.array(fft[:fftSize/2], dtype = scipy.complex64)
+    fft = scipy.array(frame['fft'][:fftSize/2], dtype = scipy.complex64)
     cog = odfcog.process( fft )
     
-    spec =  20.0 / scipy.log( 10.0 ) * scipy.log( abs( fft ) + 1e-7)[0, :plotSize]
+    spec =  20.0 / scipy.log( 10.0 ) * scipy.log( abs( fft ) + 1e-7)[:plotSize]
 
     specs.append( spec )
     cogs.append( cog[0,0] )
