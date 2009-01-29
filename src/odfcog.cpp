@@ -33,7 +33,8 @@ ODFCOG::ODFCOG(int fftLength, int peakCount, int bandwidth) :
   _fftLength(fftLength),
   _peakCount(peakCount),
   _bandwidth(bandwidth),
-  _peaker(peakCount, bandwidth)
+  _peaker(peakCount, bandwidth),
+  _peakCoger(fftLength, bandwidth)
 {
   
   DEBUG("ODFCOG: Constructor fftLength: " << _fftLength);
@@ -49,6 +50,7 @@ void ODFCOG::setup() {
   DEBUG("ODFCOG: Setting up...");
 
   _peaker.setup();
+  _peakCoger.setup();
   
   reset();
 
@@ -66,30 +68,9 @@ void ODFCOG::process(const MatrixXC& fft, MatrixXR* odfValue) {
 
   DEBUG("ODFCOG: Processing the peaks");
 
-  _peaker.process(fft, &_peakPos, &_peakMag, &_peakArg);
+  _peaker.process(fft.block(0, 0, rows, halfCols), &_peakPos, &_peakMag, &_peakArg);
 
-  DEBUG("ODFCOG: Spectrum resized rows: " << rows << " halfCols: " << halfCols);
-  
-  _spectrumAbs2 = fft.block(0, 0, rows, halfCols).cwise().abs2();
-  unwrap(fft.block(0, 0, rows, halfCols).cwise().angle(), &_spectrumArg);
-  derivate(_spectrumArg, &_spectrumArgDeriv);
-  
-  _cog = MatrixXR::Zero(_peakPos.rows(), _peakPos.cols());
-
-  for(int row = 0; row < rows; row++) {
-    for(int i = 0; i < _peakCount; i++){
-      int start = max(0, (int)floor(_peakPos(row, i) - _bandwidth / 2));
-      int end = min(halfCols, (int)ceil(_peakPos(row, i) + _bandwidth / 2));
-      int bandwidth = end - start;
-
-      if (_peakPos(row, i) != -1) {
-        
-        _cog(row, i) = ((-_spectrumArgDeriv).block(row, start, 1, bandwidth).cwise() * _spectrumAbs2.block(row, start, 1, bandwidth)).sum() / _spectrumAbs2.block(row, start, 1, bandwidth).sum();
-
-      }
-      
-    }
-  }
+  _peakCoger.process(fft.block(0, 0, rows, halfCols), _peakPos, &_cog);
 
   (*odfValue) = _cog.cwise().clipUnder().rowwise().sum();
   
@@ -99,4 +80,6 @@ void ODFCOG::process(const MatrixXC& fft, MatrixXR* odfValue) {
 void ODFCOG::reset() {
   // Initial values
   _peaker.reset();
+  _peakCoger.reset();
+
 }

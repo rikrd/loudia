@@ -43,37 +43,30 @@ stream = pyricaudio.sndfilereader({'filename': filename,
                                    'limit':analysisLimit})
 
 
-reassignment = ricaudio.SpectralReassignment(frameSize, fftSize, samplerate, ricaudio.Window.HAMMING)
-odfcog = ricaudio.ODFCOG(fftSize, 40, bandwidth)
+ffter = ricaudio.FFT(frameSize, fftSize, True)
+odfcog = ricaudio.ODFCOG(fftSize, 10, bandwidth)
 
 specs = []
-times = []
-timesWeighted = []
 cogs = []
 
 for frame in stream:
     samples = scipy.array(frame['samplesMono'], dtype = 'f4')
-    fft, time, freq = reassignment.process( samples )
+    fft = ffter.process( samples )
+    fft = scipy.array(fft[:fftSize/2], dtype = scipy.complex64)
     cog = odfcog.process( fft )
     
     spec =  20.0 / scipy.log( 10.0 ) * scipy.log( abs( fft ) + 1e-7)[0, :plotSize]
-    time = time[0, :plotSize]
 
     specs.append( spec )
-    times.append( time )
-    timesWeighted.append( time * spec )
     cogs.append( cog[0,0] )
     
 
 specs = scipy.array( specs )
 frameCount = specs.shape[0] - 1
 
-times = scipy.array( times )
-timesWeighted = scipy.array( timesWeighted )
 cogs = scipy.array( cogs )
 
 odfRoebel = cogs
-odfRoebel = timesWeighted.clip(0).sum(axis = 1) / plotSize
 
 # Get the onsets
 annotation = os.path.splitext(filename)[0] + '.onset_annotated'
