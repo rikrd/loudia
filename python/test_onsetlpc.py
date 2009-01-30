@@ -6,6 +6,8 @@ import pylab
 import os, sys, wave
 import scipy
 
+interactivePlot = False
+
 filename = sys.argv[1]
 
 # Accepted difference between the groundtruth
@@ -17,7 +19,7 @@ wavfile = wave.open(filename,'r')
 samplerate = float(wavfile.getframerate())
 wavfile.close()
 
-frameSize = 512
+frameSize = 1024
 frameStep = 256
 
 frameSizeTime = frameSize / 44100.0
@@ -62,8 +64,10 @@ npoints = 1024
 w = scipy.arange(-scipy.pi, scipy.pi, 2*scipy.pi/(npoints), dtype = 'f4')
 b = scipy.array([[1]], dtype = 'f4')
 
-pylab.ion()
-pylab.figure()
+if interactivePlot:
+    pylab.ion()
+    pylab.figure()
+    
 for frame in stream:
     samples = scipy.array(frame['samplesMono'], dtype = 'f4')
     fft = scipy.array(frame['fft'][:fftSize/2], dtype = scipy.complex64)
@@ -75,19 +79,22 @@ for frame in stream:
     freqResp = ricaudio.freqz(b*scipy.sqrt(error[0]), lpcCoeffs.T, w)
 
     freqResp = 20.0 / scipy.log( 10.0 ) * scipy.log( abs( freqResp ) + 1e-7)
-    
-    pylab.gca().clear()
-    pylab.gca().set_autoscale_on(False)
-    pylab.gca().set_ylim([-100, 40])
 
-    pylab.plot(w[npoints/2:npoints*3/4], freqResp[npoints/2:npoints*3/4,0])
-    
+    if interactivePlot:
+        pylab.gca().clear()
+        pylab.gca().set_autoscale_on(False)
+        pylab.gca().set_ylim([-100, 40])
+        
+        pylab.plot(w[npoints/2:npoints*3/4], freqResp[npoints/2:npoints*3/4,0])
+        
     specs.append( spec )
     lpcs.append( lpcCoeffs[0] )
     freqResps.append( freqResp[npoints/2:npoints*3/4,0] )
     errors.append( error[0] )
 
-pylab.ioff()
+if interactivePlot:
+    pylab.ioff()
+    
 specs = scipy.array( specs )
 frameCount = specs.shape[0] - 1
 
