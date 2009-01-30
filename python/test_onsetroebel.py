@@ -59,6 +59,7 @@ cogs = []
 for frame in stream:
     samples = scipy.array(frame['samplesMono'], dtype = 'f4')
     fft = scipy.array(frame['fft'][:fftSize/2], dtype = scipy.complex64)
+
     cog = odfcog.process( fft )
     
     spec =  20.0 / scipy.log( 10.0 ) * scipy.log( abs( fft ) + 1e-7)[:plotSize]

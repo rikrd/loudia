@@ -7,7 +7,7 @@ import sys
 import scipy
 
 
-interactivePlotting = False
+interactivePlotting = True
 
 plotSpectrumTrajs = True
 
@@ -60,7 +60,7 @@ stream = pyricaudio.fft_ricaudio(stream, {'inputKey': 'windowed',
 
 
 
-subplots = {1 : ['mag', 'peak_mags'],
+subplots = {1 : ['mag', 'peak_mags', 'resid_mag', 'synth_mag'],
             2 : ['phase', 'peak_phases']}
 
 all_processes = set()
@@ -92,6 +92,7 @@ trajsLocs = []
 trajsMags = []
 specs = []
 specsSynth = []
+specsResid = []
 
 for frame in stream:
     fft = scipy.array(frame['fft'][:plotSize], dtype = scipy.complex64)
@@ -103,7 +104,9 @@ for frame in stream:
 
     if set(['peak_mags', 'peak_phases']) | all_processes:
         fft = scipy.reshape(fft, (1, plotSize))
+
         peakLocs, peakMags, peakPhases =  peaker.process( fft )
+
         peakiLocs, peakiMags, peakiPhases = peakInterp.process( fft,
                                                                scipy.array(peakLocs, dtype='f4'),
                                                                scipy.array(peakMags, dtype='f4'),
@@ -117,12 +120,17 @@ for frame in stream:
                                        trajMags )
 
 
-        specsSynth.append( ricaudio.magToDb(specSynth[0,:plotSize])[0,:] )
+        specSynth = ricaudio.magToDb( specSynth[0,:plotSize] )[0,:]
+        
+        specResid = spec - specSynth
         
         trajsLocs.append( trajLocs[0,:] )
         trajsMags.append( trajMags[0,:] )
 
         specs.append( spec )
+
+        specsSynth.append( specSynth )
+        specsResid.append( specResid )
 
         peakPos = peakLocs[peakLocs > 0]
         peakMags = peakMags[peakLocs > 0]
@@ -138,6 +146,18 @@ for frame in stream:
                 pylab.gca().set_ylim([-100, 40])
 
                 pylab.plot(spec)
+
+            if 'synth_mag' in processes:       
+                pylab.gca().set_xlim([0, plotSize])
+                pylab.gca().set_ylim([-100, 40])
+
+                pylab.plot(specSynth)
+
+            if 'resid_mag' in processes:       
+                pylab.gca().set_xlim([0, plotSize])
+                pylab.gca().set_ylim([-100, 40])
+
+                pylab.plot(specResid)
 
 
             if 'peak_mags' in processes:
