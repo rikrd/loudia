@@ -263,7 +263,7 @@ void coeffsToZpk(const MatrixXR&  b, const MatrixXR&  a, MatrixXC* zeros, Matrix
 }
 
 Real asinc(int M, Real omega) {
-  return omega == 0 ? M : sin(M * omega / 2.0) / sin(omega / 2.0) ;
+  return omega == 0 ? 1 : sin(M * omega / 2.0) / sin(omega / 2.0) / M;
 }
 
 
@@ -275,8 +275,8 @@ void raisedCosTransform(Real position, Real magnitude,
   (*begin) = max((position - bandwidth / 2.0), 0.0);
   (*end) = min(ceil(position + bandwidth / 2.0 + 1), fftSize/2.0);
   
-  if ( end <= begin ) {
-    DEBUG("ERROR: end must be higher than begin");
+  if ( (*end) <= (*begin) ) {
+    DEBUG("ERROR: end (" << (*end) << ") must be higher than begin (" << (*begin) << ")");
     // Throw a ValueError end must be higher than begin
   }
   
