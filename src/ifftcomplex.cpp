@@ -19,89 +19,98 @@
 #include "typedefs.h"
 #include "debug.h"
 
-#include "ifft.h"
+#include "ifftcomplex.h"
 
 using namespace std;
 
 // import most common Eigen types 
 using namespace Eigen;
 
-IFFT::IFFT(int frameSize, int fftSize, bool zeroPhase) :
+IFFTComplex::IFFTComplex(int frameSize, int fftSize, bool zeroPhase) :
   _frameSize( frameSize ),
   _fftSize( fftSize ),
   _zeroPhase( zeroPhase )
 {
-  DEBUG("IFFT: Constructor frameSize: " << frameSize 
+  DEBUG("IFFTComplex: Constructor frameSize: " << frameSize 
         << ", fftSize: " << fftSize 
         << ", zeroPhase: " << zeroPhase);
 
   if(_fftSize < _frameSize){
-    // Throw exception, the IFFT size must be greater or equal than the input size
+    // Throw exception, the IFFTComplex size must be greater or equal than the input size
   }
   
   setup();
   
-  DEBUG("IFFT: Constructed");
+  DEBUG("IFFTComplex: Constructed");
 }
 
-IFFT::~IFFT(){
+IFFTComplex::~IFFTComplex(){
   fftwf_destroy_plan( _fftplan );
-  fftwf_free( _in ); 
+  fftwf_free( _in );
   fftwf_free( _out );
 }
 
-void IFFT::setup(){
-  DEBUG("IFFT: Setting up...");
+void IFFTComplex::setup(){
+  DEBUG("IFFTComplex: Setting up...");
   
-  _in = (Real*) fftwf_malloc(sizeof(Real) * _fftSize);
-  _out = (fftwf_complex*) fftwf_malloc(sizeof(fftwf_complex) * _fftSize/2+1);
+  _in = (fftwf_complex*) fftwf_malloc(sizeof(fftwf_complex) * _fftSize);
+  _out = (fftwf_complex*) fftwf_malloc(sizeof(fftwf_complex) * _fftSize);
+    
+  _fftplan = fftwf_plan_dft_1d( _fftSize, _in, _out,
+                                FFTW_FORWARD, FFTW_ESTIMATE );
   
-  _fftplan = fftwf_plan_dft_r2c_1d( _fftSize, _in, _out,
-                                   FFTW_ESTIMATE | FFTW_PRESERVE_INPUT );
-      
-  DEBUG("IFFT: Finished set up...");
+  DEBUG("IFFTComplex: Finished set up...");
 }
 
-void IFFT::process(const MatrixXR& frames, MatrixXC* ffts){
-  (*ffts).resize(frames.rows(), _fftSize/2 + 1);
+template<typename FrameMatrixType>
+void IFFTComplex::process(const FrameMatrixType& frames, MatrixXC* ffts){
+  (*ffts).resize(frames.rows(), _fftSize);
 
   for (int i = 0; i < frames.rows(); i++){    
     // Fill the buffer with zeros
-    Eigen::Map<MatrixXR>(_in, 1, _fftSize) = MatrixXR::Zero(1, _fftSize);
+    Eigen::Map<MatrixXC>(reinterpret_cast< Complex* >(_in), 1, _fftSize) = MatrixXC::Zero(1, _fftSize);
     
     // Put the data in _in
     if(_zeroPhase){
 
       int half_plus = ceil((Real)_frameSize / 2.0);
       int half_minus = floor((Real)_frameSize / 2.0);
-      
+
       // Put second half of the frame at the beginning 
-      Eigen::Map<MatrixXR>(_in, 1, _fftSize).block(0, 0, 1, half_plus) = frames.row(i).block(0, half_minus, 1, half_plus);
+      Eigen::Map<MatrixXC>(reinterpret_cast< Complex* >(_in), 1, _fftSize).block(0, 0, 1, half_plus) = frames.row(i).block(0, half_minus, 1, half_plus).template cast<Complex>();
       
       // and first half of the frame at the end
-      Eigen::Map<MatrixXR>(_in, 1, _fftSize).block(0, _fftSize - half_minus, 1, half_minus) = frames.row(i).block(0, 0, 1, half_minus);
+      Eigen::Map<MatrixXC>(reinterpret_cast< Complex* >(_in), 1, _fftSize).block(0, _fftSize - half_minus, 1, half_minus) = frames.row(i).block(0, 0, 1, half_minus).template cast<Complex>();
 
 
     }else{
 
       // Put all of the frame at the beginning
-      Eigen::Map<MatrixXR>(_in, 1, _fftSize).block(0, 0, 1, _frameSize) = frames.row(i);
+      Eigen::Map<MatrixXC>(reinterpret_cast< Complex* >(_in), 1, _fftSize).block(0, 0, 1, _frameSize) = frames.row(i).template cast<Complex>();
     }
     // Process the data
     fftwf_execute(_fftplan);
 
     // Take the data from _out
-    (*ffts).row(i) = Eigen::Map<MatrixXC>(reinterpret_cast< Complex* >(_out), 1, _fftSize/2+1);
+    (*ffts).row(i) = Eigen::Map<MatrixXC>(reinterpret_cast< Complex* >(_out), 1, _fftSize);
   }
 }
 
-void IFFT::reset(){
+void IFFTComplex::process(const MatrixXR& frames, MatrixXC* ffts){
+  process<MatrixXR>(frames, ffts);
 }
 
-int IFFT::frameSize() const{
+void IFFTComplex::process(const MatrixXC& frames, MatrixXC* ffts){
+  process<MatrixXC>(frames, ffts);
+}
+
+void IFFTComplex::reset(){
+}
+
+int IFFTComplex::frameSize() const{
   return _frameSize;
 }
 
-int IFFT::fftSize() const{
+int IFFTComplex::fftSize() const{
   return _fftSize;
 }

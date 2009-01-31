@@ -56,8 +56,8 @@ void FFTComplex::setup(){
   _in = (fftwf_complex*) fftwf_malloc(sizeof(fftwf_complex) * _fftSize);
   _out = (fftwf_complex*) fftwf_malloc(sizeof(fftwf_complex) * _fftSize);
     
-  _fftplan = fftw_plan_dft_1d( _fftSize, _in, _out,
-                               FFTW_FORWARD, FFTW_ESTIMATE );
+  _fftplan = fftwf_plan_dft_1d( _fftSize, _in, _out,
+                                FFTW_FORWARD, FFTW_ESTIMATE );
   
   DEBUG("FFTComplex: Finished set up...");
 }

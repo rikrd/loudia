@@ -23,7 +23,7 @@
 #include "debug.h"
 
 #include "window.h"
-#include "fft.h"
+#include "fftcomplex.h"
 
 class SpectralReassignment{
 protected:
@@ -36,7 +36,7 @@ protected:
   Window _windowIntegAlgo;
   Window _windowDerivAlgo;
 
-  FFT _fftAlgo;
+  FFTComplex _fftAlgo;
 
   MatrixXC _window;
   MatrixXC _windowInteg;

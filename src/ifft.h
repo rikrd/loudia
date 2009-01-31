@@ -29,22 +29,19 @@ protected:
   int _frameSize;
   int _fftSize;
   bool _zeroPhase;
- 
-  fftwf_complex* _in;
+
+  Real* _in;
+  
   fftwf_complex* _out;
 
   fftwf_plan _fftplan;
   
-  template <typename FrameMatrixType>
-  void process(const FrameMatrixType& fft, MatrixXC* frames);
-
 
 public:
-  IFFT(int fftSize, int frameSize, bool zeroPhase = true);
+  IFFT(int frameSize, int fftSize, bool zeroPhase = true);
   ~IFFT();
   
-  void process(const MatrixXC& fft, MatrixXC* frames);
-  void process(const MatrixXR& fft, MatrixXC* frames);
+  void process(const MatrixXR& frames, MatrixXC* fft);
   
   void setup();
   void reset();
@@ -53,4 +50,4 @@ public:
   int fftSize() const;
 };
 
-#endif  /* FFT_H */
+#endif  /* IFFT_H */

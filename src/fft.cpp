@@ -56,7 +56,7 @@ void FFT::setup(){
   _in = (Real*) fftwf_malloc(sizeof(Real) * _fftSize);
   _out = (fftwf_complex*) fftwf_malloc(sizeof(fftwf_complex) * _fftSize/2+1);
   
-  _fftplan = fftw_plan_dft_r2c_1d( _fftSize, _in_real, _out_complex,
+  _fftplan = fftwf_plan_dft_r2c_1d( _fftSize, _in, _out,
                                    FFTW_ESTIMATE | FFTW_PRESERVE_INPUT );
       
   DEBUG("FFT: Finished set up...");
@@ -67,25 +67,25 @@ void FFT::process(const MatrixXR& frames, MatrixXC* ffts){
 
   for (int i = 0; i < frames.rows(); i++){    
     // Fill the buffer with zeros
-    Eigen::Map<MatrixXR>(_in), 1, _fftSize) = MatrixXR::Zero(1, _fftSize);
+    Eigen::Map<MatrixXR>(_in, 1, _fftSize) = MatrixXR::Zero(1, _fftSize);
     
     // Put the data in _in
     if(_zeroPhase){
 
       int half_plus = ceil((Real)_frameSize / 2.0);
       int half_minus = floor((Real)_frameSize / 2.0);
-
+      
       // Put second half of the frame at the beginning 
-      Eigen::Map<MatrixXR>(_in), 1, _fftSize).block(0, 0, 1, half_plus) = frames.row(i).block(0, half_minus, 1, half_plus);
+      Eigen::Map<MatrixXR>(_in, 1, _fftSize).block(0, 0, 1, half_plus) = frames.row(i).block(0, half_minus, 1, half_plus);
       
       // and first half of the frame at the end
-      Eigen::Map<MatrixXR>(_in), 1, _fftSize).block(0, _fftSize - half_minus, 1, half_minus) = frames.row(i).block(0, 0, 1, half_minus)();
+      Eigen::Map<MatrixXR>(_in, 1, _fftSize).block(0, _fftSize - half_minus, 1, half_minus) = frames.row(i).block(0, 0, 1, half_minus);
 
 
     }else{
 
       // Put all of the frame at the beginning
-      Eigen::Map<MatrixXR>(_in), 1, _fftSize).block(0, 0, 1, _frameSize) = frames.row(i);
+      Eigen::Map<MatrixXR>(_in, 1, _fftSize).block(0, 0, 1, _frameSize) = frames.row(i);
     }
     // Process the data
     fftwf_execute(_fftplan);
