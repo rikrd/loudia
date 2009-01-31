@@ -19,33 +19,28 @@
 #include "typedefs.h"
 #include "debug.h"
 
-#include <Eigen/Core>
-#include <Eigen/Array>
-#include <iostream>
-
 #include "fft.h"
-
-
-
-
 
 using namespace std;
 
 // import most common Eigen types 
 using namespace Eigen;
 
-FFT::FFT(int frameSize, int fftSize, bool zeroPhase) {
-  DEBUG("FFT: Constructor frameSize: " << frameSize << ", fftSize: " << fftSize << ", zeroPhase: " << zeroPhase);
+FFT::FFT(int frameSize, int fftSize, bool zeroPhase) :
+  _frameSize( frameSize ),
+  _fftSize( fftSize ),
+  _zeroPhase( zeroPhase )
+{
+  DEBUG("FFT: Constructor frameSize: " << frameSize 
+        << ", fftSize: " << fftSize 
+        << ", zeroPhase: " << zeroPhase);
 
   if(_fftSize < _frameSize){
     // Throw exception, the FFT size must be greater or equal than the input size
   }
-
-  _frameSize = frameSize;
-  _fftSize = fftSize;
-  _zeroPhase = zeroPhase;
-
+  
   setup();
+  
   DEBUG("FFT: Constructed");
 }
 

@@ -22,18 +22,7 @@
 #include "typedefs.h"
 #include "debug.h"
 
-#include <Eigen/Core>
-#include <Eigen/Array>
-#include <iostream>
-
 #include <fftw3.h>
-
-
-
-//using namespace std;
-
-// import most common Eigen types 
-//using namespace Eigen;
 
 class FFT{
 protected:
