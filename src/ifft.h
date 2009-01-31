@@ -16,32 +16,35 @@
 ** Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */                                                                          
 
-#ifndef FFT_H
-#define FFT_H
+#ifndef IFFT_H
+#define IFFT_H
 
 #include "typedefs.h"
 #include "debug.h"
 
 #include <fftw3.h>
 
-class FFT{
+class IFFT{
 protected:
   int _frameSize;
   int _fftSize;
   bool _zeroPhase;
-
-  fftwf_real* _in;
-  
+ 
+  fftwf_complex* _in;
   fftwf_complex* _out;
 
   fftwf_plan _fftplan;
   
+  template <typename FrameMatrixType>
+  void process(const FrameMatrixType& fft, MatrixXC* frames);
+
 
 public:
-  FFT(int frameSize, int fftSize, bool zeroPhase = true);
-  ~FFT();
+  IFFT(int fftSize, int frameSize, bool zeroPhase = true);
+  ~IFFT();
   
-  void process(const MatrixXR& frames, MatrixXC* fft);
+  void process(const MatrixXC& fft, MatrixXC* frames);
+  void process(const MatrixXR& fft, MatrixXC* frames);
   
   void setup();
   void reset();
