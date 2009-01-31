@@ -80,7 +80,7 @@ if 'peaki_mags' in all_processes:
     silentFrames = 3
     minPeakWidth = 4 * int(fftSize / frameSize) # bins for Hamming
     minPeakContrast = 0.0
-    maxFreqBinChange = 2 * int(fftSize / frameSize)
+    maxFreqBinChange = 1 * fftSize / frameSize
     windowType = ricaudio.Window.HAMMING
     
     peaker = ricaudio.PeakDetect( maxPeakCount, minPeakWidth, minPeakContrast )
@@ -93,6 +93,7 @@ trajsMags = []
 specs = []
 specsSynth = []
 specsResid = []
+specsMagsResid = []
 
 for frame in stream:
     fft = scipy.array(frame['fft'][:plotSize], dtype = scipy.complex64)
@@ -122,6 +123,8 @@ for frame in stream:
         specSynth = specSynth[:,:plotSize]
 
         specMag = scipy.resize(spec, (1, spec.shape[0]))
+
+        specMagResid = ricaudio.dbToMag( specMag ) - specSynth
         
         specResid = ricaudio.magToDb(ricaudio.dbToMag( specMag ) - specSynth)[0,:]
         
@@ -143,7 +146,8 @@ for frame in stream:
 
         trajPos = trajLocs[trajLocs > 0]
         trajMags = trajMags[trajLocs > 0]
-                
+
+        specsMagsResid.append( specMagResid[0,:] )
 
     if interactivePlotting:
         for subplot, processes in subplots.items():
@@ -248,6 +252,7 @@ trajs = extractTrajs(trajsLocs, trajsMags)
 specsSynth = scipy.array( specsSynth )
 specs = scipy.array( specs )
 specsDiff = scipy.array( specsResid )
+specsMagsResid = scipy.array( specsMagsResid )
 
 if plotDetSpecSynth:
     pylab.figure()
@@ -285,8 +290,8 @@ if plotSpectrumTrajs:
 if plotOdf:
     odf = ricaudio.ODFComplex( fftSize )
     odfValue = []
-    for i in range(specsDiff.shape[0] - 10):
-        val = odf.process(specsDiff[i:i+3,:])[0,0]
+    for i in range(specsMagsResid.shape[0] - 10):
+        val = odf.process(specsMagsResid[i:i+3,:])[0,0]
         odfValue.append(val)
 
     pylab.figure()
