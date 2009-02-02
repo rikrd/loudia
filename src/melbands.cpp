@@ -19,7 +19,6 @@
 #include "typedefs.h"
 #include "debug.h"
 
-#include <cmath>
 #include <vector>
 
 #include "melbands.h"
@@ -134,10 +133,10 @@ void MelBands::setup(){
   //centersLinear *= stepSpectrum;
   
   // start bins of filters
-  MatrixXi startBins = startsLinear.cwise().ceil();
+  MatrixXI startBins = startsLinear.cwise().ceil().cast<Integer>();
 
   // stop bins of filters
-  MatrixXi stopBins = stopsLinear.cwise().ceil();
+  MatrixXI stopBins = stopsLinear.cwise().ceil().cast<Integer>();
 
   std::vector<MatrixXR> weights;
 
