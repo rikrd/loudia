@@ -51,6 +51,7 @@ FFT::~FFT(){
   DEBUG("FFT: Destroyed plan");
   fftwf_free( _in ); 
   DEBUG("FFT: Destroyed in");
+
   DEBUG("FFT: Destroying out");
   fftwf_free( _out );
   DEBUG("FFT: Destroyed out");
