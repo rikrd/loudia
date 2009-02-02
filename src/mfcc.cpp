@@ -65,11 +65,10 @@ void MFCC::setup(){
 
 
 void MFCC::process(const MatrixXR& spectrum, MatrixXR* mfccCoeffs){
-  DEBUG("MFCC: Processing Melbands");
-
   (*mfccCoeffs).resize(spectrum.rows(), _numCoeffs);
   
   for ( int i = 0; i < spectrum.rows(); i++) {  
+    DEBUG("MFCC: Processing Melbands");
     // Process the mel bands on the power of the spectrum
     _melbands.process(spectrum.row(i).cwise().square(), &_bands);
     
@@ -87,8 +86,9 @@ void MFCC::process(const MatrixXR& spectrum, MatrixXR* mfccCoeffs){
     _dct.process(_bands, &_coeffs);
 
     (*mfccCoeffs).row(i) = _coeffs;
-  DEBUG("MFCC: Finished Processing");
   }
+
+  DEBUG("MFCC: Finished Processing");
 }
 
 void MFCC::reset(){
