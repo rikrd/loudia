@@ -29,7 +29,8 @@ using namespace Eigen;
 FFT::FFT(int frameSize, int fftSize, bool zeroPhase) :
   _frameSize( frameSize ),
   _fftSize( fftSize ),
-  _zeroPhase( zeroPhase )
+  _zeroPhase( zeroPhase ),
+  _halfSize( fftSize / 2 + 1)
 {
   DEBUG("FFT: Constructor frameSize: " << frameSize 
         << ", fftSize: " << fftSize 
@@ -45,25 +46,30 @@ FFT::FFT(int frameSize, int fftSize, bool zeroPhase) :
 }
 
 FFT::~FFT(){
+  DEBUG("FFT: Destroying...");
   fftwf_destroy_plan( _fftplan );
+  DEBUG("FFT: Destroyed plan");
   fftwf_free( _in ); 
+  DEBUG("FFT: Destroyed in");
+  DEBUG("FFT: Destroying out");
   fftwf_free( _out );
+  DEBUG("FFT: Destroyed out");
 }
 
 void FFT::setup(){
   DEBUG("FFT: Setting up...");
   
   _in = (Real*) fftwf_malloc(sizeof(Real) * _fftSize);
-  _out = (fftwf_complex*) fftwf_malloc(sizeof(fftwf_complex) * _fftSize/2+1);
+  _out = (fftwf_complex*) fftwf_malloc(sizeof(fftwf_complex) * _halfSize);
   
   _fftplan = fftwf_plan_dft_r2c_1d( _fftSize, _in, _out,
-                                   FFTW_ESTIMATE | FFTW_PRESERVE_INPUT );
+                                    FFTW_ESTIMATE | FFTW_PRESERVE_INPUT );
       
   DEBUG("FFT: Finished set up...");
 }
 
 void FFT::process(const MatrixXR& frames, MatrixXC* ffts){
-  (*ffts).resize(frames.rows(), _fftSize/2 + 1);
+  (*ffts).resize(frames.rows(), _halfSize);
 
   for (int i = 0; i < frames.rows(); i++){    
     // Fill the buffer with zeros
@@ -91,7 +97,7 @@ void FFT::process(const MatrixXR& frames, MatrixXC* ffts){
     fftwf_execute(_fftplan);
 
     // Take the data from _out
-    (*ffts).row(i) = Eigen::Map<MatrixXC>(reinterpret_cast< Complex* >(_out), 1, _fftSize/2+1);
+    (*ffts).row(i) = Eigen::Map<MatrixXC>(reinterpret_cast< Complex* >(_out), 1, _halfSize);
   }
 }
 

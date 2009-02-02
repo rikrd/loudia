@@ -30,10 +30,10 @@ protected:
   int _fftSize;
   bool _zeroPhase;
 
-  Real* _in;
+  int _halfSize;
   
+  Real* _in;
   fftwf_complex* _out;
-
   fftwf_plan _fftplan;
   
 
