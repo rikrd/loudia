@@ -64,8 +64,7 @@ void NMF::process(const MatrixXR& spectrumAbs, MatrixXR* components, MatrixXR* g
   const int cols = spectrumAbs.cols();
   
   // The X matrix is spectrumAbs.transpose()
-  MatrixXR spectrum = spectrumAbs;
-  spectrum.normalize();
+  // Some beleive it can be useful to normalize
   
   // The W matrix is (*components).transpose()
   (*components).resize(_numComponents, cols);
@@ -84,18 +83,18 @@ void NMF::process(const MatrixXR& spectrumAbs, MatrixXR* components, MatrixXR* g
   (*gains) = (*gains).cwise().abs();
   
   for (int iter = 0; iter < _maxIterations; iter ++) {
-    MatrixXR xOverWH = spectrumAbs.transpose().cwise() / (((*components).transpose() * (*gains).transpose()).cwise() + _eps);
+    _xOverWH = spectrumAbs.transpose().cwise() / (((*components).transpose() * (*gains).transpose()).cwise() + _eps);
     
     // Multiplicative update rules of W and H by (Lee and Seung 2001)
-    (*components).transpose().cwise() *= (xOverWH * (*gains)).cwise() / (MatrixXR::Ones(cols, 1) * (*gains).colwise().sum());
+    (*components).transpose().cwise() *= (_xOverWH * (*gains)).cwise() / (MatrixXR::Ones(cols, 1) * (*gains).colwise().sum());
     
-    (*gains).transpose().cwise() *= ((*components) * xOverWH).cwise() / ((*components).transpose().colwise().sum().transpose() * MatrixXR::Ones(1, rows));
+    (*gains).transpose().cwise() *= ((*components) * _xOverWH).cwise() / ((*components).transpose().colwise().sum().transpose() * MatrixXR::Ones(1, rows));
 
     // Renormalize so rows of H have constant energy
-    MatrixXR norms = (*gains).colwise().norm();
+    _norms = (*gains).colwise().norm();
     
-    (*components).transpose().cwise() *= MatrixXR::Ones(cols, 1) * norms;
-    (*gains).transpose().cwise() /= norms.transpose() * MatrixXR::Ones(1, rows);
+    (*components).transpose().cwise() *= MatrixXR::Ones(cols, 1) * _norms;
+    (*gains).transpose().cwise() /= _norms.transpose() * MatrixXR::Ones(1, rows);
   }
   
   DEBUG("NMF: Finished Processing");
