@@ -39,6 +39,7 @@ import_array();
 #include "odfcog.h"
 #include "onsetcomplex.h"
 #include "lpc.h"
+#include "nmf.h"
 
 #include "melscales.h"
 #include "utils.h"
@@ -70,6 +71,7 @@ using namespace std;
 %include "odfcog.h"
 %include "onsetcomplex.h"
 %include "lpc.h"
+%include "nmf.h"
 
 %include "melscales.h"
 %include "utils.h"
