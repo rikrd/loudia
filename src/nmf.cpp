@@ -22,6 +22,7 @@
 #include "nmf.h"
 
 #include "utils.h"
+#include <Eigen/LU>
 
 using namespace std;
 
@@ -74,9 +75,9 @@ void NMF::process(const MatrixXR& spectrumAbs, MatrixXR* components, MatrixXR* g
   for (int iter = 0; iter < _maxIterations; iter ++) {
     MatrixXR xOverWH = spectrumAbs.transpose().cwise() / ((*gains).transpose() * (*components).transpose());
     
-    (*components).transpose().cwise() *= ((*gains) * xOverWH) / ((*gains).transpose() * MatrixXR::Ones(cols, rows));
-    
-    (*gains).transpose().cwise() *= (xOverWH * (*components)) / (MatrixXR::Ones(cols, rows) * (*components).transpose());
+    (*components).transpose().cwise() *= ((*gains) * xOverWH) * ((*gains).transpose() * MatrixXR::Ones(cols, rows)).inverse();
+      
+    (*gains).transpose().cwise() *= (xOverWH * (*components)) * (MatrixXR::Ones(cols, rows) * (*components).transpose()).inverse();
     
   }
   
