@@ -31,10 +31,12 @@ protected:
   int _maxIterations;
   Real _maxError;
   
+  Real _eps;
+  
   // Internal variables
 
 public:
-  NMF(int fftSize, int numComponents, int maxIterations = 100, Real maxError = 10);
+  NMF(int fftSize, int numComponents, int maxIterations = 10, Real maxError = 10, Real eps = 1e-9);
 
   ~NMF();
 

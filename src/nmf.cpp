@@ -29,11 +29,12 @@ using namespace std;
 // import most common Eigen types 
 using namespace Eigen;
 
-NMF::NMF(int fftSize, int numComponents, int maxIterations, Real maxError) :
+NMF::NMF(int fftSize, int numComponents, int maxIterations, Real maxError, Real eps) :
   _fftSize(fftSize),
   _numComponents(numComponents),
   _maxIterations(maxIterations),
-  _maxError(maxError)
+  _maxError(maxError),
+  _eps(eps)
 {
   
   DEBUG("NMF: Constructor fftSize: " << _fftSize
@@ -63,22 +64,38 @@ void NMF::process(const MatrixXR& spectrumAbs, MatrixXR* components, MatrixXR* g
   const int cols = spectrumAbs.cols();
   
   // The X matrix is spectrumAbs.transpose()
-
-  // The H matrix is (*components).transpose()
-  (*components).resize(rows, _numComponents);
+  MatrixXR spectrum = spectrumAbs;
+  spectrum.normalize();
   
   // The W matrix is (*gains).transpose()
   (*gains).resize(_numComponents, cols);
-
+  
+  // The H matrix is (*components).transpose()
+  (*components).resize(rows, _numComponents);
+  
   DEBUG("NMF: Components resized rows: " << rows << " halfCols: " << halfCols);
 
+  // Initializing W and H
+  // TODO: initialize with a Normal distribution
+  (*gains).setRandom();
+  (*gains) = (*gains).cwise().abs();
+
+  (*components).setRandom();
+  (*components) = (*components).cwise().abs();
+  
   for (int iter = 0; iter < _maxIterations; iter ++) {
-    MatrixXR xOverWH = spectrumAbs.transpose().cwise() / ((*gains).transpose() * (*components).transpose());
+    MatrixXR xOverWH = spectrumAbs.transpose().cwise() / (((*gains).transpose() * (*components).transpose()).cwise() + _eps);
     
-    (*components).transpose().cwise() *= ((*gains) * xOverWH) * ((*gains).transpose() * MatrixXR::Ones(cols, rows)).inverse();
-      
-    (*gains).transpose().cwise() *= (xOverWH * (*components)) * (MatrixXR::Ones(cols, rows) * (*components).transpose()).inverse();
+    // Multiplicative update rules of W and H by (Lee and Seung 2001)
+    (*gains).transpose().cwise() *= (xOverWH * (*components)).cwise() / (MatrixXR::Ones(cols, 1) * (*components).colwise().sum());
     
+    (*components).transpose().cwise() *= ((*gains) * xOverWH).cwise() / ((*gains).transpose().colwise().sum().transpose() * MatrixXR::Ones(1, rows));
+
+    // Renormalize so rows of H have constant energy
+    MatrixXR norms = (*components).colwise().norm();
+    
+    (*gains).transpose().cwise() *= MatrixXR::Ones(cols, 1) * norms;
+    (*components).transpose().cwise() /= norms.transpose() * MatrixXR::Ones(1, rows);
   }
   
   DEBUG("NMF: Finished Processing");
