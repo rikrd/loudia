@@ -16,7 +16,7 @@ a_sine = a_sine.reshape((1, a_sine.shape[0]))
 
 # Ricaudio's solution # --------------------------------- #
 w = ricaudio.Window(frameSize, 0)
-m = ricaudio.FFT(frameSize, fftSize, True)
+m = ricaudio.FFT(frameSize, fftSize, False)
 
 r_zeros = m.process(w.process(a_zeros))
 r_ones = m.process(w.process(a_ones))
@@ -32,10 +32,10 @@ s_random = scipy.fft(a_random, fftSize)
 s_sine = scipy.fft(a_sine, fftSize)
 # -------------------------------------------------------- #
 
-print scipy.allclose(r_zeros, s_zeros)
-print scipy.allclose(r_ones, s_ones)
-print scipy.allclose(r_random, s_random)
-print scipy.allclose(r_sine, s_sine)
+print scipy.allclose(r_zeros, s_zeros[:,:fftSize/2+1])
+print scipy.allclose(r_ones, s_ones[:,:fftSize/2+1])
+print scipy.allclose(r_random, s_random[:,:fftSize/2+1])
+print scipy.allclose(r_sine, s_sine[:,:fftSize/2+1])
 
 r_abs = scipy.absolute(r_sine).T
 r_ang = scipy.angle(r_sine).T

@@ -16,53 +16,38 @@
 ** Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */                                                                          
 
-#ifndef SPECTRALREASSIGNMENT_H
-#define SPECTRALREASSIGNMENT_H
+#ifndef IFFT_H
+#define IFFT_H
 
 #include "typedefs.h"
 #include "debug.h"
 
-#include "window.h"
-#include "fftcomplex.h"
+#include <fftw3.h>
 
-class SpectralReassignment{
+class IFFT{
 protected:
   int _frameSize;
   int _fftSize;
-  Real _samplerate;
-  Window::WindowType _windowType;
+  bool _zeroPhase;
+
+  Real* _in;
   
-  Window _windowAlgo;
-  Window _windowIntegAlgo;
-  Window _windowDerivAlgo;
+  fftwf_complex* _out;
 
-  FFTComplex _fftAlgo;
-
-  MatrixXC _window;
-  MatrixXC _windowInteg;
-  MatrixXC _windowDeriv;
-
-  MatrixXR _fftAbs2;
-  MatrixXC _fftInteg;
-  MatrixXC _fftDeriv;
-
-  MatrixXR _time;
-  MatrixXR _freq;
- 
-public: 
-  SpectralReassignment(int frameSize, int fftSize, Real samplerate, Window::WindowType windowType = Window::RECTANGULAR);
-  ~SpectralReassignment();
+  fftwf_plan _fftplan;
   
-  void process(const MatrixXR& frames,
-               MatrixXC* fft, MatrixXR* reassignTime, MatrixXR* reassignFreq);
+
+public:
+  IFFT(int frameSize, int fftSize, bool zeroPhase = true);
+  ~IFFT();
+  
+  void process(const MatrixXR& frames, MatrixXC* fft);
   
   void setup();
   void reset();
 
   int frameSize() const;
   int fftSize() const;
-
-  Window::WindowType windowType() const;
 };
 
-#endif  /* SPECTRALREASSIGNMENT_H */
+#endif  /* IFFT_H */
