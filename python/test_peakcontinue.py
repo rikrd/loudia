@@ -24,16 +24,15 @@ a_sine += (a_random - 0.5) * 1.0
 # Ricaudio's solution # --------------------------------- #
 window = ricaudio.Window(frameSize, ricaudio.Window.HAMMING)
 fft = ricaudio.FFT(frameSize, fftSize)
-peaks = ricaudio.PeakDetect(fftSize / 3, 4)
+peaks = ricaudio.PeakDetect(5, 4)
 peaksinterp = ricaudio.PeakInterpolate()
-trajs = ricaudio.PeakContinue(fftSize / 3, 4)
+trajs = ricaudio.PeakContinue(5, 4, 3)
 
 
 r_sine_windowed = window.process(a_sine)
 r_sine_mag = fft.process(r_sine_windowed)
-r_sine_mag = r_sine_mag[:,:scipy.ceil(r_sine_mag.shape[1]/2)]
-r_sine_peakpos, r_sine_peakmag = peaks.process(r_sine_mag)
-r_sine_peakipos, r_sine_peakimag = peaksinterp.process(r_sine_mag, r_sine_peakpos, r_sine_peakmag)
+r_sine_peakpos, r_sine_peakmag, r_sine_peakphase = peaks.process(r_sine_mag)
+r_sine_peakipos, r_sine_peakimag, r_sine_peakphasei = peaksinterp.process(r_sine_mag, r_sine_peakpos, r_sine_peakmag, r_sine_peakphase)
 r_sine_trajpos, r_sine_trajmag = trajs.process(r_sine_mag, r_sine_peakipos, r_sine_peakimag)
 # -------------------------------------------------------- #
 
