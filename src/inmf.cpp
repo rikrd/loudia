@@ -77,8 +77,7 @@ void INMF::process(const MatrixXR& v, MatrixXR* w, MatrixXR* h) {
   }
 
   // The X matrix is spectrumAbs.transpose()
-  // Some beleive it can be useful to normalize
-  
+  // Some beleive it can be useful to normalize  
   // The W matrix is (*w).transpose()
   (*w) = _W;
   
@@ -145,14 +144,14 @@ void INMF::process(const MatrixXR& v, MatrixXR* w, MatrixXR* h) {
     // TODO: when Eigen will have rotate use this
     //_H.rowwise().rotate(-1);
     rowShift(&_H, -1);
-    _H.row(_numPast - 1) = (*h).row( row );
+    _H.row( _numPast - 1 ) = (*h).row( row );
 
     DEBUG("INMF: Shift and update V");
     // Update the past V
     // TODO: when Eigen will have rotate use this
     //_V.rowwise().rotate(-1);
     rowShift(&_V, -1);
-    _V.row(_numPast - 1) = v.row( row );
+    _V.row( _numPast - 1 ) = v.row( row );
     
     DEBUG("INMF: Keep W");
     // Keep the past W
@@ -171,6 +170,6 @@ void INMF::reset() {
   _H.setRandom();
   _H = _H.cwise().abs();
 
-  _V.setZero();
-  
+  _V.setRandom();  
+  _V = _V.cwise().abs();
 }
