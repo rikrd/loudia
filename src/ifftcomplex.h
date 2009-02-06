@@ -26,8 +26,8 @@
 
 class IFFTComplex{
 protected:
-  int _frameSize;
   int _fftSize;
+  int _frameSize;
   bool _zeroPhase;
 
   fftwf_complex* _in;
