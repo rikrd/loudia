@@ -42,6 +42,7 @@ import_array();
 #include "onsetcomplex.h"
 #include "lpc.h"
 #include "nmf.h"
+#include "inmf.h"
 
 #include "melscales.h"
 #include "utils.h"
@@ -76,6 +77,7 @@ using namespace std;
 %include "onsetcomplex.h"
 %include "lpc.h"
 %include "nmf.h"
+%include "inmf.h"
 
 %include "melscales.h"
 %include "utils.h"
