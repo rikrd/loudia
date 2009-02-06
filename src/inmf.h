@@ -31,6 +31,8 @@ protected:
   int _maxIterations;
   Real _maxError;
 
+  Real _eps;
+
   int _numPast;
   int _numNew;
 
@@ -39,8 +41,6 @@ protected:
   // into account
   Real _pastCoeff;
   Real _newCoeff;
-  
-  Real _eps;
   
   // Internal variables
   MatrixXR _H, _V, _W, _VH, _HH;
