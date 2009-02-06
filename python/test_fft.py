@@ -4,6 +4,7 @@
 import scipy
 import ricaudio
 
+plot = False
 frameSize = 121
 fftSize = 512
 samplerate = 8000
@@ -26,35 +27,38 @@ r_sine = m.process(w.process(a_sine))
 
 
 # Scipy solution # ---------------------------------- #
-s_zeros = scipy.fft(a_zeros, fftSize)
-s_ones = scipy.fft(a_ones, fftSize)
-s_random = scipy.fft(a_random, fftSize)
-s_sine = scipy.fft(a_sine, fftSize)
+s_zeros = scipy.fft(a_zeros, fftSize)[:,:fftSize/2+1]
+s_ones = scipy.fft(a_ones, fftSize)[:,:fftSize/2+1]
+s_random = scipy.fft(a_random, fftSize)[:,:fftSize/2+1]
+s_sine = scipy.fft(a_sine, fftSize)[:,:fftSize/2+1]
 # -------------------------------------------------------- #
 
-print scipy.allclose(r_zeros, s_zeros[:,:fftSize/2+1])
-print scipy.allclose(r_ones, s_ones[:,:fftSize/2+1])
-print scipy.allclose(r_random, s_random[:,:fftSize/2+1])
-print scipy.allclose(r_sine, s_sine[:,:fftSize/2+1])
+atol = 1e-5
 
-r_abs = scipy.absolute(r_sine).T
-r_ang = scipy.angle(r_sine).T
-r_max = max(r_abs)
+print scipy.allclose(r_zeros, s_zeros, atol = atol)
+print scipy.allclose(r_ones, s_ones, atol = atol)
+print scipy.allclose(r_random, s_random, atol = atol)
+print scipy.allclose(r_sine, s_sine, atol = atol)
 
-s_abs = scipy.absolute(s_sine).T
-s_ang = scipy.angle(s_sine).T
-s_max = max(s_abs)
+if plot:
+    r_abs = scipy.absolute(r_sine).T
+    r_ang = scipy.angle(r_sine).T
+    r_max = max(r_abs)
+    
+    s_abs = scipy.absolute(s_sine).T
+    s_ang = scipy.angle(s_sine).T
+    s_max = max(s_abs)
 
-import pylab
-pylab.subplot(211)
-pylab.hold(True)
-pylab.plot(r_abs, label = 'Ricaudio')
-pylab.plot(s_abs, label = 'Scipy')
-
-pylab.subplot(212)
-pylab.hold(True)
-pylab.plot(r_abs*r_ang/r_max, label = 'Ricaudio')
-pylab.plot(s_abs*s_ang/s_max, label = 'Scipy')
-
-pylab.legend()
-pylab.show()
+    import pylab
+    pylab.subplot(211)
+    pylab.hold(True)
+    pylab.plot(r_abs, label = 'Ricaudio')
+    pylab.plot(s_abs, label = 'Scipy')
+    
+    pylab.subplot(212)
+    pylab.hold(True)
+    pylab.plot(r_abs*r_ang/r_max, label = 'Ricaudio')
+    pylab.plot(s_abs*s_ang/s_max, label = 'Scipy')
+    
+    pylab.legend()
+    pylab.show()

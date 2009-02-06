@@ -4,7 +4,7 @@
 import scipy
 import ricaudio
 
-plot = True
+plot = False
 frameSize = 256
 fftSize = 512
 samplerate = 8000
