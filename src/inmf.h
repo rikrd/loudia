@@ -31,6 +31,9 @@ protected:
   int _maxIterations;
   Real _maxError;
 
+  int _numPast;
+  int _numNew;
+
   // Coefficients between 0 and 1 which represent
   // how much should the past and the new be taken
   // into account
@@ -44,7 +47,7 @@ protected:
   MatrixXR _V;
 
 public:
-  INMF(int fftSize, int numComponents, Real  int maxIterations = 10, Real maxError = 10, Real eps = 1e-9);
+  INMF(int fftSize, int numComponents, int numPast, Real pastCoeff, Real newCoeff,  int maxIterations = 10, Real maxError = 10, Real eps = 1e-9);
 
   ~INMF();
 

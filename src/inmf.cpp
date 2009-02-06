@@ -29,18 +29,20 @@ using namespace std;
 // import most common Eigen types 
 using namespace Eigen;
 
-INMF::INMF(int fftSize, int numComponents, Real pastCoeff, Real newCoeff, int maxIterations, Real maxError, Real eps) :
+INMF::INMF(int fftSize, int numComponents, int numPast, Real pastCoeff, Real newCoeff, int maxIterations, Real maxError, Real eps) :
   _fftSize(fftSize),
   _numComponents(numComponents),
   _maxIterations(maxIterations),
   _maxError(maxError),
   _eps(eps),
+  _numPast(numPast),
   _pastCoeff(pastCoeff),
   _newCoeff(newCoeff)
 {
   
   DEBUG("INMF: Constructor fftSize: " << _fftSize
         << " numComponents: " << _numComponents
+        << " numPast: " << _numPast
         << " pastCoeff: " << _pastCoeff
         << " newCoeff: " << _newCoeff
         << " maxIterations: " << _maxIterations
@@ -56,6 +58,9 @@ void INMF::setup() {
   // Prepare the buffers
   DEBUG("INMF: Setting up...");
   
+  _H.resize(_numPast, _numComponents);
+  _W.resize(_numComponents, _numComponents);
+
   reset();
 
   DEBUG("INMF: Finished set up...");
@@ -84,10 +89,10 @@ void INMF::process(const MatrixXR& v, MatrixXR* w, MatrixXR* h) {
   for (int row = 0; row < rows; row++ ) {
 
     // Calculate beta * VHt
-    //_VH = _pastCoeff * (_V.transpose() * _H)
+    _VH = _pastCoeff * (_V.transpose() * _H)
 
     // Calculate beta * HHt
-    //_HH = _pastCoeff * (_H.transpose() * _H);
+    _HH = _pastCoeff * (_H.transpose() * _H);
     
     for ( int iter = 0; iter < _maxIterations; iter++ ) {
       /*
@@ -106,15 +111,19 @@ void INMF::process(const MatrixXR& v, MatrixXR* w, MatrixXR* h) {
     }
 
     // Update the past H
+    // TODO: when Eigen will have rotate use this
     //_H.rowwise().rotate(-1);
-    //_H.row(_H.rows() - 1) = (*h).row( row );
+    rowRotate(_H, -1);
+    _H.row(_H.rows() - 1) = (*h).row( row );
 
     // Update the past V
+    // TODO: when Eigen will have rotate use this
     //_V.rowwise().rotate(-1);
-    //_V.row(_V.rows() - 1) = v.row( row );
+    rowRotate(_V, -1);
+    _V.row(_V.rows() - 1) = v.row( row );
     
     // Keep the past W
-    //_W = (*w);
+    _W = (*w);
   }
 
   DEBUG("INMF: Finished Processing");
