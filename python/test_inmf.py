@@ -6,7 +6,7 @@ import pylab
 
 plot = True
 
-d = ricaudio.INMF(8, 2, 10, 0.5, 0.5, 100, 1, 1e-7)
+d = ricaudio.INMF(8, 2, 10, 0.8, 15, 1, 1e-17)
 
 a = scipy.zeros((14, 8), dtype = 'f4')
 a[:4, 2] = 1
