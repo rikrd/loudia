@@ -64,6 +64,12 @@ void rowCumsum(MatrixXR* in);
 void colCumsum(MatrixXR* in);
 
 /**
+ * Calculate inplace shift of a matrix
+ */
+void rowShift(MatrixXR* in, int num);
+void colShift(MatrixXR* in, int num);
+
+/**
  * Calculate inplace range matrix
  */
 void range(Real start, Real end, int steps, MatrixXR* in);

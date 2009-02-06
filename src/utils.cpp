@@ -210,10 +210,6 @@ void reverseCols(MatrixXR* in) {
   }
 }
 
-/**
- * Convert from the b and a coefficients of an IIR filter to the
- * zeros, poles and gain of the filter
- */
 void rowCumsum(MatrixXR* in) { 
   const int rows = (*in).rows();
   
@@ -229,6 +225,27 @@ void colCumsum(MatrixXR* in) {
     (*in).col(i) += (*in).col(i-1);
   }
 }
+
+void rowShift(MatrixXR* in, int num) { 
+  const int rows = (*in).rows();
+  
+  for(int i = -num; i < rows; i++ ){
+    if(i >= 0){
+      (*in).row(i).swap((*in).row(i-num));
+    }
+  }
+}
+
+void colShift(MatrixXR* in, int num) { 
+  const int cols = (*in).cols();
+  
+  for(int i = -num; i < cols; i++ ){
+    if(i >= 0){
+      (*in).col(i).swap((*in).col(i-num));
+    }
+  }
+}
+
 
 void range(Real start, Real end, int steps, MatrixXR* in){
   const Real step = (end - start) / steps;

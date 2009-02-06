@@ -58,9 +58,10 @@ void INMF::setup() {
   // Prepare the buffers
   DEBUG("INMF: Setting up...");
   
+  _V.resize(_numPast, _fftSize);
   _H.resize(_numPast, _numComponents);
-  _W.resize(_numComponents, _numComponents);
-
+  _W.resize(_numComponents, _fftSize);
+  
   reset();
 
   DEBUG("INMF: Finished set up...");
@@ -89,7 +90,7 @@ void INMF::process(const MatrixXR& v, MatrixXR* w, MatrixXR* h) {
   for (int row = 0; row < rows; row++ ) {
 
     // Calculate beta * VHt
-    _VH = _pastCoeff * (_V.transpose() * _H)
+    _VH = _pastCoeff * (_V.transpose() * _H);
 
     // Calculate beta * HHt
     _HH = _pastCoeff * (_H.transpose() * _H);
@@ -113,13 +114,13 @@ void INMF::process(const MatrixXR& v, MatrixXR* w, MatrixXR* h) {
     // Update the past H
     // TODO: when Eigen will have rotate use this
     //_H.rowwise().rotate(-1);
-    rowRotate(_H, -1);
+    rowShift(&_H, -1);
     _H.row(_H.rows() - 1) = (*h).row( row );
 
     // Update the past V
     // TODO: when Eigen will have rotate use this
     //_V.rowwise().rotate(-1);
-    rowRotate(_V, -1);
+    rowShift(&_V, -1);
     _V.row(_V.rows() - 1) = v.row( row );
     
     // Keep the past W

@@ -43,8 +43,7 @@ protected:
   Real _eps;
   
   // Internal variables
-  MatrixXR _H;
-  MatrixXR _V;
+  MatrixXR _H, _V, _W, _VH, _HH;
 
 public:
   INMF(int fftSize, int numComponents, int numPast, Real pastCoeff, Real newCoeff,  int maxIterations = 10, Real maxError = 10, Real eps = 1e-9);
