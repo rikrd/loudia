@@ -31,21 +31,19 @@ protected:
   bool _zeroPhase;
 
   fftwf_complex* _in;
-  
   fftwf_complex* _out;
 
   fftwf_plan _fftplan;
   
   template <typename FrameMatrixType>
-  void process(const FrameMatrixType& frames, MatrixXC* fft);
-
+  void process(const FrameMatrixType& ffts, MatrixXC* frames);
 
 public:
-  IFFTComplex(int frameSize, int fftSize, bool zeroPhase = true);
+  IFFTComplex(int fftSize, int frameSize, bool zeroPhase = true);
   ~IFFTComplex();
   
-  void process(const MatrixXC& frames, MatrixXC* fft);
-  void process(const MatrixXR& frames, MatrixXC* fft);
+  void process(const MatrixXC& ffts, MatrixXC* frames);
+  void process(const MatrixXR& ffts, MatrixXC* frames);
   
   void setup();
   void reset();
