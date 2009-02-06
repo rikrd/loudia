@@ -26,22 +26,23 @@
 
 class IFFT{
 protected:
-  int _frameSize;
   int _fftSize;
+  int _frameSize;
   bool _zeroPhase;
 
-  Real* _in;
-  
-  fftwf_complex* _out;
+  int _halfSize;
+
+  fftwf_complex* _in;
+  Real* _out;
 
   fftwf_plan _fftplan;
   
 
 public:
-  IFFT(int frameSize, int fftSize, bool zeroPhase = true);
+  IFFT(int fftSize, int frameSize, bool zeroPhase = true);
   ~IFFT();
   
-  void process(const MatrixXR& frames, MatrixXC* fft);
+  void process(const MatrixXC& fft, MatrixXR* frame);
   
   void setup();
   void reset();

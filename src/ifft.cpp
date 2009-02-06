@@ -26,10 +26,11 @@ using namespace std;
 // import most common Eigen types 
 using namespace Eigen;
 
-IFFT::IFFT(int frameSize, int fftSize, bool zeroPhase) :
-  _frameSize( frameSize ),
+IFFT::IFFT(int fftSize, int frameSize, bool zeroPhase) :
   _fftSize( fftSize ),
-  _zeroPhase( zeroPhase )
+  _frameSize( frameSize ),
+  _zeroPhase( zeroPhase ),
+  _halfSize( fftSize / 2 + 1 )
 {
   DEBUG("IFFT: Constructor frameSize: " << frameSize 
         << ", fftSize: " << fftSize 
@@ -53,45 +54,44 @@ IFFT::~IFFT(){
 void IFFT::setup(){
   DEBUG("IFFT: Setting up...");
   
-  _in = (Real*) fftwf_malloc(sizeof(Real) * _fftSize);
-  _out = (fftwf_complex*) fftwf_malloc(sizeof(fftwf_complex) * _fftSize/2+1);
+  _in = (fftwf_complex*) fftwf_malloc(sizeof(fftwf_complex) * _halfSize );
+  _out = (Real*) fftwf_malloc(sizeof(Real) * _fftSize);
   
-  _fftplan = fftwf_plan_dft_r2c_1d( _fftSize, _in, _out,
-                                   FFTW_ESTIMATE | FFTW_PRESERVE_INPUT );
+  _fftplan = fftwf_plan_dft_c2r_1d( _fftSize, _in, _out,
+                                    FFTW_ESTIMATE | FFTW_PRESERVE_INPUT );
       
   DEBUG("IFFT: Finished set up...");
 }
 
-void IFFT::process(const MatrixXR& frames, MatrixXC* ffts){
-  (*ffts).resize(frames.rows(), _fftSize/2 + 1);
+void IFFT::process(const MatrixXC& ffts, MatrixXR* frames){
+  const int rows = ffts.rows();
+  
+  (*frames).resize(rows, _frameSize);
 
-  for (int i = 0; i < frames.rows(); i++){    
+  for (int i = 0; i < rows; i++){    
     // Fill the buffer with zeros
-    Eigen::Map<MatrixXR>(_in, 1, _fftSize) = MatrixXR::Zero(1, _fftSize);
+    Eigen::Map<MatrixXC>(reinterpret_cast< Complex* >(_in), 1, _halfSize) = ffts.row(i);
     
-    // Put the data in _in
+    // Process the data
+    fftwf_execute(_fftplan);
+
+    // Take the data from _out
     if(_zeroPhase){
 
       int half_plus = ceil((Real)_frameSize / 2.0);
       int half_minus = floor((Real)_frameSize / 2.0);
       
-      // Put second half of the frame at the beginning 
-      Eigen::Map<MatrixXR>(_in, 1, _fftSize).block(0, 0, 1, half_plus) = frames.row(i).block(0, half_minus, 1, half_plus);
+      // Take second half of the frame from the beginning 
+      (*frames).row(i).block(0, half_minus, 1, half_plus) = Eigen::Map<MatrixXR>(_out, 1, _fftSize).block(0, 0, 1, half_plus) / _fftSize;
       
-      // and first half of the frame at the end
-      Eigen::Map<MatrixXR>(_in, 1, _fftSize).block(0, _fftSize - half_minus, 1, half_minus) = frames.row(i).block(0, 0, 1, half_minus);
-
+      // and first half of the frame from the end
+      (*frames).row(i).block(0, 0, 1, half_minus) = Eigen::Map<MatrixXR>(_out, 1, _fftSize).block(0, _fftSize - half_minus, 1, half_minus) / _fftSize;
 
     }else{
 
-      // Put all of the frame at the beginning
-      Eigen::Map<MatrixXR>(_in, 1, _fftSize).block(0, 0, 1, _frameSize) = frames.row(i);
+      // Take all of the frame from the beginning
+      (*frames).row(i) = Eigen::Map<MatrixXR>(_out, 1, _fftSize).block(0, 0, 1, _frameSize) / _fftSize;
     }
-    // Process the data
-    fftwf_execute(_fftplan);
-
-    // Take the data from _out
-    (*ffts).row(i) = Eigen::Map<MatrixXC>(reinterpret_cast< Complex* >(_out), 1, _fftSize/2+1);
   }
 }
 

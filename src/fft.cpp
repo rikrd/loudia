@@ -30,7 +30,7 @@ FFT::FFT(int frameSize, int fftSize, bool zeroPhase) :
   _frameSize( frameSize ),
   _fftSize( fftSize ),
   _zeroPhase( zeroPhase ),
-  _halfSize( fftSize / 2 + 1)
+  _halfSize( fftSize / 2 + 1 )
 {
   DEBUG("FFT: Constructor frameSize: " << frameSize 
         << ", fftSize: " << fftSize 
