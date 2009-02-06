@@ -59,7 +59,7 @@ void NMF::setup() {
 
 
 void NMF::process(const MatrixXR& spectrumAbs, MatrixXR* components, MatrixXR* gains) {
-  DEBUG("NMF: Processing windowed");
+  DEBUG("NMF: Processing ...");
   const int rows = spectrumAbs.rows();
   const int cols = spectrumAbs.cols();
   
@@ -72,8 +72,6 @@ void NMF::process(const MatrixXR& spectrumAbs, MatrixXR* components, MatrixXR* g
   // The H matrix is (*gains).transpose()
   (*gains).resize(rows, _numComponents);
   
-  DEBUG("NMF: Components resized rows: " << rows << " halfCols: " << halfCols);
-
   // Initializing W and H
   // TODO: initialize with a Normal distribution
   (*components).setRandom();
