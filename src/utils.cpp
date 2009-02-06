@@ -231,7 +231,7 @@ void rowShift(MatrixXR* in, int num) {
   
   for(int i = -num; i < rows; i++ ){
     if(i >= 0){
-      (*in).row(i).swap((*in).row(i-num));
+      (*in).row( i ).swap( (*in).row( i + num ) );
     }
   }
 }
@@ -241,7 +241,7 @@ void colShift(MatrixXR* in, int num) {
   
   for(int i = -num; i < cols; i++ ){
     if(i >= 0){
-      (*in).col(i).swap((*in).col(i-num));
+      (*in).col( i ).swap( (*in).col( i + num ) );
     }
   }
 }
