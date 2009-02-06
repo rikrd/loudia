@@ -16,7 +16,7 @@ a_sine = scipy.array(scipy.cos(2 * scipy.pi * 440 * scipy.arange(frameSize) / sa
 a_sine = a_sine.reshape((1, a_sine.shape[0]))
 
 # Ricaudio's solution # --------------------------------- #
-w = ricaudio.Window(frameSize, 0)
+w = ricaudio.Window(frameSize, ricaudio.Window.RECTANGULAR)
 m = ricaudio.FFT(frameSize, fftSize, False)
 
 r_zeros = m.process(w.process(a_zeros))
