@@ -110,8 +110,9 @@ void INMF::process(const MatrixXR& v, MatrixXR* w, MatrixXR* h) {
       }
       */
 
-      DEBUG("INMF: Update h");
+      //DEBUG("INMF: Update h");
       // Eq. 9 in Bucak 2008
+      /*
       cout << "---------------" << endl;
       cout << "(*w): " << (*w).rows() << " , " << (*w).cols() << endl;
       cout << "---------------" << endl;
@@ -119,11 +120,12 @@ void INMF::process(const MatrixXR& v, MatrixXR* w, MatrixXR* h) {
       cout << "---------------" << endl;
       cout << "v: " << v.rows() << " , " << v.cols() << endl;
       cout << "---------------" << endl;
+      */
+      (*h).row( row ).cwise() *= (((*w) * v.row(row).transpose()).cwise() / ((((*w) * (*w).transpose()) * (*h).row( row ).transpose()).cwise() + _eps)).transpose();
 
-      (*h).row( row ).cwise() *= (((*w) * v.row(row).transpose()).cwise() / (((*w) * (*w).transpose()) * (*h).row( row ).transpose())).transpose();
-
-      DEBUG("INMF: Update W");
+      //DEBUG("INMF: Update W");
       // Eq. 13 in Bucak 2008
+      /*
       cout << "---------------" << endl;
       cout << "(*w): " << (*w).rows() << " , " << (*w).cols() << endl;
       cout << "_HH: " << _HH.rows() << " , " << _HH.cols() << endl;
@@ -135,6 +137,7 @@ void INMF::process(const MatrixXR& v, MatrixXR* w, MatrixXR* h) {
       cout << "============" << endl;
       cout << (_newCoeff * ((*h).row( row ).transpose() * (*h).row( row ))) << endl;
       cout << "**********" << endl;
+      */
       (*w).cwise() *= ((_VH + (_newCoeff * v.row( row ).transpose() * (*h).row( row ))).cwise() / (((*w).transpose() * (_HH + _newCoeff * (*h).row( row ).transpose() * (*h).row( row ))).cwise() + _eps)).transpose();
     }
 
@@ -143,14 +146,14 @@ void INMF::process(const MatrixXR& v, MatrixXR* w, MatrixXR* h) {
     // TODO: when Eigen will have rotate use this
     //_H.rowwise().rotate(-1);
     rowShift(&_H, -1);
-    _H.row(_H.rows() - 1) = (*h).row( row );
+    _H.row(_numPast - 1) = (*h).row( row );
 
     DEBUG("INMF: Shift and update V");
     // Update the past V
     // TODO: when Eigen will have rotate use this
     //_V.rowwise().rotate(-1);
     rowShift(&_V, -1);
-    _V.row(_V.rows() - 1) = v.row( row );
+    _V.row(_numPast - 1) = v.row( row );
     
     DEBUG("INMF: Keep W");
     // Keep the past W
