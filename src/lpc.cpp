@@ -65,12 +65,8 @@ void LPC::process(const MatrixXR& frame, MatrixXR* lpcCoeffs, MatrixXR* reflecti
 
   DEBUG("LPC: Processing autocorrelation");
   
-  correlate(frame, frame, &_fullAcorr);
+  autocorrelate(frame, &_acorr, 0, _numCoeffs + 1);
   
-  _acorr.resize(rows, _numCoeffs + 1);
-  _acorr.setZero();
-  _acorr.block(0, 0, rows, _numCoeffs) = _fullAcorr.block(0, _frameSize - 1, rows, _numCoeffs);
-
   DEBUG("LPC: Processing Levinson-Durbin recursion");
 
   (*lpcCoeffs).resize(rows, _numCoeffs);

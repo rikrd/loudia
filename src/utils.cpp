@@ -145,7 +145,7 @@ void convolve(const MatrixXR& a, const MatrixXR& b, MatrixXR* c) {
  * returns the correlation of both
  */
 template<typename InMatrixType>
-void correlate(const InMatrixType& _a, const InMatrixType& _b, InMatrixType* c) {
+void correlate(const InMatrixType& _a, const InMatrixType& _b, InMatrixType* c, int _minlag, int _maxlag) {
   // TODO: allow to calculate only one part of the correlation
   //       like in the case of autocorrelation where only half is needed
   // a must be the shortest and b the longuest
@@ -155,7 +155,10 @@ void correlate(const InMatrixType& _a, const InMatrixType& _b, InMatrixType* c) 
   const int asize = a.cols();
   const int bsize = b.cols();
 
-  const int csize = asize + bsize - 1;
+  const int minlag = max(-bsize + 1, _minlag);
+  const int maxlag = min(asize, _maxlag);
+
+  const int csize = maxlag - minlag;
   
   const int rows = a.rows();
 
@@ -171,25 +174,34 @@ void correlate(const InMatrixType& _a, const InMatrixType& _b, InMatrixType* c) 
   
   int minsize = min(asize, bsize);
 
-  for (int lag = - bsize + 1; lag < asize; lag++ ) {    
+  for (int lag = minlag; lag < maxlag; lag++ ) {    
     int astart = max(lag, 0);
     int bstart = max(-lag, 0);
     
     int len = min(minsize - astart, lag + bsize - astart);
     
     if (len != 0){
-      (*c).col( csize - 1 - (lag + bsize - 1) ) = (a.block(0, astart, rows, len).cwise() * b.block(0, bstart, rows, len)).rowwise().sum();
+      (*c).col( (lag - minlag) ) = (a.block(0, astart, rows, len).cwise() * b.block(0, bstart, rows, len)).rowwise().sum();
     }
   }
 }
 
-void correlate(const MatrixXC& a, const MatrixXC& b, MatrixXC* c) {
-  return correlate<MatrixXC>(a, b, c);
+void correlate(const MatrixXC& a, const MatrixXC& b, MatrixXC* c, int _minlag, int _maxlag) {
+  return correlate<MatrixXC>(a, b, c, _minlag, _maxlag);
 }
 
-void correlate(const MatrixXR& a, const MatrixXR& b, MatrixXR* c) {
-  return correlate<MatrixXR>(a, b, c);
+void correlate(const MatrixXR& a, const MatrixXR& b, MatrixXR* c, int _minlag, int _maxlag) {
+  return correlate<MatrixXR>(a, b, c, _minlag, _maxlag);
 }
+
+void autocorrelate(const MatrixXR& a, MatrixXR* c,  int _minlag, int _maxlag) {
+  return correlate<MatrixXR>(a, a, c, _minlag, _maxlag);
+}
+
+void autocorrelate(const MatrixXC& a, MatrixXC* c,  int _minlag, int _maxlag) {
+  return correlate<MatrixXC>(a, a, c, _minlag, _maxlag);
+}
+
 
 /**
  * Reverse in place the order of the columns

@@ -20,6 +20,7 @@
 #define UTILS_H
 
 #include "typedefs.h"
+#include <limits>
 
 
 /**
@@ -46,8 +47,25 @@ void convolve(const MatrixXR& a, const MatrixXR& b, MatrixXR* c);
  * Given two row matrices 
  * returns the correlation of both
  */
-void correlate(const MatrixXC& a, const MatrixXC& b, MatrixXC* c);
-void correlate(const MatrixXR& a, const MatrixXR& b, MatrixXR* c);
+void correlate(const MatrixXC& a, const MatrixXC& b, MatrixXC* c, 
+               int _minlag = -std::numeric_limits<Real>::infinity(), 
+               int _maxlag = std::numeric_limits<Real>::infinity());
+
+void correlate(const MatrixXR& a, const MatrixXR& b, MatrixXR* c, 
+               int _minlag = -std::numeric_limits<Real>::infinity(), 
+               int _maxlag = std::numeric_limits<Real>::infinity());
+
+/**
+ * Given a row matrix 
+ * returns the autocorrelation
+ */
+void autocorrelate(const MatrixXR& a, MatrixXR* c, 
+                   int _minlag = 0, 
+                   int _maxlag = std::numeric_limits<Real>::infinity());
+
+void autocorrelate(const MatrixXC& a, MatrixXC* c, 
+                   int _minlag = 0, 
+                   int _maxlag = std::numeric_limits<Real>::infinity());
 
 
 /**
