@@ -21,13 +21,13 @@ halfSize = (fftSize / 2) + 1
 plotSize = halfSize/3
 zeroPhase = True
 
-components = 4
+components = 3
 pastFrames = 20
 pastCoeff = 0.2
 
 w = ricaudio.Window(windowSize, windowType)
 f = ricaudio.FFT(windowSize, fftSize, zeroPhase)
-d = ricaudio.INMF(halfSize, components, pastFrames, pastCoeff, 15, 1, 1e-17)
+d = ricaudio.INMF(halfSize, components, pastFrames, pastCoeff, 30, 1, 1e-17)
 
 framer, sr, nframes, nchannels, loader = get_framer_audio(filename, windowSize, windowHop)
 
@@ -77,7 +77,6 @@ for frame in framer:
         pylab.hold( False )
         pylab.plot( dBc )
         
-    
     a.append( fft )
     gains.append( g )
     components.append( dBc )
@@ -85,30 +84,39 @@ for frame in framer:
 pylab.ioff()
 
 gains = overlapadder(gains, 1, 1)
-components = components[-1]
+lastComponents = components[-1]
 a = scipy.array(a)
 nwindows = a.shape[0]
 
 if estimatePitch:
     freqs = overlapadder(freqs, 1, 1)
 
-    freqchange = abs(freqs[1:,:] - freqs[:-1,:])
-    wfreqchange = gains[1:,:] * freqchange
-
-    odf = wfreqchange.sum(axis = 1) / gains[1:, :].sum(axis = 1)
+    dBc = scipy.array(components)
+    dBcchange = abs(dBc[2:,:,:] - dBc[1:-1,:,:])
+    odfComponents = (gains[2:,:] * dBcchange.sum(axis = 1)).sum(axis = 1)
+    
+    freqchange = abs(freqs[2:,:] - freqs[1:-1,:])
+    wfreqchange = gains[2:,:] * freqchange
+    odfPitch = wfreqchange.sum(axis = 1) #/ gains[1:, :].sum(axis = 1)
 
     if plot:
         pylab.figure()
-        pylab.subplot( 211 )
+        pylab.subplot( 311 )
         pylab.plot( freqs )
         draw_onsets( onsets )        
         pylab.title("Pitch Contours")
         pylab.gca().set_xlim([0, nwindows - 1])
 
-        pylab.subplot( 212 )
-        pylab.plot( odf )
+        pylab.subplot( 312 )
+        pylab.plot( odfPitch )
         draw_onsets( onsets )        
-        pylab.title("INMF derived ODF")
+        pylab.title("INMF Pitch derived ODF")
+        pylab.gca().set_xlim([0, nwindows - 1])
+
+        pylab.subplot( 313 )
+        pylab.plot( scipy.log10(odfComponents + 1) )
+        draw_onsets( onsets )        
+        pylab.title("INMF Components derived ODF")
         pylab.gca().set_xlim([0, nwindows - 1])
 
 
@@ -129,7 +137,7 @@ if plot:
 
 
     pylab.figure()
-    pylab.plot(components)
-    pylab.title("Components")
+    pylab.plot(lastComponents)
+    pylab.title("Last Components")
 
     pylab.show()
