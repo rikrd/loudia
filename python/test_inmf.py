@@ -16,7 +16,7 @@ a[10:, 2] = 1
 
 components = []
 gains = []
-for frame in framer(a, windowSize, windowHop):
+for frame in framer_array(a, windowSize, windowHop):
     c, g = d.process(frame)
     
     gains.append(g)
