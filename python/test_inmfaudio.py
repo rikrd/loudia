@@ -92,12 +92,25 @@ nwindows = a.shape[0]
 if estimatePitch:
     freqs = overlapadder(freqs, 1, 1)
 
+    freqchange = abs(freqs[1:,:] - freqs[:-1,:])
+    wfreqchange = gains[1:,:] * freqchange
+
+    odf = wfreqchange.sum(axis = 1) / gains[1:, :].sum(axis = 1)
+
     if plot:
         pylab.figure()
+        pylab.subplot( 211 )
         pylab.plot( freqs )
         draw_onsets( onsets )        
         pylab.title("Pitch Contours")
         pylab.gca().set_xlim([0, nwindows - 1])
+
+        pylab.subplot( 212 )
+        pylab.plot( odf )
+        draw_onsets( onsets )        
+        pylab.title("INMF derived ODF")
+        pylab.gca().set_xlim([0, nwindows - 1])
+
 
 if plot:
     pylab.figure()
