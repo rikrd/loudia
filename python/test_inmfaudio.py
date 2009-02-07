@@ -4,7 +4,7 @@ from common import *
 import sys
 
 plot = True
-plotInteractive = True
+plotInteractive = False
 
 estimatePitch = True
 
@@ -37,6 +37,7 @@ if estimatePitch:
    acorrw = ricaudio.Window(halfSize, windowType)
    peaker = ricaudio.PeakDetect(1, 3, 0, False)
    peakeri = ricaudio.PeakInterpolate()
+   freqs = []
 
 components = []
 gains = []
@@ -56,23 +57,24 @@ for frame in framer:
         peakPos, peakMag, peakPhase = peaker.process( acorr )
         peakPosi, peakMagi, peakPhasei = peakeri.process( acorr, peakPos, peakMag, peakPhase )
         
-        freqs = peakPosi / fftSize * sr
+        fs = peakPosi / fftSize * sr
 
         if plotInteractive:
             pylab.ion()
-            pylab.figure(1)
-            pylab.subplot(211)
-            pylab.hold(False)
+            pylab.figure( 1 )
+            pylab.subplot( 211 )
+            pylab.hold( False )
             pylab.plot( acorrc.T )
             
-            pylab.subplot(212)
+            pylab.subplot( 212 )
             pylab.plot( acorr.T )
 
+        freqs.append( fs.T )
             
     if plotInteractive:
         pylab.ion()
-        pylab.figure(2)
-        pylab.hold(False)
+        pylab.figure( 2 )
+        pylab.hold( False )
         pylab.plot( dBc )
         
     
@@ -86,6 +88,17 @@ gains = overlapadder(gains, 1, 1)
 components = components[-1]
 a = scipy.array(a)
 nwindows = a.shape[0]
+
+if estimatePitch:
+    freqs = overlapadder(freqs, 1, 1)
+
+    if plot:
+        pylab.figure()
+        pylab.plot( freqs )
+        draw_onsets( onsets )        
+        pylab.title("Pitch Contours")
+        pylab.gca().set_xlim([0, nwindows - 1])
+
 if plot:
     pylab.figure()
     pylab.subplot(211)
