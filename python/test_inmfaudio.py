@@ -12,9 +12,9 @@ fftSize = 2048
 halfSize = 1025
 zeroPhase = True
 
-components = 2
+components = 10
 pastFrames = 10
-pastCoeff = 0.5
+pastCoeff = 0.2
 
 w = ricaudio.Window(windowSize, windowType)
 f = ricaudio.FFT(windowSize, fftSize, zeroPhase)
@@ -33,7 +33,7 @@ for frame in framer:
 
     a.append(20.0 * scipy.log10(fft[0,:]+1e-9))
     gains.append(g)
-    components.append(c)
+    components.append(20.0 * scipy.log10(c[0,:]+1e-9))
 
 gains = overlapadder(gains, 1, 1)
 components = components[-1]
