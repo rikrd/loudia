@@ -3,6 +3,31 @@
 import ricaudio
 import scipy
 import pylab
+import os
+
+def get_onsets(filename, hop, samplerate, onsetError = 50.0):
+    # Get the onsets
+    annotation = os.path.splitext(filename)[0] + '.onset_annotated'
+    onsets = []
+    
+    if os.path.isfile(annotation):
+        onsetsTimes = [float(o) for o in open(annotation, 'r').readlines()]
+        onsetsCenter = [int(o * samplerate / hop) for o in onsetsTimes]
+        onsetsLeft = [int((o - (onsetError / 1000.0)) * samplerate / hop) for o in onsetsTimes]
+        onsetsRight = [int((o + (onsetError / 1000.0)) * samplerate / hop) for o in onsetsTimes]
+        onsets = zip(onsetsLeft, onsetsCenter, onsetsRight)
+
+        return onsets
+
+    else:
+        return None
+    
+def draw_onsets(onsets):
+    # Draw the onsets
+    for onsetLeft, onsetCenter, onsetRight in onsets:
+        pylab.axvspan( xmin = onsetLeft, xmax = onsetRight, facecolor = 'green', linewidth = 0, alpha = 0.25)
+        pylab.axvline( x = onsetCenter, color = 'black', linewidth = 1.1)
+
 
 def get_framer_audio(filename, size, hop):
     from scikits import audiolab
