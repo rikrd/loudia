@@ -18,16 +18,16 @@ windowHop = 256
 windowType = ricaudio.Window.BLACKMANHARRIS
 fftSize = 1024
 halfSize = (fftSize / 2) + 1
-plotSize = halfSize/3
+plotSize = halfSize/2
 zeroPhase = True
 
 components = 5
-pastFrames = 20
+pastFrames = 120
 pastCoeff = 0.2
 
 w = ricaudio.Window(windowSize, windowType)
 f = ricaudio.FFT(windowSize, fftSize, zeroPhase)
-d = ricaudio.INMF(halfSize, components, pastFrames, pastCoeff, 30, 1, 1e-17)
+d = ricaudio.INMF(halfSize, components, pastFrames, pastCoeff, 15, 1, 1e-17)
 
 framer, sr, nframes, nchannels, loader = get_framer_audio(filename, windowSize, windowHop)
 
@@ -87,13 +87,13 @@ gains = overlapadder(gains, 1, 1)
 lastComponents = components[-1]
 a = scipy.array(a)
 nwindows = a.shape[0]
+components = scipy.array(components)
 
 if estimatePitch:
     freqs = overlapadder(freqs, 1, 1)
 
-    dBc = scipy.array(components)
-    dBcchange = abs(dBc[2:,:,:] - dBc[1:-1,:,:])
-    odfComponents = (gains[2:,:] * dBcchange.sum(axis = 1)).sum(axis = 1)
+    componentschange = abs(components[2:,:,:] - components[1:-1,:,:])
+    odfComponents = (gains[2:,:] * componentschange.sum(axis = 1)).sum(axis = 1)
     
     freqchange = abs(freqs[2:,:] - freqs[1:-1,:])
     wfreqchange = gains[2:,:] * freqchange
@@ -130,7 +130,8 @@ if plot:
 
 
     pylab.subplot(212)
-    pylab.plot(gains)
+    print components.mean(axis = 1).shape
+    pylab.plot(gains * components.mean(axis = 1))
     draw_onsets(onsets)
     pylab.title("Gains")
     pylab.gca().set_xlim([0, nwindows - 1])
