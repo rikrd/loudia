@@ -4,6 +4,7 @@ from common import *
 import sys
 
 plot = True
+plotInteractive = False
 
 filename = '/home/rmarxer/dev/data/onsets/pitchedphrases/Strings/Picked-Plucked-Ham/Piano/piano1.wav'
 
@@ -17,8 +18,8 @@ fftSize = 2048
 halfSize = (fftSize / 2) + 1
 zeroPhase = True
 
-components = 2
-pastFrames = 10
+components = 4
+pastFrames = 20
 pastCoeff = 0.2
 
 w = ricaudio.Window(windowSize, windowType)
@@ -37,10 +38,20 @@ for frame in framer:
     fft = f.process(windowed)
     fft = abs(fft)
     c, g = d.process(fft)
+    
+    fft = 20.0 * scipy.log10(fft[0,:fftSize/6]+0.1)
+    c = 20.0 * scipy.log10(c[:,:fftSize/6].T+0.1)
 
-    a.append(20.0 * scipy.log10(fft[0,:]+1e-9))
-    gains.append(g)
-    components.append(20.0 * scipy.log10(c[0,:]+1e-9))
+    if plotInteractive:
+        pylab.ion()
+        pylab.hold(False)
+        pylab.plot( c )
+    
+    a.append( fft )
+    gains.append( g )
+    components.append( c )
+
+pylab.ioff()
 
 gains = overlapadder(gains, 1, 1)
 components = components[-1]
@@ -63,7 +74,7 @@ if plot:
 
 
     pylab.figure()
-    pylab.plot(components.T)
+    pylab.plot(components)
     pylab.title("Components")
 
     pylab.show()
