@@ -14,7 +14,7 @@ if len(sys.argv) >= 2:
     filename = sys.argv[1]
 
 windowSize = 1024
-windowHop = 256
+windowHop = 512
 windowType = ricaudio.Window.BLACKMANHARRIS
 fftSize = 1024
 halfSize = (fftSize / 2) + 1
@@ -27,9 +27,11 @@ pastCoeff = 0.2
 
 w = ricaudio.Window(windowSize, windowType)
 f = ricaudio.FFT(windowSize, fftSize, zeroPhase)
-d = ricaudio.INMF(halfSize, components, pastFrames, pastCoeff, 15, 1, 1e-17)
+d = ricaudio.INMF(halfSize, components, pastFrames, pastCoeff, 15, 1, 1e-7)
 
 framer, sr, nframes, nchannels, loader = get_framer_audio(filename, windowSize, windowHop)
+
+nwindows = (nframes - windowSize) / windowHop + 1
 
 onsets = get_onsets(filename, windowHop, sr)
 
@@ -42,7 +44,8 @@ if estimatePitch:
 components = []
 gains = []
 a = []
-for frame in framer:
+for ind, frame in enumerate(framer):
+    print 'Processing frame # %05d / %05d' % (ind, nwindows)
     windowed = w.process(frame)
     fft = f.process(windowed)
     fft = abs(fft)
