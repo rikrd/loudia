@@ -6,8 +6,8 @@ import pylab
 
 plot = True
 
-windowSize = 14
-windowHop = 14
+windowSize = 1
+windowHop = 1
 
 d = ricaudio.INMF(8, 2, 10, 0.5, 15, 1, 1e-17)
 
