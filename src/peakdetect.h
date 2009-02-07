@@ -30,13 +30,14 @@ protected:
   int _numPeaks;
   int _minPeakWidth;
   Real _minPeakContrast;
+  bool _sort;
     
   // Internal variables
   MatrixXR _magnitudes;
   MatrixXR _phases;
 
 public:
-  PeakDetect(int numPeaks, int minPeakWidth = 3, Real minPeakContrast = 0);
+  PeakDetect(int numPeaks, int minPeakWidth = 3, Real minPeakContrast = 0, bool sort = true);
 
   ~PeakDetect();
 

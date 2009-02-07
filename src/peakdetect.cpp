@@ -42,14 +42,17 @@ struct peak{
 };
 
 
-PeakDetect::PeakDetect(int numPeaks, int minPeakWidth, Real minPeakContrast) {
+PeakDetect::PeakDetect(int numPeaks, int minPeakWidth, Real minPeakContrast, bool sort) :
+  _numPeaks(numPeaks),
+  _minPeakWidth(minPeakWidth),
+  _minPeakContrast(minPeakContrast),
+  _sort(sort)
+
+{
   DEBUG("PEAKDETECT: Constructor numPeaks: " << numPeaks << ", minPeakWidth: " << minPeakWidth);
   
-  _numPeaks = numPeaks;
-  _minPeakWidth = minPeakWidth;
-  _minPeakContrast = minPeakContrast;
-
   setup();
+
   DEBUG("PEAKDETECT: Constructed");
 }
 
@@ -103,8 +106,9 @@ void PeakDetect::process(const MatrixXC& fft,
   
   int peakIndex;
   
-  vector<peak> peaks;
   for ( int i = 0 ; i < _magnitudes.rows(); i++){
+    vector<peak> peaks;
+
     peakIndex = 0;
     
     for ( int j = (_minPeakWidth / 2); j < _magnitudes.row(i).cols() - (_minPeakWidth / 2); j++) {     
@@ -129,20 +133,22 @@ void PeakDetect::process(const MatrixXC& fft,
           peakIndex ++;
         }
       }
-    }
-    
-    // Order the peaks by magnitude
-    std::sort(peaks.begin(), peaks.end());  
 
-    int peakCount = min(_numPeaks, peakIndex);
-
-    // Put the peaks in the matrices
-    for( int j = 0; j < peakCount; j++ ){
-      (*peakMagnitudes)(i, j) = peaks[j].mag;
-      (*peakPhases)(i, j) = peaks[j].phase;
-      (*peakPositions)(i, j) = peaks[j].pos;
-    }
+      if ( _sort ) {
+        // Order the peaks by magnitude
+        std::sort(peaks.begin(), peaks.end());  
+      }
+      
+      int peakCount = min(_numPeaks, peakIndex);
+      
+      // Put the peaks in the matrices
+      for( int j = 0; j < peakCount; j++ ){
+        (*peakMagnitudes)(i, j) = peaks[j].mag;
+        (*peakPhases)(i, j) = peaks[j].phase;
+        (*peakPositions)(i, j) = peaks[j].pos;
+      }
     
+    }    
   }
 
   

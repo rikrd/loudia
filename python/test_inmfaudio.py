@@ -6,6 +6,8 @@ import sys
 plot = True
 plotInteractive = True
 
+estimatePitch = True
+
 filename = '/home/rmarxer/dev/data/onsets/pitchedphrases/Strings/Picked-Plucked-Ham/Piano/piano1.wav'
 
 if len(sys.argv) >= 2:
@@ -16,6 +18,7 @@ windowHop = 256
 windowType = ricaudio.Window.BLACKMANHARRIS
 fftSize = 2048
 halfSize = (fftSize / 2) + 1
+plotSize = halfSize/3
 zeroPhase = True
 
 components = 4
@@ -30,6 +33,11 @@ framer, sr, nframes, nchannels, loader = get_framer_audio(filename, windowSize, 
 
 onsets = get_onsets(filename, windowHop, sr)
 
+if estimatePitch:
+   acorrw = ricaudio.Window(halfSize, windowType)
+   peaker = ricaudio.PeakDetect(1, 3, 0, False)
+   peakeri = ricaudio.PeakInterpolate()
+
 components = []
 gains = []
 a = []
@@ -39,22 +47,38 @@ for frame in framer:
     fft = abs(fft)
     c, g = d.process(fft)
     
-    fft = 20.0 * scipy.log10(fft[0,:fftSize/6]+0.1)
-    c = 20.0 * scipy.log10(c[:,:fftSize/6].T+0.1)
+    fft = 20.0 * scipy.log10(fft[0,:plotSize]+0.1)
+    dBc = 20.0 * scipy.log10(c[:,:plotSize].T+0.1)
 
+    if estimatePitch:
+        acorrc = acorrw.process( c )
+        acorr = ricaudio.autocorrelate( acorrc )
+        peakPos, peakMag, peakPhase = peaker.process( acorr )
+        peakPosi, peakMagi, peakPhasei = peakeri.process( acorr, peakPos, peakMag, peakPhase )
+        
+        freqs = peakPosi / fftSize * sr
+
+        if plotInteractive:
+            pylab.ion()
+            pylab.figure(1)
+            pylab.subplot(211)
+            pylab.hold(False)
+            pylab.plot( acorrc.T )
+            
+            pylab.subplot(212)
+            pylab.plot( acorr.T )
+
+            
     if plotInteractive:
         pylab.ion()
-        pylab.subplot(211)
+        pylab.figure(2)
         pylab.hold(False)
-        pylab.plot( c )
-
-        pylab.subplot(212)
-        acorr = ricaudio.autocorrelate(c.T)
-        pylab.plot( acorr.T )
+        pylab.plot( dBc )
+        
     
     a.append( fft )
     gains.append( g )
-    components.append( c )
+    components.append( dBc )
 
 pylab.ioff()
 
