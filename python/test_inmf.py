@@ -21,7 +21,7 @@ def framer(arr, size, hop):
     
     while cursor < nframes:
         nframes_read = min(size, nframes-cursor)
-        samples[:nframes_read, :] = arr[:nframes_read, :]
+        samples[:nframes_read, :] = arr[cursor:cursor+nframes_read, :]
         
         # fill in empty
         if nframes_read < size:
@@ -38,8 +38,6 @@ def overlapadder(frames, size, hop):
     arr = scipy.zeros((arrsize, frames[0].shape[1]))
 
     for cur, frame in enumerate(frames):
-        print frame.shape
-        print cur*hop + size
         arr[cur*hop:(cur*hop) + size,:] += frame
 
     return arr
@@ -53,7 +51,7 @@ components = []
 gains = []
 for frame in framer(a, windowSize, windowHop):
     c, g = d.process(frame)
-
+    
     gains.append(g)
     components.append(c)
 

@@ -20,9 +20,7 @@
 #include "debug.h"
 
 #include "inmf.h"
-
 #include "utils.h"
-#include <Eigen/LU>
 
 using namespace std;
 
@@ -154,10 +152,12 @@ void INMF::process(const MatrixXR& v, MatrixXR* w, MatrixXR* h) {
     _V.row( _numPast - 1 ) = v.row( row );
     
     DEBUG("INMF: Keep W");
-    // Keep the past W
-    _W = (*w);
+
   }
 
+  // Keep the past W
+  _W = (*w);
+  
   DEBUG("INMF: Finished Processing");
 }
 
