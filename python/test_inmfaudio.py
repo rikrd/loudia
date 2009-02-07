@@ -16,12 +16,12 @@ if len(sys.argv) >= 2:
 windowSize = 1024
 windowHop = 256
 windowType = ricaudio.Window.BLACKMANHARRIS
-fftSize = 2048
+fftSize = 1024
 halfSize = (fftSize / 2) + 1
 plotSize = halfSize/3
 zeroPhase = True
 
-components = 3
+components = 5
 pastFrames = 20
 pastCoeff = 0.2
 
@@ -34,7 +34,7 @@ framer, sr, nframes, nchannels, loader = get_framer_audio(filename, windowSize, 
 onsets = get_onsets(filename, windowHop, sr)
 
 if estimatePitch:
-   acorrw = ricaudio.Window(halfSize, windowType)
+   acorrw = ricaudio.Window(halfSize, ricaudio.Window.HAMMING)
    peaker = ricaudio.PeakDetect(1, 3, 0, False)
    peakeri = ricaudio.PeakInterpolate()
    freqs = []
@@ -48,8 +48,8 @@ for frame in framer:
     fft = abs(fft)
     c, g = d.process(fft)
     
-    fft = 20.0 * scipy.log10(fft[0,:plotSize]+0.1)
-    dBc = 20.0 * scipy.log10(c[:,:plotSize].T+0.1)
+    fft = 20.0 * scipy.log10(fft[0,:plotSize] + 0.1)
+    dBc = 20.0 * scipy.log10(c[:,:plotSize].T + 0.1)
 
     if estimatePitch:
         acorrc = acorrw.process( c )
@@ -114,7 +114,7 @@ if estimatePitch:
         pylab.gca().set_xlim([0, nwindows - 1])
 
         pylab.subplot( 313 )
-        pylab.plot( scipy.log10(odfComponents + 1) )
+        pylab.plot( odfComponents )
         draw_onsets( onsets )        
         pylab.title("INMF Components derived ODF")
         pylab.gca().set_xlim([0, nwindows - 1])
