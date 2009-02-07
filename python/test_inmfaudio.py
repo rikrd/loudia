@@ -4,7 +4,7 @@ from common import *
 import sys
 
 plot = True
-plotInteractive = False
+plotInteractive = True
 
 filename = '/home/rmarxer/dev/data/onsets/pitchedphrases/Strings/Picked-Plucked-Ham/Piano/piano1.wav'
 
@@ -44,8 +44,13 @@ for frame in framer:
 
     if plotInteractive:
         pylab.ion()
+        pylab.subplot(211)
         pylab.hold(False)
         pylab.plot( c )
+
+        pylab.subplot(212)
+        acorr = ricaudio.autocorrelate(c.T)
+        pylab.plot( acorr.T )
     
     a.append( fft )
     gains.append( g )
