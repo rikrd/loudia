@@ -32,6 +32,7 @@ using namespace std;
 using namespace Eigen;
 
 Chebyshev::Chebyshev(int channels, int order, Real freq, Real rippleDB, Real samplerate) : 
+  _channels(channels),
   _order(order),
   _freq(freq),
   _rippleDB(rippleDB),
@@ -56,19 +57,20 @@ Chebyshev::Chebyshev(int channels, int order, Real freq, Real rippleDB, Real sam
 
 void Chebyshev::setup(){
   DEBUG("CHEBYSHEV: Setting up...");
-  
+
+  DEBUG("CHEBYSHEV: Getting zpk");  
   // Get the chebyshev z, p, k
-  MatrixXC zeros = MatrixXC::Zero(1, 1);
+  MatrixXC zeros = MatrixXC::Zero(_channels, 1);
  
   Real eps = sqrt(pow(10, (0.1 * _rippleDB)) - 1.0);
 
   MatrixXC n;
-  range(1, _order + 1, _order , &n);
-  
+  range(1, _order + 1, _order, _channels, &n);
+
   Real mu = 1.0 / _order * log((1.0 + sqrt( 1 + eps * eps)) / eps);
 
   MatrixXC theta = ((n * 2).cwise() - 1.0) / _order * M_PI / 2.0;
-  
+
   MatrixXC poles = -sinh(mu) * theta.cwise().sin() + Complex(0, 1) * cosh(mu) * theta.cwise().cos();
 
   Complex gainComplex = 1.0;
