@@ -25,15 +25,16 @@
 
 class Chebyshev {
 protected:
+  int _channels;
+  int _order;
+  Real _freq;
   Real _rippleDB;
   Real _samplerate;
-  int _order;
-  int _channels;
-
+  
   Filter _filter;
 
 public:
-  Chebyshev(int channels, int order, Real rippleDB, Real samplerate);
+  Chebyshev(int channels, int order, Real freq, Real rippleDB, Real samplerate);
 
   void setup();
 

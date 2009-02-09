@@ -104,6 +104,12 @@ void polar(const MatrixXR& mag, const MatrixXR& phase, MatrixXC* complex);
 void coeffsToZpk(const MatrixXR& b, const MatrixXR& a, MatrixXC* zeros, MatrixXC* poles, Real* gain);
 
 /**
+ * Convert from zeros, poles and gain of an IIR filter to the
+ * the b and a coefficients of the filter
+ */
+void zpkToCoeffs(const MatrixXC& zeros, const MatrixXC& poles, Real gain, MatrixXC*  b, MatrixXC*  a);
+
+/**
  * Calculate the aliased cardinal sine defined as:
  *   
  *   asinc(M, T, x) = sin(M * pi * x * T) / sin(pi * x * T)

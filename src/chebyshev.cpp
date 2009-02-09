@@ -20,10 +20,6 @@
 #include "typedefs.h"
 #include "debug.h"
 
-#include <Eigen/Core>
-#include <Eigen/Array>
-
-#include <iostream>
 #include <cmath>
 #include <vector>
 
@@ -34,7 +30,13 @@ using namespace std;
 // import most common Eigen types 
 using namespace Eigen;
 
-Chebyshev::Chebyshev(int channels, int order, Real rippleDB, Real samplerate) : _filter(channels)
+Chebyshev::Chebyshev(int channels, int order, Real freq, Real rippleDB, Real samplerate) : 
+  _order(order),
+  _freq(freq),
+  _rippleDB(rippleDB),
+  _samplerate(samplerate),
+  _filter(channels)
+                                                                                           
 {
   DEBUG("CHEBYSHEV: Constructor order: " << order << ", rippleDB: " << rippleDB << ", samplerate: " << samplerate);
 
@@ -46,24 +48,20 @@ Chebyshev::Chebyshev(int channels, int order, Real rippleDB, Real samplerate) : 
     // Throw an exception
   }
   
-  _channels = channels;
-  _order = order;
-  _rippleDB = rippleDB;
-  _samplerate = samplerate;
-
   setup();
+  
   DEBUG("CHEBYSHEV: Constructed");
 }
 
 void Chebyshev::setup(){
   DEBUG("CHEBYSHEV: Setting up...");
   
-  MatrixXC zeros(1,1);
-  zeros.setZero();
-  
+  // Get the chebyshev z, p, k
+  MatrixXC zeros = MatrixXC::Zero(1,1);
+ 
   Real eps = sqrt(pow(10, (0.1 * _rippleDB) - 1.0));
 
-  MatrixXR n(1, _order + 1);
+  MatrixXC n(1, _order + 1);
   for ( int i = 0; i < n.cols(); i++ ) {
     n(0, i) = i;
   }
@@ -75,6 +73,7 @@ void Chebyshev::setup(){
   MatrixXC poles = -sinh(mu) * theta.cwise().sin() + Complex(0, 1) * cosh(mu) * theta.cwise().cos();
 
   Complex gainComplex = 1.0;
+
   for ( int i = 0; i < poles.cols(); i++ ) {
     gainComplex *= -poles(0, i);
   }
@@ -84,6 +83,13 @@ void Chebyshev::setup(){
   if ( _order % 2 == 0 ) {
     gain = gain / sqrt((1 + eps * eps));
   }
+
+  // Convert zpk to ab coeffs
+  //zpkToCoeffs
+
+  // Get the warped critical frequency
+  Real warped = 4.0 * tan( M_PI * _freq / 2.0 );
+
   
   DEBUG("CHEBYSHEV: zeros:" << zeros );
   DEBUG("CHEBYSHEV: poles:" << poles );

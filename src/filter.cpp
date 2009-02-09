@@ -19,18 +19,9 @@
 #include "typedefs.h"
 #include "debug.h"
 
-#include <Eigen/Core>
-#include <Eigen/Array>
-#include <iostream>
 #include "filter.h"
 
-
-
-
-
 using namespace std;
-
-// import most common Eigen types 
 using namespace Eigen;
 
 Filter::Filter(int channels){

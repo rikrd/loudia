@@ -53,25 +53,25 @@ void roots(const MatrixXR& poly, MatrixXC* result) {
  * returns a matrix of polynomes (a polynome per vector of roots)
  */
 template<typename InMatrixType>
-void poly(const InMatrixType& roots, InMatrixType* result) {
-  const int nroots = roots.cols();
+void poly(const InMatrixType& _roots, InMatrixType* result) {
+  const int rows = _roots.rows();
+  const int nroots = _roots.cols();
 
   // Prepare the output
   (*result).resize(1, 1);
   (*result).setZero();
-  (*result)(0, 0) = 1.0;
+  (*result).col(0).setOnes();
 
-  //InMatrixType newA;
-  //InMatrixType a = InMatrixType::Zero(1, nroots + 1);
-  InMatrixType b(1, 2);
+  InMatrixType b(rows, 2);
 
   for ( int i = 0; i < nroots; i++) {
-    b << 1 , -roots(0, i);
-    convolve(*result, b, result);
-    //a.set(newA);
+    b.col(0).setOnes();
+    b.col(1) = -_roots.col( i );
+    
+    InMatrixType temp = (*result);
+    
+    convolve(temp, b, result);
   }
-
-  //(*result) = a;
 }
 
 void poly(const MatrixXC& roots, MatrixXC* result) {
@@ -292,6 +292,13 @@ void coeffsToZpk(const MatrixXR&  b, const MatrixXR&  a, MatrixXC* zeros, Matrix
   bTemp /= b(0, 0);
   roots(bTemp, zeros);
   roots(a, poles);
+}
+
+void zpkToCoeffs(const MatrixXC& zeros, const MatrixXC& poles, Real gain, MatrixXC*  b, MatrixXC*  a){
+  poly( zeros, b );
+  (*b) *= gain;
+  
+  poly( poles, a );
 }
 
 Real asinc(int M, Real omega) {
