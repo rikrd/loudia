@@ -16,42 +16,39 @@
 ** Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */                                                                          
 
-#ifndef PEAKDETECT_H
-#define PEAKDETECT_H
+#ifndef IFFT_H
+#define IFFT_H
 
 #include "typedefs.h"
 #include "debug.h"
 
-#include <iostream>
+#include <fftw3.h>
 
-class PeakDetect {
+class IFFT{
 protected:
-  // Internal parameters
-  int _numPeaks;
-  int _minPeakWidth;
-  Real _minPeakContrast;
-  bool _sort;
-    
-  // Internal variables
-  MatrixXR _magnitudes;
-  MatrixXR _phases;
+  int _fftSize;
+  int _frameSize;
+  bool _zeroPhase;
+
+  int _halfSize;
+
+  fftwf_complex* _in;
+  Real* _out;
+
+  fftwf_plan _fftplan;
+  
 
 public:
-  PeakDetect(int numPeaks, int minPeakWidth = 3, Real minPeakContrast = 0, bool sort = true);
-
-  ~PeakDetect();
-
+  IFFT(int fftSize, int frameSize, bool zeroPhase = true);
+  ~IFFT();
+  
+  void process(const MatrixXC& fft, MatrixXR* frame);
+  
   void setup();
-
-  void process(const MatrixXC& fft,
-               MatrixXR* peakPositions, MatrixXR* peakMagnitudes, MatrixXR* peakPhases);
-
   void reset();
 
-  int numPeaks() const;
-
-  int minPeakWidth() const;
-
+  int frameSize() const;
+  int fftSize() const;
 };
 
-#endif  /* PEAKDETECT_H */
+#endif  /* IFFT_H */

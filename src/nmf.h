@@ -16,42 +16,38 @@
 ** Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */                                                                          
 
-#ifndef PEAKDETECT_H
-#define PEAKDETECT_H
+#ifndef NMF_H
+#define NMF_H
 
 #include "typedefs.h"
 #include "debug.h"
 
-#include <iostream>
-
-class PeakDetect {
+class NMF {
 protected:
   // Internal parameters
-  int _numPeaks;
-  int _minPeakWidth;
-  Real _minPeakContrast;
-  bool _sort;
-    
+  int _fftSize;
+  int _numComponents;
+
+  int _maxIterations;
+  Real _maxError;
+  
+  Real _eps;
+  
   // Internal variables
-  MatrixXR _magnitudes;
-  MatrixXR _phases;
+  MatrixXR _xOverWH;
+  MatrixXR _norms;
 
 public:
-  PeakDetect(int numPeaks, int minPeakWidth = 3, Real minPeakContrast = 0, bool sort = true);
+  NMF(int fftSize, int numComponents, int maxIterations = 10, Real maxError = 10, Real eps = 1e-9);
 
-  ~PeakDetect();
+  ~NMF();
 
   void setup();
 
-  void process(const MatrixXC& fft,
-               MatrixXR* peakPositions, MatrixXR* peakMagnitudes, MatrixXR* peakPhases);
+  void process(const MatrixXR& spectrumAbs, MatrixXR* components, MatrixXR* gains);
 
   void reset();
 
-  int numPeaks() const;
-
-  int minPeakWidth() const;
-
 };
 
-#endif  /* PEAKDETECT_H */
+#endif  /* NMF_H */

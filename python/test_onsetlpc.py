@@ -6,6 +6,8 @@ import pylab
 import os, sys, wave
 import scipy
 
+interactivePlot = False
+
 filename = sys.argv[1]
 
 # Accepted difference between the groundtruth
@@ -17,7 +19,7 @@ wavfile = wave.open(filename,'r')
 samplerate = float(wavfile.getframerate())
 wavfile.close()
 
-frameSize = 1024 
+frameSize = 1024
 frameStep = 256
 
 frameSizeTime = frameSize / 44100.0
@@ -51,29 +53,54 @@ stream = pyricaudio.fft_ricaudio(stream, {'inputKey': 'windowed',
                                           'zeroPhase': True,
                                           'fftLength': fftSize})
 
-odfcog = ricaudio.ODFCOG(fftSize, 10, bandwidth)
+lpc = ricaudio.LPC(frameSize, 14)
 
 specs = []
-cogs = []
+lpcs = []
+freqResps = []
+errors = []
 
+npoints = 1024
+w = scipy.arange(-scipy.pi, scipy.pi, 2*scipy.pi/(npoints), dtype = 'f4')
+b = scipy.array([[1]], dtype = 'f4')
+
+if interactivePlot:
+    pylab.ion()
+    pylab.figure()
+    
 for frame in stream:
     samples = scipy.array(frame['samplesMono'], dtype = 'f4')
     fft = scipy.array(frame['fft'][:fftSize/2], dtype = scipy.complex64)
 
-    cog = odfcog.process( fft )
-    
+    lpcCoeffs, reflection, error = lpc.process( samples )
+
     spec =  20.0 / scipy.log( 10.0 ) * scipy.log( abs( fft ) + 1e-7)[:plotSize]
 
-    specs.append( spec )
-    cogs.append( cog[0,0] )
-    
+    freqResp = ricaudio.freqz(b*scipy.sqrt(error[0]), lpcCoeffs.T, w)
 
+    freqResp = 20.0 / scipy.log( 10.0 ) * scipy.log( abs( freqResp ) + 1e-7)
+
+    if interactivePlot:
+        pylab.gca().clear()
+        pylab.gca().set_autoscale_on(False)
+        pylab.gca().set_ylim([-100, 40])
+        
+        pylab.plot(w[npoints/2:npoints*3/4], freqResp[npoints/2:npoints*3/4,0])
+        
+    specs.append( spec )
+    lpcs.append( lpcCoeffs[0] )
+    freqResps.append( freqResp[npoints/2:npoints*3/4,0] )
+    errors.append( error[0] )
+
+if interactivePlot:
+    pylab.ioff()
+    
 specs = scipy.array( specs )
 frameCount = specs.shape[0] - 1
 
-cogs = scipy.array( cogs )
-
-odfRoebel = cogs
+lpcs = scipy.array( lpcs )
+freqResps = scipy.array( freqResps )
+errors = scipy.array( errors )
 
 # Get the onsets
 annotation = os.path.splitext(filename)[0] + '.onset_annotated'
@@ -93,7 +120,7 @@ def drawOnsets():
 
 pylab.figure()
 pylab.hold(True)
-pylab.subplot(2, 1, 1)
+pylab.subplot(3, 1, 1)
 
 pylab.imshow( scipy.flipud(specs.T), aspect = 'auto' )
 
@@ -112,13 +139,30 @@ ax.set_yticklabels([])
 ax.set_xlim([0, frameCount - 1])
 
 
+pylab.subplot(3, 1, 2)
+
+pylab.imshow( scipy.flipud(freqResps.T), aspect = 'auto' )
+
+pylab.title( 'LPC Frequency Response' )
+ax = pylab.gca()
+
+ax.set_xticks( ax.get_xticks()[1:] )
+ticks = ax.get_xticks()
+ax.set_xticklabels(['%.2f' % (float(tick) * frameStep / samplerate) for tick in ticks])
+
+ax.set_yticks([])
+ax.set_yticklabels([])
+
+ax.set_xlim([0, frameCount - 1])
+
+
 # Create the ODF processors and process
-pylab.subplot(2, 1, 2)
-pylab.plot(odfRoebel)
+pylab.subplot(3, 1, 3)
+pylab.plot( errors )
 
 drawOnsets()
 
-pylab.title( 'Axel Roebel''s Onset Detector' )
+pylab.title( 'LPC Error' )
 ax = pylab.gca()
 
 ax.set_xticks([])

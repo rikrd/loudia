@@ -24,6 +24,7 @@
 
 #include "odfbase.h"
 #include "peakdetect.h"
+#include "peakcog.h"
 
 class ODFCOG : public ODFBase {
 protected:
@@ -44,6 +45,7 @@ protected:
   MatrixXR _cog;
 
   PeakDetect _peaker;
+  PeakCOG _peakCoger;
   
 public:
   ODFCOG(int fftLength, int bandwidth = 6, int peakCount = 40);

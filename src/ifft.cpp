@@ -19,96 +19,89 @@
 #include "typedefs.h"
 #include "debug.h"
 
-#include "fft.h"
+#include "ifft.h"
 
 using namespace std;
 
 // import most common Eigen types 
 using namespace Eigen;
 
-FFT::FFT(int frameSize, int fftSize, bool zeroPhase) :
-  _frameSize( frameSize ),
+IFFT::IFFT(int fftSize, int frameSize, bool zeroPhase) :
   _fftSize( fftSize ),
+  _frameSize( frameSize ),
   _zeroPhase( zeroPhase ),
   _halfSize( fftSize / 2 + 1 )
 {
-  DEBUG("FFT: Constructor frameSize: " << frameSize 
+  DEBUG("IFFT: Constructor frameSize: " << frameSize 
         << ", fftSize: " << fftSize 
         << ", zeroPhase: " << zeroPhase);
 
   if(_fftSize < _frameSize){
-    // Throw exception, the FFT size must be greater or equal than the input size
+    // Throw exception, the IFFT size must be greater or equal than the input size
   }
   
   setup();
   
-  DEBUG("FFT: Constructed");
+  DEBUG("IFFT: Constructed");
 }
 
-FFT::~FFT(){
-  DEBUG("FFT: Destroying...");
+IFFT::~IFFT(){
   fftwf_destroy_plan( _fftplan );
-  DEBUG("FFT: Destroyed plan");
   fftwf_free( _in ); 
-  DEBUG("FFT: Destroyed in");
-
-  DEBUG("FFT: Destroying out");
   fftwf_free( _out );
-  DEBUG("FFT: Destroyed out");
 }
 
-void FFT::setup(){
-  DEBUG("FFT: Setting up...");
+void IFFT::setup(){
+  DEBUG("IFFT: Setting up...");
   
-  _in = (Real*) fftwf_malloc(sizeof(Real) * _fftSize);
-  _out = (fftwf_complex*) fftwf_malloc(sizeof(fftwf_complex) * _halfSize);
+  _in = (fftwf_complex*) fftwf_malloc(sizeof(fftwf_complex) * _halfSize );
+  _out = (Real*) fftwf_malloc(sizeof(Real) * _fftSize);
   
-  _fftplan = fftwf_plan_dft_r2c_1d( _fftSize, _in, _out,
+  _fftplan = fftwf_plan_dft_c2r_1d( _fftSize, _in, _out,
                                     FFTW_ESTIMATE | FFTW_PRESERVE_INPUT );
       
-  DEBUG("FFT: Finished set up...");
+  DEBUG("IFFT: Finished set up...");
 }
 
-void FFT::process(const MatrixXR& frames, MatrixXC* ffts){
-  (*ffts).resize(frames.rows(), _halfSize);
+void IFFT::process(const MatrixXC& ffts, MatrixXR* frames){
+  const int rows = ffts.rows();
+  
+  (*frames).resize(rows, _frameSize);
 
-  for (int i = 0; i < frames.rows(); i++){    
+  for (int i = 0; i < rows; i++){    
     // Fill the buffer with zeros
-    Eigen::Map<MatrixXR>(_in, 1, _fftSize) = MatrixXR::Zero(1, _fftSize);
+    Eigen::Map<MatrixXC>(reinterpret_cast< Complex* >(_in), 1, _halfSize) = ffts.row(i);
     
-    // Put the data in _in
+    // Process the data
+    fftwf_execute(_fftplan);
+
+    // Take the data from _out
     if(_zeroPhase){
 
       int half_plus = ceil((Real)_frameSize / 2.0);
       int half_minus = floor((Real)_frameSize / 2.0);
       
-      // Put second half of the frame at the beginning 
-      Eigen::Map<MatrixXR>(_in, 1, _fftSize).block(0, 0, 1, half_plus) = frames.row(i).block(0, half_minus, 1, half_plus);
+      // Take second half of the frame from the beginning 
+      (*frames).row(i).block(0, half_minus, 1, half_plus) = Eigen::Map<MatrixXR>(_out, 1, _fftSize).block(0, 0, 1, half_plus) / _fftSize;
       
-      // and first half of the frame at the end
-      Eigen::Map<MatrixXR>(_in, 1, _fftSize).block(0, _fftSize - half_minus, 1, half_minus) = frames.row(i).block(0, 0, 1, half_minus);
-
+      // and first half of the frame from the end
+      (*frames).row(i).block(0, 0, 1, half_minus) = Eigen::Map<MatrixXR>(_out, 1, _fftSize).block(0, _fftSize - half_minus, 1, half_minus) / _fftSize;
 
     }else{
 
-      // Put all of the frame at the beginning
-      Eigen::Map<MatrixXR>(_in, 1, _fftSize).block(0, 0, 1, _frameSize) = frames.row(i);
+      // Take all of the frame from the beginning
+      (*frames).row(i) = Eigen::Map<MatrixXR>(_out, 1, _fftSize).block(0, 0, 1, _frameSize) / _fftSize;
     }
-    // Process the data
-    fftwf_execute(_fftplan);
-
-    // Take the data from _out
-    (*ffts).row(i) = Eigen::Map<MatrixXC>(reinterpret_cast< Complex* >(_out), 1, _halfSize);
   }
 }
 
-void FFT::reset(){
+void IFFT::reset(){
 }
 
-int FFT::frameSize() const{
+int IFFT::frameSize() const{
   return _frameSize;
 }
 
-int FFT::fftSize() const{
+int IFFT::fftSize() const{
   return _fftSize;
 }

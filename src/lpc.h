@@ -1,5 +1,5 @@
 /*                                                         
-** Copyright (C) 2008 Ricard Marxer <email@ricardmarxer.com>
+** Copyright (C) 2008 Ricard Marxer <email@ricardmarxer.com.com>
 **                                                                  
 ** This program is free software; you can redistribute it and/or modify
 ** it under the terms of the GNU General Public License as published by
@@ -16,42 +16,34 @@
 ** Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */                                                                          
 
-#ifndef PEAKDETECT_H
-#define PEAKDETECT_H
+#ifndef LPC_H
+#define LPC_H
 
 #include "typedefs.h"
 #include "debug.h"
 
-#include <iostream>
-
-class PeakDetect {
+class LPC {
 protected:
   // Internal parameters
-  int _numPeaks;
-  int _minPeakWidth;
-  Real _minPeakContrast;
-  bool _sort;
-    
+  int _frameSize;
+  int _numCoeffs;
+  
   // Internal variables
-  MatrixXR _magnitudes;
-  MatrixXR _phases;
+  MatrixXR _temp;
+  MatrixXR _acorr;
 
 public:
-  PeakDetect(int numPeaks, int minPeakWidth = 3, Real minPeakContrast = 0, bool sort = true);
+  LPC(int frameSize, int numCoeffs);
 
-  ~PeakDetect();
+  ~LPC();
 
   void setup();
 
-  void process(const MatrixXC& fft,
-               MatrixXR* peakPositions, MatrixXR* peakMagnitudes, MatrixXR* peakPhases);
+  void process(const MatrixXR& frame, MatrixXR* lpcCoeffs, MatrixXR* reflectionCoeffs, MatrixXR* error);
 
   void reset();
 
-  int numPeaks() const;
-
-  int minPeakWidth() const;
-
+  int numCoeffs() const;
 };
 
-#endif  /* PEAKDETECT_H */
+#endif  /* LPC_H */

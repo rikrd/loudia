@@ -60,7 +60,7 @@ stream = pyricaudio.fft_ricaudio(stream, {'inputKey': 'windowed',
 
 
 
-subplots = {1 : ['mag', 'peak_mags'],
+subplots = {1 : ['mag', 'peaki_mags', 'resid_mag', 'synth_mag', 'traj_mags'],
             2 : ['phase', 'peak_phases']}
 
 all_processes = set()
@@ -74,24 +74,26 @@ subplotCount = max(subplots)
 print subplots
 pylab.ion()
 
-if 'peak_mags' in all_processes:
-    maxPeakCount = 40
-    maxTrajCount = 40
+if 'peaki_mags' in all_processes:
+    maxPeakCount = 30
+    maxTrajCount = 30
     silentFrames = 3
-    minPeakWidth = 2 * int(fftSize / frameSize) # bins for Hamming
-    minPeakContrast = 0.1
-    maxFreqBinChange = 2 * int(fftSize / frameSize)
+    minPeakWidth = 4 * int(fftSize / frameSize) # bins for Hamming
+    minPeakContrast = 0.0
+    maxFreqBinChange = 1 * fftSize / frameSize
     windowType = ricaudio.Window.HAMMING
     
     peaker = ricaudio.PeakDetect( maxPeakCount, minPeakWidth, minPeakContrast )
     peakInterp = ricaudio.PeakInterpolate( )
     tracker = ricaudio.PeakContinue( maxTrajCount, maxFreqBinChange, silentFrames )
-    peakSynth = ricaudio.PeakSynthesize( frameSize, fftSize, windowType )
+    peakSynth = ricaudio.PeakSynthesize( frameSize/6, fftSize, windowType )
 
 trajsLocs = []
 trajsMags = []
 specs = []
 specsSynth = []
+specsResid = []
+specsMagsResid = []
 
 for frame in stream:
     fft = scipy.array(frame['fft'][:plotSize], dtype = scipy.complex64)
@@ -103,7 +105,9 @@ for frame in stream:
 
     if set(['peak_mags', 'peak_phases']) | all_processes:
         fft = scipy.reshape(fft, (1, plotSize))
+
         peakLocs, peakMags, peakPhases =  peaker.process( fft )
+
         peakiLocs, peakiMags, peakiPhases = peakInterp.process( fft,
                                                                scipy.array(peakLocs, dtype='f4'),
                                                                scipy.array(peakMags, dtype='f4'),
@@ -116,16 +120,34 @@ for frame in stream:
         specSynth = peakSynth.process( trajLocs,
                                        trajMags )
 
+        specSynth = specSynth[:,:plotSize]
 
-        specsSynth.append( ricaudio.magToDb(specSynth[0,:plotSize])[0,:] )
+        specMag = scipy.resize(spec, (1, spec.shape[0]))
+
+        specMagResid = ricaudio.dbToMag( specMag ) - specSynth
+        
+        specResid = ricaudio.magToDb(ricaudio.dbToMag( specMag ) - specSynth)[0,:]
+        
+        specSynth = ricaudio.magToDb( specSynth )[0,:]
         
         trajsLocs.append( trajLocs[0,:] )
         trajsMags.append( trajMags[0,:] )
 
         specs.append( spec )
 
+        specsSynth.append( specSynth )
+        specsResid.append( specResid )
+
         peakPos = peakLocs[peakLocs > 0]
         peakMags = peakMags[peakLocs > 0]
+
+        peakiPos = peakiLocs[peakiLocs > 0]
+        peakiMags = peakiMags[peakiLocs > 0]
+
+        trajPos = trajLocs[trajLocs > 0]
+        trajMags = trajMags[trajLocs > 0]
+
+        specsMagsResid.append( specMagResid[0,:] )
 
     if interactivePlotting:
         for subplot, processes in subplots.items():
@@ -139,10 +161,26 @@ for frame in stream:
 
                 pylab.plot(spec)
 
+            if 'synth_mag' in processes:       
+                pylab.gca().set_xlim([0, plotSize])
+                pylab.gca().set_ylim([-100, 40])
 
-            if 'peak_mags' in processes:
-                if not (peakPos == -1).all():
-                    pylab.scatter(peakPos, spec[scipy.array(peakPos, dtype='i4')], c='r')
+                pylab.plot(specSynth)
+
+            if 'resid_mag' in processes:       
+                pylab.gca().set_xlim([0, plotSize])
+                pylab.gca().set_ylim([-100, 40])
+
+                pylab.plot(specResid)
+
+
+            if 'peaki_mags' in processes:
+                if not (peakiPos == -1).all():
+                    pylab.scatter(peakiPos, peakiMags, c='r')
+
+            if 'traj_mags' in processes:
+                if not (trajPos == -1).all():
+                    pylab.scatter(trajPos, trajMags, c='g')
 
 
             if 'phase' in processes:           
@@ -204,7 +242,7 @@ def extractTrajs(trajsLocs, trajsMags):
 
         
 
-    print len(trajs)
+    print 'Number of trajectories:', len(trajs)
     return trajs
 
 
@@ -213,7 +251,8 @@ trajs = extractTrajs(trajsLocs, trajsMags)
 
 specsSynth = scipy.array( specsSynth )
 specs = scipy.array( specs )
-specsDiff = abs(specs - specsSynth)
+specsDiff = scipy.array( specsResid )
+specsMagsResid = scipy.array( specsMagsResid )
 
 if plotDetSpecSynth:
     pylab.figure()
@@ -251,8 +290,8 @@ if plotSpectrumTrajs:
 if plotOdf:
     odf = ricaudio.ODFComplex( fftSize )
     odfValue = []
-    for i in range(specsDiff.shape[0] - 10):
-        val = odf.process(specsDiff[i:i+3,:])[0,0]
+    for i in range(specsMagsResid.shape[0] - 10):
+        val = odf.process(specsMagsResid[i:i+3,:])[0,0]
         odfValue.append(val)
 
     pylab.figure()

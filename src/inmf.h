@@ -16,42 +16,45 @@
 ** Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */                                                                          
 
-#ifndef PEAKDETECT_H
-#define PEAKDETECT_H
+#ifndef INMF_H
+#define INMF_H
 
 #include "typedefs.h"
 #include "debug.h"
 
-#include <iostream>
-
-class PeakDetect {
+class INMF {
 protected:
   // Internal parameters
-  int _numPeaks;
-  int _minPeakWidth;
-  Real _minPeakContrast;
-  bool _sort;
-    
+  int _fftSize;
+  int _numComponents;
+
+  int _maxIterations;
+  Real _maxError;
+
+  Real _eps;
+
+  int _numPast;
+
+  // Coefficients between 0 and 1 which represent
+  // how much should the past and the new be taken
+  // into account
+  Real _pastCoeff;
+  Real _newCoeff;
+  
   // Internal variables
-  MatrixXR _magnitudes;
-  MatrixXR _phases;
+  MatrixXR _H, _V, _W, _VH, _HH;
 
 public:
-  PeakDetect(int numPeaks, int minPeakWidth = 3, Real minPeakContrast = 0, bool sort = true);
+  INMF(int fftSize, int numComponents, int numPast, Real pastCoeff,  int maxIterations = 10, Real maxError = 10, Real eps = 1e-9);
 
-  ~PeakDetect();
+  ~INMF();
 
   void setup();
 
-  void process(const MatrixXC& fft,
-               MatrixXR* peakPositions, MatrixXR* peakMagnitudes, MatrixXR* peakPhases);
+  void process(const MatrixXR& v, MatrixXR* w, MatrixXR* h);
 
   void reset();
 
-  int numPeaks() const;
-
-  int minPeakWidth() const;
-
 };
 
-#endif  /* PEAKDETECT_H */
+#endif  /* NMF_H */

@@ -11,7 +11,10 @@ where A is a Toelpitz matrix.
 import scipy
 import scipy.linalg
 
-r = [1, 0.5, 0.5, 0.25]
+w = [1, 0.5, 0.5, 0.25]
+r = w
+#w = [1, 2, 3, 4, 5, 6, 7, 8, 9]
+#r = scipy.correlate(w, w, 'full')[:10]
 A = scipy.linalg.toeplitz( r[:-1] )
 b = -scipy.array( r[1:] )
 
@@ -27,7 +30,7 @@ def levinson(A, y, ncoeffs = scipy.inf):
     x = scipy.zeros( ncoeffs )
     x[0] = y[0] / A[0,0]
     error = 0
-
+    
     for i in range(1, ncoeffs):
         ef = scipy.dot( fs[:i] , A[-1, 0:i  ] )
         eb = scipy.dot( bs[-i:], A[0 , 1:i+1] )
@@ -78,7 +81,7 @@ def levinson2(A, y, ncoeffs = scipy.inf):
         
         x[:(i+1)] += (ln / eps) * b[-(i+1):]
         
-    return (x, scipy.sqrt(eps))
+    return (x, eps)
 
 
 def levinsonSymmetricConstrainA1(A, y, ncoeffs = scipy.inf):

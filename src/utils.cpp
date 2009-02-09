@@ -19,12 +19,6 @@
 #include "typedefs.h"
 #include "debug.h"
 
-#include <Eigen/Core>
-#include <Eigen/Array>
-#include <Eigen/QR> 
-
-#include <cmath>
-
 #include "utils.h"
 
 
@@ -51,7 +45,7 @@ void roots(const MatrixXR& poly, MatrixXC* result) {
   companion.row(0) = -poly.corner( Eigen::TopRight, 1, coeffs - 1 ) / poly(0, 0);
   
   // Get the eigen values
-  (*result) = Eigen::EigenSolver<MatrixXR>(companion).eigenvalues();
+  //(*result) = Eigen::EigenSolver<MatrixXR>(companion).eigenvalues();
 }
 
 /**
@@ -146,6 +140,69 @@ void convolve(const MatrixXR& a, const MatrixXR& b, MatrixXR* c) {
 }
 
 /**
+ * Given two row matrices 
+ * returns the correlation of both
+ */
+template<typename InMatrixType>
+void correlate(const InMatrixType& _a, const InMatrixType& _b, InMatrixType* c, int _minlag, int _maxlag) {
+  // TODO: allow to calculate only one part of the correlation
+  //       like in the case of autocorrelation where only half is needed
+  // a must be the shortest and b the longuest
+  const InMatrixType& a(_a.cols() > _b.cols() ? _b : _a);
+  const InMatrixType& b(_a.cols() > _b.cols() ? _a : _b);
+  
+  const int asize = a.cols();
+  const int bsize = b.cols();
+
+  const int minlag = max(-bsize + 1, _minlag);
+  const int maxlag = min(asize, _maxlag);
+
+  const int csize = maxlag - minlag;
+  
+  const int rows = a.rows();
+
+  if ( b.rows() != rows ) {
+    // Throw an error the two inputs must have the same number of rows
+    DEBUG("ERROR: the two inputs must have the same number of rows");
+    return;
+  }
+
+  // Prepare the output
+  (*c).resize( rows, csize );
+  (*c).setZero();
+  
+  int minsize = min(asize, bsize);
+
+  for (int lag = minlag; lag < maxlag; lag++ ) {    
+    int astart = max(lag, 0);
+    int bstart = max(-lag, 0);
+    
+    int len = min(minsize - astart, lag + bsize - astart);
+    
+    if (len != 0){
+      (*c).col( (lag - minlag) ) = (a.block(0, astart, rows, len).cwise() * b.block(0, bstart, rows, len)).rowwise().sum();
+    }
+  }
+}
+
+void correlate(const MatrixXC& a, const MatrixXC& b, MatrixXC* c, int _minlag, int _maxlag) {
+  return correlate<MatrixXC>(a, b, c, _minlag, _maxlag);
+}
+
+void correlate(const MatrixXR& a, const MatrixXR& b, MatrixXR* c, int _minlag, int _maxlag) {
+  return correlate<MatrixXR>(a, b, c, _minlag, _maxlag);
+}
+
+void autocorrelate(const MatrixXR& a, MatrixXR* c,  int _minlag, int _maxlag) {
+  return correlate<MatrixXR>(a, a, c, _minlag, _maxlag);
+}
+
+void autocorrelate(const MatrixXC& a, MatrixXC* c,  int _minlag, int _maxlag) {
+  return correlate<MatrixXC>(a, a, c, _minlag, _maxlag);
+}
+
+
+/**
  * Reverse in place the order of the columns
  */
 void reverseCols(MatrixXC* in) { 
@@ -184,6 +241,27 @@ void colCumsum(MatrixXR* in) {
   }
 }
 
+void rowShift(MatrixXR* in, int num) { 
+  const int rows = (*in).rows();
+  
+  for(int i = -num; i < rows; i++ ){
+    if(i >= 0){
+      (*in).row( i ).swap( (*in).row( i + num ) );
+    }
+  }
+}
+
+void colShift(MatrixXR* in, int num) { 
+  const int cols = (*in).cols();
+  
+  for(int i = -num; i < cols; i++ ){
+    if(i >= 0){
+      (*in).col( i ).swap( (*in).col( i + num ) );
+    }
+  }
+}
+
+
 void range(Real start, Real end, int steps, MatrixXR* in){
   const Real step = (end - start) / steps;
   
@@ -217,7 +295,7 @@ void coeffsToZpk(const MatrixXR&  b, const MatrixXR&  a, MatrixXC* zeros, Matrix
 }
 
 Real asinc(int M, Real omega) {
-  return omega == 0 ? M : sin(M * omega / 2.0) / sin(omega / 2.0) ;
+  return omega == 0 ? 1 : sin(M * omega / 2.0) / sin(omega / 2.0) / M;
 }
 
 
@@ -229,8 +307,8 @@ void raisedCosTransform(Real position, Real magnitude,
   (*begin) = max((position - bandwidth / 2.0), 0.0);
   (*end) = min(ceil(position + bandwidth / 2.0 + 1), fftSize/2.0);
   
-  if ( end <= begin ) {
-    DEBUG("ERROR: end must be higher than begin");
+  if ( (*end) <= (*begin) ) {
+    DEBUG("ERROR: end (" << (*end) << ") must be higher than begin (" << (*begin) << ")");
     // Throw a ValueError end must be higher than begin
   }
   

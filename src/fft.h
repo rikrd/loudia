@@ -22,39 +22,25 @@
 #include "typedefs.h"
 #include "debug.h"
 
-#include <Eigen/Core>
-#include <Eigen/Array>
-#include <iostream>
-
 #include <fftw3.h>
-
-
-
-//using namespace std;
-
-// import most common Eigen types 
-//using namespace Eigen;
 
 class FFT{
 protected:
   int _frameSize;
   int _fftSize;
   bool _zeroPhase;
- 
-  fftwf_complex* _in;
-  fftwf_complex* _out;
 
+  int _halfSize;
+  
+  Real* _in;
+  fftwf_complex* _out;
   fftwf_plan _fftplan;
   
-  template <typename FrameMatrixType>
-  void process(const FrameMatrixType& frames, MatrixXC* fft);
-
 
 public:
   FFT(int frameSize, int fftSize, bool zeroPhase = true);
   ~FFT();
   
-  void process(const MatrixXC& frames, MatrixXC* fft);
   void process(const MatrixXR& frames, MatrixXC* fft);
   
   void setup();

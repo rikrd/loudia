@@ -50,11 +50,7 @@ Meddis::Meddis(Real samplerate, int channels, bool substractSpont) : kt(1, chann
   setup();
 }
 
-Meddis::~Meddis() {
-  // TODO: Here we should free the buffers
-  // but I don't know how to do that with MatrixXR and MatrixXR
-  // I'm sure Nico will...
-}
+Meddis::~Meddis() {}
 
 void Meddis::setup(){
   DEBUG("MEDDIS: Setting up...");

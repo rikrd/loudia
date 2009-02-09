@@ -64,10 +64,10 @@ void PeakSynthesize::process(const MatrixXR& trajPositions, const MatrixXR& traj
   
   spectrum->resize(trajPositions.rows(), ceil(_fftSize/2.0));
   spectrum->setZero();
-
+  
   MatrixXR trajMags;
   dbToMag(trajMagnitudes, &trajMags);
-
+  
   for ( int row = 0 ; row < spectrum->rows(); row++ ) {
   
     for ( int i = 0; i < trajPositions.cols(); i++ ) {
