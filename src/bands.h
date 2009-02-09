@@ -19,6 +19,8 @@
 #ifndef BANDS_H
 #define BANDS_H
 
+#include <Eigen/StdVector>
+
 #include "typedefs.h"
 #include "debug.h"
 

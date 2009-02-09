@@ -29,6 +29,9 @@ protected:
   int _length; 
 
   // Internal variables
+  MatrixXR _ina;
+  MatrixXR _inb;
+
   MatrixXR _a;
   MatrixXR _b;
 
@@ -47,6 +50,12 @@ public:
   void process(const MatrixXR& samples, MatrixXR* output);
 
   void reset();
+  
+  void setA(const MatrixXR& a);
+  void setB(const MatrixXR& b);
+
+  void a(MatrixXR* a);
+  void b(MatrixXR* b);
 
   int channels() const;
 

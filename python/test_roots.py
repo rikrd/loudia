@@ -2,17 +2,21 @@
 
 # Create input
 import scipy
+import scipy.signal
 import ricaudio
 
-poly = [1, 2, 3, 4, 5]
+order = 12
+freq = 0.3
+rp = -60
+fs = 8000
 
-rr = ricaudio.roots( poly )
+rc = ricaudio.Chebyshev( 1, order, freq, rp, 8000 )
+sc = cheby1(order, rp, freq, btype='low', analog=0, output='ba')
 
-rs = scipy.flipud(scipy.roots( poly ))
+print sc
+print rc.a()
+print rc.b()
 
-
-print rr[:,0]
-print rs
-print scipy.allclose(rr[0], rs, rtol = 1e1)
+#print scipy.allclose(rr[0], rs, rtol = 1e1)
 
 

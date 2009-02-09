@@ -39,6 +39,9 @@ public:
   void setup();
 
   void process(MatrixXR samples, MatrixXR* filtered);
+
+  void a(MatrixXR* a);
+  void b(MatrixXR* b);
   
   void reset();
 };

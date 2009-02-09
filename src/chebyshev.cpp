@@ -24,6 +24,7 @@
 #include <vector>
 
 #include "chebyshev.h"
+#include "utils.h"
 
 using namespace std;
 
@@ -57,19 +58,17 @@ void Chebyshev::setup(){
   DEBUG("CHEBYSHEV: Setting up...");
   
   // Get the chebyshev z, p, k
-  MatrixXC zeros = MatrixXC::Zero(1,1);
+  MatrixXC zeros = MatrixXC::Zero(1, 1);
  
-  Real eps = sqrt(pow(10, (0.1 * _rippleDB) - 1.0));
+  Real eps = sqrt(pow(10, (0.1 * _rippleDB)) - 1.0);
 
-  MatrixXC n(1, _order + 1);
-  for ( int i = 0; i < n.cols(); i++ ) {
-    n(0, i) = i;
-  }
+  MatrixXC n;
+  range(1, _order + 1, _order , &n);
   
   Real mu = 1.0 / _order * log((1.0 + sqrt( 1 + eps * eps)) / eps);
 
   MatrixXC theta = ((n * 2).cwise() - 1.0) / _order * M_PI / 2.0;
-
+  
   MatrixXC poles = -sinh(mu) * theta.cwise().sin() + Complex(0, 1) * cosh(mu) * theta.cwise().cos();
 
   Complex gainComplex = 1.0;
@@ -83,19 +82,51 @@ void Chebyshev::setup(){
   if ( _order % 2 == 0 ) {
     gain = gain / sqrt((1 + eps * eps));
   }
-
-  // Convert zpk to ab coeffs
-  //zpkToCoeffs
-
-  // Get the warped critical frequency
-  Real warped = 4.0 * tan( M_PI * _freq / 2.0 );
-
   
   DEBUG("CHEBYSHEV: zeros:" << zeros );
   DEBUG("CHEBYSHEV: poles:" << poles );
   DEBUG("CHEBYSHEV: gain:" << gain );
 
+  // Convert zpk to ab coeffs
+  MatrixXC a;
+  MatrixXC b;
+  zpkToCoeffs(zeros, poles, gain, &b, &a);
+  
+  // Since we cannot create matrices of Nx0
+  // we have created at least one Zero in 0
+  // Now we must remove the last coefficient from b
+
+  MatrixXC temp = b.block(0, 0, b.rows(), b.cols()-1);
+  b = temp;
+
+  // Get the warped critical frequency
+  Real fs = 2.0;
+  Real warped = 2.0 * fs * tan( M_PI * _freq / fs );
+
+  // Warpped coeffs
+  MatrixXC wa;
+  MatrixXC wb;
+  lowPassToLowPass(b, a, warped, &wb, &wa);
+ 
+  // Digital coeffs
+  MatrixXR da;
+  MatrixXR db;
+  bilinear(wb, wa, fs, &db, &da);
+  
+  // Set the coefficients to the filter
+  _filter.setB( db.transpose() );
+  _filter.setA( da.transpose() );
+  _filter.setup();
+  
   DEBUG("CHEBYSHEV: Finished set up...");
+}
+
+void Chebyshev::a(MatrixXR* a) {
+  _filter.a(a);
+}
+
+void Chebyshev::b(MatrixXR* b) {
+  _filter.b(b);
 }
 
 void Chebyshev::process(MatrixXR samples, MatrixXR* filtered) {

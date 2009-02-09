@@ -19,10 +19,10 @@
 #include "typedefs.h"
 #include "debug.h"
 
-#include <vector>
-
 #include "melbands.h"
 #include "melscales.h"
+
+#include <vector>
 
 using namespace std;
 
