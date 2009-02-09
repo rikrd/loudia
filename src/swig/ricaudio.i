@@ -15,8 +15,6 @@ import_array();
 #include <Eigen/Core>
 #include <Eigen/Array>
 
-#include <stdio.h>
-
 #include "filter.h"
 #include "dct.h"
 #include "window.h"
@@ -35,6 +33,7 @@ import_array();
 #include "peakinterpolate.h"
 #include "peakcontinue.h"
 #include "peaksynthesize.h"
+#include "chebyshev.h"
 #include "unwrap.h"
 #include "odfcomplex.h"
 #include "odf.h"
@@ -46,8 +45,6 @@ import_array();
 
 #include "melscales.h"
 #include "utils.h"
-
-using namespace std;
 %}
 
 %include "typemaps.i"
@@ -70,6 +67,8 @@ using namespace std;
 %include "peakinterpolate.h"
 %include "peakcontinue.h"
 %include "peaksynthesize.h"
+%include "chebyshev.h"
+%include "utils.h"
 %include "unwrap.h"
 %include "odfcomplex.h"
 %include "odf.h"

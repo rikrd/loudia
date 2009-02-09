@@ -16,46 +16,34 @@
 ** Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */                                                                          
 
-#ifndef BANDS_H
-#define BANDS_H
+#ifndef CHEBYSHEV_H
+#define CHEBYSHEV_H
 
-#include <Eigen/StdVector>
+#include "filter.h"
 
 #include "typedefs.h"
-#include "debug.h"
 
-#include <vector>
-
-class Bands {
+class Chebyshev {
 protected:
-  // Internal parameters
-  MatrixXI _starts;
-  std::vector<MatrixXR> _weights;
-
-  // Internal variables
+  int _channels;
+  int _order;
+  Real _freq;
+  Real _rippleDB;
+  Real _samplerate;
+  
+  Filter _filter;
 
 public:
-  Bands();
-
-  Bands(MatrixXI starts, std::vector<MatrixXR> weights);
-
-  ~Bands();
+  Chebyshev(int channels, int order, Real freq, Real rippleDB, Real samplerate);
 
   void setup();
 
-  void process(const MatrixXR&  spectrum, MatrixXR* bands);
+  void process(MatrixXR samples, MatrixXR* filtered);
 
+  void a(MatrixXR* a);
+  void b(MatrixXR* b);
+  
   void reset();
-
-  std::vector<MatrixXR> weights() const;
-
-  void bandWeights(int band, MatrixXR* bandWeights) const;
-
-  void starts(MatrixXI* result) const;
-
-  int bands() const;
-
-  void setStartsWeights(const MatrixXI& starts, std::vector<MatrixXR> weights);
 };
 
-#endif  /* BANDS_H */
+#endif  /* CHEBYSHEV_H */

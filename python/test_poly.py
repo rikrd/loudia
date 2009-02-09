@@ -1,0 +1,16 @@
+#!/usr/bin/env python
+
+# Create input
+import scipy
+import ricaudio
+
+a = [1, 2, 3, 4, 5]
+
+rr = ricaudio.poly( a )
+rs = scipy.poly( a )
+
+print rr[0]
+print rs
+print scipy.allclose(rr[0], rs, rtol = 1e1)
+
+

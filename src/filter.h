@@ -22,17 +22,6 @@
 #include "typedefs.h"
 #include "debug.h"
 
-#include <Eigen/Core>
-#include <Eigen/Array>
-#include <iostream>
-
-
-
-//using namespace std;
-
-// import most common Eigen types
-//using namespace Eigen;
-
 class Filter {
 protected:
   // Internal parameters
@@ -40,6 +29,9 @@ protected:
   int _length; 
 
   // Internal variables
+  MatrixXR _ina;
+  MatrixXR _inb;
+
   MatrixXR _a;
   MatrixXR _b;
 
@@ -47,6 +39,8 @@ protected:
   MatrixXR _samples;
 
 public:
+  Filter(int channels);
+
   Filter(const MatrixXR& b, const MatrixXR& a, int channels);
 
   ~Filter();
@@ -56,6 +50,12 @@ public:
   void process(const MatrixXR& samples, MatrixXR* output);
 
   void reset();
+  
+  void setA(const MatrixXR& a);
+  void setB(const MatrixXR& b);
+
+  void a(MatrixXR* a);
+  void b(MatrixXR* b);
 
   int channels() const;
 

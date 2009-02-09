@@ -90,7 +90,10 @@ void colShift(MatrixXR* in, int num);
 /**
  * Calculate inplace range matrix
  */
+void range(Real start, Real end, int steps, MatrixXC* in);
+void range(Real start, Real end, int steps, int rows, MatrixXC* in);
 void range(Real start, Real end, int steps, MatrixXR* in);
+void range(Real start, Real end, int steps, int rows, MatrixXR* in);
 
 /**
  * Create a matrix of complex numbers given the polar coordinates
@@ -102,6 +105,30 @@ void polar(const MatrixXR& mag, const MatrixXR& phase, MatrixXC* complex);
  * zeros, poles and gain of the filter
  */
 void coeffsToZpk(const MatrixXR& b, const MatrixXR& a, MatrixXC* zeros, MatrixXC* poles, Real* gain);
+
+/**
+ * Convert from zeros, poles and gain of an IIR filter to the
+ * the b and a coefficients of the filter
+ */
+void zpkToCoeffs(const MatrixXC& zeros, const MatrixXC& poles, Real gain, MatrixXC*  b, MatrixXC*  a);
+
+/**
+ * Convert from the b and a coefficients of an IIR filter with critical frequency 1.0
+ * to the coefficients with the critical frequency passed as argument
+ */
+void lowPassToLowPass(const MatrixXC& b, const MatrixXC& a, Real freq, MatrixXC*  bout, MatrixXC*  aout);
+
+/**
+ * Apply the biliniear transformations to a set of coefficients
+ * 
+ */
+void bilinear(const MatrixXC& b, const MatrixXC& a, Real fs, MatrixXR*  bout, MatrixXR*  aout);
+
+/**
+ * Calculate the combinations of N elements in groups of k
+ *   
+ */
+int comb(int N, int k);
 
 /**
  * Calculate the aliased cardinal sine defined as:

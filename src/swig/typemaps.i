@@ -330,4 +330,3 @@
 
   $result = SWIG_Python_AppendOutput($result, Py_BuildValue("i", $1));
 }
-

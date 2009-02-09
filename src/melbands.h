@@ -19,10 +19,10 @@
 #ifndef MELBANDS_H
 #define MELBANDS_H
 
+#include <Eigen/StdVector>
+
 #include "typedefs.h"
 #include "debug.h"
-
-#include <Eigen/StdVector>
 
 #include "bands.h"
 

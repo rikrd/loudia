@@ -53,25 +53,26 @@ void roots(const MatrixXR& poly, MatrixXC* result) {
  * returns a matrix of polynomes (a polynome per vector of roots)
  */
 template<typename InMatrixType>
-void poly(const InMatrixType& roots, InMatrixType* result) {
-  const int nroots = roots.cols();
-
+void poly(const InMatrixType& _roots, InMatrixType* result) {
+  
+  const int rows = _roots.rows();
+  const int nroots = _roots.cols();
+  
   // Prepare the output
   (*result).resize(1, 1);
   (*result).setZero();
-  (*result)(0, 0) = 1.0;
-
-  //InMatrixType newA;
-  //InMatrixType a = InMatrixType::Zero(1, nroots + 1);
-  InMatrixType b(1, 2);
+  (*result).col(0).setOnes();
+  
+  InMatrixType b(rows, 2);
 
   for ( int i = 0; i < nroots; i++) {
-    b << 1 , -roots(0, i);
-    convolve(*result, b, result);
-    //a.set(newA);
+    b.col(0).setOnes();
+    b.col(1) = -_roots.col( i );
+    
+    InMatrixType temp = (*result);
+    
+    convolve(temp, b, result);
   }
-
-  //(*result) = a;
 }
 
 void poly(const MatrixXC& roots, MatrixXC* result) {
@@ -138,7 +139,6 @@ void convolve(const MatrixXC& a, const MatrixXC& b, MatrixXC* c) {
 void convolve(const MatrixXR& a, const MatrixXR& b, MatrixXR* c) {
   return convolve<MatrixXR>(a, b, c);
 }
-
 
 /**
  * Given two row matrices 
@@ -222,6 +222,10 @@ void reverseCols(MatrixXR* in) {
   }
 }
 
+/**
+ * Convert from the b and a coefficients of an IIR filter to the
+ * zeros, poles and gain of the filter
+ */
 void rowCumsum(MatrixXR* in) { 
   const int rows = (*in).rows();
   
@@ -258,15 +262,36 @@ void colShift(MatrixXR* in, int num) {
   }
 }
 
-
-void range(Real start, Real end, int steps, MatrixXR* in){
+template<typename InMatrixType>
+void range(Real start, Real end, int steps, int rows, InMatrixType* in){
   const Real step = (end - start) / steps;
   
-  in->resize(1, steps);
+  in->resize(rows, steps);
   
   for (int i = 0; i<steps; i++) {
-    (*in)(0, i) = i*step + start;
+    (*in).col(i).setConstant( i*step + start );
   }
+}
+
+template<typename InMatrixType>
+void range(Real start, Real end, int steps, InMatrixType* in){
+  return range<InMatrixType>(start, end, steps, 1, in);
+}
+
+void range(Real start, Real end, int steps, int rows, MatrixXC* in){
+  range<MatrixXC>(start, end, steps, rows, in);
+}
+
+void range(Real start, Real end, int steps, MatrixXC* in){
+  return range(start, end, steps, 1, in);
+}
+
+void range(Real start, Real end, int steps, int rows, MatrixXR* in){
+  range<MatrixXR>(start, end, steps, rows, in);
+}
+
+void range(Real start, Real end, int steps, MatrixXR* in){
+  return range(start, end, steps, 1, in);
 }
 
 void polar(const MatrixXR&  mag, const MatrixXR&  phase, MatrixXC* complex) {
@@ -289,6 +314,102 @@ void coeffsToZpk(const MatrixXR&  b, const MatrixXR&  a, MatrixXC* zeros, Matrix
   bTemp /= b(0, 0);
   roots(bTemp, zeros);
   roots(a, poles);
+}
+
+void zpkToCoeffs(const MatrixXC& zeros, const MatrixXC& poles, Real gain, MatrixXC*  b, MatrixXC*  a){
+  poly( zeros, b );
+  (*b) *= gain;
+  
+  poly( poles, a );
+}
+
+void lowPassToLowPass(const MatrixXC& b, const MatrixXC& a, Real freq, MatrixXC*  bout, MatrixXC*  aout) {
+  const int asize = a.cols();
+  const int bsize = b.cols();
+
+  const int rows = a.rows();
+
+  const int maxsize = max(asize, bsize);    
+
+  *aout = a;
+  *bout = b;
+  
+  MatrixXR pwo;
+  range(maxsize-1, -1, maxsize, rows, &pwo);
+
+  pwo = pwo.cwise().expN( freq );
+  
+  int start1 = max(bsize - asize, 0);
+  int start2 = max(asize - bsize, 0);
+  
+  for ( int i = 0; i < bsize; i++ ) {
+    (*bout).col(i) *= pwo.col( start2 + i ).cwise().inverse() * pwo.col( start1 );
+  }
+
+  for ( int i = 0; i < asize; i++ ) {
+    (*aout).col(i) *= pwo.col( start1 + i ).cwise().inverse() * pwo.col( start1 );
+  }
+}
+
+int comb(int N, int k) {
+  if ((k > N) || (N < 0) || (k < 0)) return 0;
+  
+  int val = 1;
+  for (int i = 0; i < min(k, N-k); i++) {
+    val = floor((val * (N - i)) / (i + 1));
+  }
+
+  return val;
+}
+
+void bilinear(const MatrixXC& b, const MatrixXC& a, Real fs, MatrixXR*  bout, MatrixXR*  aout) {
+  const int asize = a.cols();
+  const int bsize = b.cols();
+  const int maxsize = max(asize, bsize);
+  
+  const int rows = a.rows();
+  
+  (*aout).resize(rows, maxsize);
+  (*bout).resize(rows, maxsize);
+  
+  MatrixXC val;
+  
+  for ( int j = 0; j < maxsize; j++ ) {
+    val = MatrixXC::Zero(rows, 1);
+    
+    for ( int i = 0; i < bsize; i++ ) {
+      for ( int k = 0; k < i + 1; k++ ) {
+        for ( int l = 0; l < (maxsize - i); l++ ) {
+          
+          if((k + l) == j)
+            val += comb(i, k) * comb(maxsize - i - 1, l) * b.col(bsize - 1 - i) * pow(2*fs, i) * pow(-1, k);
+        }
+      }
+    }
+    
+    (*bout).col(j) = val.real();
+  }
+
+  for ( int j = 0; j < maxsize; j++ ) {
+    val = MatrixXC::Zero(rows, 1);
+    
+    for ( int i = 0; i < asize; i++ ) {
+      for ( int k = 0; k < i + 1; k++ ) {
+        for ( int l = 0; l < (maxsize - i); l++ ) {
+          
+          if((k + l) == j)
+            val += comb(i, k) * comb(maxsize - i - 1, l) * a.col(asize - 1 - i) * pow(2*fs, i) * pow(-1, k);
+        }
+      }
+    }
+    
+    (*aout).col(j) = val.real();
+  }
+  
+}
+
+void bilinear(const MatrixXC& b, const MatrixXC& a, MatrixXR*  bout, MatrixXR*  aout) {
+  bilinear(b, a, 1.0, bout, aout);
 }
 
 Real asinc(int M, Real omega) {
