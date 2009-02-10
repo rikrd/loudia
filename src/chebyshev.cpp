@@ -108,20 +108,8 @@ void Chebyshev::chebyshev2(int order, Real rippleDB, int channels, MatrixXC* zer
 
   (*poles) = (((*poles).real().cast<Complex>() * sinh( mu )) + (Complex(0, 1) * cosh( mu ) * (*poles).imag().cast<Complex>())).cwise().inverse();
 
-  // TODO: use the Eigen prod() when the patch is accepted
-  //(*gain) = ((-(*poles)).rowwise().prod().cwise() / (-(*zeros)).rowwise().prod()).real().sum();
-  
-  MatrixXC num = MatrixXC::Ones((*poles).rows(), 1);
-  for (int i = 0; i < (*poles).cols(); i++) {
-    num.cwise() *= -(*poles).col(i);
-  }
-
-  MatrixXC den = MatrixXC::Ones((*zeros).rows(), 1);
-  for (int i = 0; i < (*zeros).cols(); i++) {
-    den.cwise() *= -(*zeros).col(i);
-  }
-  
-  (*gain) = (num.cwise() / den).real().sum();
+  // TODO: gain should be a vector (one gain per channel)
+  (*gain) = ((-(*poles)).rowwise().prod().cwise() / (-(*zeros)).rowwise().prod()).real().sum();
 }
 
 

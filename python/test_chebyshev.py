@@ -5,7 +5,7 @@ import scipy
 import scipy.signal
 import ricaudio
 
-plot = True
+plot = False
 
 atol = 1e-5
 
