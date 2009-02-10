@@ -146,7 +146,7 @@ void Chebyshev::setup(){
   DEBUG("CHEBYSHEV: zeros:" << zeros );
   DEBUG("CHEBYSHEV: poles:" << poles );
   DEBUG("CHEBYSHEV: gain:" << gain );
-
+  
   // Convert zpk to ab coeffs
   MatrixXC a;
   MatrixXC b;
@@ -159,16 +159,16 @@ void Chebyshev::setup(){
     MatrixXC temp = b.block(0, 0, b.rows(), b.cols()-1);
     b = temp;
   }
-
+  
   // Get the warped critical frequency
   Real fs = 2.0;
   Real warped = 2.0 * fs * tan( M_PI * _freq / fs );
-
+  
   // Warpped coeffs
   MatrixXC wa;
   MatrixXC wb;
   lowPassToLowPass(b, a, warped, &wb, &wa);
- 
+  
   // Digital coeffs
   MatrixXR da;
   MatrixXR db;
