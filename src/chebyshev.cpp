@@ -82,47 +82,46 @@ void Chebyshev::chebyshev1(int order, Real rippleDB, int channels, MatrixXC* zer
 
 void Chebyshev::chebyshev2(int order, Real rippleDB, int channels, MatrixXC* zeros, MatrixXC* poles, Real* gain) {
   Real de = 1.0 / sqrt(pow(10, (0.1 * rippleDB)) - 1.0);
-  Real mu = arcsinh(1.0 / de) / order;
-  
-  int m;
-  MatrixXC n(channels, order);
+  Real mu = asinh(1.0 / de) / order;
+
+  MatrixXC n;
   if(order % 2) {
-    m = order - 1;
+    n.resize(channels, order - 1);
     MatrixXC nFirst;
-    range(1, order - 1, order/2 - 1, channels, &nFirst);
+    range(1, order , order/2, channels, &nFirst);
 
     MatrixXC nSecond;
-    range(order + 2, 2 * order, order/2 - 1, channels, &nSecond);
+    range(order + 2, (2 * order) + 1, order/2, channels, &nSecond);
     
     n << nFirst, nSecond;
   } else{
-    m = order;
-    range(1, 2*order, order, channels, &n);
+    n.resize(channels, order);
+    range(1, (2 * order) + 1, order, channels, &n);
   }
   
-  (*zeros) = (Complex(0,1) / ((n + M_PI) / (2.0*order)).cwise().cos()).conj();
+  (*zeros) = (Complex(0,1) * ((n * M_PI) / (2.0 * order)).cwise().cos().cwise().inverse()).conjugate();
 
   MatrixXC rng;
-  range(1, 2*order, order, channels, &rng);
+  range(1, (2 * order) + 1, order, channels, &rng);
   
-  (*poles) = (Complex(0,1) * (M_PI * rng / (2.0*order) + M_PI/2.0)).cwise().exp();
-  (*poles) = (sinh( mu ) * (*poles).real() + Complex(0, 1) * cosh( mu ) * (*poles).imag()).cwise().inverse();
-  
+  (*poles) = (Complex(0,1) * (((M_PI * rng) / (2.0*order)).cwise() + M_PI / 2.0)).cwise().exp();
+
+  (*poles) = (((*poles).real().cast<Complex>() * sinh( mu )) + (Complex(0, 1) * cosh( mu ) * (*poles).imag().cast<Complex>())).cwise().inverse();
+
   // TODO: use the Eigen prod() when the patch is accepted
   //(*gain) = ((-(*poles)).rowwise().prod().cwise() / (-(*zeros)).rowwise().prod()).real().sum();
-
+  
   MatrixXC num = MatrixXC::Ones((*poles).rows(), 1);
-  for (int i = 0; i < (*poles).cols()) {
+  for (int i = 0; i < (*poles).cols(); i++) {
     num.cwise() *= -(*poles).col(i);
   }
 
   MatrixXC den = MatrixXC::Ones((*zeros).rows(), 1);
-  for (int i = 0; i < (*zeros).cols()) {
+  for (int i = 0; i < (*zeros).cols(); i++) {
     den.cwise() *= -(*zeros).col(i);
   }
   
   (*gain) = (num.cwise() / den).real().sum();
-
 }
 
 
@@ -155,10 +154,11 @@ void Chebyshev::setup(){
   
   // Since we cannot create matrices of Nx0
   // we have created at least one Zero in 0
-  // Now we must remove the last coefficient from b
-
-  MatrixXC temp = b.block(0, 0, b.rows(), b.cols()-1);
-  b = temp;
+  if ( zeros == MatrixXC::Zero(zeros.rows(), 1) ){
+    // Now we must remove the last coefficient from b
+    MatrixXC temp = b.block(0, 0, b.rows(), b.cols()-1);
+    b = temp;
+  }
 
   // Get the warped critical frequency
   Real fs = 2.0;
