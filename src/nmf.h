@@ -25,11 +25,10 @@
 class NMF {
 protected:
   // Internal parameters
-  int _fftSize;
-  int _numComponents;
+  int _vectorSize;
+  int _factor;
 
   int _maxIterations;
-  Real _maxError;
   
   Real _eps;
   
@@ -38,13 +37,13 @@ protected:
   MatrixXR _norms;
 
 public:
-  NMF(int fftSize, int numComponents, int maxIterations = 10, Real maxError = 10, Real eps = 1e-9);
+  NMF(int vectorSize, int factor, int maxIterations = 10, Real eps = 1e-9);
 
   ~NMF();
 
   void setup();
 
-  void process(const MatrixXR& spectrumAbs, MatrixXR* components, MatrixXR* gains);
+  void process(const MatrixXR& v, MatrixXR* w, MatrixXR* h);
 
   void reset();
 

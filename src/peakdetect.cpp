@@ -78,7 +78,7 @@ void PeakDetect::process(const MatrixXC& fft,
   DEBUG("PEAKDETECT: Processing");
   
   int numPeaks = _numPeaks;
-  if(numPeaks == -1){
+  if( numPeaks == -1 ){
     numPeaks = fft.cols();
   }
   
@@ -110,8 +110,10 @@ void PeakDetect::process(const MatrixXC& fft,
     vector<peak> peaks;
 
     peakIndex = 0;
+
+    if( (!_sort) && (peakIndex > numPeaks) ) break;
     
-    for ( int j = (_minPeakWidth / 2); j < _magnitudes.row(i).cols() - (_minPeakWidth / 2); j++) {     
+    for ( int j = (_minPeakWidth / 2); j < _magnitudes.row(i).cols() - (_minPeakWidth / 2); j++) {
       int inf = j - (_minPeakWidth / 2);
       
       // Get the maximum value and position of a region (corresponding to the min bandwidth of the peak)
@@ -136,7 +138,7 @@ void PeakDetect::process(const MatrixXC& fft,
 
       if ( _sort ) {
         // Order the peaks by magnitude
-        std::sort(peaks.begin(), peaks.end());  
+        std::sort(peaks.begin(), peaks.end());
       }
       
       int peakCount = min(_numPeaks, peakIndex);
@@ -148,7 +150,7 @@ void PeakDetect::process(const MatrixXC& fft,
         (*peakPositions)(i, j) = peaks[j].pos;
       }
     
-    }    
+    }
   }
 
   
