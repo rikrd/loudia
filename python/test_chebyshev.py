@@ -5,7 +5,7 @@ import scipy
 import scipy.signal
 import ricaudio
 
-plot = False
+plot = True
 
 atol = 1e-5
 
@@ -78,6 +78,9 @@ if plot:
 
 
 # Test type II with even order
+rp = 40
+order = 4
+
 rc = ricaudio.Chebyshev( order, freq, rp, 1, ricaudio.Chebyshev.II )
 sc_b, sc_a = scipy.signal.cheby2(order, rp, freq, btype='low', analog=0, output='ba')
 
@@ -108,7 +111,6 @@ if plot:
 
 
 # Test with type II with odd order
-rp = 5
 order = 11
 
 rc = ricaudio.Chebyshev( order, freq, rp, 1, ricaudio.Chebyshev.II )

@@ -63,7 +63,7 @@ for ind, frame in enumerate(framer):
         
         fs = peakPosi / fftSize * sr
 
-        if plotInteractive:
+        if plotInteractive and not (ind % 10):
             pylab.ion()
             pylab.figure( 1 )
             pylab.subplot( 211 )
