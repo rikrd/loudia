@@ -24,17 +24,27 @@
 #include "typedefs.h"
 
 class Chebyshev {
+public:
+  enum ChebyshevType {
+    I = 0,
+    II = 1
+  };
+
 protected:
-  int _channels;
   int _order;
   Real _freq;
   Real _rippleDB;
-  Real _samplerate;
+  int _channels;
   
   Filter _filter;
 
+  ChebyshevType _chebyshevType;
+
+  void chebyshev1(int order, Real rippleDB, int channels, MatrixXC* zeros, MatrixXC* poles, Real* gain);
+  void chebyshev2(int order, Real rippleDB, int channels, MatrixXC* zeros, MatrixXC* poles, Real* gain);
+
 public:
-  Chebyshev(int channels, int order, Real freq, Real rippleDB, Real samplerate);
+  Chebyshev(int order, Real freq, Real rippleDB, int channels = 1, ChebyshevType chebyshevType = I);
 
   void setup();
 

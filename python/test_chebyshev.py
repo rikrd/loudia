@@ -12,7 +12,7 @@ freq = 0.3
 rp = 0.05
 fs = 8000
 
-rc = ricaudio.Chebyshev( 1, order, freq, rp, fs )
+rc = ricaudio.Chebyshev( order, freq, rp, 1 )
 sc_b, sc_a = scipy.signal.cheby1(order, rp, freq, btype='low', analog=0, output='ba')
 
 rc_b = rc.b().T

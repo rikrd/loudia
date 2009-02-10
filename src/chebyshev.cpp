@@ -31,22 +31,20 @@ using namespace std;
 // import most common Eigen types 
 using namespace Eigen;
 
-Chebyshev::Chebyshev(int channels, int order, Real freq, Real rippleDB, Real samplerate) : 
-  _channels(channels),
+Chebyshev::Chebyshev( int order, Real freq, Real rippleDB, int channels, ChebyshevType chebyshevType) : 
   _order(order),
   _freq(freq),
   _rippleDB(rippleDB),
-  _samplerate(samplerate),
-  _filter(channels)
+  _channels(channels),
+  _filter(channels),
+  _chebyshevType(chebyshevType)
                                                                                            
 {
-  DEBUG("CHEBYSHEV: Constructor order: " << order << ", rippleDB: " << rippleDB << ", samplerate: " << samplerate);
+  DEBUG("CHEBYSHEV: Constructor order: " << order << 
+        ", freq: " << freq << 
+        ", rippleDB: " << rippleDB );
 
   if ( order < 1 ) {
-    // Throw an exception
-  }
-
-  if ( samplerate <= 0 ) {
     // Throw an exception
   }
   
@@ -55,34 +53,83 @@ Chebyshev::Chebyshev(int channels, int order, Real freq, Real rippleDB, Real sam
   DEBUG("CHEBYSHEV: Constructed");
 }
 
+void Chebyshev::chebyshev1(int order, Real rippleDB, int channels, MatrixXC* zeros, MatrixXC* poles, Real* gain) {
+  (*zeros) = MatrixXC::Zero(channels, 1);
+ 
+  Real eps = sqrt(pow(10, (0.1 * rippleDB)) - 1.0);
+
+  MatrixXC n;
+  range(1, order + 1, order, channels, &n);
+
+  Real mu = 1.0 / order * log((1.0 + sqrt( 1 + eps * eps)) / eps);
+
+  MatrixXC theta = ((n * 2).cwise() - 1.0) / order * M_PI / 2.0;
+
+  (*poles) = -sinh(mu) * theta.cwise().sin() + Complex(0, 1) * cosh(mu) * theta.cwise().cos();
+
+  Complex gainComplex = 1.0;
+
+  for ( int i = 0; i < (*poles).cols(); i++ ) {
+    gainComplex *= -(*poles)(0, i);
+  }
+
+  (*gain) = gainComplex.real();
+  
+  if ( order % 2 == 0 ) {
+    (*gain) /= sqrt((1 + eps * eps));
+  }
+}
+
+void Chebyshev::chebyshev2(int order, Real rippleDB, int channels, MatrixXC* zeros, MatrixXC* poles, Real* gain) {
+  Real de = 1.0 / sqrt(pow(10, (0.1 * rippleDB)) - 1.0);
+  Real mu = arcsinh(1.0 / de) / order;
+  
+  int m;
+  MatrixXC n(channels, order);
+  if(order % 2) {
+    m = order - 1;
+    MatrixXC nFirst;
+    range(1, order - 1, order/2 - 1, channels, &nFirst);
+
+    MatrixXC nSecond;
+    range(order + 2, 2 * order, order/2 - 1, channels, &nSecond);
+    
+    n << nFirst, nSecond;
+  } else{
+    m = order;
+    range(1, 2*order, order, channels, &n);
+  }
+  
+  (*zeros) = (Complex(0,1) / ((n + M_PI) / (2.0*order)).cwise().cos()).conj();
+
+  MatrixXC rng;
+  range(1, 2*order, order, channels, &rng);
+  
+  (*poles) = (Complex(0,1) * (M_PI * rng / (2.0*order) + M_PI/2.0)).cwise().exp();
+  (*poles) = (sinh( mu ) * (*poles).real() + Complex(0, 1) * cosh( mu ) * (*poles).imag()).cwise().inverse();
+  
+  // TODO: use the Eigen prod() when the patch is accepted
+  Real num = 1.0;
+  //k = (numpy.prod(-p,axis=0)/numpy.prod(-z,axis=0)).real
+}
+
+
 void Chebyshev::setup(){
   DEBUG("CHEBYSHEV: Setting up...");
 
   DEBUG("CHEBYSHEV: Getting zpk");  
   // Get the chebyshev z, p, k
-  MatrixXC zeros = MatrixXC::Zero(_channels, 1);
- 
-  Real eps = sqrt(pow(10, (0.1 * _rippleDB)) - 1.0);
+  MatrixXC zeros, poles;
+  Real gain;
 
-  MatrixXC n;
-  range(1, _order + 1, _order, _channels, &n);
+  switch( _chebyshevType ){
+  case I:
+    chebyshev1(_order, _rippleDB, _channels, &zeros, &poles, &gain);
+    break;
 
-  Real mu = 1.0 / _order * log((1.0 + sqrt( 1 + eps * eps)) / eps);
-
-  MatrixXC theta = ((n * 2).cwise() - 1.0) / _order * M_PI / 2.0;
-
-  MatrixXC poles = -sinh(mu) * theta.cwise().sin() + Complex(0, 1) * cosh(mu) * theta.cwise().cos();
-
-  Complex gainComplex = 1.0;
-
-  for ( int i = 0; i < poles.cols(); i++ ) {
-    gainComplex *= -poles(0, i);
-  }
-
-  Real gain = gainComplex.real();
-  
-  if ( _order % 2 == 0 ) {
-    gain = gain / sqrt((1 + eps * eps));
+  case II:
+    chebyshev2(_order, _rippleDB, _channels, &zeros, &poles, &gain);
+    break;
   }
   
   DEBUG("CHEBYSHEV: zeros:" << zeros );
