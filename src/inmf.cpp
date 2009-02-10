@@ -27,11 +27,10 @@ using namespace std;
 // import most common Eigen types 
 using namespace Eigen;
 
-INMF::INMF(int fftSize, int numComponents, int numPast, Real pastCoeff, int maxIterations, Real maxError, Real eps) :
+INMF::INMF(int fftSize, int numComponents, int numPast, Real pastCoeff, int maxIterations, Real eps) :
   _fftSize(fftSize),
   _numComponents(numComponents),
   _maxIterations(maxIterations),
-  _maxError(maxError),
   _eps(eps),
   _numPast(numPast),
   _pastCoeff(pastCoeff),
@@ -42,8 +41,7 @@ INMF::INMF(int fftSize, int numComponents, int numPast, Real pastCoeff, int maxI
         << " numComponents: " << _numComponents
         << " numPast: " << _numPast
         << " pastCoeff: " << _pastCoeff
-        << " maxIterations: " << _maxIterations
-        << " maxError: " << _maxError );
+        << " maxIterations: " << _maxIterations );
   
   setup();
 }

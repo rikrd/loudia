@@ -3,10 +3,10 @@
 from common import *
 import sys
 
-plot = True
+plot = False
 plotInteractive = False
 
-estimatePitch = True
+estimatePitch = False
 
 filename = '/home/rmarxer/dev/data/onsets/pitchedphrases/Strings/Picked-Plucked-Ham/Piano/piano1.wav'
 
@@ -22,12 +22,13 @@ plotSize = halfSize/2
 zeroPhase = True
 
 components = 5
-pastFrames = 120
+pastFrames = 500
 pastCoeff = 0.2
+iterations = 10
 
 w = ricaudio.Window(windowSize, windowType)
 f = ricaudio.FFT(windowSize, fftSize, zeroPhase)
-d = ricaudio.INMF(halfSize, components, pastFrames, pastCoeff, 15, 1, 1e-17)
+d = ricaudio.INMF(halfSize, components, pastFrames, pastCoeff, iterations, 1e-17)
 
 framer, sr, nframes, nchannels, loader = get_framer_audio(filename, windowSize, windowHop)
 
@@ -35,7 +36,7 @@ onsets = get_onsets(filename, windowHop, sr)
 
 if estimatePitch:
    acorrw = ricaudio.Window(halfSize, ricaudio.Window.HAMMING)
-   peaker = ricaudio.PeakDetect(1, 3, 0, False)
+   peaker = ricaudio.PeakDetect(1, 5, 0, False)
    peakeri = ricaudio.PeakInterpolate()
    freqs = []
 

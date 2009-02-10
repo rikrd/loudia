@@ -29,7 +29,6 @@ protected:
   int _numComponents;
 
   int _maxIterations;
-  Real _maxError;
 
   Real _eps;
 
@@ -45,7 +44,7 @@ protected:
   MatrixXR _H, _V, _W, _VH, _HH;
 
 public:
-  INMF(int fftSize, int numComponents, int numPast, Real pastCoeff,  int maxIterations = 10, Real maxError = 10, Real eps = 1e-9);
+  INMF(int fftSize, int numComponents, int numPast, Real pastCoeff,  int maxIterations = 10, Real eps = 1e-9);
 
   ~INMF();
 

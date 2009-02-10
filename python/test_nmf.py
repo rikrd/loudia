@@ -4,9 +4,9 @@ import ricaudio
 import scipy
 import pylab
 
-plot = True
+plot = False
 
-d = ricaudio.NMF(8, 2, 100, 1, 1e-7)
+d = ricaudio.NMF(8, 2, 100, 1e-7)
 
 a = scipy.zeros((14, 8), dtype = 'f4')
 a[:4, 2] = 1
