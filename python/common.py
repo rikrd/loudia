@@ -5,6 +5,34 @@ import scipy
 import pylab
 import os
 
+def plotFreqz(b, a, w = None, npoints = None, title = '', db = False):
+    # Create the omega array if necessary
+    if npoints is None:
+        npoints = 1000
+
+    if w is None:
+        w = scipy.arange(-scipy.pi, scipy.pi, 2*scipy.pi/(npoints), dtype = 'f4')
+
+    # Calculate the frequency response
+    d = ricaudio.freqz(b.T, a.T, w)
+
+    if db:
+        mag = 20.0 * scipy.log10(abs(d[:,0]))
+    else:
+        mag = abs(d[:,0])
+
+    import pylab
+
+    pylab.subplot(2,1,1)
+    pylab.plot(w, mag)
+    pylab.title('%s \n Magnitude of the Frequency Response' % title)
+
+    pylab.subplot(2,1,2)
+    pylab.plot(w, scipy.angle(d[:,0]))
+    pylab.title('Angle of the Frequency Response')
+
+    pylab.show()
+
 def get_onsets(filename, hop, samplerate, onsetError = 50.0):
     # Get the onsets
     annotation = os.path.splitext(filename)[0] + '.onset_annotated'

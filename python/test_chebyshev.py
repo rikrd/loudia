@@ -1,9 +1,9 @@
 #!/usr/bin/env python
 
-# Create input
+import ricaudio
 import scipy
 import scipy.signal
-import ricaudio
+from common import *
 
 plot = True
 
@@ -25,25 +25,7 @@ rc_a = rc.a().T
 print scipy.allclose(sc_b, rc_b, atol = atol) and scipy.allclose(sc_a, rc_a, atol = atol)
 
 if plot:
-    # Create the omega array
-    npoints = 1000
-    w = scipy.arange(-scipy.pi, scipy.pi, 2*scipy.pi/(npoints), dtype = 'f4')
-
-    # Calculate the frequency response
-    d = ricaudio.freqz(rc_b.T, rc_a.T, w)
-
-    import pylab
-
-    pylab.subplot(2,1,1)
-    pylab.plot(w, abs(d[:,0]))
-    pylab.title('Type I with order %d \n Magnitude of the Frequency Response' % order)
-    
-    pylab.subplot(2,1,2)
-    pylab.plot(w, scipy.angle(d[:,0]))
-    pylab.title('Angle of the Frequency Response')
-    
-    pylab.show()
-
+    plotFreqz(rc_b, rc_a, title = 'Chebyshev 1 order %d' % order)
 
 # Test with type I with odd order
 order = 11
@@ -57,24 +39,7 @@ rc_a = rc.a().T
 print scipy.allclose(sc_b, rc_b, atol = atol) and scipy.allclose(sc_a, rc_a, atol = atol)
 
 if plot:
-    # Create the omega array
-    npoints = 1000
-    w = scipy.arange(-scipy.pi, scipy.pi, 2*scipy.pi/(npoints), dtype = 'f4')
-
-    # Calculate the frequency response
-    d = ricaudio.freqz(rc_b.T, rc_a.T, w)
-
-    import pylab
-
-    pylab.subplot(2,1,1)
-    pylab.plot(w, abs(d[:,0]))
-    pylab.title('Type I with order %d \n Magnitude of the Frequency Response' % order)
-    
-    pylab.subplot(2,1,2)
-    pylab.plot(w, scipy.angle(d[:,0]))
-    pylab.title('Angle of the Frequency Response')
-    
-    pylab.show()
+    plotFreqz(rc_b, rc_a, title = 'Chebyshev 1 order %d' % order)
 
 
 # Test type II with even order
@@ -90,24 +55,7 @@ rc_a = rc.a().T
 print scipy.allclose(sc_b, rc_b, atol = atol) and scipy.allclose(sc_a, rc_a, atol = atol)
 
 if plot:
-    # Create the omega array
-    npoints = 1000
-    w = scipy.arange(-scipy.pi, scipy.pi, 2*scipy.pi/(npoints), dtype = 'f4')
-
-    # Calculate the frequency response
-    d = ricaudio.freqz(rc_b.T, rc_a.T, w)
-
-    import pylab
-
-    pylab.subplot(2,1,1)
-    pylab.plot(w, abs(d[:,0]))
-    pylab.title('Type II with order %d \n Magnitude of the Frequency Response' % order)
-    
-    pylab.subplot(2,1,2)
-    pylab.plot(w, scipy.angle(d[:,0]))
-    pylab.title('Angle of the Frequency Response')
-    
-    pylab.show()
+    plotFreqz(rc_b, rc_a, title = 'Chebyshev 2 order %d' % order)
 
 
 # Test with type II with odd order
@@ -122,21 +70,4 @@ rc_a = rc.a().T
 print scipy.allclose(sc_b, rc_b, atol = atol) and scipy.allclose(sc_a, rc_a, atol = atol)
 
 if plot:
-    # Create the omega array
-    npoints = 1000
-    w = scipy.arange(-scipy.pi, scipy.pi, 2*scipy.pi/(npoints), dtype = 'f4')
-
-    # Calculate the frequency response
-    d = ricaudio.freqz(rc_b.T, rc_a.T, w)
-
-    import pylab
-
-    pylab.subplot(2,1,1)
-    pylab.plot(w, abs(d[:,0]))
-    pylab.title('Type II with order %d \n Magnitude of the Frequency Response' % order)
-    
-    pylab.subplot(2,1,2)
-    pylab.plot(w, scipy.angle(d[:,0]))
-    pylab.title('Angle of the Frequency Response')
-    
-    pylab.show()
+    plotFreqz(rc_b, rc_a, title = 'Chebyshev 2 order %d' % order)
