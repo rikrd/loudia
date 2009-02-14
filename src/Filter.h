@@ -1,5 +1,5 @@
 /*                                                         
-** Copyright (C) 2008 Ricard Marxer <email@ricardmarxer.com>
+** Copyright (C) 2008 Ricard Marxer <email@ricardmarxer.com.com>
 **                                                                  
 ** This program is free software; you can redistribute it and/or modify
 ** it under the terms of the GNU General Public License as published by
@@ -16,48 +16,51 @@
 ** Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */                                                                          
 
+#ifndef FILTER_H
+#define FILTER_H
+
 #include "Typedefs.h"
 #include "Debug.h"
 
-#include "AOK.h"
+class Filter {
+protected:
+  // Internal parameters
+  int _channels; 
+  int _length; 
 
-#include <fstream>
+  // Internal variables
+  MatrixXR _ina;
+  MatrixXR _inb;
 
-using namespace std;
+  MatrixXR _a;
+  MatrixXR _b;
 
-void loadFile(string filename, MatrixXC* result, int rows, int cols) {
-  FILE* in = fopen( filename.c_str(), "r");
-  Real coeff;
-  for ( int i = 0; i<rows; i++ ) {
-    for (int j = 0; j<cols; j++) {
-      int r = fscanf(in, "%f", &coeff);
-      (*result)(i, j) = coeff;
-    }
-  }
-}
+  MatrixXR _z;
+  MatrixXR _samples;
 
-int main() {
-  int windowSize = 256;
-  int hopSize = 128;
-  int fftLength = 256;
-  int numFrames = 3442;
-  Real normVolume = 3;
+public:
+  Filter(int channels);
+
+  Filter(const MatrixXR& b, const MatrixXR& a, int channels);
+
+  ~Filter();
+
+  void setup();
+
+  void process(const MatrixXR& samples, MatrixXR* output);
+
+  void reset();
   
-  //cerr << in << endl;
-  
-  AOK aok(windowSize, hopSize, fftLength, normVolume);
-  aok.setup();
+  void setA(const MatrixXR& a);
+  void setB(const MatrixXR& b);
 
-  int frameSize = aok.frameSize();
-  MatrixXC in = MatrixXC::Zero(numFrames, frameSize);
-  loadFile("/home/rmarxer/dev/ricaudio/src/tests/test.frames", &in, numFrames, frameSize);
+  void a(MatrixXR* a);
+  void b(MatrixXR* b);
 
-  MatrixXR result(numFrames, fftLength);
-  
-  aok.process(in, &result);
-  
-  cout << result << endl;
+  int channels() const;
 
-  return 0;
-}
+  int length() const;
 
+};
+
+#endif  /* FILTER_H */

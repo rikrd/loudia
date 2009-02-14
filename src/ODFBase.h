@@ -16,48 +16,24 @@
 ** Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */                                                                          
 
+#ifndef ODFBASE_H
+#define ODFBASE_H
+
 #include "Typedefs.h"
 #include "Debug.h"
 
-#include "AOK.h"
+class ODFBase {
+protected:
+  // Internal parameters
 
-#include <fstream>
-
-using namespace std;
-
-void loadFile(string filename, MatrixXC* result, int rows, int cols) {
-  FILE* in = fopen( filename.c_str(), "r");
-  Real coeff;
-  for ( int i = 0; i<rows; i++ ) {
-    for (int j = 0; j<cols; j++) {
-      int r = fscanf(in, "%f", &coeff);
-      (*result)(i, j) = coeff;
-    }
-  }
-}
-
-int main() {
-  int windowSize = 256;
-  int hopSize = 128;
-  int fftLength = 256;
-  int numFrames = 3442;
-  Real normVolume = 3;
+  // Internal variables
+public:
+  virtual void setup() = 0;
   
-  //cerr << in << endl;
+  virtual void process(const MatrixXC& fft, MatrixXR* odfValue) = 0;
   
-  AOK aok(windowSize, hopSize, fftLength, normVolume);
-  aok.setup();
+  virtual void reset() = 0;
 
-  int frameSize = aok.frameSize();
-  MatrixXC in = MatrixXC::Zero(numFrames, frameSize);
-  loadFile("/home/rmarxer/dev/ricaudio/src/tests/test.frames", &in, numFrames, frameSize);
+};
 
-  MatrixXR result(numFrames, fftLength);
-  
-  aok.process(in, &result);
-  
-  cout << result << endl;
-
-  return 0;
-}
-
+#endif  /* ODFBASE_H */

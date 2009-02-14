@@ -16,48 +16,42 @@
 ** Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */                                                                          
 
+#ifndef FFTCOMPLEX_H
+#define FFTCOMPLEX_H
+
 #include "Typedefs.h"
 #include "Debug.h"
 
-#include "AOK.h"
+#include <fftw3.h>
 
-#include <fstream>
+class FFTComplex{
+protected:
+  int _frameSize;
+  int _fftSize;
+  bool _zeroPhase;
 
-using namespace std;
-
-void loadFile(string filename, MatrixXC* result, int rows, int cols) {
-  FILE* in = fopen( filename.c_str(), "r");
-  Real coeff;
-  for ( int i = 0; i<rows; i++ ) {
-    for (int j = 0; j<cols; j++) {
-      int r = fscanf(in, "%f", &coeff);
-      (*result)(i, j) = coeff;
-    }
-  }
-}
-
-int main() {
-  int windowSize = 256;
-  int hopSize = 128;
-  int fftLength = 256;
-  int numFrames = 3442;
-  Real normVolume = 3;
+  fftwf_complex* _in;
   
-  //cerr << in << endl;
+  fftwf_complex* _out;
+
+  fftwf_plan _fftplan;
   
-  AOK aok(windowSize, hopSize, fftLength, normVolume);
-  aok.setup();
+  template <typename FrameMatrixType>
+  void process(const FrameMatrixType& frames, MatrixXC* fft);
 
-  int frameSize = aok.frameSize();
-  MatrixXC in = MatrixXC::Zero(numFrames, frameSize);
-  loadFile("/home/rmarxer/dev/ricaudio/src/tests/test.frames", &in, numFrames, frameSize);
 
-  MatrixXR result(numFrames, fftLength);
+public:
+  FFTComplex(int frameSize, int fftSize, bool zeroPhase = true);
+  ~FFTComplex();
   
-  aok.process(in, &result);
+  void process(const MatrixXC& frames, MatrixXC* fft);
+  void process(const MatrixXR& frames, MatrixXC* fft);
   
-  cout << result << endl;
+  void setup();
+  void reset();
 
-  return 0;
-}
+  int frameSize() const;
+  int fftSize() const;
+};
 
+#endif  /* FFTCOMPLEX_H */

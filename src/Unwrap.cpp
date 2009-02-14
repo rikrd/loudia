@@ -19,45 +19,59 @@
 #include "Typedefs.h"
 #include "Debug.h"
 
-#include "AOK.h"
-
-#include <fstream>
+#include "Unwrap.h"
+#include "Utils.h"
 
 using namespace std;
+using namespace Eigen;
 
-void loadFile(string filename, MatrixXC* result, int rows, int cols) {
-  FILE* in = fopen( filename.c_str(), "r");
-  Real coeff;
-  for ( int i = 0; i<rows; i++ ) {
-    for (int j = 0; j<cols; j++) {
-      int r = fscanf(in, "%f", &coeff);
-      (*result)(i, j) = coeff;
-    }
+Unwrap::Unwrap(int inputLength) :
+  _inputLength( inputLength )
+{
+  DEBUG("Unwrap: Construction inputLength: " << inputLength);
+
+  setup();
+}
+
+Unwrap::~Unwrap(){}
+
+void Unwrap::setup(){
+  // Prepare the buffers
+  DEBUG("Unwrap: Setting up...");
+  
+  reset();
+
+  DEBUG("Unwrap: Finished setup.");
+}
+
+void Unwrap::process(const MatrixXR& input, MatrixXR* unwrapped){
+  const int rows = input.rows();
+  const int cols = input.cols();
+
+  (*unwrapped).resize(rows, cols);
+  
+  if(input.rows() <= 1){
+    (*unwrapped) = input;
   }
+
+  _diff.resize(rows, cols);
+  _upsteps.resize(rows, cols);
+  _downsteps.resize(rows, cols);
+  _shift.resize(rows, cols);  
+
+  _diff << MatrixXR::Zero(1, cols), input.block(0, 0, rows-1, cols) - input.block(1, 0, rows-1, cols);
+  
+  _upsteps = (_diff.cwise() > M_PI).cast<Real>();
+  _downsteps = (_diff.cwise() < -M_PI).cast<Real>();
+
+  rowCumsum(&_upsteps);
+  rowCumsum(&_downsteps);
+
+  _shift =  _upsteps - _downsteps;
+
+  (*unwrapped) = input + (2.0 * M_PI * _shift);
 }
 
-int main() {
-  int windowSize = 256;
-  int hopSize = 128;
-  int fftLength = 256;
-  int numFrames = 3442;
-  Real normVolume = 3;
-  
-  //cerr << in << endl;
-  
-  AOK aok(windowSize, hopSize, fftLength, normVolume);
-  aok.setup();
-
-  int frameSize = aok.frameSize();
-  MatrixXC in = MatrixXC::Zero(numFrames, frameSize);
-  loadFile("/home/rmarxer/dev/ricaudio/src/tests/test.frames", &in, numFrames, frameSize);
-
-  MatrixXR result(numFrames, fftLength);
-  
-  aok.process(in, &result);
-  
-  cout << result << endl;
-
-  return 0;
+void Unwrap::reset(){
+  // Initial values
 }
-

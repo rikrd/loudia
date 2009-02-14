@@ -16,48 +16,49 @@
 ** Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */                                                                          
 
+#ifndef DCT_H
+#define DCT_H
+
 #include "Typedefs.h"
 #include "Debug.h"
 
-#include "AOK.h"
+class DCT {
+public:
+  enum DCTType {
+    I = 0,
+    II = 1,
+    III = 2,
+    IV = 3,
+    OCTAVE = 4
+  };
 
-#include <fstream>
+protected:
+  // Internal parameters
+  int _inputLength;
+  int _dctLength;
+  Real _scale;
 
-using namespace std;
+  DCTType _dctType;
 
-void loadFile(string filename, MatrixXC* result, int rows, int cols) {
-  FILE* in = fopen( filename.c_str(), "r");
-  Real coeff;
-  for ( int i = 0; i<rows; i++ ) {
-    for (int j = 0; j<cols; j++) {
-      int r = fscanf(in, "%f", &coeff);
-      (*result)(i, j) = coeff;
-    }
-  }
-}
+  // Internal variables
+  MatrixXR _dctMatrix;
 
-int main() {
-  int windowSize = 256;
-  int hopSize = 128;
-  int fftLength = 256;
-  int numFrames = 3442;
-  Real normVolume = 3;
-  
-  //cerr << in << endl;
-  
-  AOK aok(windowSize, hopSize, fftLength, normVolume);
-  aok.setup();
+  void type1Matrix(MatrixXR* dctMatrix);
 
-  int frameSize = aok.frameSize();
-  MatrixXC in = MatrixXC::Zero(numFrames, frameSize);
-  loadFile("/home/rmarxer/dev/ricaudio/src/tests/test.frames", &in, numFrames, frameSize);
+  void type2Matrix(MatrixXR* dctMatrix);
 
-  MatrixXR result(numFrames, fftLength);
-  
-  aok.process(in, &result);
-  
-  cout << result << endl;
+  void typeOctaveMatrix(MatrixXR* dctMatrix);
 
-  return 0;
-}
+public:
+  DCT(int inputLength, int dctLength, bool scale = false, DCTType dctType = OCTAVE);
 
+  ~DCT();
+
+  void setup();
+
+  void process(const MatrixXR& input, MatrixXR* dctCoeffs);
+
+  void reset();
+};
+
+#endif  /* DCT_H */

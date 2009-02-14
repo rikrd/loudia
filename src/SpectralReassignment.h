@@ -16,48 +16,53 @@
 ** Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */                                                                          
 
+#ifndef SPECTRALREASSIGNMENT_H
+#define SPECTRALREASSIGNMENT_H
+
 #include "Typedefs.h"
 #include "Debug.h"
 
-#include "AOK.h"
+#include "Window.h"
+#include "FFTComplex.h"
 
-#include <fstream>
-
-using namespace std;
-
-void loadFile(string filename, MatrixXC* result, int rows, int cols) {
-  FILE* in = fopen( filename.c_str(), "r");
-  Real coeff;
-  for ( int i = 0; i<rows; i++ ) {
-    for (int j = 0; j<cols; j++) {
-      int r = fscanf(in, "%f", &coeff);
-      (*result)(i, j) = coeff;
-    }
-  }
-}
-
-int main() {
-  int windowSize = 256;
-  int hopSize = 128;
-  int fftLength = 256;
-  int numFrames = 3442;
-  Real normVolume = 3;
+class SpectralReassignment{
+protected:
+  int _frameSize;
+  int _fftSize;
+  Real _samplerate;
+  Window::WindowType _windowType;
   
-  //cerr << in << endl;
+  Window _windowAlgo;
+  Window _windowIntegAlgo;
+  Window _windowDerivAlgo;
+
+  FFTComplex _fftAlgo;
+
+  MatrixXC _window;
+  MatrixXC _windowInteg;
+  MatrixXC _windowDeriv;
+
+  MatrixXR _fftAbs2;
+  MatrixXC _fftInteg;
+  MatrixXC _fftDeriv;
+
+  MatrixXR _time;
+  MatrixXR _freq;
+ 
+public: 
+  SpectralReassignment(int frameSize, int fftSize, Real samplerate, Window::WindowType windowType = Window::RECTANGULAR);
+  ~SpectralReassignment();
   
-  AOK aok(windowSize, hopSize, fftLength, normVolume);
-  aok.setup();
-
-  int frameSize = aok.frameSize();
-  MatrixXC in = MatrixXC::Zero(numFrames, frameSize);
-  loadFile("/home/rmarxer/dev/ricaudio/src/tests/test.frames", &in, numFrames, frameSize);
-
-  MatrixXR result(numFrames, fftLength);
+  void process(const MatrixXR& frames,
+               MatrixXC* fft, MatrixXR* reassignTime, MatrixXR* reassignFreq);
   
-  aok.process(in, &result);
-  
-  cout << result << endl;
+  void setup();
+  void reset();
 
-  return 0;
-}
+  int frameSize() const;
+  int fftSize() const;
 
+  Window::WindowType windowType() const;
+};
+
+#endif  /* SPECTRALREASSIGNMENT_H */

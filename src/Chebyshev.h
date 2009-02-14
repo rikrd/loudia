@@ -16,48 +16,45 @@
 ** Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */                                                                          
 
+#ifndef CHEBYSHEV_H
+#define CHEBYSHEV_H
+
 #include "Typedefs.h"
 #include "Debug.h"
 
-#include "AOK.h"
+#include "Filter.h"
 
-#include <fstream>
+class Chebyshev {
+public:
+  enum ChebyshevType {
+    I = 0,
+    II = 1
+  };
 
-using namespace std;
-
-void loadFile(string filename, MatrixXC* result, int rows, int cols) {
-  FILE* in = fopen( filename.c_str(), "r");
-  Real coeff;
-  for ( int i = 0; i<rows; i++ ) {
-    for (int j = 0; j<cols; j++) {
-      int r = fscanf(in, "%f", &coeff);
-      (*result)(i, j) = coeff;
-    }
-  }
-}
-
-int main() {
-  int windowSize = 256;
-  int hopSize = 128;
-  int fftLength = 256;
-  int numFrames = 3442;
-  Real normVolume = 3;
+protected:
+  int _order;
+  Real _freq;
+  Real _rippleDB;
+  int _channels;
   
-  //cerr << in << endl;
+  Filter _filter;
+
+  ChebyshevType _chebyshevType;
+
+  void chebyshev1(int order, Real rippleDB, int channels, MatrixXC* zeros, MatrixXC* poles, Real* gain);
+  void chebyshev2(int order, Real rippleDB, int channels, MatrixXC* zeros, MatrixXC* poles, Real* gain);
+
+public:
+  Chebyshev(int order, Real freq, Real rippleDB, int channels = 1, ChebyshevType chebyshevType = I);
+
+  void setup();
+
+  void process(MatrixXR samples, MatrixXR* filtered);
+
+  void a(MatrixXR* a);
+  void b(MatrixXR* b);
   
-  AOK aok(windowSize, hopSize, fftLength, normVolume);
-  aok.setup();
+  void reset();
+};
 
-  int frameSize = aok.frameSize();
-  MatrixXC in = MatrixXC::Zero(numFrames, frameSize);
-  loadFile("/home/rmarxer/dev/ricaudio/src/tests/test.frames", &in, numFrames, frameSize);
-
-  MatrixXR result(numFrames, fftLength);
-  
-  aok.process(in, &result);
-  
-  cout << result << endl;
-
-  return 0;
-}
-
+#endif  /* CHEBYSHEV_H */

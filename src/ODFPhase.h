@@ -16,48 +16,43 @@
 ** Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */                                                                          
 
+#ifndef ODFPHASE_H
+#define ODFPHASE_H
+
 #include "Typedefs.h"
 #include "Debug.h"
 
-#include "AOK.h"
+#include "ODFBase.h"
+#include "Unwrap.h"
 
-#include <fstream>
-
-using namespace std;
-
-void loadFile(string filename, MatrixXC* result, int rows, int cols) {
-  FILE* in = fopen( filename.c_str(), "r");
-  Real coeff;
-  for ( int i = 0; i<rows; i++ ) {
-    for (int j = 0; j<cols; j++) {
-      int r = fscanf(in, "%f", &coeff);
-      (*result)(i, j) = coeff;
-    }
-  }
-}
-
-int main() {
-  int windowSize = 256;
-  int hopSize = 128;
-  int fftLength = 256;
-  int numFrames = 3442;
-  Real normVolume = 3;
+class ODFPhase : public ODFBase {
+protected:
+  // Internal parameters
+  int _fftLength;
+  bool _weighted;
+  bool _normalize;
   
-  //cerr << in << endl;
+  // Internal variables
+  Unwrap _unwrap;
+
+  MatrixXC _spectrum;
+  MatrixXR _unwrappedAngle;
+  MatrixXR _phaseDiff;
+  MatrixXR _instFreq;
   
-  AOK aok(windowSize, hopSize, fftLength, normVolume);
-  aok.setup();
+  void phaseDeviation(const MatrixXC& spectrum, const MatrixXR& spectrumArg, MatrixXR* odfValue);
 
-  int frameSize = aok.frameSize();
-  MatrixXC in = MatrixXC::Zero(numFrames, frameSize);
-  loadFile("/home/rmarxer/dev/ricaudio/src/tests/test.frames", &in, numFrames, frameSize);
+public:
+  ODFPhase(int fftLength, bool weighted = false, bool normalize = false);
 
-  MatrixXR result(numFrames, fftLength);
-  
-  aok.process(in, &result);
-  
-  cout << result << endl;
+  ~ODFPhase();
 
-  return 0;
-}
+  void setup();
 
+  void process(const MatrixXC& fft, MatrixXR* odfValue);
+
+  void reset();
+
+};
+
+#endif  /* ODFPHASE_H */

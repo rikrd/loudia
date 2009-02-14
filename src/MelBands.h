@@ -16,48 +16,61 @@
 ** Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */                                                                          
 
+#ifndef MELBANDS_H
+#define MELBANDS_H
+
+#include <Eigen/StdVector>
+
 #include "Typedefs.h"
 #include "Debug.h"
 
-#include "AOK.h"
+#include "Bands.h"
 
-#include <fstream>
+class MelBands {
+public:
+  enum ScaleType {
+    STEVENS = 0,
+    FANT = 1,
+    GREENWOOD = 2
+  };
 
-using namespace std;
+protected:
+  Real _lowFreq;
+  Real _highFreq;
+  int _numBands;
+  Real _samplerate;
+  int _fftLength;
+  ScaleType _scaleType;
 
-void loadFile(string filename, MatrixXC* result, int rows, int cols) {
-  FILE* in = fopen( filename.c_str(), "r");
-  Real coeff;
-  for ( int i = 0; i<rows; i++ ) {
-    for (int j = 0; j<cols; j++) {
-      int r = fscanf(in, "%f", &coeff);
-      (*result)(i, j) = coeff;
-    }
-  }
-}
+  Bands _bands;
 
-int main() {
-  int windowSize = 256;
-  int hopSize = 128;
-  int fftLength = 256;
-  int numFrames = 3442;
-  Real normVolume = 3;
+  Real (*_linearToMel)(Real linearFreq);
   
-  //cerr << in << endl;
+  Real (*_melToLinear)(Real melFreq);
   
-  AOK aok(windowSize, hopSize, fftLength, normVolume);
-  aok.setup();
-
-  int frameSize = aok.frameSize();
-  MatrixXC in = MatrixXC::Zero(numFrames, frameSize);
-  loadFile("/home/rmarxer/dev/ricaudio/src/tests/test.frames", &in, numFrames, frameSize);
-
-  MatrixXR result(numFrames, fftLength);
+  void (*_linearToMelMatrix)(const MatrixXR& linearFreq, MatrixXR* melFreq);
   
-  aok.process(in, &result);
+  void (*_melToLinearMatrix)(const MatrixXR& melFreq, MatrixXR* linearFreq);
+
+  void triangleWindow(MatrixXR* window, Real start, Real stop, Real center = -1, Real height = Real(1.0));
   
-  cout << result << endl;
+public:
+  MelBands(Real lowFreq, Real highFreq, int numBands, Real samplerate, int fftLength, ScaleType scaleType = GREENWOOD);
 
-  return 0;
-}
+  void setup();
 
+  void process(const MatrixXR& spectrum, MatrixXR* bands);
+  
+  void reset();
+
+  std::vector<MatrixXR> weights() const;
+
+  void bandWeights(int band, MatrixXR* bandWeights) const;
+
+  void starts(MatrixXI* result) const;
+
+  int bands() const;
+
+};
+
+#endif  /* MELBANDS_H */

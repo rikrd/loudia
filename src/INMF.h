@@ -16,48 +16,44 @@
 ** Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */                                                                          
 
+#ifndef INMF_H
+#define INMF_H
+
 #include "Typedefs.h"
 #include "Debug.h"
 
-#include "AOK.h"
+class INMF {
+protected:
+  // Internal parameters
+  int _fftSize;
+  int _numComponents;
 
-#include <fstream>
+  int _maxIterations;
 
-using namespace std;
+  Real _eps;
 
-void loadFile(string filename, MatrixXC* result, int rows, int cols) {
-  FILE* in = fopen( filename.c_str(), "r");
-  Real coeff;
-  for ( int i = 0; i<rows; i++ ) {
-    for (int j = 0; j<cols; j++) {
-      int r = fscanf(in, "%f", &coeff);
-      (*result)(i, j) = coeff;
-    }
-  }
-}
+  int _numPast;
 
-int main() {
-  int windowSize = 256;
-  int hopSize = 128;
-  int fftLength = 256;
-  int numFrames = 3442;
-  Real normVolume = 3;
+  // Coefficients between 0 and 1 which represent
+  // how much should the past and the new be taken
+  // into account
+  Real _pastCoeff;
+  Real _newCoeff;
   
-  //cerr << in << endl;
-  
-  AOK aok(windowSize, hopSize, fftLength, normVolume);
-  aok.setup();
+  // Internal variables
+  MatrixXR _H, _V, _W, _VH, _HH;
 
-  int frameSize = aok.frameSize();
-  MatrixXC in = MatrixXC::Zero(numFrames, frameSize);
-  loadFile("/home/rmarxer/dev/ricaudio/src/tests/test.frames", &in, numFrames, frameSize);
+public:
+  INMF(int fftSize, int numComponents, int numPast, Real pastCoeff,  int maxIterations = 10, Real eps = 1e-9);
 
-  MatrixXR result(numFrames, fftLength);
-  
-  aok.process(in, &result);
-  
-  cout << result << endl;
+  ~INMF();
 
-  return 0;
-}
+  void setup();
 
+  void process(const MatrixXR& v, MatrixXR* w, MatrixXR* h);
+
+  void reset();
+
+};
+
+#endif  /* NMF_H */

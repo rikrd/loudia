@@ -16,16 +16,11 @@
 ** Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */                                                                          
 
-#include "spectralreassignment.h"
-#include "window.h"
+#include "SpectralReassignment.h"
+#include "Window.h"
 
-
-#include "typedefs.h"
-#include "debug.h"
-
-#include <Eigen/Core>
-#include <iostream>
-#include <cmath>
+#include "Typedefs.h"
+#include "Debug.h"
 
 using namespace std;
 

@@ -16,10 +16,10 @@
 ** Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */                                                                          
 
-#include "fft.h"
+#include "FFT.h"
 
-#include "typedefs.h"
-#include "debug.h"
+#include "Typedefs.h"
+#include "Debug.h"
 
 #include <Eigen/Core>
 #include <iostream>

@@ -1,5 +1,5 @@
 /*                                                         
-** Copyright (C) 2008 Ricard Marxer <email@ricardmarxer.com>
+** Copyright (C) 2008 Ricard Marxer <email@ricardmarxer.com.com>
 **                                                                  
 ** This program is free software; you can redistribute it and/or modify
 ** it under the terms of the GNU General Public License as published by
@@ -16,48 +16,53 @@
 ** Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */                                                                          
 
+#ifndef MFCC_H
+#define MFCC_H
+
 #include "Typedefs.h"
 #include "Debug.h"
 
-#include "AOK.h"
+#include "MelBands.h"
+#include "DCT.h"
 
-#include <fstream>
+class MFCC {
+protected:
+  // Internal parameters
+  Real _lowFreq;
+  Real _highFreq;
+  int _numBands;
+  Real _samplerate;
+  int _fftLength;
 
-using namespace std;
-
-void loadFile(string filename, MatrixXC* result, int rows, int cols) {
-  FILE* in = fopen( filename.c_str(), "r");
-  Real coeff;
-  for ( int i = 0; i<rows; i++ ) {
-    for (int j = 0; j<cols; j++) {
-      int r = fscanf(in, "%f", &coeff);
-      (*result)(i, j) = coeff;
-    }
-  }
-}
-
-int main() {
-  int windowSize = 256;
-  int hopSize = 128;
-  int fftLength = 256;
-  int numFrames = 3442;
-  Real normVolume = 3;
+  int _numCoeffs;
   
-  //cerr << in << endl;
+  Real _minSpectrum;
+  Real _power;
   
-  AOK aok(windowSize, hopSize, fftLength, normVolume);
-  aok.setup();
+  // Internal variables
+  MelBands _melbands;
+  DCT _dct;
 
-  int frameSize = aok.frameSize();
-  MatrixXC in = MatrixXC::Zero(numFrames, frameSize);
-  loadFile("/home/rmarxer/dev/ricaudio/src/tests/test.frames", &in, numFrames, frameSize);
+  MatrixXR _bands;
+  MatrixXR _coeffs;
 
-  MatrixXR result(numFrames, fftLength);
-  
-  aok.process(in, &result);
-  
-  cout << result << endl;
+public:
+  MFCC(Real lowFreq, Real highFreq, int numBands, Real samplerate, int fftLength, int numCoeffs, Real minSpectrum = 1e-10, Real power = 1.0);
 
-  return 0;
-}
+  ~MFCC();
 
+  void setup();
+
+  void process(const MatrixXR& spectrum, MatrixXR* mfccCoeffs);
+
+  void reset();
+
+  int numCoeffs() const;
+
+  Real lowFreq() const;
+
+  Real highFreq() const;
+
+};
+
+#endif  /* MFCC_H */

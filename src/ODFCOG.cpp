@@ -19,45 +19,65 @@
 #include "Typedefs.h"
 #include "Debug.h"
 
-#include "AOK.h"
+#include "ODFCOG.h"
 
-#include <fstream>
+#include "Utils.h"
 
 using namespace std;
+using namespace Eigen;
 
-void loadFile(string filename, MatrixXC* result, int rows, int cols) {
-  FILE* in = fopen( filename.c_str(), "r");
-  Real coeff;
-  for ( int i = 0; i<rows; i++ ) {
-    for (int j = 0; j<cols; j++) {
-      int r = fscanf(in, "%f", &coeff);
-      (*result)(i, j) = coeff;
-    }
-  }
+ODFCOG::ODFCOG(int fftLength, int peakCount, int bandwidth) :
+  ODFBase(),
+  _fftLength(fftLength),
+  _peakCount(peakCount),
+  _bandwidth(bandwidth),
+  _peaker(peakCount, bandwidth),
+  _peakCoger(fftLength, bandwidth)
+{
+  
+  DEBUG("ODFCOG: Constructor fftLength: " << _fftLength);
+  
+  setup();
 }
 
-int main() {
-  int windowSize = 256;
-  int hopSize = 128;
-  int fftLength = 256;
-  int numFrames = 3442;
-  Real normVolume = 3;
-  
-  //cerr << in << endl;
-  
-  AOK aok(windowSize, hopSize, fftLength, normVolume);
-  aok.setup();
+ODFCOG::~ODFCOG() {}
 
-  int frameSize = aok.frameSize();
-  MatrixXC in = MatrixXC::Zero(numFrames, frameSize);
-  loadFile("/home/rmarxer/dev/ricaudio/src/tests/test.frames", &in, numFrames, frameSize);
 
-  MatrixXR result(numFrames, fftLength);
-  
-  aok.process(in, &result);
-  
-  cout << result << endl;
+void ODFCOG::setup() {
+  // Prepare the buffers
+  DEBUG("ODFCOG: Setting up...");
 
-  return 0;
+  _peaker.setup();
+  _peakCoger.setup();
+  
+  reset();
+
+  DEBUG("ODFCOG: Finished set up...");
 }
 
+
+void ODFCOG::process(const MatrixXC& fft, MatrixXR* odfValue) {
+  DEBUG("ODFCOG: Processing windowed");
+  const int rows = fft.rows();
+  const int cols = fft.cols();
+  const int halfCols = min((int)ceil(_fftLength / 2.0), cols);
+  
+  (*odfValue).resize(rows, 1);
+
+  DEBUG("ODFCOG: Processing the peaks");
+
+  _peaker.process(fft.block(0, 0, rows, halfCols), &_peakPos, &_peakMag, &_peakArg);
+
+  _peakCoger.process(fft.block(0, 0, rows, halfCols), _peakPos, &_cog);
+
+  (*odfValue) = _cog.cwise().clipUnder().rowwise().sum();
+  
+  DEBUG("ODFCOG: Finished Processing");
+}
+
+void ODFCOG::reset() {
+  // Initial values
+  _peaker.reset();
+  _peakCoger.reset();
+
+}

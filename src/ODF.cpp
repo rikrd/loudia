@@ -19,45 +19,77 @@
 #include "Typedefs.h"
 #include "Debug.h"
 
-#include "AOK.h"
+#include "ODF.h"
+#include "ODFComplex.h"
+#include "ODFPhase.h"
+#include "ODFMKL.h"
+#include "ODFSpectralFlux.h"
+#include "ODFHFC.h"
+#include "ODFCOG.h"
 
-#include <fstream>
+#include "Utils.h"
 
 using namespace std;
+using namespace Eigen;
 
-void loadFile(string filename, MatrixXC* result, int rows, int cols) {
-  FILE* in = fopen( filename.c_str(), "r");
-  Real coeff;
-  for ( int i = 0; i<rows; i++ ) {
-    for (int j = 0; j<cols; j++) {
-      int r = fscanf(in, "%f", &coeff);
-      (*result)(i, j) = coeff;
-    }
+ODF::ODF(int fftLength, ODFType odfType) :
+  _fftLength(fftLength),
+  _odfType(odfType)
+{
+  switch(_odfType) {
+
+  case SPECTRAL_FLUX:
+    _odf = new ODFSpectralFlux(_fftLength);
+    break;
+
+  case PHASE_DEVIATION:
+    _odf = new ODFPhase(_fftLength);
+    break;
+
+  case WEIGHTED_PHASE_DEVIATION:
+    _odf = new ODFPhase(_fftLength, true);
+    break;
+
+  case NORM_WEIGHTED_PHASE_DEVIATION:
+    _odf = new ODFPhase(_fftLength, true, true);
+    break;
+
+  case MODIFIED_KULLBACK_LIEBLER:
+    _odf = new ODFMKL(_fftLength);
+    break;
+
+  case COMPLEX_DOMAIN:
+    _odf = new ODFComplex(_fftLength);
+    break;
+
+  case RECTIFIED_COMPLEX_DOMAIN:
+    _odf = new ODFComplex(_fftLength, true);
+    break;
+
+  case HIGH_FREQUENCY_CONTENT:
+    _odf = new ODFHFC(_fftLength);
+    break;
+
+  case CENTER_OF_GRAVITY:
+    _odf = new ODFCOG(_fftLength);
+    break;
+
   }
+  
 }
 
-int main() {
-  int windowSize = 256;
-  int hopSize = 128;
-  int fftLength = 256;
-  int numFrames = 3442;
-  Real normVolume = 3;
-  
-  //cerr << in << endl;
-  
-  AOK aok(windowSize, hopSize, fftLength, normVolume);
-  aok.setup();
-
-  int frameSize = aok.frameSize();
-  MatrixXC in = MatrixXC::Zero(numFrames, frameSize);
-  loadFile("/home/rmarxer/dev/ricaudio/src/tests/test.frames", &in, numFrames, frameSize);
-
-  MatrixXR result(numFrames, fftLength);
-  
-  aok.process(in, &result);
-  
-  cout << result << endl;
-
-  return 0;
+ODF::~ODF() {
+  delete _odf;  
 }
 
+void ODF::setup() {
+  _odf->setup();
+}
+
+void ODF::process(const MatrixXC& fft, MatrixXR* odfValue) {
+  _odf->process(fft, odfValue);
+}
+
+void ODF::reset() {
+  _odf->reset();
+}

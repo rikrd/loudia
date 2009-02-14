@@ -19,45 +19,60 @@
 #include "Typedefs.h"
 #include "Debug.h"
 
-#include "AOK.h"
+#include "ODFHFC.h"
 
-#include <fstream>
+#include "Utils.h"
 
 using namespace std;
+using namespace Eigen;
 
-void loadFile(string filename, MatrixXC* result, int rows, int cols) {
-  FILE* in = fopen( filename.c_str(), "r");
-  Real coeff;
-  for ( int i = 0; i<rows; i++ ) {
-    for (int j = 0; j<cols; j++) {
-      int r = fscanf(in, "%f", &coeff);
-      (*result)(i, j) = coeff;
-    }
+ODFHFC::ODFHFC(int fftLength) :
+  ODFBase(),
+  _fftLength(fftLength)
+{
+  
+  DEBUG("ODFHFC: Constructor fftLength: " << _fftLength);
+  
+  setup();
+}
+
+ODFHFC::~ODFHFC() {}
+
+
+void ODFHFC::setup() {
+  // Prepare the buffers
+  DEBUG("ODFHFC: Setting up...");
+
+  // Create the vector with the weights (weights are the frequency bin indices)
+  const int halfFFTlen = (int)ceil(_fftLength / 2.0);
+  range(0, halfFFTlen, halfFFTlen, &_freqBin);
+  
+  reset();
+
+  DEBUG("ODFHFC: Finished set up...");
+}
+
+
+void ODFHFC::process(const MatrixXC& fft, MatrixXR* odfValue) {
+  DEBUG("ODFHFC: Processing windowed");
+  const int rows = fft.rows();
+  const int cols = fft.cols();
+  const int halfCols = min((int)ceil(_fftLength / 2.0), cols);
+  
+  (*odfValue).resize(rows, 1);
+  _spectrumAbs.resize(rows, halfCols);
+
+  DEBUG("ODFHFC: Spectrum resized rows: " << rows << " halfCols: " << halfCols);
+  
+  _spectrumAbs = fft.block(0, 0, rows, halfCols).cwise().abs();  
+
+  for (int row = 0; row < rows; row ++) {
+    (*odfValue).row(row) = _spectrumAbs.row(row) * _freqBin.block(0, 0, 1, halfCols).transpose() / halfCols;
   }
+  
+  DEBUG("ODFHFC: Finished Processing");
 }
 
-int main() {
-  int windowSize = 256;
-  int hopSize = 128;
-  int fftLength = 256;
-  int numFrames = 3442;
-  Real normVolume = 3;
-  
-  //cerr << in << endl;
-  
-  AOK aok(windowSize, hopSize, fftLength, normVolume);
-  aok.setup();
-
-  int frameSize = aok.frameSize();
-  MatrixXC in = MatrixXC::Zero(numFrames, frameSize);
-  loadFile("/home/rmarxer/dev/ricaudio/src/tests/test.frames", &in, numFrames, frameSize);
-
-  MatrixXR result(numFrames, fftLength);
-  
-  aok.process(in, &result);
-  
-  cout << result << endl;
-
-  return 0;
+void ODFHFC::reset() {
+  // Initial values
 }
-

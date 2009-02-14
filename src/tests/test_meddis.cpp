@@ -1,5 +1,5 @@
 /*                                                         
-** Copyright (C) 2008 Ricard Marxer <email@ricardmarxer.com.com>
+** Copyright (C) 2008 Ricard Marxer <email@ricardmarxer.com>
 **                                                                  
 ** This program is free software; you can redistribute it and/or modify
 ** it under the terms of the GNU General Public License as published by
@@ -16,10 +16,10 @@
 ** Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */                                                                          
 
-#include "meddis.h"
+#include "Meddis.h"
 
-#include "typedefs.h"
-#include "debug.h"
+#include "Typedefs.h"
+#include "Debug.h"
 
 #include <Eigen/Core>
 #include <iostream>

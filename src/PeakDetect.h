@@ -16,48 +16,40 @@
 ** Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */                                                                          
 
+#ifndef PEAKDETECT_H
+#define PEAKDETECT_H
+
 #include "Typedefs.h"
 #include "Debug.h"
 
-#include "AOK.h"
+class PeakDetect {
+protected:
+  // Internal parameters
+  int _numPeaks;
+  int _minPeakWidth;
+  Real _minPeakContrast;
+  bool _sort;
+    
+  // Internal variables
+  MatrixXR _magnitudes;
+  MatrixXR _phases;
 
-#include <fstream>
+public:
+  PeakDetect(int numPeaks, int minPeakWidth = 3, Real minPeakContrast = 0, bool sort = true);
 
-using namespace std;
+  ~PeakDetect();
 
-void loadFile(string filename, MatrixXC* result, int rows, int cols) {
-  FILE* in = fopen( filename.c_str(), "r");
-  Real coeff;
-  for ( int i = 0; i<rows; i++ ) {
-    for (int j = 0; j<cols; j++) {
-      int r = fscanf(in, "%f", &coeff);
-      (*result)(i, j) = coeff;
-    }
-  }
-}
+  void setup();
 
-int main() {
-  int windowSize = 256;
-  int hopSize = 128;
-  int fftLength = 256;
-  int numFrames = 3442;
-  Real normVolume = 3;
-  
-  //cerr << in << endl;
-  
-  AOK aok(windowSize, hopSize, fftLength, normVolume);
-  aok.setup();
+  void process(const MatrixXC& fft,
+               MatrixXR* peakPositions, MatrixXR* peakMagnitudes, MatrixXR* peakPhases);
 
-  int frameSize = aok.frameSize();
-  MatrixXC in = MatrixXC::Zero(numFrames, frameSize);
-  loadFile("/home/rmarxer/dev/ricaudio/src/tests/test.frames", &in, numFrames, frameSize);
+  void reset();
 
-  MatrixXR result(numFrames, fftLength);
-  
-  aok.process(in, &result);
-  
-  cout << result << endl;
+  int numPeaks() const;
 
-  return 0;
-}
+  int minPeakWidth() const;
 
+};
+
+#endif  /* PEAKDETECT_H */
