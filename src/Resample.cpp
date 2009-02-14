@@ -55,13 +55,9 @@ void Resample::setup(){
   _resampleData.output_frames = _outSize;
   _resampleData.src_ratio = _resampleRatio;
 
-  cout << "Deleting arrays" << endl;
-
   if ( !_resampleData.data_in ) delete [] _resampleData.data_in;
   if ( !_resampleData.data_out ) delete [] _resampleData.data_out;
 
-  cout << "Arrays deleted" << endl;
-  
   _resampleData.data_in = new float[_inSize];
   _resampleData.data_out = new float[_outSize];
 
