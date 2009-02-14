@@ -11,9 +11,10 @@ f = 4.0
 t = scipy.linspace(0, dur, npoints)
 x = scipy.cos(2.0 * f * scipy.pi * t)
 x = scipy.array(x, dtype = 'f4')
-ratio = 1./3.
+ratio = 1./6.
+resampleType = ricaudio.Resample.SINC_BEST_QUALITY
 
-d = ricaudio.Resample(npoints, npoints/3, ratio, ricaudio.Resample.SINC_BEST_QUALITY)
+d = ricaudio.Resample(npoints, int(npoints*ratio), ratio, resampleType)
 b = d.process(x)
 
 if plot:
@@ -34,8 +35,9 @@ t = scipy.linspace(0, dur, npoints)
 x = scipy.cos(2.0 * f * scipy.pi * t)
 x = scipy.array(x, dtype = 'f4')
 ratio = 3.
+resampleType = ricaudio.Resample.SINC_BEST_QUALITY
  
-d = ricaudio.Resample(npoints, npoints*3, ratio, ricaudio.Resample.SINC_BEST_QUALITY)
+d = ricaudio.Resample(npoints, int(npoints*ratio), ratio, resampleType)
 b = d.process(x)
 
 if plot:
