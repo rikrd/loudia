@@ -42,6 +42,7 @@ import_array();
 #include "LPC.h"
 #include "NMF.h"
 #include "INMF.h"
+#include "Resample.h"
 
 #include "MelScales.h"
 #include "Utils.h"
@@ -76,6 +77,7 @@ import_array();
 %include "LPC.h"
 %include "NMF.h"
 %include "INMF.h"
+%include "Resample.h"
 
 %include "MelScales.h"
 %include "Utils.h"

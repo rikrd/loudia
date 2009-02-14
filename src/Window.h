@@ -25,16 +25,16 @@
 class Window{
 public:
   enum WindowType {
-    RECTANGULAR = 0,
-    HANN = 1,
-    HANNING = 2,
-    HAMMING = 3,
-    COSINE = 4,
-    BLACKMAN = 5,
-    BLACKMANHARRIS = 6,
-    NUTTALL = 7,
-    BLACKMANNUTTALL = 8,
-    CUSTOM = 9
+    RECTANGULAR         = 0,
+    HANN                = 1,
+    HANNING             = 2,
+    HAMMING             = 3,
+    COSINE              = 4,
+    BLACKMAN            = 5,
+    BLACKMANHARRIS      = 6,
+    NUTTALL             = 7,
+    BLACKMANNUTTALL     = 8,
+    CUSTOM              = 9
   };
 
 protected:
