@@ -38,6 +38,9 @@ protected:
   MatrixXR _z;
   MatrixXR _samples;
 
+  void setupState();
+  void setupCoeffs();
+
 public:
   Filter();
 
@@ -53,7 +56,6 @@ public:
 
   void reset();
 
-  void setupState();
   void setA(const MatrixXR& a);
   void setB(const MatrixXR& b);
 

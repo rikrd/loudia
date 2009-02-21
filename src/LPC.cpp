@@ -25,12 +25,14 @@
 using namespace std;
 using namespace Eigen;
 
-LPC::LPC(int frameSize, int numCoeffs) : 
+LPC::LPC(int frameSize, int numCoeffs, Real preEmphasis) : 
   _frameSize( frameSize ), 
-  _numCoeffs( numCoeffs )
+  _numCoeffs( numCoeffs ),
+  _preEmphasis( preEmphasis )
 {
-  DEBUG("LPC: Constructor frameSize: " << frameSize 
-        << ", numCoeffs: " << numCoeffs);
+  DEBUG("LPC: Constructor frameSize: " << _frameSize 
+        << ", numCoeffs: " << _numCoeffs
+        << ", preEmphasis: " << _preEmphasis);
 
   if (_numCoeffs > _frameSize) {
     // Thorw ValueError, the number of coefficients must be smaller or equal than the frame size.
@@ -46,6 +48,13 @@ void LPC::setup(){
   // Prepare the buffers
   DEBUG("LPC: Setting up...");
 
+  if ( _preEmphasis != 0.0 ) {
+    MatrixXR preCoeffs(2, 1);
+    preCoeffs << 1, _preEmphasis;
+    _preFilter.setA( preCoeffs );
+    _preFilter.setB( MatrixXR::Zero(1, 1) );
+  }
+
   reset();
   
   DEBUG("LPC: Finished set up...");
@@ -56,9 +65,20 @@ void LPC::process(const MatrixXR& frame, MatrixXR* lpcCoeffs, MatrixXR* reflecti
   DEBUG("LPC: Processing...");
   const int rows = frame.rows();
   const int cols = frame.cols();
-  
+
   if ( cols != _frameSize ) {
     // Throw ValueError, the frames passed are the wrong size
+  }
+  
+  _pre.resize(rows, cols);
+  
+  if ( _preEmphasis != 0.0 ) {
+    for ( int row = 0; row < rows; row++) {
+      _preFilter.process( frame.transpose(), &_preRow );
+      _pre.row( row ) = _preRow.transpose();
+    }
+  } else {
+    _pre = frame;
   }
 
   DEBUG("LPC: Processing autocorrelation");
@@ -120,6 +140,11 @@ void LPC::process(const MatrixXR& frame, MatrixXR* lpcCoeffs, MatrixXR* reflecti
 
 void LPC::reset(){
   // Initial values
+
+  if ( _preEmphasis != 0.0 ) {
+    _preFilter.reset( );
+  }
+
 }
 
 int LPC::numCoeffs() const {

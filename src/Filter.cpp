@@ -157,6 +157,18 @@ void Filter::process(const MatrixXR& samples, MatrixXR* output){
 void Filter::setA(const MatrixXR& a){
   _ina = a;
 
+  setupCoeffs();
+  setupState();
+}
+
+void Filter::setB(const MatrixXR& b){
+  _inb = b;
+
+  setupCoeffs();
+  setupState();
+}
+
+void Filter::setupCoeffs() {
   _length = max(_inb.rows(), _ina.rows());
 
   // Normalize by the first value value the denominator coefficients
@@ -190,14 +202,6 @@ void Filter::setA(const MatrixXR& a){
   DEBUG("FILTER: Setting the 'a' coefficients.");
   DEBUG("FILTER: 'a' coefficients: " << _a.transpose());
 
-  setupState();
-}
-
-void Filter::setB(const MatrixXR& b){
-  _inb = b;
-
-  _length = max(_inb.rows(), _ina.rows());
-
   _b = MatrixXR::Zero(_length, _channels);
 
   // Check that it has one column or as many as channels
@@ -225,7 +229,6 @@ void Filter::setB(const MatrixXR& b){
   DEBUG("FILTER: Setting the 'b' coefficients.");
   DEBUG("FILTER: 'b' coefficients: " << _b.transpose());  
 
-  setupState();
 }
 
 void Filter::a(MatrixXR* a){

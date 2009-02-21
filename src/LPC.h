@@ -22,18 +22,32 @@
 #include "Typedefs.h"
 #include "Debug.h"
 
+#include "Filter.h"
+
 class LPC {
 protected:
   // Internal parameters
   int _frameSize;
   int _numCoeffs;
+  Real _preEmphasis;
   
   // Internal variables
+  MatrixXR _pre;
+  MatrixXR _preRow;
   MatrixXR _temp;
   MatrixXR _acorr;
+  Filter _preFilter;
 
 public:
-  LPC(int frameSize, int numCoeffs);
+  /**
+   *
+   * The LPC often uses a preemphasis filter to emphasize the
+   * higher freqs.  The filter is of the form a = [1 a1]
+   *
+   * with usually 0.96 <= a1 <= 0.99
+   *
+   */
+  LPC(int frameSize, int numCoeffs, Real preEmphasis = 0.0);
 
   ~LPC();
 

@@ -6,7 +6,7 @@ import pylab
 import os, sys, wave
 import scipy
 
-interactivePlot = False
+interactivePlot = True
 
 filename = sys.argv[1]
 
@@ -31,6 +31,7 @@ plotSize = fftSize / 4
 analysisLimit = scipy.inf
 
 numCoeffs = 18
+preEmphasis = 0.975
 
 # Creation of the pipeline        
 stream = pyricaudio.sndfilereader({'filename': filename,
@@ -54,7 +55,7 @@ stream = pyricaudio.fft_ricaudio(stream, {'inputKey': 'windowed',
                                           'zeroPhase': False,
                                           'fftLength': fftSize})
 
-lpc = ricaudio.LPC(frameSize, numCoeffs)
+lpc = ricaudio.LPC(frameSize, numCoeffs, preEmphasis)
 
 specs = []
 lpcs = []
