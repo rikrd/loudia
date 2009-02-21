@@ -20,7 +20,7 @@ samplerate = float(wavfile.getframerate())
 wavfile.close()
 
 frameSize = 1024
-frameStep = 256
+frameStep = 512
 
 frameSizeTime = frameSize / 44100.0
 frameStepTime = frameStep / 44100.0
@@ -30,6 +30,8 @@ plotSize = fftSize / 4
 
 bandwidth = 4 * fftSize/frameSize
 analysisLimit = scipy.inf
+
+numCoeffs = 12
 
 # Creation of the pipeline        
 stream = pyricaudio.sndfilereader({'filename': filename,
@@ -46,14 +48,14 @@ stream = pyricaudio.sndfilereader({'filename': filename,
 
 stream = pyricaudio.window_ricaudio(stream, {'inputKey': 'samplesMono',
                                              'outputKey': 'windowed',
-                                             'windowType': 'hamming'})
+                                             'windowType': 'blackmanharris'})
 
 stream = pyricaudio.fft_ricaudio(stream, {'inputKey': 'windowed',
                                           'outputKey': 'fft',
                                           'zeroPhase': True,
                                           'fftLength': fftSize})
 
-lpc = ricaudio.LPC(frameSize, 14)
+lpc = ricaudio.LPC(frameSize, numCoeffs)
 
 specs = []
 lpcs = []
@@ -61,16 +63,19 @@ freqResps = []
 errors = []
 
 npoints = 1024
-w = scipy.arange(-scipy.pi, scipy.pi, 2*scipy.pi/(npoints), dtype = 'f4')
+w = scipy.arange(0, scipy.pi, scipy.pi/(fftSize/2. + 1), dtype = 'f4')
 b = scipy.array([[1]], dtype = 'f4')
 
 if interactivePlot:
     pylab.ion()
     pylab.figure()
+    pylab.title('Interactive plot of the FFT vs LPC frequency response')
+    pylab.gca().set_ylim([-100, 40])
+    pylab.gca().set_autoscale_on(False)
     
 for frame in stream:
     samples = scipy.array(frame['windowed'], dtype = 'f4')
-    fft = scipy.array(frame['fft'][:fftSize/2], dtype = scipy.complex64)
+    fft = scipy.array(frame['fft'], dtype = scipy.complex64)
 
     lpcCoeffs, reflection, error = lpc.process( samples )
 
@@ -81,15 +86,15 @@ for frame in stream:
     freqResp = 20.0 / scipy.log( 10.0 ) * scipy.log( abs( freqResp ) + 1e-7)
 
     if interactivePlot:
-        pylab.gca().clear()
-        pylab.gca().set_autoscale_on(False)
-        pylab.gca().set_ylim([-100, 40])
-        
-        pylab.plot(w[npoints/2:npoints*3/4], freqResp[npoints/2:npoints*3/4,0])
+        pylab.hold(False)
+        fftdb = ricaudio.magToDb(abs(fft))
+        pylab.plot(w, fftdb[0,:], label = 'FFT')
+        pylab.hold(True)
+        pylab.plot(w, freqResp[:,0], label = 'LPC')
         
     specs.append( spec )
     lpcs.append( lpcCoeffs[0] )
-    freqResps.append( freqResp[npoints/2:npoints*3/4,0] )
+    freqResps.append( freqResp[:,0] )
     errors.append( error[0] )
 
 if interactivePlot:

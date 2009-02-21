@@ -10,6 +10,8 @@ a2 = scipy.array([[0,0,0,0,0,0,0,0,0]], dtype = 'f4')
 coeffs1, reflection1, error1 = d.process(a1)
 coeffs2, reflection2, error2 = d.process(a2)
 
+
+
 exp_coeffs1 = scipy.array([[ 1.        , -0.89023799,  0.01518036,  0.01562015,  0.01640711,
                              0.01755869,  0.01910042,  0.02106662, -0.00439638]], dtype=scipy.float32)
 
@@ -25,6 +27,7 @@ exp_coeffs2 = scipy.array([[1,0,0,0,0,0,0,0,0]], dtype=scipy.float32)
 exp_reflection2 = scipy.array([[0,0,0,0,0,0,0,0]], dtype=scipy.float32)
 
 exp_error2 = scipy.array([[0]], dtype=scipy.float32)
+
 
 
 print scipy.allclose(coeffs1, exp_coeffs1)
