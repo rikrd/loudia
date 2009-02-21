@@ -39,6 +39,8 @@ protected:
   MatrixXR _samples;
 
 public:
+  Filter();
+
   Filter(int channels);
 
   Filter(const MatrixXR& b, const MatrixXR& a, int channels);
@@ -50,7 +52,8 @@ public:
   void process(const MatrixXR& samples, MatrixXR* output);
 
   void reset();
-  
+
+  void setupState();
   void setA(const MatrixXR& a);
   void setB(const MatrixXR& b);
 

@@ -24,13 +24,25 @@
 using namespace std;
 using namespace Eigen;
 
+Filter::Filter() : 
+  _channels( 1 )
+{
+  DEBUG("FILTER: Constructor");
+
+  setA(MatrixXR::Ones(1, _channels));
+  setB(MatrixXR::Ones(1, _channels));
+
+  setup();
+}
+
+
 Filter::Filter(int channels) : 
   _channels( channels )
 {
-
-  setB(MatrixXR::Ones(1, _channels));
+  DEBUG("FILTER: Constructor channels:" << channels);
 
   setA(MatrixXR::Ones(1, _channels));
+  setB(MatrixXR::Ones(1, _channels));
 
   setup();
 }
@@ -39,13 +51,14 @@ Filter::Filter(int channels) :
 Filter::Filter(const MatrixXR& b,
                const MatrixXR& a,
                int channels) :
-  _channels( channels ),
-  _ina( a ),
-  _inb( b )
+  _channels( channels )
 {
 
   DEBUG("FILTER: Constructor channels:" << channels);
   DEBUG("FILTER: Constructor b:" << b.transpose() << ", a:" << a.transpose());
+
+  setA( a );
+  setB( b );
     
   setup();
 }
@@ -61,73 +74,23 @@ void Filter::setup(){
   // Prepare the buffers
   DEBUG("FILTER: Setting up...");
 
-  _length = max(_inb.rows(), _ina.rows());
-  
-  _z.resize(_length, _channels);
+  setupState();
 
   _samples.resize(1, _channels);
-
-  // Normalize by the first value value the denominator coefficients
-  // since a[0] must be 1.0
-  // TODO: throw an exception when a[0] == 0
-  DEBUG("FILTER: Initializing 'a' coeffs");
-  _a = MatrixXR::Zero(_length, _channels);
-
-  // Check that it has one column or as many as channels
-  if ((_ina.cols() != 1) && (_ina.cols() != _channels)) {
-    // TODO: Throw an exception
-    DEBUG("FILTER: Error in shape of 'a' coeffs. _ina.cols():" << _ina.cols() << ", _channels:" << _channels);
-    return;
-  }
-
-  // Set the coefficients
-  if (_ina.cols() == 1) {
-    // If only one column has been defined repeat it for all columns
-    for (int i=0; i < _a.cols(); i++) {
-      _a.block(0, i, _ina.rows(), 1) = _ina.col(0);
-    }
-  }else{
-    // Else set it directly
-    _a.block(0, 0, _ina.rows(), _channels) = _ina;
-  }
-
-  for(int i = 0; i < _a.rows(); i++){
-    _a.row(i) = _a.row(i).cwise() / _ina.row(0);
-  }
-
-  DEBUG("FILTER: Setting the 'a' coefficients.");
-  DEBUG("FILTER: 'a' coefficients: " << _a.transpose());
-  
-  _b = MatrixXR::Zero(_length, _channels);
-
-  // Check that it has one column or as many as channels
-  if ((_inb.cols() != 1) && (_inb.cols() != _channels)) {
-    // TODO: Throw an exception
-    DEBUG("FILTER: Error in shape of 'b' coeffs. b.cols():" << _inb.cols() << ", _channels:" << _channels);
-    return;
-  }
-
-  // Set the coefficients
-  if (_inb.cols() == 1) {
-    // If only one column has been defined repeat it for all columns
-    for (int i=0; i < _b.cols(); i++) {
-      _b.block(0, i, _inb.rows(), 1) = _inb.col(0);
-    }
-  }else{
-    // Else set it directly
-    _b.block(0, 0, _inb.rows(), _channels) = _inb;
-  }
-
-  for(int i = 0; i < _b.rows(); i++){
-    _b.row(i) = _b.row(i).cwise() / _ina.row(0);
-  }  
-  
-  DEBUG("FILTER: Setting the 'b' coefficients.");
-  DEBUG("FILTER: 'b' coefficients: " << _b.transpose());  
-  
+ 
   reset();
 
   DEBUG("FILTER: Finished set up...");
+}
+
+
+void Filter::setupState() { 
+  if( _z.rows() != _length ){
+    _z.resize(_length, _channels);
+
+    reset(); // if the state has changed, we reset it
+  }
+
 }
 
 
@@ -193,10 +156,76 @@ void Filter::process(const MatrixXR& samples, MatrixXR* output){
 
 void Filter::setA(const MatrixXR& a){
   _ina = a;
+
+  _length = max(_inb.rows(), _ina.rows());
+
+  // Normalize by the first value value the denominator coefficients
+  // since a[0] must be 1.0
+  // TODO: throw an exception when a[0] == 0
+  DEBUG("FILTER: Initializing 'a' coeffs");
+  _a = MatrixXR::Zero(_length, _channels);
+
+  // Check that it has one column or as many as channels
+  if ((_ina.cols() != 1) && (_ina.cols() != _channels)) {
+    // TODO: Throw an exception
+    DEBUG("FILTER: Error in shape of 'a' coeffs. _ina.cols():" << _ina.cols() << ", _channels:" << _channels);
+    return;
+  }
+
+  // Set the coefficients
+  if (_ina.cols() == 1) {
+    // If only one column has been defined repeat it for all columns
+    for (int i=0; i < _a.cols(); i++) {
+      _a.block(0, i, _ina.rows(), 1) = _ina.col(0);
+    }
+  }else{
+    // Else set it directly
+    _a.block(0, 0, _ina.rows(), _channels) = _ina;
+  }
+
+  for(int i = 0; i < _a.rows(); i++){
+    _a.row(i) = _a.row(i).cwise() / _ina.row(0);
+  }
+
+  DEBUG("FILTER: Setting the 'a' coefficients.");
+  DEBUG("FILTER: 'a' coefficients: " << _a.transpose());
+
+  setupState();
 }
 
 void Filter::setB(const MatrixXR& b){
   _inb = b;
+
+  _length = max(_inb.rows(), _ina.rows());
+
+  _b = MatrixXR::Zero(_length, _channels);
+
+  // Check that it has one column or as many as channels
+  if ((_inb.cols() != 1) && (_inb.cols() != _channels)) {
+    // TODO: Throw an exception
+    DEBUG("FILTER: Error in shape of 'b' coeffs. b.cols():" << _inb.cols() << ", _channels:" << _channels);
+    return;
+  }
+
+  // Set the coefficients
+  if (_inb.cols() == 1) {
+    // If only one column has been defined repeat it for all columns
+    for (int i=0; i < _b.cols(); i++) {
+      _b.block(0, i, _inb.rows(), 1) = _inb.col(0);
+    }
+  }else{
+    // Else set it directly
+    _b.block(0, 0, _inb.rows(), _channels) = _inb;
+  }
+
+  for(int i = 0; i < _b.rows(); i++){
+    _b.row(i) = _b.row(i).cwise() / _ina.row(0);
+  }  
+  
+  DEBUG("FILTER: Setting the 'b' coefficients.");
+  DEBUG("FILTER: 'b' coefficients: " << _b.transpose());  
+
+  setupState();
 }
 
 void Filter::a(MatrixXR* a){
