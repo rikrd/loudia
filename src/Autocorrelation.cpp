@@ -31,8 +31,8 @@ Autocorrelation::Autocorrelation(int inputLength, int maxLag, int minLag) :
   _minLag( minLag ),
   _maxLag( min(inputLength, maxLag) ),
   _useFFT( (_maxLag - _minLag) > 128 ),
-  _fft( inputLength, inputLength ),
-  _ifft( inputLength, inputLength )
+  _fft( inputLength, inputLength, false ),
+  _ifft( inputLength, inputLength, false )
 {
   DEBUG("AUTOCORRELATION: Construction inputLength: " << _inputLength
         << " minLag: " << _minLag
