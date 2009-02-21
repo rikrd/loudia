@@ -48,8 +48,8 @@ Autocorrelation::Autocorrelation(int inputLength, int maxLag, int minLag, bool u
   _minLag( minLag ),
   _maxLag( min(inputLength, maxLag) ),
   _useFFT( useFFT ),
-  _fft( inputLength, inputLength ),
-  _ifft( inputLength, inputLength )
+  _fft( inputLength, inputLength, false ),
+  _ifft( inputLength, inputLength, false )
 {
   DEBUG("AUTOCORRELATION: Construction inputLength: " << _inputLength
         << " minLag: " << _minLag
@@ -65,11 +65,11 @@ void Autocorrelation::setup(){
   // Prepare the buffers
   DEBUG("AUTOCORRELATION: Setting up...");
 
-  if ( _useFFT ) {    
+  if ( _useFFT ) {
     _fft.setup();
     _ifft.setup();
   }
-
+  
   reset();
   
   DEBUG("AUTOCORRELATION: Finished setup.");
