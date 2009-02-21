@@ -135,15 +135,17 @@ void Chebyshev::setup(){
   MatrixXC a;
   MatrixXC b;
   zpkToCoeffs(zeros, poles, gain, &b, &a);
-  
+
+  DEBUG("CHEBYSHEV: Calculated the coeffs");
+
   // Since we cannot create matrices of Nx0
   // we have created at least one Zero in 0
-  if ( zeros == MatrixXC::Zero(zeros.rows(), 1) ){
+  if ( zeros == MatrixXC::Zero(zeros.rows(), zeros.cols()) ){
     // Now we must remove the last coefficient from b
     MatrixXC temp = b.block(0, 0, b.rows(), b.cols()-1);
     b = temp;
   }
-  
+
   // Get the warped critical frequency
   Real fs = 2.0;
   Real warped = 2.0 * fs * tan( M_PI * _freq / fs );
@@ -152,15 +154,20 @@ void Chebyshev::setup(){
   MatrixXC wa;
   MatrixXC wb;
   lowPassToLowPass(b, a, warped, &wb, &wa);
+
+  DEBUG("CHEBYSHEV: Calculated the low pass to low pass");
   
   // Digital coeffs
   MatrixXR da;
   MatrixXR db;
   bilinear(wb, wa, fs, &db, &da);
   
+  DEBUG("CHEBYSHEV: setup the coeffs");
+
   // Set the coefficients to the filter
-  _filter.setB( db.transpose() );
   _filter.setA( da.transpose() );
+  _filter.setB( db.transpose() );
+  
   _filter.setup();
   
   DEBUG("CHEBYSHEV: Finished set up...");

@@ -333,12 +333,12 @@ void lowPassToLowPass(const MatrixXC& b, const MatrixXC& a, Real freq, MatrixXC*
 
   *aout = a;
   *bout = b;
-  
+
   MatrixXR pwo;
   range(maxsize-1, -1, maxsize, rows, &pwo);
 
   pwo = pwo.cwise().expN( freq );
-  
+ 
   int start1 = max(bsize - asize, 0);
   int start2 = max(asize - bsize, 0);
   
@@ -349,6 +349,7 @@ void lowPassToLowPass(const MatrixXC& b, const MatrixXC& a, Real freq, MatrixXC*
   for ( int i = 0; i < asize; i++ ) {
     (*aout).col(i) *= pwo.col( start1 + i ).cwise().inverse() * pwo.col( start1 );
   }
+
 }
 
 int comb(int N, int k) {

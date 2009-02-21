@@ -22,7 +22,7 @@ def plotFreqz(b, a, w = None, npoints = None, title = '', db = False):
         mag = abs(d[:,0])
 
     import pylab
-
+    pylab.figure()
     pylab.subplot(2,1,1)
     pylab.plot(w, mag)
     pylab.title('%s \n Magnitude of the Frequency Response' % title)
@@ -30,8 +30,6 @@ def plotFreqz(b, a, w = None, npoints = None, title = '', db = False):
     pylab.subplot(2,1,2)
     pylab.plot(w, scipy.angle(d[:,0]))
     pylab.title('Angle of the Frequency Response')
-
-    pylab.show()
 
 def get_onsets(filename, hop, samplerate, onsetError = 50.0):
     # Get the onsets

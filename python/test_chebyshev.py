@@ -71,3 +71,7 @@ print scipy.allclose(sc_b, rc_b, atol = atol) and scipy.allclose(sc_a, rc_a, ato
 
 if plot:
     plotFreqz(rc_b, rc_a, title = 'Chebyshev 2 order %d' % order)
+
+if plot:
+    import pylab
+    pylab.show()
