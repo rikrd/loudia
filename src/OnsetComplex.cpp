@@ -32,8 +32,8 @@ using namespace Eigen;
 OnsetComplex::OnsetComplex(int frameLength, int fftLength, Window::WindowType windowType, bool zeroPhase) : 
   _frameLength( frameLength ),
   _fftLength( fftLength ),
-  _windowType( windowType ),
   _zeroPhase( zeroPhase ),
+  _windowType( windowType ),
   _window( frameLength, windowType ), 
   _fft( frameLength, fftLength, zeroPhase ),
   _odf( fftLength )
