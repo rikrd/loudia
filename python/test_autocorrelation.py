@@ -23,8 +23,6 @@ d = ricaudio.Autocorrelation( 1024 )
 r = d.process(a)
 s = scipy.correlate(a[0,:], a[0,:], 'full')
 s = s[s.shape[0]/2:]
-
-
 print scipy.allclose(r[0,:], s)
 
 if plot:
