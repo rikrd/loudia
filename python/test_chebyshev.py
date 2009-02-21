@@ -5,7 +5,7 @@ import scipy
 import scipy.signal
 from common import *
 
-plot = True
+plot = False
 
 atol = 1e-5
 
