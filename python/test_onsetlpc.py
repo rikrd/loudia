@@ -28,10 +28,9 @@ frameStepTime = frameStep / 44100.0
 fftSize = 2048 * 2
 plotSize = fftSize / 4
 
-bandwidth = 4 * fftSize/frameSize
 analysisLimit = scipy.inf
 
-numCoeffs = 12
+numCoeffs = 18
 
 # Creation of the pipeline        
 stream = pyricaudio.sndfilereader({'filename': filename,
@@ -52,7 +51,7 @@ stream = pyricaudio.window_ricaudio(stream, {'inputKey': 'samplesMono',
 
 stream = pyricaudio.fft_ricaudio(stream, {'inputKey': 'windowed',
                                           'outputKey': 'fft',
-                                          'zeroPhase': True,
+                                          'zeroPhase': False,
                                           'fftLength': fftSize})
 
 lpc = ricaudio.LPC(frameSize, numCoeffs)
