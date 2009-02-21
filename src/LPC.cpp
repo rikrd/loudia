@@ -83,6 +83,9 @@ void LPC::process(const MatrixXR& frame, MatrixXR* lpcCoeffs, MatrixXR* reflecti
   for ( int row = 0; row < rows; row++) {  
     Real gamma;
     
+    if ((_acorr.cwise() == 0.).all())
+      continue;
+
     for ( int i = 1; i < _numCoeffs; i++ ) {
       gamma = _acorr(row, i);
       

@@ -69,15 +69,15 @@ if interactivePlot:
     pylab.figure()
     
 for frame in stream:
-    samples = scipy.array(frame['samplesMono'], dtype = 'f4')
+    samples = scipy.array(frame['windowed'], dtype = 'f4')
     fft = scipy.array(frame['fft'][:fftSize/2], dtype = scipy.complex64)
 
     lpcCoeffs, reflection, error = lpc.process( samples )
 
     spec =  20.0 / scipy.log( 10.0 ) * scipy.log( abs( fft ) + 1e-7)[:plotSize]
 
-    freqResp = ricaudio.freqz(b*scipy.sqrt(error[0]), lpcCoeffs.T, w)
-
+    freqResp = ricaudio.freqz(b*scipy.sqrt(abs(error[0])), lpcCoeffs.T, w)
+    
     freqResp = 20.0 / scipy.log( 10.0 ) * scipy.log( abs( freqResp ) + 1e-7)
 
     if interactivePlot:
