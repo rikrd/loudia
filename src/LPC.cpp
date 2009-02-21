@@ -50,9 +50,8 @@ void LPC::setup(){
 
   if ( _preEmphasis != 0.0 ) {
     MatrixXR preCoeffs(2, 1);
-    preCoeffs << 1, _preEmphasis;
-    _preFilter.setA( preCoeffs );
-    _preFilter.setB( MatrixXR::Zero(1, 1) );
+    preCoeffs << 1, -_preEmphasis;
+    _preFilter.setB( preCoeffs );
   }
 
   reset();
@@ -80,10 +79,10 @@ void LPC::process(const MatrixXR& frame, MatrixXR* lpcCoeffs, MatrixXR* reflecti
   } else {
     _pre = frame;
   }
-
+  
   DEBUG("LPC: Processing autocorrelation");
   
-  autocorrelate(frame, &_acorr, 0, _numCoeffs + 1);
+  autocorrelate(_pre, &_acorr, 0, _numCoeffs + 1);
   
   DEBUG("LPC: Processing Levinson-Durbin recursion");
 

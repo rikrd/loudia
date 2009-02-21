@@ -36,7 +36,7 @@ print scipy.allclose(error2, exp_error2)
 
 
 
-d = ricaudio.LPC(9, 9, 0.975)
+d = ricaudio.LPC(9, 9, 0.99)
 a1 = scipy.array([[1,2,3,4,5,6,7,8,9]], dtype = 'f4')
 a2 = scipy.array([[0,0,0,0,0,0,0,0,0]], dtype = 'f4')
 

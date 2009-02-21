@@ -42,9 +42,9 @@ public:
   /**
    *
    * The LPC often uses a preemphasis filter to emphasize the
-   * higher freqs.  The filter is of the form a = [1 a1]
+   * higher freqs.  The filter is of the form b = [1 b1]
    *
-   * with usually 0.96 <= a1 <= 0.99
+   * with usually 0.96 <= b1 <= 0.99
    *
    */
   LPC(int frameSize, int numCoeffs, Real preEmphasis = 0.0);
