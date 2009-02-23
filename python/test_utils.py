@@ -9,7 +9,7 @@ i = scipy.array([[1,2,3,4,5,6]], dtype = 'f4')
 a = ricaudio.magToDb(i)
 o = ricaudio.dbToMag(a)
 
-print 'magToDb:', scipy.allclose(i, o)
+print 'magToDb/dbToMag:', scipy.allclose(i, o)
 
 # Test the transform of windows
 transf = ricaudio.hammingTransform(24, 10, 1024, 4096)
@@ -70,3 +70,9 @@ rb = rb / ra[:,0]
 ra = ra / ra[:,0]
 
 print 'bilinear: ', scipy.allclose(rb, sb) and scipy.allclose(ra, sa)
+
+# Test the nextPowerOf2 function
+print 'nextPowerOf2(0): ', ricaudio.nextPowerOf2(0) == 2
+print 'nextPowerOf2(0, 3): ', ricaudio.nextPowerOf2(0, 3) == 16
+print 'nextPowerOf2(94): ', ricaudio.nextPowerOf2(94) == 128
+print 'nextPowerOf2(94, 1): ', ricaudio.nextPowerOf2(94, 1) == 256
