@@ -3,27 +3,30 @@
 import ricaudio
 import scipy
 
-plot = True
+plot = False
 
-a = scipy.array([[1,2,3,4,5,6,7,8,9]], dtype = 'f4')
+atol = 1e-1
+rtol = 1e-1
 
-d = ricaudio.Autocorrelation(9)
-r = d.process(a)
-s = scipy.correlate(a[0,:], a[0,:], 'full')
-s = s[s.shape[0]/2:]
-print scipy.allclose(r[0,:], s)
-
-
-
-size = 1024
+size = 9
 a = scipy.reshape(scipy.array(scipy.arange( size ), dtype = 'f4'), (1, size))
-print a.shape
 
-d = ricaudio.Autocorrelation( 1024 )
+d = ricaudio.Autocorrelation( size, size, 0, False )
 r = d.process(a)
 s = scipy.correlate(a[0,:], a[0,:], 'full')
 s = s[s.shape[0]/2:]
-print scipy.allclose(r[0,:], s)
+print scipy.allclose(r[0,:], s, atol = atol, rtol = rtol)
+
+
+
+size = 128
+a = scipy.reshape(scipy.array(scipy.arange( size ), dtype = 'f4'), (1, size))
+
+d = ricaudio.Autocorrelation( size, size, 0, True )
+r = d.process(a)
+s = scipy.correlate(a[0,:], a[0,:], 'full')
+s = s[s.shape[0]/2:]
+print scipy.allclose(r[0,:], s, atol = atol, rtol = rtol)
 
 if plot:
     import pylab

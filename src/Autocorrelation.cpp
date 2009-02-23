@@ -31,8 +31,8 @@ Autocorrelation::Autocorrelation(int inputLength, int maxLag, int minLag) :
   _minLag( minLag ),
   _maxLag( min(inputLength, maxLag) ),
   _useFFT( (_maxLag - _minLag) > 128 ),
-  _fft( inputLength, inputLength, false ),
-  _ifft( inputLength, inputLength, false )
+  _fft( inputLength, nextPowerOf2(((_maxLag - _minLag)-1)*2), false ),
+  _ifft( nextPowerOf2(((_maxLag - _minLag)-1)*2), inputLength, false )
 {
   DEBUG("AUTOCORRELATION: Construction inputLength: " << _inputLength
         << " minLag: " << _minLag
@@ -48,8 +48,8 @@ Autocorrelation::Autocorrelation(int inputLength, int maxLag, int minLag, bool u
   _minLag( minLag ),
   _maxLag( min(inputLength, maxLag) ),
   _useFFT( useFFT ),
-  _fft( inputLength, inputLength, false ),
-  _ifft( inputLength, inputLength, false )
+  _fft( inputLength, nextPowerOf2(((_maxLag - _minLag)-1)*2), false ),
+  _ifft( nextPowerOf2(((_maxLag - _minLag)-1)*2), inputLength, false )
 {
   DEBUG("AUTOCORRELATION: Construction inputLength: " << _inputLength
         << " minLag: " << _minLag
@@ -93,7 +93,7 @@ void Autocorrelation::process(const MatrixXR& input, MatrixXR* autocorrelation){
     (*autocorrelation) = temp2.block(0, 0, rows, _maxLag - _minLag);
 
   } else {
-
+    
     correlate(input, input, autocorrelation, _minLag, _maxLag);
 
   }

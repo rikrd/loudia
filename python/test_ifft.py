@@ -17,8 +17,8 @@ a_sine = a_sine.reshape((1, a_sine.shape[0]))
 
 # Ricaudio's solution # --------------------------------- #
 w = ricaudio.Window(frameSize, ricaudio.Window.HAMMING)
-m = ricaudio.FFT(frameSize, fftSize, True)
-n = ricaudio.IFFT(fftSize, frameSize, True)
+m = ricaudio.FFT(frameSize, fftSize, False)
+n = ricaudio.IFFT(fftSize, frameSize, False)
 
 r_zeros = n.process(m.process(w.process(a_zeros)))
 r_ones = n.process(m.process(w.process(a_ones)))

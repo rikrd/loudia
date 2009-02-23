@@ -178,4 +178,6 @@ void freqz(const MatrixXR& b, const MatrixXR& w, MatrixXC* resp);
 
 void derivate(const MatrixXR& a, MatrixXR* b);
 
+Real nextPowerOf2(Real a);
+
 #endif  /* UTILS_H */

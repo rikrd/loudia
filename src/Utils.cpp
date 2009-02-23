@@ -575,3 +575,7 @@ void derivate(const MatrixXR& a, MatrixXR* b) {
 
   (*b).block(0, 1, rows, cols - 1) = a.block(0, 1, rows, cols - 1) - a.block(0, 0, rows, cols - 1);
 }
+
+Real nextPowerOf2(Real a){
+  return pow(2, ceil(log2(a)));
+}
