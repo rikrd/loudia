@@ -58,7 +58,7 @@ void IFFT::setup(){
 void IFFT::process(const MatrixXC& ffts, MatrixXR* frames){
   const int rows = ffts.rows();
   
-  (*frames).resize(rows, _halfSize);
+  (*frames).resize(rows, _fftSize);
 
   for (int i = 0; i < rows; i++){    
     // Fill the buffer with zeros
@@ -80,9 +80,10 @@ void IFFT::process(const MatrixXC& ffts, MatrixXR* frames){
       (*frames).row(i).block(0, 0, 1, half_minus) = Eigen::Map<MatrixXR>(_out, 1, _fftSize).block(0, _fftSize - half_minus, 1, half_minus) / _fftSize;
 
     }else{
-
+      
       // Take all of the frame from the beginning
-      (*frames).row(i) = Eigen::Map<MatrixXR>(_out, 1, _fftSize).block(0, 0, 1, _halfSize) / _fftSize;
+      (*frames).row(i) = Eigen::Map<MatrixXR>(_out, 1, _fftSize) / _fftSize;
+
     }
   }
 }

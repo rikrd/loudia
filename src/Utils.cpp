@@ -146,6 +146,7 @@ void convolve(const MatrixXR& a, const MatrixXR& b, MatrixXR* c) {
  */
 template<typename InMatrixType>
 void correlate(const InMatrixType& _a, const InMatrixType& _b, InMatrixType* c, int _minlag, int _maxlag) {
+  /*
   // TODO: allow to calculate only one part of the correlation
   //       like in the case of autocorrelation where only half is needed
   // a must be the shortest and b the longuest
@@ -184,6 +185,12 @@ void correlate(const InMatrixType& _a, const InMatrixType& _b, InMatrixType* c, 
       (*c).col( (lag - minlag) ) = (a.block(0, astart, rows, len).cwise() * b.block(0, bstart, rows, len)).rowwise().sum();
     }
   }
+  */
+  const int rows = _a.rows();
+  InMatrixType temp;
+  convolve<InMatrixType>(_a.rowwise().reverse(), _b, &temp);
+  (*c).resize(rows, _maxlag - _minlag);
+  (*c) = temp.block(0, max(_a.cols(), _b.cols()) - 1 + _minlag, rows, _maxlag - _minlag);  
 }
 
 void correlate(const MatrixXC& a, const MatrixXC& b, MatrixXC* c, int _minlag, int _maxlag) {

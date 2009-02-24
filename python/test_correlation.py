@@ -14,23 +14,14 @@ a = scipy.reshape(scipy.array(scipy.arange( sizeA ), dtype = 'f4'), (1, sizeA))
 sizeB = 10
 b = scipy.reshape(scipy.array(scipy.arange( sizeB ), dtype = 'f4'), (1, sizeB))
 
-d = ricaudio.Correlation( sizeA, sizeB, sizeA+sizeB, 0, False )
+d = ricaudio.Correlation( sizeA, sizeB )
 r = d.process(a, b)
-print r
-s = scipy.correlate(b[0,:], a[0,:], 'full')
-print s
-s = s[s.shape[0]/2:]
+s = scipy.correlate(a[0,:], b[0,:], 'full')
 print scipy.allclose(r[0,:], s, atol = atol, rtol = rtol)
 
-
-
-size = 128
-a = scipy.reshape(scipy.array(scipy.arange( size ), dtype = 'f4'), (1, size))
-
-d = ricaudio.Autocorrelation( size, size, 0, True )
-r = d.process(a)
-s = scipy.correlate(a[0,:], a[0,:], 'full')
-s = s[s.shape[0]/2:]
+d = ricaudio.Correlation( sizeA, sizeB, sizeA + sizeB, -(sizeA + sizeB), True )
+r = d.process(b, a)
+s = scipy.correlate(a[0,:], b[0,:], 'full')
 print scipy.allclose(r[0,:], s, atol = atol, rtol = rtol)
 
 if plot:

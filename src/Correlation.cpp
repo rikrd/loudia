@@ -29,10 +29,10 @@ using namespace Eigen;
 Correlation::Correlation(int inputLengthA, int inputLengthB, int maxLag, int minLag) :
   _inputLengthA( inputLengthA ),
   _inputLengthB( inputLengthB ),
-  _minLag( minLag ),
-  _maxLag( min(max(inputLengthA, inputLengthB), maxLag) ),
+  _minLag( max(-max(_inputLengthA, _inputLengthB) + 1, minLag) ),
+  _maxLag( min( min(_inputLengthA, _inputLengthB), maxLag) ),
   _useFFT( (_maxLag - _minLag) > 128 ),
-  _fftSize(nextPowerOf2((max(_inputLengthA, _inputLengthB)-1)*2)),
+  _fftSize(nextPowerOf2(((_inputLengthA + _inputLengthB) - 1)*2)),
   _fft( _fftSize, false ),
   _ifft( _fftSize, false )
 
@@ -41,7 +41,8 @@ Correlation::Correlation(int inputLengthA, int inputLengthB, int maxLag, int min
         << " inputLengthB: " << _inputLengthB
         << " minLag: " << _minLag
         << " maxLag: " << _maxLag
-        << " useFFT: " << _useFFT);
+        << " useFFT: " << _useFFT
+        << " fftLength: " << _fftSize);
 
   setup();
 }
@@ -50,10 +51,10 @@ Correlation::Correlation(int inputLengthA, int inputLengthB, int maxLag, int min
 Correlation::Correlation(int inputLengthA, int inputLengthB, int maxLag, int minLag, bool useFFT) :
   _inputLengthA( inputLengthA ),
   _inputLengthB( inputLengthB ),
-  _minLag( minLag ),
-  _maxLag( min(max(inputLengthA, inputLengthB), maxLag) ),
+  _minLag( max(-max(_inputLengthA, _inputLengthB) + 1, minLag) ),
+  _maxLag( min( min(_inputLengthA, _inputLengthB), maxLag) ),
   _useFFT( useFFT ),
-  _fftSize(nextPowerOf2((max(_inputLengthA, _inputLengthB)-1)*2)),
+  _fftSize( nextPowerOf2(((_inputLengthA + _inputLengthB) - 1)*2) ),
   _fft( _fftSize, false ),
   _ifft( _fftSize, false )
 {
@@ -61,7 +62,8 @@ Correlation::Correlation(int inputLengthA, int inputLengthB, int maxLag, int min
         << " inputLengthB: " << _inputLengthB
         << " minLag: " << _minLag
         << " maxLag: " << _maxLag
-        << " useFFT: " << _useFFT);
+        << " useFFT: " << _useFFT
+        << " fftLength: " << _fftSize);
   
   setup();
 }
@@ -86,24 +88,22 @@ void Correlation::process(const MatrixXR& inputA, const MatrixXR& inputB, Matrix
   const int rows = inputA.rows();
   
   if ( rows != inputB.rows() ) {
-    // Thorw error rows of A and B must be the same
+    // Thorw ValueError rows of A and B must be the same
   }
-
+  
   (*correlation).resize(rows, _maxLag - _minLag);
   
   if ( _useFFT ) {
-
-    MatrixXC tempA;
-    MatrixXC tempB;
-    MatrixXR temp2;
-    _fft.process(inputA, &tempA);
-    _fft.process(inputB, &tempB);
     
-    tempA.cwise() *= tempB.conjugate();
+    _fft.process(inputA, &_fftA);
+    _fft.process(inputB, &_fftB);
+        
+    _ifft.process(_fftA.cwise() * _fftB.conjugate(), &_result);
     
-    _ifft.process(tempA, &temp2);
-    
-    (*correlation) = temp2.block(0, 0, rows, _maxLag - _minLag);
+    // TODO: use Eigen rowwise().shift(_fftSize - 2) when it will exist
+    for(int i = _minLag;  i < _maxLag; i++ ){
+      (*correlation).col(i - _minLag) = _result.col(((_fftSize-2) + (i - _minLag)) % _fftSize);
+    }
 
   } else {
     

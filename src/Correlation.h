@@ -41,8 +41,12 @@ protected:
   FFT _fft;
   IFFT _ifft;
 
+  MatrixXC _fftA;
+  MatrixXC _fftB;
+  MatrixXR _result;
+
 public:
-  Correlation(int inputLengthA, int inputLengthB, int maxLag = std::numeric_limits<Real>::infinity(), int minLag = 0);
+  Correlation(int inputLengthA, int inputLengthB, int maxLag = std::numeric_limits<Real>::infinity(), int minLag = -std::numeric_limits<Real>::infinity());
   Correlation(int inputLengthA, int inputLengthB, int maxLag, int minLag, bool useFFT);
 
   ~Correlation();
