@@ -61,7 +61,6 @@ lpcr = ricaudio.LPCResidual(frameSize)
 
 specs = []
 lpcs = []
-lpcResiduals = []
 freqResps = []
 errors = []
 
@@ -108,7 +107,6 @@ for frame in stream:
     lpcs.append( lpcCoeffs[0] )
     freqResps.append( freqResp[:,0] )
     errors.append( error[0] )
-    lpcResiduals.append( lpcResidual )
 
 if interactivePlot:
     pylab.ioff()
@@ -120,15 +118,13 @@ lpcs = scipy.array( lpcs )
 freqResps = scipy.array( freqResps )
 errors = scipy.array( errors )
 
-lpcResiduals = overlap_add( lpcResiduals, frameSize, frameStep )
-
 # Get the onsets
 annotation = os.path.splitext(filename)[0] + '.onset_annotated'
 onsets = get_onsets(annotation, frameStep, samplerate)
     
 pylab.figure()
 pylab.hold(True)
-pylab.subplot(4, 1, 1)
+pylab.subplot(3, 1, 1)
 
 pylab.imshow( scipy.flipud(specs.T), aspect = 'auto' )
 
@@ -147,7 +143,7 @@ ax.set_yticklabels([])
 ax.set_xlim([0, frameCount - 1])
 
 
-pylab.subplot(4, 1, 2)
+pylab.subplot(3, 1, 2)
 
 pylab.imshow( scipy.flipud(freqResps.T), aspect = 'auto' )
 
@@ -165,7 +161,7 @@ ax.set_xlim([0, frameCount - 1])
 
 
 # Create the ODF processors and process
-pylab.subplot(4, 1, 3)
+pylab.subplot(3, 1, 3)
 pylab.plot( errors )
 
 draw_onsets( onsets )
@@ -181,22 +177,6 @@ ax.set_yticklabels([])
 
 ax.set_xlim([0, frameCount - 1])       
 
-pylab.subplot(4, 1, 4)
-pylab.plot( 20.0 * scipy.log10(lpcResiduals.T + 0.01) )
-
-pylab.title( 'LPC Residual' )
-ax = pylab.gca()
-
-ax.set_xticks([])
-ax.set_yticks([])
-
-ax.set_xticklabels([])
-ax.set_yticklabels([])
-
-ax.set_xlim([0, frameCount - 1])
-
 pylab.subplots_adjust(left = 0.05, right = 0.95, bottom = 0.05, top = 0.95, hspace=0.6)
-        
-pylab.show()
 
 pylab.show()

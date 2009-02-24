@@ -114,11 +114,10 @@ def overlap_add(frames, size, hop):
     nframes = len(frames)
 
     arrsize = size + hop * (nframes - 1)
-
-    print arrsize
-    arr = scipy.zeros((arrsize, frames[0].shape[0]))
+    
+    arr = scipy.zeros((arrsize, frames[0].shape[1]))
 
     for cur, frame in enumerate(frames):
-        arr[cur*hop:(cur*hop) + size,:] += frame.T
+        arr[cur*hop:(cur*hop) + size,:] += frame
 
     return arr
