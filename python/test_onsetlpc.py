@@ -5,6 +5,7 @@ from sepel.inputs import pyricaudio
 import pylab
 import os, sys, wave
 import scipy
+from common import *
 
 interactivePlot = False
 
@@ -56,9 +57,11 @@ stream = pyricaudio.fft_ricaudio(stream, {'inputKey': 'windowed',
                                           'fftLength': fftSize})
 
 lpc = ricaudio.LPC(frameSize, numCoeffs, preEmphasis)
+lpcr = ricaudio.LPCResidual(frameSize)
 
 specs = []
 lpcs = []
+lpcResiduals = []
 freqResps = []
 errors = []
 
@@ -79,6 +82,8 @@ for frame in stream:
 
     lpcCoeffs, reflection, error = lpc.process( samples )
 
+    lpcResidual = lpcr.process( samples, lpcCoeffs )
+
     spec =  20.0 / scipy.log( 10.0 ) * scipy.log( abs( fft ) + 1e-7)[:plotSize]
 
     freqResp = ricaudio.freqz(b*scipy.sqrt(abs(error[0])), lpcCoeffs.T, w)
@@ -86,6 +91,13 @@ for frame in stream:
     freqResp = 20.0 / scipy.log( 10.0 ) * scipy.log( abs( freqResp ) + 1e-7)
 
     if interactivePlot:
+        pylab.subplot(211)
+        pylab.hold(False)
+        pylab.plot( samples )
+        #pylab.hold(True)
+        #pylab.plot( lpcResidual[0,:] )
+        
+        pylab.subplot(212)
         pylab.hold(False)
         fftdb = ricaudio.magToDb(abs(fft))
         pylab.plot(w, fftdb[0,:], label = 'FFT')
@@ -96,6 +108,7 @@ for frame in stream:
     lpcs.append( lpcCoeffs[0] )
     freqResps.append( freqResp[:,0] )
     errors.append( error[0] )
+    lpcResiduals.append( lpcResidual )
 
 if interactivePlot:
     pylab.ioff()
@@ -107,29 +120,19 @@ lpcs = scipy.array( lpcs )
 freqResps = scipy.array( freqResps )
 errors = scipy.array( errors )
 
+lpcResiduals = overlap_add( lpcResiduals, frameSize, frameStep )
+
 # Get the onsets
 annotation = os.path.splitext(filename)[0] + '.onset_annotated'
-onsets = []
-if os.path.isfile(annotation):
-    onsetsTimes = [float(o) for o in open(annotation, 'r').readlines()]
-    onsetsCenter = [int(o * samplerate / frameStep) for o in onsetsTimes]
-    onsetsLeft = [int((o - (onsetError / 1000.0)) * samplerate / frameStep) for o in onsetsTimes]
-    onsetsRight = [int((o + (onsetError / 1000.0)) * samplerate / frameStep) for o in onsetsTimes]
-    onsets = zip(onsetsLeft, onsetsCenter, onsetsRight)
+onsets = get_onsets(annotation, frameStep, samplerate)
     
-def drawOnsets():
-    # Draw the onsets
-    for onsetLeft, onsetCenter, onsetRight in onsets:
-        pylab.axvspan( xmin = onsetLeft, xmax = onsetRight, facecolor = 'green', linewidth = 0, alpha = 0.25)
-        pylab.axvline( x = onsetCenter, color = 'black', linewidth = 1.1)
-
 pylab.figure()
 pylab.hold(True)
-pylab.subplot(3, 1, 1)
+pylab.subplot(4, 1, 1)
 
 pylab.imshow( scipy.flipud(specs.T), aspect = 'auto' )
 
-drawOnsets()
+draw_onsets(onsets)
     
 pylab.title( 'Spectrogram' )
 ax = pylab.gca()
@@ -144,7 +147,7 @@ ax.set_yticklabels([])
 ax.set_xlim([0, frameCount - 1])
 
 
-pylab.subplot(3, 1, 2)
+pylab.subplot(4, 1, 2)
 
 pylab.imshow( scipy.flipud(freqResps.T), aspect = 'auto' )
 
@@ -162,12 +165,26 @@ ax.set_xlim([0, frameCount - 1])
 
 
 # Create the ODF processors and process
-pylab.subplot(3, 1, 3)
+pylab.subplot(4, 1, 3)
 pylab.plot( errors )
 
-drawOnsets()
+draw_onsets( onsets )
 
 pylab.title( 'LPC Error' )
+ax = pylab.gca()
+
+ax.set_xticks([])
+ax.set_yticks([])
+
+ax.set_xticklabels([])
+ax.set_yticklabels([])
+
+ax.set_xlim([0, frameCount - 1])       
+
+pylab.subplot(4, 1, 4)
+pylab.plot( 20.0 * scipy.log10(lpcResiduals.T + 0.01) )
+
+pylab.title( 'LPC Residual' )
 ax = pylab.gca()
 
 ax.set_xticks([])
@@ -180,4 +197,6 @@ ax.set_xlim([0, frameCount - 1])
 
 pylab.subplots_adjust(left = 0.05, right = 0.95, bottom = 0.05, top = 0.95, hspace=0.6)
         
+pylab.show()
+
 pylab.show()

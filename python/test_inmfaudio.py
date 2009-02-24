@@ -87,14 +87,14 @@ for ind, frame in enumerate(framer):
 
 pylab.ioff()
 
-gains = overlapadder(gains, 1, 1)
+gains = overlap_add(gains, 1, 1)
 lastComponents = components[-1]
 a = scipy.array(a)
 nwindows = a.shape[0]
 components = scipy.array(components)
 
 if estimatePitch:
-    freqs = overlapadder(freqs, 1, 1)
+    freqs = overlap_add(freqs, 1, 1)
 
     componentschange = abs(components[2:,:,:] - components[1:-1,:,:])
     odfComponents = (gains[2:,:] * componentschange.sum(axis = 1)).sum(axis = 1)

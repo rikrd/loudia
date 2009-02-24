@@ -59,7 +59,7 @@ void LPCResidual::process(const MatrixXR& frame, const MatrixXR& lpcCoeffs, Matr
   (*residual).resize(rows, cols);
 
   DEBUG("LPCRESIDUAL: Processing setting filter");
-  _filter.setA(lpcCoeffs);
+  _filter.setA( lpcCoeffs.transpose() );
   
   for ( int row = 0; row < rows; row++ ) {
     

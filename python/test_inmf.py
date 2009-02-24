@@ -22,7 +22,7 @@ for frame in framer_array(a, windowSize, windowHop):
     gains.append(g)
     components.append(c)
 
-gains = overlapadder(gains, windowSize, windowHop)
+gains = overlap_add(gains, windowSize, windowHop)
 components = components[-1]
 
 if plot:

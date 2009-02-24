@@ -28,7 +28,8 @@ using namespace Eigen;
 LPC::LPC(int frameSize, int numCoeffs, Real preEmphasis) : 
   _frameSize( frameSize ), 
   _numCoeffs( numCoeffs ),
-  _preEmphasis( preEmphasis )
+  _preEmphasis( preEmphasis ),
+  _acorrelation( _frameSize, _numCoeffs + 1 )
 {
   DEBUG("LPC: Constructor frameSize: " << _frameSize 
         << ", numCoeffs: " << _numCoeffs
@@ -53,6 +54,9 @@ void LPC::setup(){
     preCoeffs << 1, -_preEmphasis;
     _preFilter.setB( preCoeffs );
   }
+
+  _preFilter.setup();
+  _acorrelation.setup();
 
   reset();
   
@@ -81,8 +85,9 @@ void LPC::process(const MatrixXR& frame, MatrixXR* lpcCoeffs, MatrixXR* reflecti
   }
   
   DEBUG("LPC: Processing autocorrelation");
-  
-  autocorrelate(_pre, &_acorr, 0, _numCoeffs + 1);
+
+  _acorrelation.process(_pre, &_acorr);
+  //autocorrelate(_pre, &_acorr, 0, _numCoeffs + 1);
   
   DEBUG("LPC: Processing Levinson-Durbin recursion");
 
@@ -143,6 +148,9 @@ void LPC::reset(){
   if ( _preEmphasis != 0.0 ) {
     _preFilter.reset( );
   }
+
+  _acorrelation.reset( );
+
 
 }
 

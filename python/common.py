@@ -110,14 +110,15 @@ def framer_array(arr, size, hop):
         yield samples
         cursor += hop
 
-def overlapadder(frames, size, hop):
+def overlap_add(frames, size, hop):
     nframes = len(frames)
 
     arrsize = size + hop * (nframes - 1)
 
-    arr = scipy.zeros((arrsize, frames[0].shape[1]))
+    print arrsize
+    arr = scipy.zeros((arrsize, frames[0].shape[0]))
 
     for cur, frame in enumerate(frames):
-        arr[cur*hop:(cur*hop) + size,:] += frame
+        arr[cur*hop:(cur*hop) + size,:] += frame.T
 
     return arr

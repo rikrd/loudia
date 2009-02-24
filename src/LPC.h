@@ -23,6 +23,7 @@
 #include "Debug.h"
 
 #include "Filter.h"
+#include "Autocorrelation.h"
 
 class LPC {
 protected:
@@ -36,7 +37,9 @@ protected:
   MatrixXR _preRow;
   MatrixXR _temp;
   MatrixXR _acorr;
+
   Filter _preFilter;
+  Autocorrelation _acorrelation;
 
 public:
   /**
