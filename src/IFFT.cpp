@@ -24,19 +24,13 @@
 using namespace std;
 using namespace Eigen;
 
-IFFT::IFFT(int fftSize, int frameSize, bool zeroPhase) :
+IFFT::IFFT(int fftSize, bool zeroPhase) :
   _fftSize( fftSize ),
-  _frameSize( frameSize ),
   _zeroPhase( zeroPhase ),
   _halfSize( fftSize / 2 + 1 )
 {
-  DEBUG("IFFT: Constructor frameSize: " << frameSize 
-        << ", fftSize: " << fftSize 
+  DEBUG("IFFT: Constructor fftSize: " << fftSize 
         << ", zeroPhase: " << zeroPhase);
-
-  if(_fftSize < _frameSize){
-    // Throw exception, the IFFT size must be greater or equal than the input size
-  }
   
   setup();
   
@@ -64,7 +58,7 @@ void IFFT::setup(){
 void IFFT::process(const MatrixXC& ffts, MatrixXR* frames){
   const int rows = ffts.rows();
   
-  (*frames).resize(rows, _frameSize);
+  (*frames).resize(rows, _halfSize);
 
   for (int i = 0; i < rows; i++){    
     // Fill the buffer with zeros
@@ -76,8 +70,8 @@ void IFFT::process(const MatrixXC& ffts, MatrixXR* frames){
     // Take the data from _out
     if(_zeroPhase){
 
-      int half_plus = ceil((Real)_frameSize / 2.0);
-      int half_minus = floor((Real)_frameSize / 2.0);
+      int half_plus = ceil((Real)_halfSize / 2.0);
+      int half_minus = floor((Real)_halfSize / 2.0);
       
       // Take second half of the frame from the beginning 
       (*frames).row(i).block(0, half_minus, 1, half_plus) = Eigen::Map<MatrixXR>(_out, 1, _fftSize).block(0, 0, 1, half_plus) / _fftSize;
@@ -88,16 +82,12 @@ void IFFT::process(const MatrixXC& ffts, MatrixXR* frames){
     }else{
 
       // Take all of the frame from the beginning
-      (*frames).row(i) = Eigen::Map<MatrixXR>(_out, 1, _fftSize).block(0, 0, 1, _frameSize) / _fftSize;
+      (*frames).row(i) = Eigen::Map<MatrixXR>(_out, 1, _fftSize).block(0, 0, 1, _halfSize) / _fftSize;
     }
   }
 }
 
 void IFFT::reset(){
-}
-
-int IFFT::frameSize() const{
-  return _frameSize;
 }
 
 int IFFT::fftSize() const{

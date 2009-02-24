@@ -26,7 +26,6 @@
 
 class FFT{
 protected:
-  int _frameSize;
   int _fftSize;
   bool _zeroPhase;
 
@@ -38,15 +37,14 @@ protected:
   
 
 public:
-  FFT(int frameSize, int fftSize, bool zeroPhase = true);
+  FFT(int fftSize, bool zeroPhase = true);
   ~FFT();
   
   void process(const MatrixXR& frames, MatrixXC* fft);
   
   void setup();
   void reset();
-
-  int frameSize() const;
+  
   int fftSize() const;
 };
 

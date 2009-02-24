@@ -35,7 +35,7 @@ OnsetComplex::OnsetComplex(int frameLength, int fftLength, Window::WindowType wi
   _zeroPhase( zeroPhase ),
   _windowType( windowType ),
   _window( frameLength, windowType ), 
-  _fft( frameLength, fftLength, zeroPhase ),
+  _fft( fftLength, zeroPhase ),
   _odf( fftLength )
 {
   

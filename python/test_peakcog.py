@@ -27,7 +27,7 @@ sinenoise = scipy.array(sine + (scipy.random.random((signalSize, 1)) - 0.5), dty
 bandwidth = 8 * fftSize / frameSize
 peakCount = 4
 window = ricaudio.Window(frameSize, ricaudio.Window.BLACKMANHARRIS)
-fft = ricaudio.FFT(frameSize, fftSize)
+fft = ricaudio.FFT(fftSize)
 peaks = ricaudio.PeakDetect(peakCount, bandwidth)
 cogs = ricaudio.PeakCOG(fftSize, bandwidth)
 

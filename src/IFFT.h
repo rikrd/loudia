@@ -27,7 +27,6 @@
 class IFFT{
 protected:
   int _fftSize;
-  int _frameSize;
   bool _zeroPhase;
 
   int _halfSize;
@@ -39,7 +38,7 @@ protected:
   
 
 public:
-  IFFT(int fftSize, int frameSize, bool zeroPhase = true);
+  IFFT(int fftSize, bool zeroPhase = true);
   ~IFFT();
   
   void process(const MatrixXC& fft, MatrixXR* frame);
@@ -47,7 +46,6 @@ public:
   void setup();
   void reset();
 
-  int frameSize() const;
   int fftSize() const;
 };
 

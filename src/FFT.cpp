@@ -24,19 +24,13 @@
 using namespace std;
 using namespace Eigen;
 
-FFT::FFT(int frameSize, int fftSize, bool zeroPhase) :
-  _frameSize( frameSize ),
+FFT::FFT(int fftSize, bool zeroPhase) :
   _fftSize( fftSize ),
   _zeroPhase( zeroPhase ),
   _halfSize( fftSize / 2 + 1 )
 {
-  DEBUG("FFT: Constructor frameSize: " << frameSize 
-        << ", fftSize: " << fftSize 
+  DEBUG("FFT: Constructor fftSize: " << fftSize 
         << ", zeroPhase: " << zeroPhase);
-
-  if(_fftSize < _frameSize){
-    // Throw exception, the FFT size must be greater or equal than the input size
-  }
   
   setup();
   
@@ -68,17 +62,24 @@ void FFT::setup(){
 }
 
 void FFT::process(const MatrixXR& frames, MatrixXC* ffts){
-  (*ffts).resize(frames.rows(), _halfSize);
+  const int cols = frames.cols();
+  const int rows = frames.rows();
 
-  for (int i = 0; i < frames.rows(); i++){    
+  if(_fftSize < cols){
+    // Throw exception, the FFT size must be greater or equal than the input size
+  }
+  
+  (*ffts).resize(rows, _halfSize);
+
+  for (int i = 0; i < rows; i++){    
     // Fill the buffer with zeros
     Eigen::Map<MatrixXR>(_in, 1, _fftSize) = MatrixXR::Zero(1, _fftSize);
     
     // Put the data in _in
     if(_zeroPhase){
 
-      int half_plus = ceil((Real)_frameSize / 2.0);
-      int half_minus = floor((Real)_frameSize / 2.0);
+      int half_plus = ceil((Real)cols / 2.0);
+      int half_minus = floor((Real)cols / 2.0);
       
       // Put second half of the frame at the beginning 
       Eigen::Map<MatrixXR>(_in, 1, _fftSize).block(0, 0, 1, half_plus) = frames.row(i).block(0, half_minus, 1, half_plus);
@@ -90,7 +91,7 @@ void FFT::process(const MatrixXR& frames, MatrixXC* ffts){
     }else{
 
       // Put all of the frame at the beginning
-      Eigen::Map<MatrixXR>(_in, 1, _fftSize).block(0, 0, 1, _frameSize) = frames.row(i);
+      Eigen::Map<MatrixXR>(_in, 1, _fftSize).block(0, 0, 1, cols) = frames.row(i);
     }
     // Process the data
     fftwf_execute(_fftplan);
@@ -101,10 +102,6 @@ void FFT::process(const MatrixXR& frames, MatrixXC* ffts){
 }
 
 void FFT::reset(){
-}
-
-int FFT::frameSize() const{
-  return _frameSize;
 }
 
 int FFT::fftSize() const{

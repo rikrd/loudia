@@ -31,8 +31,8 @@ Autocorrelation::Autocorrelation(int inputLength, int maxLag, int minLag) :
   _minLag( minLag ),
   _maxLag( min(inputLength, maxLag) ),
   _useFFT( (_maxLag - _minLag) > 128 ),
-  _fft( inputLength, nextPowerOf2(((_maxLag - _minLag)-1)*2), false ),
-  _ifft( nextPowerOf2(((_maxLag - _minLag)-1)*2), inputLength, false )
+  _fft( nextPowerOf2(((_maxLag - _minLag)-1)*2), false ),
+  _ifft( nextPowerOf2(((_maxLag - _minLag)-1)*2), false )
 {
   DEBUG("AUTOCORRELATION: Construction inputLength: " << _inputLength
         << " minLag: " << _minLag
@@ -48,8 +48,8 @@ Autocorrelation::Autocorrelation(int inputLength, int maxLag, int minLag, bool u
   _minLag( minLag ),
   _maxLag( min(inputLength, maxLag) ),
   _useFFT( useFFT ),
-  _fft( inputLength, nextPowerOf2(((_maxLag - _minLag)-1)*2), false ),
-  _ifft( nextPowerOf2(((_maxLag - _minLag)-1)*2), inputLength, false )
+  _fft( nextPowerOf2(((_maxLag - _minLag)-1)*2), false ),
+  _ifft( nextPowerOf2(((_maxLag - _minLag)-1)*2), false )
 {
   DEBUG("AUTOCORRELATION: Construction inputLength: " << _inputLength
         << " minLag: " << _minLag
