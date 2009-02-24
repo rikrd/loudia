@@ -44,6 +44,7 @@ import_array();
 #include "NMF.h"
 #include "INMF.h"
 #include "Resample.h"
+#include "Correlation.h"
 #include "Autocorrelation.h"
 
 #include "MelScales.h"
@@ -81,6 +82,7 @@ import_array();
 %include "NMF.h"
 %include "INMF.h"
 %include "Resample.h"
+%include "Correlation.h"
 %include "Autocorrelation.h"
 
 %include "MelScales.h"
