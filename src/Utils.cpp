@@ -189,8 +189,15 @@ void correlate(const InMatrixType& _a, const InMatrixType& _b, InMatrixType* c, 
   const int rows = _a.rows();
   InMatrixType temp;
   convolve<InMatrixType>(_a.rowwise().reverse(), _b, &temp);
-  (*c).resize(rows, _maxlag - _minlag);
-  (*c) = temp.block(0, max(_a.cols(), _b.cols()) - 1 + _minlag, rows, _maxlag - _minlag);  
+  
+  // In some cases users might want some zero coeffs of the autocorrelation
+  // in those cases temp will not be big enough and then we only copy a part of it
+  // (from colstart we copy 'colscopy' columns)
+  const int colstart = max(_a.cols(), _b.cols()) - 1 + _minlag;
+  const int colscopy = min(_maxlag - _minlag, temp.cols() - colstart);
+
+  (*c) = InMatrixType::Zero(rows, _maxlag - _minlag);
+  (*c).block(0, 0, rows, colscopy) = temp.block(0, colstart, rows, colscopy);
 }
 
 void correlate(const MatrixXC& a, const MatrixXC& b, MatrixXC* c, int _minlag, int _maxlag) {
