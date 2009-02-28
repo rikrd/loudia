@@ -58,8 +58,8 @@ void SpectralNoiseSuppression::setup(){
 
   MatrixXI starts(_halfSize, 1);
   vector<MatrixXR> weights;
+  weights.reserve(_halfSize);
   for ( int i = 0; i < _halfSize; i++ ) {
-    cout << i << endl;
     int halfBandUnder = max( minHalfBand,  (Real)(2.0/3.0*i));
     int halfBandOver = max( minHalfBand,  (Real)(i/2.0*3.0));
 
@@ -68,7 +68,7 @@ void SpectralNoiseSuppression::setup(){
 
     starts(i, 0) = begin;
 
-    MatrixXR weight = MatrixXR::Constant(_halfSize, end - begin, 1.0 / float(end - begin));
+    MatrixXR weight = MatrixXR::Constant(1, end - begin, 1.0 / float(end - begin));
     weights.push_back( weight );
   }
   
