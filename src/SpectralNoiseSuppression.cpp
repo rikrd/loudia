@@ -46,7 +46,9 @@ void SpectralNoiseSuppression::setup(){
   
   // Prepare the bands for the moving average
   int _halfSize = (_fftSize / 2) + 1;
-  
+  MatrixXI starts = range(0, _halfSize, _halfSize);
+
+  cout << starts << endl;
   
   _bands.setup()
 
