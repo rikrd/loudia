@@ -94,6 +94,8 @@ void range(Real start, Real end, int steps, MatrixXC* in);
 void range(Real start, Real end, int steps, int rows, MatrixXC* in);
 void range(Real start, Real end, int steps, MatrixXR* in);
 void range(Real start, Real end, int steps, int rows, MatrixXR* in);
+void range(Real start, Real end, int steps, MatrixXI* in);
+void range(Real start, Real end, int steps, int rows, MatrixXI* in);
 
 /**
  * Create a matrix of complex numbers given the polar coordinates

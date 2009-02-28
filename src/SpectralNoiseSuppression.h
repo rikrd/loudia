@@ -19,6 +19,8 @@
 #ifndef SPECTRALNOISESUPPRESSION_H
 #define SPECTRALNOISESUPPRESSION_H
 
+#include <Eigen/StdVector>
+
 #include "Typedefs.h"
 #include "Debug.h"
 
@@ -28,6 +30,9 @@ class SpectralNoiseSuppression {
 protected:
   int _fftSize;
   Real _samplerate;
+
+  Real _f0;
+  Real _f1;
   
   int _k0;
   int _k1;

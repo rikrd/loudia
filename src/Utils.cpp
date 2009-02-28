@@ -308,6 +308,15 @@ void range(Real start, Real end, int steps, MatrixXR* in){
   return range(start, end, steps, 1, in);
 }
 
+void range(Real start, Real end, int steps, int rows, MatrixXI* in){
+  range<MatrixXI>(start, end, steps, rows, in);
+}
+
+void range(Real start, Real end, int steps, MatrixXI* in){
+  return range(start, end, steps, 1, in);
+}
+
+
 void polar(const MatrixXR&  mag, const MatrixXR&  phase, MatrixXC* complex) {
   if ((mag.rows() != phase.rows()) || (mag.cols() != phase.cols())) {
     // Throw an error
