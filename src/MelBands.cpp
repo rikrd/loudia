@@ -126,7 +126,7 @@ void MelBands::setup(){
     centers(i, 0) = (Real(i + 1) * stepMel + lowMel);
   }
 
-  MatrixXR centersLinear = startsLinear + (stopsLinear - startsLinear) / 2.0;
+  _centersLinear = startsLinear + (stopsLinear - startsLinear) / 2.0;
   //melToLinearMatrixGreenwood1990(centers, &centersLinear);
   //centersLinear *= stepSpectrum;
   
@@ -151,7 +151,7 @@ void MelBands::setup(){
       newFilter.resize(filterLength, 1);
       
       Real start = startsLinear(i, 0);
-      Real center = centersLinear(i, 0);
+      Real center = _centersLinear(i, 0);
       Real stop = stopsLinear(i, 0);
       
       triangleWindow(&newFilter, start - startBin, stop  - startBin, center  - startBin);
@@ -202,6 +202,10 @@ void MelBands::reset(){
 
 void MelBands::starts(MatrixXI* result) const {
   return _bands.starts( result );
+}
+
+void MelBands::centers(MatrixXR* result) const {
+  (*result) = _centersLinear;
 }
 
 std::vector<MatrixXR> MelBands::weights() const {

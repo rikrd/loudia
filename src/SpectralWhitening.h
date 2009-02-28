@@ -38,11 +38,12 @@ protected:
 
   MelBands::ScaleType _scaleType;
 
+  MatrixXR _centers;
+
   MatrixXR _bandEnergy;
   MatrixXR _compressionWeights;
 
   MelBands _bands;
-  Resample _resample;
 
 public:
   SpectralWhitening(int fftSize, Real f0, Real f1, Real samplerate = 1.0, Real compressionFactor = 0.33, int numBands = 30, MelBands::ScaleType scaleType = MelBands::GREENWOOD);

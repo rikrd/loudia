@@ -43,6 +43,7 @@ protected:
   ScaleType _scaleType;
 
   Bands _bands;
+  MatrixXR _centersLinear;
 
   Real (*_linearToMel)(Real linearFreq);
   
@@ -71,6 +72,7 @@ public:
 
   int bands() const;
 
+  void centers(MatrixXR* result) const;
 };
 
 #endif  /* MELBANDS_H */

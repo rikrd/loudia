@@ -7,7 +7,7 @@ import os, sys, wave
 import scipy
 from common import *
 
-interactivePlot = True
+interactivePlot = False
 
 filename = sys.argv[1]
 

@@ -34,8 +34,7 @@ SpectralWhitening::SpectralWhitening(int fftSize, Real f0, Real f1, Real sampler
   _compressionFactor( compressionFactor ),
   _numBands( numBands ),
   _scaleType( scaleType ),
-  _bands( _f0, _f1, _numBands, _samplerate, _fftSize, _scaleType),
-  _resample( _numBands, _halfSize, (Real)_halfSize / (Real)_numBands )
+  _bands( _f0, _f1, _numBands, _samplerate, _fftSize, _scaleType)
 {
   DEBUG("SPECTRALWHITENING: Construction fftSize: " << _fftSize
         << " samplerate: " << _samplerate
@@ -51,9 +50,13 @@ SpectralWhitening::~SpectralWhitening(){}
 
 void SpectralWhitening::setup(){
   DEBUG("SPECTRALWHITENING: Setting up...");
-  
+
   // Setup the bands
   _bands.setup();
+
+  _bands.centers(&_centers);
+  
+  cout << _centers << endl;
 
   reset();
 
@@ -66,10 +69,34 @@ void SpectralWhitening::process(const MatrixXR& spectrum, MatrixXR* result){
 
   (*result).resize( rows, cols );
 
-  _bands.process( spectrum.cwise().square(), &_bandEnergy );
-  
-  _resample.process( (_bandEnergy / _fftSize).cwise().sqrt().cwise().pow(_compressionFactor - 1.0), &_compressionWeights );
+  _compressionWeights.resize(rows, _halfSize);
 
+  // Calculate the energy per band
+  _bands.process( spectrum.cwise().square(), &_bandEnergy );
+
+  // Calculate compress weights of bands
+  _bandEnergy = (_bandEnergy / _fftSize).cwise().sqrt().cwise().pow(_compressionFactor - 1.0);
+
+  // Interpolate linearly between the center frequencies of bands
+  // Interpolate the region before the first frequency center
+  int col = 0;
+  for (; col < _centers(0, 0); col++ ) {
+    _compressionWeights.col( col ) = (Real)col * _bandEnergy.col(1) / _centers(0, 0);
+  }
+
+  // Interpolate the region between the first and last frequency centers
+  for ( int band = 1; band < _numBands; band++ ) {
+    for (; col < _centers(band, 0); col++ ) {
+      _compressionWeights.col(col) = (((Real)col - _centers(band - 1, 0)) * (_bandEnergy.col(band) - _bandEnergy.col(band-1)) / (_centers(band, 0) - _centers(band - 1, 0))) + _bandEnergy.col(band - 1);
+    }
+  }
+
+  // Interpolate the region after the last frequency center
+  for (; col < _halfSize; col++ ) {
+      _compressionWeights.col(col) = (((Real)col - _centers(_numBands - 1, 0)) * ( -_bandEnergy.col(_numBands - 1)) / (_halfSize - _centers(_numBands - 1, 0))) + _bandEnergy.col(_numBands - 1);
+  }
+
+  // Apply compression weihgts
   (*result) = spectrum.cwise() * _compressionWeights;
 }
 
