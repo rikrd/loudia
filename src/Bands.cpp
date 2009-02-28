@@ -33,7 +33,7 @@ Bands::Bands() :
 }
 
 
-Bands::Bands(MatrixXi starts, vector<MatrixXR> weights) {
+Bands::Bands(MatrixXI starts, vector<MatrixXR> weights) {
   DEBUG("BANDS: Constructor starts: " << starts);
 
   if ( starts.rows() != (int)weights.size() ) {
@@ -72,7 +72,7 @@ void Bands::process(const MatrixXR& spectrum, MatrixXR* bands){
 
   (*bands).resize(spectrum.rows(), _starts.rows());
 
-  for (int j = 0; j < spectrum.rows(); j++){
+  for (int j = 0; j < spectrum.rows(); j++) {
     for (int i = 0; i < _starts.rows(); i++ ) {
       (*bands)(j, i) = spectrum.block(j, _starts(i, 0), 1, _weights[i].rows()).row(0).dot(_weights[i].col(0));
     }
