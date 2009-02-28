@@ -47,6 +47,7 @@ import_array();
 #include "Correlation.h"
 #include "Autocorrelation.h"
 #include "SpectralNoiseSuppression.h"
+#include "SpectralWhitening.h"
 
 #include "MelScales.h"
 #include "Utils.h"
@@ -86,6 +87,7 @@ import_array();
 %include "Correlation.h"
 %include "Autocorrelation.h"
 %include "SpectralNoiseSuppression.h"
+%include "SpectralWhitening.h"
 
 %include "MelScales.h"
 %include "Utils.h"
