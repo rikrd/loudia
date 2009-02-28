@@ -35,7 +35,7 @@ SpectralNoiseSuppression::SpectralNoiseSuppression(int fftSize, Real f0, Real f1
   _k0( ( _f0 / _samplerate ) * _fftSize ),
   _k1( ( _f1 / _samplerate ) * _fftSize )
 {
-  DEBUG("SpectralNoiseSuppression: Construction fftSize: " << _fftSize
+  DEBUG("SPECTRALNOISESUPPRESSION: Construction fftSize: " << _fftSize
         << " samplerate: " << _samplerate
         << " f0: " << _f0
         << " f1: " << _f1
@@ -88,22 +88,23 @@ void SpectralNoiseSuppression::process(const MatrixXR& spectrum, MatrixXR* resul
   
   (*result) = spectrum;
 
-
-  DEBUG("SPECTRALNOISESUPPRESSION: Calculate wrapped magnitude.");
+  //DEBUG("SPECTRALNOISESUPPRESSION: Calculate wrapped magnitude.");
   // Calculate the wrapped magnitude of the spectrum
-  _g = (1 / (_k1 - _k0 + 1) * spectrum.block(0, _k0, rows, _k1 - _k0).cwise().pow(1.0/3.0).rowwise().sum()).cwise().cube();
+  _g = (1.0 / (_k1 - _k0 + 1.0) * spectrum.block(0, _k0, rows, _k1 - _k0).cwise().pow(1.0/3.0).rowwise().sum()).cwise().cube();
+
+  //cout << (_g) << endl;
   
   for ( int i = 0; i < cols; i++ ) {
     (*result).col(i) = (((*result).col(i).cwise() * _g.cwise().inverse()).cwise() + 1.0).cwise().log();
   }
-
   
-  DEBUG("SPECTRALNOISESUPPRESSION: Estimate spectral noise.");
+  //cout << (*result) << endl;
+  
+  //DEBUG("SPECTRALNOISESUPPRESSION: Estimate spectral noise.");
   // Estimate spectral noise
   _bands.process((*result), &_noise);
-
   
-  DEBUG("SPECTRALNOISESUPPRESSION: Suppress spectral noise.");
+  //DEBUG("SPECTRALNOISESUPPRESSION: Suppress spectral noise.");
   // Suppress spectral noise
   (*result) = ((*result) - _noise).cwise().clipUnder();
 }
