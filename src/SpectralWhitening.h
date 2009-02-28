@@ -16,63 +16,45 @@
 ** Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */                                                                          
 
-#ifndef MELBANDS_H
-#define MELBANDS_H
-
-#include <Eigen/StdVector>
+#ifndef SPECTRALWHITENING_H
+#define SPECTRALWHITENING_H
 
 #include "Typedefs.h"
 #include "Debug.h"
 
-#include "Bands.h"
+#include "MelBands.h"
+#include "Resample.h"
 
-class MelBands {
-public:
-  enum ScaleType {
-    STEVENS = 0,
-    FANT = 1,
-    GREENWOOD = 2
-  };
-
+class SpectralWhitening {
 protected:
-  Real _lowFreq;
-  Real _highFreq;
-  int _numBands;
+  int _fftSize;
+  int _halfSize;
+  Real _f0;
+  Real _f1;
+
   Real _samplerate;
-  int _fftLength;
-  ScaleType _scaleType;
+  Real _compressionFactor;
+  int _numBands;
 
-  Bands _bands;
-  MatrixXR _centersLinear;
+  MelBands::ScaleType _scaleType;
 
-  Real (*_linearToMel)(Real linearFreq);
-  
-  Real (*_melToLinear)(Real melFreq);
-  
-  void (*_linearToMelMatrix)(const MatrixXR& linearFreq, MatrixXR* melFreq);
-  
-  void (*_melToLinearMatrix)(const MatrixXR& melFreq, MatrixXR* linearFreq);
+  MatrixXR _centers;
 
-  void triangleWindow(MatrixXR* window, Real start, Real stop, Real center = -1, Real height = Real(1.0));
-  
+  MatrixXR _bandEnergy;
+  MatrixXR _compressionWeights;
+
+  MelBands _bands;
+
 public:
-  MelBands(Real lowFreq, Real highFreq, int numBands, Real samplerate, int fftLength, ScaleType scaleType = GREENWOOD);
+  SpectralWhitening(int fftSize, Real f0, Real f1, Real samplerate = 1.0, Real compressionFactor = 0.33, int numBands = 30, MelBands::ScaleType scaleType = MelBands::GREENWOOD);
+
+  ~SpectralWhitening();
 
   void setup();
 
-  void process(const MatrixXR& spectrum, MatrixXR* bands);
-  
+  void process(const MatrixXR& spectrum, MatrixXR* result);
+
   void reset();
-
-  std::vector<MatrixXR> weights() const;
-
-  void bandWeights(int band, MatrixXR* bandWeights) const;
-
-  void starts(MatrixXI* result) const;
-
-  int bands() const;
-
-  void centers(MatrixXR* result) const;
 };
 
-#endif  /* MELBANDS_H */
+#endif  /* SPECTRALWHITENING_H */

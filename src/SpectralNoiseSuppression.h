@@ -16,8 +16,8 @@
 ** Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */                                                                          
 
-#ifndef MELBANDS_H
-#define MELBANDS_H
+#ifndef SPECTRALNOISESUPPRESSION_H
+#define SPECTRALNOISESUPPRESSION_H
 
 #include <Eigen/StdVector>
 
@@ -26,53 +26,32 @@
 
 #include "Bands.h"
 
-class MelBands {
-public:
-  enum ScaleType {
-    STEVENS = 0,
-    FANT = 1,
-    GREENWOOD = 2
-  };
-
+class SpectralNoiseSuppression {
 protected:
-  Real _lowFreq;
-  Real _highFreq;
-  int _numBands;
+  int _fftSize;
   Real _samplerate;
-  int _fftLength;
-  ScaleType _scaleType;
+
+  Real _f0;
+  Real _f1;
+  
+  int _k0;
+  int _k1;
+
+  MatrixXR _g;
+  MatrixXR _noise;
 
   Bands _bands;
-  MatrixXR _centersLinear;
 
-  Real (*_linearToMel)(Real linearFreq);
-  
-  Real (*_melToLinear)(Real melFreq);
-  
-  void (*_linearToMelMatrix)(const MatrixXR& linearFreq, MatrixXR* melFreq);
-  
-  void (*_melToLinearMatrix)(const MatrixXR& melFreq, MatrixXR* linearFreq);
-
-  void triangleWindow(MatrixXR* window, Real start, Real stop, Real center = -1, Real height = Real(1.0));
-  
 public:
-  MelBands(Real lowFreq, Real highFreq, int numBands, Real samplerate, int fftLength, ScaleType scaleType = GREENWOOD);
+  SpectralNoiseSuppression(int fftSize, Real f0, Real f1, Real samplerate = 1.0);
+
+  ~SpectralNoiseSuppression();
 
   void setup();
 
-  void process(const MatrixXR& spectrum, MatrixXR* bands);
-  
+  void process(const MatrixXR& spectrum, MatrixXR* result);
+
   void reset();
-
-  std::vector<MatrixXR> weights() const;
-
-  void bandWeights(int band, MatrixXR* bandWeights) const;
-
-  void starts(MatrixXI* result) const;
-
-  int bands() const;
-
-  void centers(MatrixXR* result) const;
 };
 
-#endif  /* MELBANDS_H */
+#endif  /* SPECTRALNOISESUPPRESSION_H */
