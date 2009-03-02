@@ -24,7 +24,7 @@ a_sine += (a_random - 0.5) * 1.0
 # Ricaudio's solution # --------------------------------- #
 window = ricaudio.Window(frameSize, ricaudio.Window.HAMMING)
 fft = ricaudio.FFT(fftSize)
-peaks = ricaudio.PeakDetect(5, 4)
+peaks = ricaudio.PeakDetect(5, ricaudio.PeakDetect.BYMAGNITUDE, 4)
 
 r_sine_windowed = window.process(a_sine)
 r_sine_fft = fft.process(r_sine_windowed)

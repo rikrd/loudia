@@ -22,6 +22,8 @@
 #include "Typedefs.h"
 #include "Debug.h"
 
+#include <limits>
+
 class PeakDetect {
 public:
   enum SortType {
@@ -34,6 +36,7 @@ protected:
   // Internal parameters
   int _numPeaks;
   int _minPeakWidth;
+  int _numCandidates;
   Real _minPeakContrast;
     
   SortType _sort;
@@ -43,7 +46,7 @@ protected:
   MatrixXR _phases;
 
 public:
-  PeakDetect(int numPeaks, SortType sort = NOSORT, int minPeakWidth = 3, Real minPeakContrast = 0);
+  PeakDetect(int numPeaks, SortType sort = BYMAGNITUDE, int minPeakWidth = 3, int numCandidates = -1, Real minPeakContrast = 0);
 
   ~PeakDetect();
 

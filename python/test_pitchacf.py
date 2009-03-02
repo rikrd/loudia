@@ -53,8 +53,9 @@ stream = pyricaudio.fft_ricaudio(stream, {'inputKey': 'windowed',
 
 
 minPeakWidth = 8
+peakCandidateCount = 6
 whitening = ricaudio.SpectralWhitening(fftSize, 50.0, 6000.0, samplerate)
-pitchACF = ricaudio.PitchACF(fftSize, samplerate, minPeakWidth)
+pitchACF = ricaudio.PitchACF(fftSize, samplerate, minPeakWidth, peakCandidateCount)
 acorr = ricaudio.Autocorrelation(fftSize/2+1, fftSize/2+1)
 
 specs = []

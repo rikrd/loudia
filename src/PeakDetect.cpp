@@ -40,16 +40,17 @@ struct peak{
 };
 
 struct byMagnitudeComp{
-  bool operator() (peak i, peak j) { return ( i.mag < j.mag ); }
+  bool operator() (peak i, peak j) { return ( i.mag > j.mag ); }
 } byMagnitude;
 
 struct byPositionComp{
   bool operator() (peak i, peak j) { return ( i.pos < j.pos ); }
 } byPosition;
 
-PeakDetect::PeakDetect(int numPeaks, SortType sort, int minPeakWidth, Real minPeakContrast) :
+PeakDetect::PeakDetect(int numPeaks, SortType sort, int minPeakWidth, int numCandidates, Real minPeakContrast) :
   _numPeaks(numPeaks),
   _minPeakWidth(minPeakWidth),
+  _numCandidates(numCandidates),
   _minPeakContrast(minPeakContrast),
   _sort(sort)
 
@@ -141,16 +142,24 @@ void PeakDetect::process(const MatrixXC& fft,
           peakIndex ++;
         }
       }
+      
+      int candidateCount;
+      if(_numCandidates > 0) {
+        candidateCount = min(peakIndex, _numCandidates);
+      }else{
+        candidateCount = peakIndex;
+      }
+      
 
       switch ( _sort ) {
       case BYPOSITION:
         // Order the peaks by magnitude
-        std::sort(peaks.begin(), peaks.end(), byPosition);
+        std::sort(peaks.begin(), peaks.begin() + candidateCount, byPosition);
         break;
 
       case BYMAGNITUDE:
         // Order the peaks by position
-        std::sort(peaks.begin(), peaks.end(), byPosition);
+        std::sort(peaks.begin(), peaks.begin() + candidateCount, byMagnitude);
         break;
 
       case NOSORT:
@@ -158,7 +167,7 @@ void PeakDetect::process(const MatrixXC& fft,
         break;
       }
       
-      int peakCount = min(_numPeaks, peakIndex);
+      int peakCount = min(_numPeaks, candidateCount);
       
       // Put the peaks in the matrices
       for( int j = 0; j < peakCount; j++ ){

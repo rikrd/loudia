@@ -25,11 +25,11 @@
 using namespace std;
 using namespace Eigen;
 
-PitchACF::PitchACF(int fftSize, Real samplerate, int minPeakWidth) :
+PitchACF::PitchACF(int fftSize, Real samplerate, int minPeakWidth, int peakCandidateCount) :
   _fftSize( fftSize ),
   _halfSize( ( _fftSize / 2 ) + 1 ),
   _samplerate( samplerate ),
-  _peak(1, PeakDetect::BYMAGNITUDE, minPeakWidth),
+  _peak(1, PeakDetect::BYMAGNITUDE, minPeakWidth, peakCandidateCount),
   _peakInterp(),
   _acorr(_halfSize, _halfSize)
 {
