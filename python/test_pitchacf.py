@@ -17,7 +17,7 @@ wavfile = wave.open(filename,'r')
 samplerate = float(wavfile.getframerate())
 wavfile.close()
 
-frameSize = 1024
+frameSize = 2048
 frameStep = 512
 
 frameSizeTime = frameSize / 44100.0
