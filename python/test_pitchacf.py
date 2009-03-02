@@ -7,7 +7,7 @@ import os, sys, wave
 import scipy
 from common import *
 
-interactivePlot = True
+interactivePlot = False
 plot = True
 
 filename = sys.argv[1]
@@ -80,7 +80,7 @@ for frame in stream:
         pylab.hold(False)
         pylab.plot( wspec[:plotSize] )
 
-        acorred = acorr.process( spec )
+        acorred = acorr.process( wspec )
         
         pylab.subplot(212)
         pylab.hold(False)
