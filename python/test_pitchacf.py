@@ -17,8 +17,8 @@ wavfile = wave.open(filename,'r')
 samplerate = float(wavfile.getframerate())
 wavfile.close()
 
-frameSize = 2048
-frameStep = 1024
+frameSize = 1024
+frameStep = 512
 
 frameSizeTime = frameSize / 44100.0
 frameStepTime = frameStep / 44100.0
@@ -102,6 +102,9 @@ saliencies = scipy.array( saliencies )[:, 0]
 frameCount = specs.shape[0] - 1
 
 if plot:
+
+    pitches[ saliencies < 60] = 0.0
+    
     pylab.figure()
     pylab.subplot(211)
     pylab.plot( pitches[:,0] )
