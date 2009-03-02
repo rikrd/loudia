@@ -17,7 +17,7 @@ wavfile = wave.open(filename,'r')
 samplerate = float(wavfile.getframerate())
 wavfile.close()
 
-frameSize = 2048
+frameSize = 4096
 frameStep = 512
 
 frameSizeTime = frameSize / 44100.0
@@ -44,7 +44,7 @@ stream = pyricaudio.sndfilereader({'filename': filename,
 
 stream = pyricaudio.window_ricaudio(stream, {'inputKey': 'samplesMono',
                                              'outputKey': 'windowed',
-                                             'windowType': 'blackmanharris'})
+                                             'windowType': 'hamming'})
 
 stream = pyricaudio.fft_ricaudio(stream, {'inputKey': 'windowed',
                                           'outputKey': 'fft',
@@ -52,8 +52,8 @@ stream = pyricaudio.fft_ricaudio(stream, {'inputKey': 'windowed',
                                           'fftLength': fftSize})
 
 
-minPeakWidth = 4
-whitening = ricaudio.SpectralWhitening(fftSize, 50.0, 9000.0, samplerate)
+minPeakWidth = 8
+whitening = ricaudio.SpectralWhitening(fftSize, 50.0, 6000.0, samplerate)
 pitchACF = ricaudio.PitchACF(fftSize, samplerate, minPeakWidth)
 acorr = ricaudio.Autocorrelation(fftSize/2+1, fftSize/2+1)
 
