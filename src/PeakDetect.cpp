@@ -40,7 +40,7 @@ struct peak{
 };
 
 
-PeakDetect::PeakDetect(int numPeaks, int minPeakWidth, Real minPeakContrast, bool sort) :
+PeakDetect::PeakDetect(int numPeaks, bool sort, int minPeakWidth, Real minPeakContrast) :
   _numPeaks(numPeaks),
   _minPeakWidth(minPeakWidth),
   _minPeakContrast(minPeakContrast),

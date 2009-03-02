@@ -16,40 +16,44 @@
 ** Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */                                                                          
 
-#ifndef PEAKDETECT_H
-#define PEAKDETECT_H
+#ifndef PITCHSALIENCY_H
+#define PITCHSALIENCY_H
 
 #include "Typedefs.h"
 #include "Debug.h"
 
-class PeakDetect {
+class PitchSaliency {
 protected:
-  // Internal parameters
-  int _numPeaks;
-  int _minPeakWidth;
-  Real _minPeakContrast;
-  bool _sort;
-    
-  // Internal variables
-  MatrixXR _magnitudes;
-  MatrixXR _phases;
+  int _fftSize;
+  int _halfSize;
+  Real _f0;
+  Real _f1;
+  Real _fPrec;
+  int _numHarmonics;
+
+  Real _tMin;
+  Real _tMax;
+  Real _tPrec;
+  Real _alpha;
+  Real _beta;
+
+  Real _samplerate;
+
+  Real harmonicWeight(Real period, Real tLow, Real tUp, int harmonicIndex);
+
+  Real saliency(Real period, Real deltaPeriod, Real tLow, Real tUp, const MatrixXR& spectrum);
+
 
 public:
-  PeakDetect(int numPeaks, bool sort = true, int minPeakWidth = 3, Real minPeakContrast = 0);
+  PitchSaliency(int fftSize, Real f0, Real f1, Real samplerate = 1.0, Real fPrec = 0.01, int numHarmonics = 5);
 
-  ~PeakDetect();
+  ~PitchSaliency();
 
   void setup();
 
-  void process(const MatrixXC& fft,
-               MatrixXR* peakPositions, MatrixXR* peakMagnitudes, MatrixXR* peakPhases);
+  void process(const MatrixXR& spectrum, MatrixXR* pitches, MatrixXR* saliencies);
 
   void reset();
-
-  int numPeaks() const;
-
-  int minPeakWidth() const;
-
 };
 
-#endif  /* PEAKDETECT_H */
+#endif  /* PITCHSALIENCY_H */

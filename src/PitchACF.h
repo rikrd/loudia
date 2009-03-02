@@ -16,40 +16,41 @@
 ** Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */                                                                          
 
-#ifndef PEAKDETECT_H
-#define PEAKDETECT_H
+#ifndef PITCHACF_H
+#define PITCHACF_H
 
 #include "Typedefs.h"
 #include "Debug.h"
 
-class PeakDetect {
+#include "PeakDetect.h"
+#include "PeakInterpolate.h"
+#include "Autocorrelation.h"
+
+class PitchACF {
 protected:
-  // Internal parameters
-  int _numPeaks;
-  int _minPeakWidth;
-  Real _minPeakContrast;
-  bool _sort;
-    
-  // Internal variables
-  MatrixXR _magnitudes;
+  int _fftSize;
+  int _halfSize;
+
+  Real _samplerate;
+
+  PeakDetect _peak;
+  PeakInterpolate _peakInterp;
+  Autocorrelation _acorr;
+
+  MatrixXR _acorred;
+  MatrixXC _acorredC;
   MatrixXR _phases;
 
 public:
-  PeakDetect(int numPeaks, bool sort = true, int minPeakWidth = 3, Real minPeakContrast = 0);
+  PitchACF(int fftSize, Real samplerate = 1.0);
 
-  ~PeakDetect();
+  ~PitchACF();
 
   void setup();
 
-  void process(const MatrixXC& fft,
-               MatrixXR* peakPositions, MatrixXR* peakMagnitudes, MatrixXR* peakPhases);
+  void process(const MatrixXR& spectrum, MatrixXR* pitches, MatrixXR* saliencies);
 
   void reset();
-
-  int numPeaks() const;
-
-  int minPeakWidth() const;
-
 };
 
-#endif  /* PEAKDETECT_H */
+#endif  /* PITCHACF_H */

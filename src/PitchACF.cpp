@@ -16,40 +16,54 @@
 ** Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */                                                                          
 
-#ifndef PEAKDETECT_H
-#define PEAKDETECT_H
-
 #include "Typedefs.h"
 #include "Debug.h"
 
-class PeakDetect {
-protected:
-  // Internal parameters
-  int _numPeaks;
-  int _minPeakWidth;
-  Real _minPeakContrast;
-  bool _sort;
-    
-  // Internal variables
-  MatrixXR _magnitudes;
-  MatrixXR _phases;
+#include "PitchACF.h"
+#include "Utils.h"
 
-public:
-  PeakDetect(int numPeaks, bool sort = true, int minPeakWidth = 3, Real minPeakContrast = 0);
+using namespace std;
+using namespace Eigen;
 
-  ~PeakDetect();
+PitchACF::PitchACF(int fftSize, Real samplerate) :
+  _fftSize( fftSize ),
+  _halfSize( ( _fftSize / 2 ) + 1 ),
+  _samplerate( samplerate ),
+  _peak(1, true, 8),
+  _peakInterp(),
+  _acorr(_halfSize, _halfSize)
+{
+  DEBUG("PITCHACF: Construction fftSize: " << _fftSize
+        << " samplerate: " << _samplerate );
 
-  void setup();
+  setup();
+}
 
-  void process(const MatrixXC& fft,
-               MatrixXR* peakPositions, MatrixXR* peakMagnitudes, MatrixXR* peakPhases);
+PitchACF::~PitchACF(){}
 
-  void reset();
+void PitchACF::setup(){
+  DEBUG("PITCHACF: Setting up...");
 
-  int numPeaks() const;
+  reset();
 
-  int minPeakWidth() const;
+  DEBUG("PITCHACF: Finished setup.");
+}
 
-};
+void PitchACF::process(const MatrixXR& spectrum, MatrixXR* pitches, MatrixXR* saliencies){
+  _acorr.process(spectrum, &_acorred); 
+ 
+  _acorredC = _acorred.cast<Complex>();
+  
+  _peak.process(_acorredC,
+                pitches, saliencies, &_phases);
+  
+  _peakInterp.process(_acorredC, (*pitches), (*saliencies), _phases,
+                      pitches, saliencies, &_phases);
 
-#endif  /* PEAKDETECT_H */
+  (*pitches) *= _samplerate / _fftSize;
+}
+
+void PitchACF::reset(){
+  // Initial values
+
+}
