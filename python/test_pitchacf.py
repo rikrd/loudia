@@ -7,7 +7,7 @@ import os, sys, wave
 import scipy
 from common import *
 
-interactivePlot = False
+interactivePlot = True
 plot = True
 
 filename = sys.argv[1]
@@ -51,8 +51,10 @@ stream = pyricaudio.fft_ricaudio(stream, {'inputKey': 'windowed',
                                           'zeroPhase': True,
                                           'fftLength': fftSize})
 
-whitening = ricaudio.SpectralWhitening(fftSize, 50.0, 6000.0, samplerate)
-pitchACF = ricaudio.PitchACF(fftSize, samplerate)
+
+minPeakWidth = 4
+whitening = ricaudio.SpectralWhitening(fftSize, 50.0, 9000.0, samplerate)
+pitchACF = ricaudio.PitchACF(fftSize, samplerate, minPeakWidth)
 acorr = ricaudio.Autocorrelation(fftSize/2+1, fftSize/2+1)
 
 specs = []
@@ -69,20 +71,20 @@ if interactivePlot:
 
 for frame in stream:
     spec = scipy.array(abs(frame['fft']), dtype = scipy.float32)
-
+    
     wspec = whitening.process( spec )
     pitch, saliency = pitchACF.process( wspec )
     
     if interactivePlot:
         pylab.subplot(211)
         pylab.hold(False)
-        pylab.plot( spec[:plotSize] )
+        pylab.plot( wspec[:plotSize] )
 
         acorred = acorr.process( spec )
         
         pylab.subplot(212)
         pylab.hold(False)
-        pylab.plot(acorred[0,:plotSize], label = 'Noise Suppressed Spectrum')
+        pylab.plot(acorred[0,:plotSize] / acorred[0,0], label = 'Noise Suppressed Spectrum')
         pylab.hold(True)
         pylab.stem( pitch/samplerate*fftSize, saliency )
         
@@ -103,7 +105,7 @@ frameCount = specs.shape[0] - 1
 
 if plot:
 
-    pitches[ saliencies < 60] = 0.0
+    pitches[ saliencies < 0.001] = scipy.NaN
     
     pylab.figure()
     pylab.subplot(211)

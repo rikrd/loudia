@@ -25,11 +25,11 @@
 using namespace std;
 using namespace Eigen;
 
-PitchACF::PitchACF(int fftSize, Real samplerate) :
+PitchACF::PitchACF(int fftSize, Real samplerate, int minPeakWidth) :
   _fftSize( fftSize ),
   _halfSize( ( _fftSize / 2 ) + 1 ),
   _samplerate( samplerate ),
-  _peak(1, true, 8),
+  _peak(1, PeakDetect::BYPOSITION, minPeakWidth),
   _peakInterp(),
   _acorr(_halfSize, _halfSize)
 {
@@ -61,6 +61,8 @@ void PitchACF::process(const MatrixXR& spectrum, MatrixXR* pitches, MatrixXR* sa
                       pitches, saliencies, &_phases);
 
   (*pitches) *= _samplerate / _fftSize;
+
+  (*saliencies).cwise() /= _acorred.col(0);
 }
 
 void PitchACF::reset(){

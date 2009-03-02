@@ -23,19 +23,27 @@
 #include "Debug.h"
 
 class PeakDetect {
+public:
+  enum SortType {
+    NOSORT              = 0,
+    BYMAGNITUDE         = 1,
+    BYPOSITION          = 2
+  };
+
 protected:
   // Internal parameters
   int _numPeaks;
   int _minPeakWidth;
   Real _minPeakContrast;
-  bool _sort;
     
+  SortType _sort;
+
   // Internal variables
   MatrixXR _magnitudes;
   MatrixXR _phases;
 
 public:
-  PeakDetect(int numPeaks, bool sort = true, int minPeakWidth = 3, Real minPeakContrast = 0);
+  PeakDetect(int numPeaks, SortType sort = NOSORT, int minPeakWidth = 3, Real minPeakContrast = 0);
 
   ~PeakDetect();
 

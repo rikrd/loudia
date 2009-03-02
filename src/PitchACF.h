@@ -42,7 +42,7 @@ protected:
   MatrixXR _phases;
 
 public:
-  PitchACF(int fftSize, Real samplerate = 1.0);
+  PitchACF(int fftSize, Real samplerate = 1.0, int minPeakWidth = 6);
 
   ~PitchACF();
 

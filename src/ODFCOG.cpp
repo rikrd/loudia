@@ -31,7 +31,7 @@ ODFCOG::ODFCOG(int fftLength, int peakCount, int bandwidth) :
   _fftLength(fftLength),
   _peakCount(peakCount),
   _bandwidth(bandwidth),
-  _peaker(peakCount, bandwidth),
+  _peaker(peakCount, PeakDetect::BYMAGNITUDE, bandwidth),
   _peakCoger(fftLength, bandwidth)
 {
   
