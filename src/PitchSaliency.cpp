@@ -108,8 +108,6 @@ void PitchSaliency::process(const MatrixXR& spectrum, MatrixXR* pitches, MatrixX
     Real period;
     Real deltaPeriod;
 
-    cout << "row = " << row << endl;
-
     while ( ( tUp - tLow ) > _tPrec ) {
       // Split the best block and compute new limits
       tLow = (tLowBest + tUpBest) / 2.0;
