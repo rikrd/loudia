@@ -56,8 +56,6 @@ void SpectralWhitening::setup(){
 
   _bands.centers(&_centers);
   
-  cout << _centers << endl;
-
   reset();
 
   DEBUG("SPECTRALWHITENING: Finished setup.");
