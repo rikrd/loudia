@@ -7,7 +7,7 @@ import os, sys, wave
 import scipy
 from common import *
 
-interactivePlot = True
+interactivePlot = False
 plot = True
 
 filename = sys.argv[1]
@@ -17,7 +17,7 @@ wavfile = wave.open(filename,'r')
 samplerate = float(wavfile.getframerate())
 wavfile.close()
 
-frameSize = 2048 
+frameSize = 2048
 frameStep = 1024
 
 frameSizeTime = frameSize / 44100.0
@@ -44,14 +44,12 @@ stream = pyricaudio.sndfilereader({'filename': filename,
 
 stream = pyricaudio.window_ricaudio(stream, {'inputKey': 'samplesMono',
                                              'outputKey': 'windowed',
-                                             'windowType': 'hamming'})
+                                             'windowType': 'blackmanharris'})
 
 stream = pyricaudio.fft_ricaudio(stream, {'inputKey': 'windowed',
                                           'outputKey': 'fft',
                                           'zeroPhase': True,
                                           'fftLength': fftSize})
-
-freqPrec = 0.001
 
 whitening = ricaudio.SpectralWhitening(fftSize, 50.0, 6000.0, samplerate)
 pitchACF = ricaudio.PitchACF(fftSize, samplerate)
@@ -72,8 +70,8 @@ if interactivePlot:
 for frame in stream:
     spec = scipy.array(abs(frame['fft']), dtype = scipy.float32)
 
-    #wspec = whitening.process( spec )
-    pitch, saliency = pitchACF.process( spec )
+    wspec = whitening.process( spec )
+    pitch, saliency = pitchACF.process( wspec )
     
     if interactivePlot:
         pylab.subplot(211)
@@ -86,10 +84,10 @@ for frame in stream:
         pylab.hold(False)
         pylab.plot(acorred[0,:plotSize], label = 'Noise Suppressed Spectrum')
         pylab.hold(True)
-        pylab.stem(pitch/samplerate*fftSize, saliency)
+        pylab.stem( pitch/samplerate*fftSize, saliency )
         
     specs.append( spec )
-    #wspecs.append( wspec )
+    wspecs.append( wspec )
     pitches.append( pitch )
     saliencies.append( saliency )
 

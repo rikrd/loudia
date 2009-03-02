@@ -29,7 +29,7 @@ PitchACF::PitchACF(int fftSize, Real samplerate) :
   _fftSize( fftSize ),
   _halfSize( ( _fftSize / 2 ) + 1 ),
   _samplerate( samplerate ),
-  _peak(1, false, 40),
+  _peak(1, true, 8),
   _peakInterp(),
   _acorr(_halfSize, _halfSize)
 {
@@ -50,22 +50,15 @@ void PitchACF::setup(){
 }
 
 void PitchACF::process(const MatrixXR& spectrum, MatrixXR* pitches, MatrixXR* saliencies){
-  const int rows = spectrum.rows();
-
-  (*pitches).resize( rows, 1 );
-  (*saliencies).resize( rows, 1 );
-
-  MatrixXR phases;
-
   _acorr.process(spectrum, &_acorred); 
  
   _acorredC = _acorred.cast<Complex>();
-
-  _peak.process(_acorredC,
-                pitches, saliencies, &phases);
   
-  _peakInterp.process(_acorredC, (*pitches), (*saliencies), phases,
-                      pitches, saliencies, &phases);
+  _peak.process(_acorredC,
+                pitches, saliencies, &_phases);
+  
+  _peakInterp.process(_acorredC, (*pitches), (*saliencies), _phases,
+                      pitches, saliencies, &_phases);
 
   (*pitches) *= _samplerate / _fftSize;
 }

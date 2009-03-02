@@ -39,6 +39,7 @@ protected:
 
   MatrixXR _acorred;
   MatrixXC _acorredC;
+  MatrixXR _phases;
 
 public:
   PitchACF(int fftSize, Real samplerate = 1.0);
