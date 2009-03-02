@@ -49,6 +49,7 @@ import_array();
 #include "SpectralNoiseSuppression.h"
 #include "SpectralWhitening.h"
 #include "PitchSaliency.h"
+#include "PitchACF.h"
 
 #include "MelScales.h"
 #include "Utils.h"
@@ -90,6 +91,7 @@ import_array();
 %include "SpectralNoiseSuppression.h"
 %include "SpectralWhitening.h"
 %include "PitchSaliency.h"
+%include "PitchACF.h"
 
 %include "MelScales.h"
 %include "Utils.h"
