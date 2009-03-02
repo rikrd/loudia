@@ -29,7 +29,6 @@ protected:
   Real _f0;
   Real _f1;
   Real _fPrec;
-  Real _deltaT;
   int _numHarmonics;
 
   Real _tMin;
@@ -46,7 +45,7 @@ protected:
 
 
 public:
-  PitchSaliency(int fftSize, Real f0, Real f1, Real samplerate = 1.0, Real fPrec = 0.01, Real deltaT = 0.5, int numHarmonics = 10);
+  PitchSaliency(int fftSize, Real f0, Real f1, Real samplerate = 1.0, Real fPrec = 0.01, int numHarmonics = 5);
 
   ~PitchSaliency();
 

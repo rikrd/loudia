@@ -51,12 +51,12 @@ stream = pyricaudio.fft_ricaudio(stream, {'inputKey': 'windowed',
                                           'zeroPhase': True,
                                           'fftLength': fftSize})
 
-freqPrec = 0.5
+freqPrec = 0.001
 deltaPeriod = 2
-numHarmonics = 20
+numHarmonics = 10
 
 whitening = ricaudio.SpectralWhitening(fftSize, 50.0, 6000.0, samplerate)
-pitchSaliency = ricaudio.PitchSaliency(fftSize, 40.0, 2100.0, samplerate, freqPrec, deltaPeriod, numHarmonics)
+pitchSaliency = ricaudio.PitchSaliency(fftSize, 50.0, 2100.0, samplerate, freqPrec, numHarmonics)
 
 specs = []
 wspecs = []
@@ -96,13 +96,17 @@ if interactivePlot:
 
 specs = scipy.array( specs )
 wspecs = scipy.array( wspecs )
-pitches = scipy.array( pitches )
-saliencies = scipy.array( saliencies )
+pitches = scipy.array( pitches )[:, 0]
+saliencies = scipy.array( saliencies )[:, 0]
 frameCount = specs.shape[0] - 1
 
 if plot:
     pylab.figure()
+    pylab.subplot(211)
     pylab.plot( pitches[:,0] )
+
+    pylab.subplot(212)
+    pylab.plot( saliencies[:,0] )
     pylab.show()
 
 print pitches

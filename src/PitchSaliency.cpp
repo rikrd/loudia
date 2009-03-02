@@ -25,13 +25,12 @@
 using namespace std;
 using namespace Eigen;
 
-PitchSaliency::PitchSaliency(int fftSize, Real f0, Real f1, Real samplerate, Real fPrec, Real deltaT, int numHarmonics) :
+PitchSaliency::PitchSaliency(int fftSize, Real f0, Real f1, Real samplerate, Real fPrec, int numHarmonics) :
   _fftSize( fftSize ),
   _halfSize( ( _fftSize / 2 ) + 1 ),
   _f0( f0 ),
   _f1( f1 ),
   _fPrec( fPrec ),
-  _deltaT( deltaT ),
   _numHarmonics( numHarmonics ),
   _samplerate( samplerate )
 {
@@ -40,7 +39,6 @@ PitchSaliency::PitchSaliency(int fftSize, Real f0, Real f1, Real samplerate, Rea
         << " f0: " << _f0
         << " f1: " << _f1
         << " fPrec: " << _fPrec
-        << " deltaT: " << _deltaT
         << " numHarmonics: " << _numHarmonics );
 
   setup();
@@ -79,11 +77,7 @@ Real PitchSaliency::saliency(Real period, Real deltaPeriod, Real tLow, Real tUp,
     int begin = round(m * _fftSize / (period + (deltaPeriod / 2.0)));
     int end = min(round(m * _fftSize / (period - (deltaPeriod / 2.0))), cols - 1.0);
 
-    //cout << begin << " - " << end << endl;
-
-    if (begin < end) {
-      sum += harmonicWeight(period, tLow, tUp, m) * spectrum.block(0, begin, 1, end - begin).maxCoeff();
-    }
+    if (begin < end) sum += harmonicWeight(period, tLow, tUp, m) * spectrum.block(0, begin, 1, end - begin).maxCoeff();
   }
 
   return sum;
