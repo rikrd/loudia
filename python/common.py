@@ -49,6 +49,9 @@ def get_onsets(filename, hop, samplerate, onsetError = 50.0):
         return None
     
 def draw_onsets(onsets):
+    if not onsets:
+        return
+    
     # Draw the onsets
     for onsetLeft, onsetCenter, onsetRight in onsets:
         pylab.axvspan( xmin = onsetLeft, xmax = onsetRight, facecolor = 'green', linewidth = 0, alpha = 0.25)

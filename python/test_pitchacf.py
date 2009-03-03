@@ -85,7 +85,7 @@ for frame in stream:
         
         pylab.subplot(212)
         pylab.hold(False)
-        pylab.plot(acorred[0,:plotSize] / acorred[0,0], label = 'Noise Suppressed Spectrum')
+        pylab.plot(acorred[0,:plotSize], label = 'Noise Suppressed Spectrum')
         pylab.hold(True)
         pylab.stem( pitch/samplerate*fftSize, saliency )
         
