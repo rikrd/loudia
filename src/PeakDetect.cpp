@@ -141,34 +141,33 @@ void PeakDetect::process(const MatrixXC& fft,
 
           peakIndex ++;
         }
-      }
+      }      
       
-      int candidateCount;
+      // Get the largest candidates
+      int candidateCount = peakIndex;
       if(_numCandidates > 0) {
         candidateCount = min(peakIndex, _numCandidates);
-      }else{
-        candidateCount = peakIndex;
+        std::sort(peaks.begin(), peaks.end(), byMagnitude);
       }
-      
 
+      // Sort the candidates using position or magnitude
       switch ( _sort ) {
-      case BYPOSITION:
-        // Order the peaks by magnitude
+      case BYPOSITION:      
         std::sort(peaks.begin(), peaks.begin() + candidateCount, byPosition);
         break;
 
       case BYMAGNITUDE:
-        // Order the peaks by position
-        std::sort(peaks.begin(), peaks.begin() + candidateCount, byMagnitude);
+        if (_numCandidates <= 0)
+          std::sort(peaks.begin(), peaks.begin() + candidateCount, byMagnitude);
         break;
-
+        
       case NOSORT:
       default:
         break;
       }
       
-      int peakCount = min(_numPeaks, candidateCount);
-      
+      // Take the first numPeaks
+      int peakCount = min(_numPeaks, candidateCount);      
       // Put the peaks in the matrices
       for( int j = 0; j < peakCount; j++ ){
         (*peakMagnitudes)(i, j) = peaks[j].mag;

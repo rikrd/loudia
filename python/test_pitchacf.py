@@ -18,7 +18,7 @@ samplerate = float(wavfile.getframerate())
 wavfile.close()
 
 frameSize = 4096
-frameStep = 512
+frameStep = 1024
 
 frameSizeTime = frameSize / 44100.0
 frameStepTime = frameStep / 44100.0
@@ -53,7 +53,7 @@ stream = pyricaudio.fft_ricaudio(stream, {'inputKey': 'windowed',
 
 
 minPeakWidth = 8
-peakCandidateCount = 6
+peakCandidateCount = 4
 whitening = ricaudio.SpectralWhitening(fftSize, 50.0, 6000.0, samplerate)
 pitchACF = ricaudio.PitchACF(fftSize, samplerate, minPeakWidth, peakCandidateCount)
 acorr = ricaudio.Autocorrelation(fftSize/2+1, fftSize/2+1)
@@ -99,7 +99,7 @@ if interactivePlot:
 
 
 specs = scipy.array( specs )
-#wspecs = scipy.array( wspecs )
+wspecs = scipy.array( wspecs )
 pitches = scipy.array( pitches )[:, 0]
 saliencies = scipy.array( saliencies )[:, 0]
 frameCount = specs.shape[0] - 1
@@ -107,13 +107,22 @@ frameCount = specs.shape[0] - 1
 if plot:
 
     pitches[ saliencies < 0.001] = scipy.NaN
+
+    # Get the onsets
+    annotation = os.path.splitext(filename)[0] + '.onset_annotated'
+    onsets = get_onsets(annotation, frameStep, samplerate)
     
     pylab.figure()
     pylab.subplot(211)
     pylab.plot( pitches[:,0] )
 
+    draw_onsets(onsets)
+
     pylab.subplot(212)
     pylab.plot( saliencies[:,0] )
+
+    draw_onsets(onsets)
+    
     pylab.show()
 
 print pitches
