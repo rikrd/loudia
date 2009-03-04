@@ -48,7 +48,9 @@ PitchInverseProblem::PitchInverseProblem(int fftSize, Real f0, Real f1, Real sam
   setup();
 }
 
-PitchInverseProblem::~PitchInverseProblem(){}
+PitchInverseProblem::~PitchInverseProblem(){
+  delete _inverseProjectionMatrix;
+}
 
 void PitchInverseProblem::setup(){
   DEBUG("PITCHINVERSEPROBLEM: Setting up...");
@@ -82,6 +84,8 @@ void PitchInverseProblem::setup(){
     }
   }
 
+  _inverseProjectionMatrix = new LU<MatrixXR>(_projectionMatrix);
+
   reset();
 
   DEBUG("PITCHINVERSEPROBLEM: Finished setup.");
@@ -109,7 +113,7 @@ void PitchInverseProblem::process(const MatrixXR& spectrum, MatrixXR* pitches, M
   (*saliencies).resize( rows, _numMaxPitches );
   
   for ( int row = 0; row < rows; row++ ) {
-
+    
   }
 }
 
@@ -120,9 +124,4 @@ void PitchInverseProblem::reset(){
 
 void PitchInverseProblem::projectionMatrix(MatrixXR* matrix) const {
   (*matrix) = _projectionMatrix;
-}
-
-
-void PitchInverseProblem::inverseProjectionMatrix(MatrixXR* inverseMatrix) const {
-  (*inverseMatrix) = _inverseProjectionMatrix;
 }

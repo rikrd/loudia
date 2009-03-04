@@ -22,6 +22,8 @@
 #include "Typedefs.h"
 #include "Debug.h"
 
+#include <Eigen/LU>
+
 class PitchInverseProblem {
 protected:
   int _fftSize;
@@ -43,7 +45,7 @@ protected:
   Real _inharmonicity;
 
   MatrixXR _projectionMatrix;
-  MatrixXR _inverseProjectionMatrix;
+  Eigen::LU<MatrixXR>* _inverseProjectionMatrix;
 
 public:
   PitchInverseProblem(int fftSize, Real f0, Real f1, Real samplerate = 1.0, Real fPrec = 0.01, int numHarmonics = 10, int maxNumPitches = 5, int peakBandwidth = 8);
@@ -55,8 +57,6 @@ public:
   void process(const MatrixXR& spectrum, MatrixXR* pitches, MatrixXR* saliencies);
 
   void projectionMatrix(MatrixXR* matrix) const;
-
-  void inverseProjectionMatrix(MatrixXR* inverseMatrix) const;
 
   Real harmonicWeight(Real period, Real tLow, Real tUp, int harmonicIndex);
 
