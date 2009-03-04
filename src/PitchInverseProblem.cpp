@@ -25,13 +25,14 @@
 using namespace std;
 using namespace Eigen;
 
-PitchInverseProblem::PitchInverseProblem(int fftSize, Real f0, Real f1, Real samplerate, Real fPrec, int numHarmonics, int numMaxPitches, int peakBandwidth) :
+PitchInverseProblem::PitchInverseProblem(int fftSize, Real f0, Real f1, Real samplerate, Real fPrec, int numHarmonics, int numFreqCandidates, int numMaxPitches, int peakBandwidth) :
   _fftSize( fftSize ),
   _halfSize( ( _fftSize / 2 ) + 1 ),
   _f0( f0 ),
   _f1( f1 ),
   _fPrec( fPrec ),
   _numHarmonics( numHarmonics ),
+  _numFreqCandidates( numFreqCandidates == -1 ? _halfSize : min( numFreqCandidates, _halfSize ) ),
   _numMaxPitches( numMaxPitches ),
   _peakBandwidth( peakBandwidth ),
   _samplerate( samplerate )
@@ -42,6 +43,7 @@ PitchInverseProblem::PitchInverseProblem(int fftSize, Real f0, Real f1, Real sam
         << " f1: " << _f1
         << " fPrec: " << _fPrec
         << " numHarmonics: " << _numHarmonics
+        << " numFreqCandidates: " << _numFreqCandidates
         << " numMaxPitches: " << _numMaxPitches
         << " peakBandwidth: " << _peakBandwidth);
 
@@ -68,7 +70,7 @@ void PitchInverseProblem::setup(){
   MatrixXR freqs;
   range(_f0, _f1, _halfSize, &freqs);
 
-  _projectionMatrix.resize(freqs.cols(), _halfSize);
+  _projectionMatrix.resize(freqs.cols(), _numFreqCandidates);
   _projectionMatrix.setZero();
 
   DEBUG("PITCHINVERSEPROBLEM: Setting up the projection matrix...");  
@@ -108,14 +110,21 @@ Real PitchInverseProblem::harmonicSpread(Real period, Real tLow, Real tUp, int h
 }
 
 
-void PitchInverseProblem::process(const MatrixXR& spectrum, MatrixXR* pitches, MatrixXR* saliencies){
+void PitchInverseProblem::process(const MatrixXR& spectrum, MatrixXR* pitches, MatrixXR* saliencies, MatrixXR* freqs){
   const int rows = spectrum.rows();
 
   (*pitches).resize( rows, _numMaxPitches );
   (*saliencies).resize( rows, _numMaxPitches );
-  
+  (*freqs).resize( rows, _numFreqCandidates );
+
+  MatrixXR a(1, _numFreqCandidates);
+
   for ( int row = 0; row < rows; row++ ) {
+    DEBUG("PITCHINVERSEPROBLEM: Solving the LU");
+    _inverseProjectionMatrix->solve( spectrum.row( row ), &a );
     
+    DEBUG("PITCHINVERSEPROBLEM: Setting the result");
+    (*freqs).row( row ) = a;
   }
 }
 

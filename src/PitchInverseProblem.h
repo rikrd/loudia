@@ -32,6 +32,7 @@ protected:
   Real _f1;
   Real _fPrec;
   int _numHarmonics;
+  int _numFreqCandidates;
   int _numMaxPitches;
   int _peakBandwidth;
 
@@ -48,13 +49,13 @@ protected:
   Eigen::LU<MatrixXR>* _inverseProjectionMatrix;
 
 public:
-  PitchInverseProblem(int fftSize, Real f0, Real f1, Real samplerate = 1.0, Real fPrec = 0.01, int numHarmonics = 10, int maxNumPitches = 5, int peakBandwidth = 8);
+  PitchInverseProblem(int fftSize, Real f0, Real f1, Real samplerate = 1.0, Real fPrec = 0.01, int numHarmonics = 10, int numFreqCandidates = -1, int maxNumPitches = 5, int peakBandwidth = 8);
 
   ~PitchInverseProblem();
 
   void setup();
 
-  void process(const MatrixXR& spectrum, MatrixXR* pitches, MatrixXR* saliencies);
+  void process(const MatrixXR& spectrum, MatrixXR* pitches, MatrixXR* saliencies, MatrixXR* freqs);
 
   void projectionMatrix(MatrixXR* matrix) const;
 
