@@ -77,13 +77,6 @@ void PitchInverseProblem::setup(){
         Real a = harmonicWeight(1.0/f, _tMin, _tMax, harmonicIndex);
         Real fi = harmonicSpread(1.0/f, _tMin, _tMax, harmonicIndex);
         
-        /*
-        cout << f << endl;
-        cout << mu << endl;
-        cout << a << endl;
-        cout << fi << endl;
-        cout << "-------" << endl;
-        */
         _projectionMatrix(row, col) += a * gaussian(col, mu, fi);
       }
     }

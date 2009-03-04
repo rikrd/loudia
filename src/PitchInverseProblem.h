@@ -46,7 +46,7 @@ protected:
   MatrixXR _inverseProjectionMatrix;
 
 public:
-  PitchInverseProblem(int fftSize, Real f0, Real f1, Real samplerate = 1.0, Real fPrec = 0.01, int numHarmonics = 5, int maxNumPitches = 5, int peakBandwidth = 8);
+  PitchInverseProblem(int fftSize, Real f0, Real f1, Real samplerate = 1.0, Real fPrec = 0.01, int numHarmonics = 10, int maxNumPitches = 5, int peakBandwidth = 8);
 
   ~PitchInverseProblem();
 
