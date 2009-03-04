@@ -70,7 +70,8 @@ void PitchInverseProblem::setup(){
 
   _projectionMatrix.resize(freqs.cols(), _halfSize);
   _projectionMatrix.setZero();
-  
+
+  DEBUG("PITCHINVERSEPROBLEM: Setting up the projection matrix...");  
   for ( int row = 0; row < _projectionMatrix.rows(); row++ ) {
     for ( int col = 0; col < _projectionMatrix.cols(); col++ ) {
       for ( int harmonicIndex = 1; harmonicIndex < _numHarmonics+1; harmonicIndex++ ) {
@@ -84,6 +85,7 @@ void PitchInverseProblem::setup(){
     }
   }
 
+  DEBUG("PITCHINVERSEPROBLEM: Setting up the LU decomposition...");
   _inverseProjectionMatrix = new LU<MatrixXR>(_projectionMatrix);
 
   reset();
