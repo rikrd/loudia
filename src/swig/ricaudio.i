@@ -50,6 +50,7 @@ import_array();
 #include "SpectralWhitening.h"
 #include "PitchSaliency.h"
 #include "PitchACF.h"
+#include "PitchInverseProblem.h"
 
 #include "MelScales.h"
 #include "Utils.h"
@@ -92,6 +93,7 @@ import_array();
 %include "SpectralWhitening.h"
 %include "PitchSaliency.h"
 %include "PitchACF.h"
+%include "PitchInverseProblem.h"
 
 %include "MelScales.h"
 %include "Utils.h"
