@@ -121,7 +121,7 @@ void PitchInverseProblem::process(const MatrixXR& spectrum, MatrixXR* pitches, M
 
   for ( int row = 0; row < rows; row++ ) {
     DEBUG("PITCHINVERSEPROBLEM: Solving the LU");
-    _inverseProjectionMatrix->solve( spectrum.row( row ), &a );
+    _inverseProjectionMatrix->solve( spectrum.row( row ).transpose(), &a );
     
     DEBUG("PITCHINVERSEPROBLEM: Setting the result");
     (*freqs).row( row ) = a;

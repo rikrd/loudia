@@ -7,7 +7,7 @@ import os, sys, wave
 import scipy
 from common import *
 
-interactivePlot = False
+interactivePlot = True
 plot = True
 
 filename = sys.argv[1]
@@ -73,20 +73,18 @@ for frame in stream:
     spec = scipy.array(abs(frame['fft']), dtype = scipy.float32)
     
     wspec = whitening.process( spec )
-    pitch, saliency = pitchInverseProblem.process( wspec )
+    pitch, saliency, freqs = pitchInverseProblem.process( wspec )
     
     if interactivePlot:
         pylab.subplot(211)
         pylab.hold(False)
-        pylab.plot( wspec[:plotSize] )
+        pylab.plot( wspec[0, :plotSize] )
 
-        acorred = acorr.process( wspec )
-        
         pylab.subplot(212)
         pylab.hold(False)
-        pylab.plot(acorred[0,:plotSize], label = 'Noise Suppressed Spectrum')
-        pylab.hold(True)
-        pylab.stem( pitch/samplerate*fftSize, saliency )
+        pylab.plot(freqs[0,:plotSize], label = 'Noise Suppressed Spectrum')
+        #pylab.hold(True)
+        #pylab.stem( pitch/samplerate*fftSize, saliency )
         
     specs.append( spec )
     wspecs.append( wspec )
