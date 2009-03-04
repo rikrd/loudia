@@ -130,7 +130,7 @@ void bilinear(const MatrixXC& b, const MatrixXC& a, Real fs, MatrixXR*  bout, Ma
  * Calculate the combinations of N elements in groups of k
  *   
  */
-int comb(int N, int k);
+int combination(int N, int k);
 
 /**
  * Calculate the aliased cardinal sine defined as:
@@ -181,5 +181,7 @@ void freqz(const MatrixXR& b, const MatrixXR& w, MatrixXC* resp);
 void derivate(const MatrixXR& a, MatrixXR* b);
 
 Real nextPowerOf2(Real a, int factor = 0);
+
+Real gaussian(Real x, Real mu, Real fi);
 
 #endif  /* UTILS_H */

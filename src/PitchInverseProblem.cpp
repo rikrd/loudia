@@ -25,14 +25,14 @@
 using namespace std;
 using namespace Eigen;
 
-PitchInverseProblem::PitchInverseProblem(int fftSize, Real f0, Real f1, Real samplerate, Real fPrec, int numHarmonics, int maxNumPitches, int peakBandwidth) :
+PitchInverseProblem::PitchInverseProblem(int fftSize, Real f0, Real f1, Real samplerate, Real fPrec, int numHarmonics, int numMaxPitches, int peakBandwidth) :
   _fftSize( fftSize ),
   _halfSize( ( _fftSize / 2 ) + 1 ),
   _f0( f0 ),
   _f1( f1 ),
   _fPrec( fPrec ),
   _numHarmonics( numHarmonics ),
-  _maxNumPitches( maxNumPitches ),
+  _numMaxPitches( numMaxPitches ),
   _peakBandwidth( peakBandwidth ),
   _samplerate( samplerate )
 {
@@ -42,7 +42,7 @@ PitchInverseProblem::PitchInverseProblem(int fftSize, Real f0, Real f1, Real sam
         << " f1: " << _f1
         << " fPrec: " << _fPrec
         << " numHarmonics: " << _numHarmonics
-        << " maxNumPitches: " << _maxNumPitches
+        << " numMaxPitches: " << _numMaxPitches
         << " peakBandwidth: " << _peakBandwidth);
 
   setup();
@@ -61,13 +61,34 @@ void PitchInverseProblem::setup(){
   // Params taken from Klapuri ISMIR 2006
   _alpha = 27; // 27 Hz
   _beta = 320; // 320 Hz
-  _inharmonicity = 0.1;
+  _inharmonicity = 0.0;
 
   MatrixXR freqs;
   range(_f0, _f1, _halfSize, &freqs);
+
+  _projectionMatrix.resize(freqs.cols(), _halfSize);
+  _projectionMatrix.setZero();
   
-  cout << freqs << endl;
-  
+  for ( int row = 0; row < _projectionMatrix.rows(); row++ ) {
+    for ( int col = 0; col < _projectionMatrix.cols(); col++ ) {
+      for ( int harmonicIndex = 1; harmonicIndex < _numHarmonics+1; harmonicIndex++ ) {
+        Real f = freqs(0, row);
+        Real mu = harmonicPosition(1.0/f, _tMin, _tMax, harmonicIndex);
+        Real a = harmonicWeight(1.0/f, _tMin, _tMax, harmonicIndex);
+        Real fi = harmonicSpread(1.0/f, _tMin, _tMax, harmonicIndex);
+        
+        /*
+        cout << f << endl;
+        cout << mu << endl;
+        cout << a << endl;
+        cout << fi << endl;
+        cout << "-------" << endl;
+        */
+        _projectionMatrix(row, col) += a * gaussian(col, mu, fi);
+      }
+    }
+  }
+
   reset();
 
   DEBUG("PITCHINVERSEPROBLEM: Finished setup.");
@@ -78,7 +99,7 @@ Real PitchInverseProblem::harmonicWeight(Real period, Real tLow, Real tUp, int h
 }
 
 Real PitchInverseProblem::harmonicPosition(Real period, Real tLow, Real tUp, int harmonicIndex){
-  return (harmonicIndex / period * sqrt(1.0 + (sqr(harmonicIndex) - 1.0)*_inharmonicity)) * _fftSize;
+  return (harmonicIndex / period * sqrt(1.0 + (pow(harmonicIndex, 2.0) - 1.0)*_inharmonicity));
 }
 
 Real PitchInverseProblem::harmonicSpread(Real period, Real tLow, Real tUp, int harmonicIndex){
@@ -91,8 +112,8 @@ Real PitchInverseProblem::harmonicSpread(Real period, Real tLow, Real tUp, int h
 void PitchInverseProblem::process(const MatrixXR& spectrum, MatrixXR* pitches, MatrixXR* saliencies){
   const int rows = spectrum.rows();
 
-  (*pitches).resize( rows, _maxNumPitches );
-  (*saliencies).resize( rows, _maxNumPitches );
+  (*pitches).resize( rows, _numMaxPitches );
+  (*saliencies).resize( rows, _numMaxPitches );
   
   for ( int row = 0; row < rows; row++ ) {
 
@@ -105,10 +126,10 @@ void PitchInverseProblem::reset(){
 }
 
 void PitchInverseProblem::projectionMatrix(MatrixXR* matrix) const {
-  matrix = _projectionMatrix;
+  (*matrix) = _projectionMatrix;
 }
 
 
 void PitchInverseProblem::inverseProjectionMatrix(MatrixXR* inverseMatrix) const {
-  inverseMatrix = _inverseProjectionMatrix;
+  (*inverseMatrix) = _inverseProjectionMatrix;
 }

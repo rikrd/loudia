@@ -375,7 +375,7 @@ void lowPassToLowPass(const MatrixXC& b, const MatrixXC& a, Real freq, MatrixXC*
 
 }
 
-int comb(int N, int k) {
+int combination(int N, int k) {
   if ((k > N) || (N < 0) || (k < 0)) return 0;
   
   int val = 1;
@@ -406,7 +406,7 @@ void bilinear(const MatrixXC& b, const MatrixXC& a, Real fs, MatrixXR*  bout, Ma
         for ( int l = 0; l < (maxsize - i); l++ ) {
           
           if((k + l) == j)
-            val += comb(i, k) * comb(maxsize - i - 1, l) * b.col(bsize - 1 - i) * pow(2*fs, i) * pow(-1, k);
+            val += combination(i, k) * combination(maxsize - i - 1, l) * b.col(bsize - 1 - i) * pow(2*fs, i) * pow(-1, k);
         }
       }
     }
@@ -422,7 +422,7 @@ void bilinear(const MatrixXC& b, const MatrixXC& a, Real fs, MatrixXR*  bout, Ma
         for ( int l = 0; l < (maxsize - i); l++ ) {
           
           if((k + l) == j)
-            val += comb(i, k) * comb(maxsize - i - 1, l) * a.col(asize - 1 - i) * pow(2*fs, i) * pow(-1, k);
+            val += combination(i, k) * combination(maxsize - i - 1, l) * a.col(asize - 1 - i) * pow(2*fs, i) * pow(-1, k);
         }
       }
     }
@@ -602,4 +602,9 @@ void derivate(const MatrixXR& a, MatrixXR* b) {
 Real nextPowerOf2(Real a, int factor){
   if (a == 0) return pow(2, 1 + factor);
   return pow(2, ceil(log2(a)) + factor);
+}
+
+
+Real gaussian(Real x, Real mu, Real fi){
+  return exp(- pow((x - mu), 2.0) / (2.0 * pow(fi, 2.0))) / (fi * sqrt(2.0 * M_PI));
 }
