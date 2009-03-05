@@ -68,13 +68,13 @@ void PitchInverseProblem::setup(){
   _inharmonicity = 0.0;
 
   MatrixXR freqs;
-  range(_f0, _f1, _halfSize, &freqs);
+  range(_f0, _f1, _numFreqCandidates, &freqs);
 
-  _projectionMatrix.resize(freqs.cols(), _numFreqCandidates);
+  _projectionMatrix.resize(freqs.cols() + 1, _halfSize);  // We add one that will be the noise component
   _projectionMatrix.setZero();
 
   DEBUG("PITCHINVERSEPROBLEM: Setting up the projection matrix...");  
-  for ( int row = 0; row < _projectionMatrix.rows(); row++ ) {
+  for ( int row = 0; row < _projectionMatrix.rows() - 1; row++ ) {
     for ( int col = 0; col < _projectionMatrix.cols(); col++ ) {
       for ( int harmonicIndex = 1; harmonicIndex < _numHarmonics+1; harmonicIndex++ ) {
         Real f = freqs(0, row);
@@ -86,6 +86,8 @@ void PitchInverseProblem::setup(){
       }
     }
   }
+  
+  _projectionMatrix.row(_projectionMatrix.cols() - 1).setRandom();
 
   DEBUG("PITCHINVERSEPROBLEM: Setting up the LU decomposition...");
   _inverseProjectionMatrix = new LU<MatrixXR>(_projectionMatrix);
