@@ -61,7 +61,7 @@ void PitchInverseProblem::setup(){
   
   _tPrec = _fPrec;
 
-  _regularisation = 1.5;
+  _regularisation = 2.0;
 
   // Params taken from Klapuri ISMIR 2006
   _alpha = 27; // 27 Hz
@@ -97,7 +97,7 @@ void PitchInverseProblem::setup(){
   // A = W^{-1} K^t [ K W^{-1} K^t + \lambda * I_N ]^{+} 
   _inverseProjectionMatrix = _invSourceWeight * _projectionMatrix.transpose() * LU<MatrixXR>( _projectionMatrix * _invSourceWeight * _projectionMatrix.transpose() + _regularisation * MatrixXR::Identity( _halfSize, _halfSize ) ).inverse();
 
-  _inverseProjectionMatrix = _inverseProjectionMatrix.cwise().clipUnder();
+  //_inverseProjectionMatrix = _inverseProjectionMatrix.cwise().clipUnder();
 
   reset();
 
@@ -115,7 +115,7 @@ Real PitchInverseProblem::harmonicPosition(Real period, Real tLow, Real tUp, int
 Real PitchInverseProblem::harmonicSpread(Real period, Real tLow, Real tUp, int harmonicIndex){
   // TODO: change this by a spread function which might or might not change with the position
   //       or other things such as the chirp rate or inharmonicity error
-  return _peakBandwidth * 4;
+  return _peakBandwidth;
 }
 
 
