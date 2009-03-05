@@ -32,7 +32,7 @@ PitchInverseProblem::PitchInverseProblem(int fftSize, Real f0, Real f1, Real sam
   _f1( f1 ),
   _fPrec( fPrec ),
   _numHarmonics( numHarmonics ),
-  _numFreqCandidates( numFreqCandidates == -1 ? _halfSize : min( numFreqCandidates, _halfSize ) ),
+  _numFreqCandidates( numFreqCandidates == -1 ? _halfSize : numFreqCandidates ),
   _numMaxPitches( numMaxPitches ),
   _peakBandwidth( peakBandwidth ),
   _samplerate( samplerate )
@@ -70,24 +70,24 @@ void PitchInverseProblem::setup(){
   MatrixXR freqs;
   range(_f0, _f1, _numFreqCandidates, &freqs);
 
-  _projectionMatrix.resize(freqs.cols() + 1, _halfSize);  // We add one that will be the noise component
+  _projectionMatrix.resize(_halfSize, freqs.cols() + 1);  // We add one that will be the noise component
   _projectionMatrix.setZero();
 
   DEBUG("PITCHINVERSEPROBLEM: Setting up the projection matrix...");  
-  for ( int row = 0; row < _projectionMatrix.rows() - 1; row++ ) {
-    for ( int col = 0; col < _projectionMatrix.cols(); col++ ) {
+  for ( int row = 0; row < _projectionMatrix.rows(); row++ ) {
+    for ( int col = 0; col < _projectionMatrix.cols() - 1; col++ ) {
       for ( int harmonicIndex = 1; harmonicIndex < _numHarmonics+1; harmonicIndex++ ) {
-        Real f = freqs(0, row);
+        Real f = freqs(0, col);
         Real mu = harmonicPosition(1.0/f, _tMin, _tMax, harmonicIndex);
         Real a = harmonicWeight(1.0/f, _tMin, _tMax, harmonicIndex);
         Real fi = harmonicSpread(1.0/f, _tMin, _tMax, harmonicIndex);
         
-        _projectionMatrix(row, col) += a * gaussian(col, mu, fi);
+        _projectionMatrix(row, col) += a * gaussian(row, mu, fi);
       }
     }
   }
   
-  _projectionMatrix.row(_projectionMatrix.cols() - 1).setRandom();
+  _projectionMatrix.col(_projectionMatrix.cols() - 1).setConstant(0.5);
 
   DEBUG("PITCHINVERSEPROBLEM: Setting up the LU decomposition...");
   _inverseProjectionMatrix = new LU<MatrixXR>(_projectionMatrix);
@@ -117,9 +117,9 @@ void PitchInverseProblem::process(const MatrixXR& spectrum, MatrixXR* pitches, M
 
   (*pitches).resize( rows, _numMaxPitches );
   (*saliencies).resize( rows, _numMaxPitches );
-  (*freqs).resize( rows, _numFreqCandidates );
+  (*freqs).resize( rows, _numFreqCandidates + 1 );
 
-  MatrixXR a(1, _numFreqCandidates);
+  MatrixXR a(1, _numFreqCandidates + 1);
 
   for ( int row = 0; row < rows; row++ ) {
     DEBUG("PITCHINVERSEPROBLEM: Solving the LU");
