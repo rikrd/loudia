@@ -44,9 +44,10 @@ protected:
   Real _alpha;
   Real _beta;
   Real _inharmonicity;
+  Real _regularisation;
 
   MatrixXR _projectionMatrix;
-  Eigen::LU<MatrixXR>* _inverseProjectionMatrix;
+  MatrixXR _inverseProjectionMatrix;
 
 public:
   PitchInverseProblem(int fftSize, Real f0, Real f1, Real samplerate = 1.0, Real fPrec = 0.01, int numHarmonics = 10, int numFreqCandidates = -1, int maxNumPitches = 5, int peakBandwidth = 8);

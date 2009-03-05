@@ -51,7 +51,6 @@ PitchInverseProblem::PitchInverseProblem(int fftSize, Real f0, Real f1, Real sam
 }
 
 PitchInverseProblem::~PitchInverseProblem(){
-  delete _inverseProjectionMatrix;
 }
 
 void PitchInverseProblem::setup(){
@@ -62,6 +61,8 @@ void PitchInverseProblem::setup(){
   
   _tPrec = _fPrec;
 
+  _regularisation = 0.5;
+
   // Params taken from Klapuri ISMIR 2006
   _alpha = 27; // 27 Hz
   _beta = 320; // 320 Hz
@@ -70,7 +71,7 @@ void PitchInverseProblem::setup(){
   MatrixXR freqs;
   range(_f0, _f1, _numFreqCandidates, &freqs);
 
-  _projectionMatrix.resize(_halfSize, freqs.cols() + 1);  // We add one that will be the noise component
+  _projectionMatrix.resize(_halfSize, freqs.cols());  // We add one that will be the noise component
   _projectionMatrix.setZero();
 
   DEBUG("PITCHINVERSEPROBLEM: Setting up the projection matrix...");  
@@ -86,11 +87,15 @@ void PitchInverseProblem::setup(){
       }
     }
   }
-  
-  _projectionMatrix.col(_projectionMatrix.cols() - 1).setConstant(0.5);
+
+  MatrixXR _sourceWeight = MatrixXR::Identity( _numFreqCandidates, _numFreqCandidates );
+  MatrixXR _targetWeight = MatrixXR::Identity( _halfSize, _halfSize );
+
+  MatrixXR _invSourceWeight = LU<MatrixXR>( _sourceWeight ).inverse();
 
   DEBUG("PITCHINVERSEPROBLEM: Setting up the LU decomposition...");
-  _inverseProjectionMatrix = new LU<MatrixXR>(_projectionMatrix);
+  // A = W^{-1} K^t [ K W^{-1} K^t + \lambda * I_N ]^{+} 
+  _inverseProjectionMatrix = _invSourceWeight * _projectionMatrix.transpose() * LU<MatrixXR>( _projectionMatrix * _invSourceWeight * _projectionMatrix.transpose() + _regularisation * MatrixXR::Identity( _halfSize, _halfSize ) ).inverse();
 
   reset();
 
@@ -117,16 +122,14 @@ void PitchInverseProblem::process(const MatrixXR& spectrum, MatrixXR* pitches, M
 
   (*pitches).resize( rows, _numMaxPitches );
   (*saliencies).resize( rows, _numMaxPitches );
-  (*freqs).resize( rows, _numFreqCandidates + 1 );
+  (*freqs).resize( rows, _numFreqCandidates );
 
-  MatrixXR a(1, _numFreqCandidates + 1);
+  (*pitches).setZero();
+  (*saliencies).setZero();
 
   for ( int row = 0; row < rows; row++ ) {
-    DEBUG("PITCHINVERSEPROBLEM: Solving the LU");
-    _inverseProjectionMatrix->solve( spectrum.row( row ).transpose(), &a );
-    
     DEBUG("PITCHINVERSEPROBLEM: Setting the result");
-    (*freqs).row( row ) = a;
+    (*freqs).row( row ) = _inverseProjectionMatrix * spectrum.row( row ).transpose();
   }
 }
 

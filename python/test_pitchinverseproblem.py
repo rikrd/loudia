@@ -7,7 +7,7 @@ import os, sys, wave
 import scipy
 from common import *
 
-interactivePlot = True
+interactivePlot = False
 plot = True
 
 filename = sys.argv[1]
@@ -55,7 +55,7 @@ stream = pyricaudio.fft_ricaudio(stream, {'inputKey': 'windowed',
 minPeakWidth = 8
 peakCandidateCount = 4
 numHarmonics = 10
-numCandidates = 4096
+numCandidates = 512
 fprec = 0.1
 whitening = ricaudio.SpectralWhitening(fftSize, 50.0, 6000.0, samplerate)
 pitchInverseProblem = ricaudio.PitchInverseProblem(fftSize, 50, 6000, samplerate, fprec, numHarmonics, numCandidates)
@@ -64,6 +64,7 @@ specs = []
 wspecs = []
 pitches = []
 saliencies = []
+freqss = []
 
 if interactivePlot:
     pylab.ion()
@@ -93,6 +94,7 @@ for frame in stream:
     wspecs.append( wspec )
     pitches.append( pitch )
     saliencies.append( saliency )
+    freqss.append( freqs )
 
 if interactivePlot:
     pylab.ioff()
@@ -102,7 +104,10 @@ specs = scipy.array( specs )
 wspecs = scipy.array( wspecs )
 pitches = scipy.array( pitches )[:, 0]
 saliencies = scipy.array( saliencies )[:, 0]
+freqss = scipy.array( freqss )
 frameCount = specs.shape[0] - 1
+
+print freqss.shape
 
 if plot:
 
@@ -113,12 +118,15 @@ if plot:
     onsets = get_onsets(annotation, frameStep, samplerate)
     
     pylab.figure()
-    pylab.subplot(211)
+    pylab.subplot(312)
+    pylab.imshow( scipy.flipud(freqss.T), aspect = 'auto' )
+
+    pylab.subplot(312)
     pylab.plot( pitches[:,0] )
 
     draw_onsets(onsets)
 
-    pylab.subplot(212)
+    pylab.subplot(313)
     pylab.plot( saliencies[:,0] )
 
     draw_onsets(onsets)
