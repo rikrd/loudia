@@ -55,7 +55,7 @@ stream = pyricaudio.fft_ricaudio(stream, {'inputKey': 'windowed',
 minPeakWidth = 8
 peakCandidateCount = 4
 numHarmonics = 10
-numCandidates = 512
+numCandidates = 1024
 fprec = 0.1
 whitening = ricaudio.SpectralWhitening(fftSize, 50.0, 6000.0, samplerate)
 pitchInverseProblem = ricaudio.PitchInverseProblem(fftSize, 50, 6000, samplerate, fprec, numHarmonics, numCandidates)
@@ -104,10 +104,8 @@ specs = scipy.array( specs )
 wspecs = scipy.array( wspecs )
 pitches = scipy.array( pitches )[:, 0]
 saliencies = scipy.array( saliencies )[:, 0]
-freqss = scipy.array( freqss )
+freqss = scipy.array( freqss )[:,0,:]
 frameCount = specs.shape[0] - 1
-
-print freqss.shape
 
 if plot:
 
@@ -118,7 +116,7 @@ if plot:
     onsets = get_onsets(annotation, frameStep, samplerate)
     
     pylab.figure()
-    pylab.subplot(312)
+    pylab.subplot(311)
     pylab.imshow( scipy.flipud(freqss.T), aspect = 'auto' )
 
     pylab.subplot(312)
