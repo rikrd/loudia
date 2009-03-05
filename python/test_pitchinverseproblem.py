@@ -7,7 +7,7 @@ import os, sys, wave
 import scipy
 from common import *
 
-interactivePlot = False
+interactivePlot = True
 plot = True
 
 filename = sys.argv[1]
@@ -55,10 +55,10 @@ stream = pyricaudio.fft_ricaudio(stream, {'inputKey': 'windowed',
 minPeakWidth = 8
 peakCandidateCount = 4
 numHarmonics = 10
-numCandidates = 1024
+numCandidates = fftSize/2 + 1
 fprec = 0.1
 whitening = ricaudio.SpectralWhitening(fftSize, 50.0, 6000.0, samplerate)
-pitchInverseProblem = ricaudio.PitchInverseProblem(fftSize, 50, 6000, samplerate, fprec, numHarmonics, numCandidates)
+pitchInverseProblem = ricaudio.PitchInverseProblem(fftSize, 50, 2100, samplerate, fprec, numHarmonics, numCandidates)
 
 specs = []
 wspecs = []

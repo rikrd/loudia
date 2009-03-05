@@ -115,7 +115,7 @@ Real PitchInverseProblem::harmonicPosition(Real period, Real tLow, Real tUp, int
 Real PitchInverseProblem::harmonicSpread(Real period, Real tLow, Real tUp, int harmonicIndex){
   // TODO: change this by a spread function which might or might not change with the position
   //       or other things such as the chirp rate or inharmonicity error
-  return _peakBandwidth * 10;
+  return _peakBandwidth * 4;
 }
 
 
