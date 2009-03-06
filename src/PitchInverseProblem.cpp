@@ -75,7 +75,7 @@ void PitchInverseProblem::setup(){
 
   DEBUG("PITCHINVERSEPROBLEM: Setting up the projection matrix...");  
   for ( int row = 0; row < _projectionMatrix.rows(); row++ ) {
-    for ( int col = 0; col < _projectionMatrix.cols() - 1; col++ ) {
+    for ( int col = 0; col < _projectionMatrix.cols(); col++ ) {
       for ( int harmonicIndex = 1; harmonicIndex < _numHarmonics + 1; harmonicIndex++ ) {
         Real f = freqs(0, col);
         Real mu = harmonicPosition(1.0/f, _tMin, _tMax, harmonicIndex);
@@ -87,16 +87,14 @@ void PitchInverseProblem::setup(){
     }
   }
 
-  MatrixXR _sourceWeight = MatrixXR::Identity( _numFreqCandidates, _numFreqCandidates );
-  MatrixXR _targetWeight = MatrixXR::Identity( _halfSize, _halfSize );
+  MatrixXR sourceWeight = MatrixXR::Identity( _numFreqCandidates, _numFreqCandidates );
+  MatrixXR targetWeight = MatrixXR::Identity( _halfSize, _halfSize );
 
-  MatrixXR _invSourceWeight = LU<MatrixXR>( _sourceWeight ).inverse();
+  MatrixXR invSourceWeight = LU<MatrixXR>( sourceWeight ).inverse();
 
-  DEBUG("PITCHINVERSEPROBLEM: Setting up the LU decomposition...");
-  // A = W^{-1} K^t [ K W^{-1} K^t + \lambda * I_N ]^{+} 
-  _inverseProjectionMatrix = _invSourceWeight * _projectionMatrix.transpose() * LU<MatrixXR>( _projectionMatrix * _invSourceWeight * _projectionMatrix.transpose() + _regularisation * MatrixXR::Identity( _halfSize, _halfSize ) ).inverse();
-
-  //_inverseProjectionMatrix = _inverseProjectionMatrix.cwise().clipUnder();
+  DEBUG("PITCHINVERSEPROBLEM: Setting up the inversion...");
+  // A = W^{-1} K^t [ K W^{-1} K^t + \lambda * I_N ]^{+}
+  _inverseProjectionMatrix = invSourceWeight * _projectionMatrix.transpose() * LU<MatrixXR>( (_projectionMatrix * invSourceWeight * _projectionMatrix.transpose()) + (_regularisation * MatrixXR::Identity( _halfSize, _halfSize )) ).inverse();
 
   DEBUG("PITCHINVERSEPROBLEM: Setting up the peak detector and interpolator...");
   _peak.setup();
@@ -143,6 +141,8 @@ void PitchInverseProblem::process(const MatrixXR& spectrum, MatrixXR* pitches, M
   
   _peakInterp.process((*freqs), (*pitches), (*saliencies),
                       pitches, saliencies);
+
+  (*pitches) *= (_f1 - _f0) / _numFreqCandidates + _f0;
   
 }
 
