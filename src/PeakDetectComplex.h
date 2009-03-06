@@ -24,7 +24,7 @@
 
 #include <limits>
 
-class Peakdetectcomplex {
+class PeakDetectComplex {
 public:
   enum SortType {
     NOSORT              = 0,
@@ -52,7 +52,7 @@ public:
 
   void setup();
 
-  void process(const MatrixXC& fft,
+  void process(const MatrixXC& input,
                MatrixXR* peakPositions, MatrixXR* peakMagnitudes, MatrixXR* peakPhases);
 
   void reset();

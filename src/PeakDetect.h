@@ -51,7 +51,7 @@ public:
 
   void setup();
 
-  void process(const MatrixXC& fft,
+  void process(const MatrixXR& input,
                MatrixXR* peakPositions, MatrixXR* peakMagnitudes);
 
   void reset();

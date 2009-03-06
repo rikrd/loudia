@@ -49,7 +49,7 @@ void PeakInterpolateComplex::setup(){
 }
 
 
-void PeakInterpolateComplex::process(const MatrixXC& fft,
+void PeakInterpolateComplex::process(const MatrixXC& input,
                               const MatrixXR& peakPositions, const MatrixXR& peakMagnitudes, const MatrixXR& peakPhases,
                               MatrixXR* peakPositionsInterp, MatrixXR* peakMagnitudesInterp, MatrixXR* peakPhasesInterp) {
   
@@ -58,12 +58,12 @@ void PeakInterpolateComplex::process(const MatrixXC& fft,
   Real rightMag, rightPhase;
   Real mag, interpFactor;
   
-  (*peakPositionsInterp).resize(fft.rows(), peakPositions.cols());
-  (*peakMagnitudesInterp).resize(fft.rows(), peakPositions.cols());
-  (*peakPhasesInterp).resize(fft.rows(), peakPositions.cols());
+  (*peakPositionsInterp).resize(input.rows(), peakPositions.cols());
+  (*peakMagnitudesInterp).resize(input.rows(), peakPositions.cols());
+  (*peakPhasesInterp).resize(input.rows(), peakPositions.cols());
   
-  _magnitudes = fft.cwise().abs();
-  unwrap(fft.cwise().angle(), &_phases);
+  _magnitudes = input.cwise().abs();
+  unwrap(input.cwise().angle(), &_phases);
   
   for ( int row = 0 ; row < _magnitudes.rows(); row++ ) {
   

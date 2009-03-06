@@ -78,24 +78,24 @@ void PeakDetect::setup(){
 }
 
 
-void PeakDetect::process(const MatrixXC& fft, 
+void PeakDetect::process(const MatrixXR& input, 
                          MatrixXR* peakPositions, MatrixXR* peakMagnitudes){
   DEBUG("PEAKDETECT: Processing");
   
   int numPeaks = _numPeaks;
   if( numPeaks == -1 ){
-    numPeaks = fft.cols();
+    numPeaks = input.cols();
   }
   
-  DEBUG("PEAKDETECT: Processing, fft.shape: (" << fft.rows() << ", " << fft.cols() << ")");
+  DEBUG("PEAKDETECT: Processing, input.shape: (" << input.rows() << ", " << input.cols() << ")");
 
-  (*peakPositions).resize(fft.rows(), numPeaks);
+  (*peakPositions).resize(input.rows(), numPeaks);
   (*peakPositions).setConstant(-1);
 
-  (*peakMagnitudes).resize(fft.rows(), numPeaks);
+  (*peakMagnitudes).resize(input.rows(), numPeaks);
   (*peakMagnitudes).setConstant(-1);
 
-  _magnitudes = fft.cwise().abs();
+  _magnitudes = input.cwise().abs();
 
   DEBUG("PEAKDETECT: Processing, _magnitudes.shape: (" << _magnitudes.rows() << ", " << _magnitudes.cols() << ")");
   

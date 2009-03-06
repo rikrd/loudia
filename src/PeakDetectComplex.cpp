@@ -41,11 +41,11 @@ struct peak{
 
 struct byMagnitudeComp{
   bool operator() (peak i, peak j) { return ( i.mag > j.mag ); }
-} byMagnitude;
+} byMagnitudeComplex;
 
 struct byPositionComp{
   bool operator() (peak i, peak j) { return ( i.pos < j.pos ); }
-} byPosition;
+} byPositionComplex;
 
 PeakDetectComplex::PeakDetectComplex(int numPeaks, SortType sort, int minPeakWidth, int numCandidates, Real minPeakContrast) :
   _numPeaks(numPeaks),
@@ -79,28 +79,28 @@ void PeakDetectComplex::setup(){
 }
 
 
-void PeakDetectComplex::process(const MatrixXC& fft, 
+void PeakDetectComplex::process(const MatrixXC& input, 
                          MatrixXR* peakPositions, MatrixXR* peakMagnitudes, MatrixXR* peakPhases){
   DEBUG("PEAKDETECTCOMPLEX: Processing");
   
   int numPeaks = _numPeaks;
   if( numPeaks == -1 ){
-    numPeaks = fft.cols();
+    numPeaks = input.cols();
   }
   
-  DEBUG("PEAKDETECTCOMPLEX: Processing, fft.shape: (" << fft.rows() << ", " << fft.cols() << ")");
+  DEBUG("PEAKDETECTCOMPLEX: Processing, input.shape: (" << input.rows() << ", " << input.cols() << ")");
 
-  (*peakPositions).resize(fft.rows(), numPeaks);
+  (*peakPositions).resize(input.rows(), numPeaks);
   (*peakPositions).setConstant(-1);
 
-  (*peakMagnitudes).resize(fft.rows(), numPeaks);
+  (*peakMagnitudes).resize(input.rows(), numPeaks);
   (*peakMagnitudes).setConstant(-1);
 
-  (*peakPhases).resize(fft.rows(), numPeaks);
+  (*peakPhases).resize(input.rows(), numPeaks);
   (*peakPhases).setConstant(-1);
 
-  _magnitudes = fft.cwise().abs();
-  _phases = fft.cwise().angle();
+  _magnitudes = input.cwise().abs();
+  _phases = input.cwise().angle();
 
   DEBUG("PEAKDETECTCOMPLEX: Processing, _magnitudes.shape: (" << _magnitudes.rows() << ", " << _magnitudes.cols() << ")");
   
@@ -147,18 +147,18 @@ void PeakDetectComplex::process(const MatrixXC& fft,
       int candidateCount = peakIndex;
       if(_numCandidates > 0) {
         candidateCount = min(peakIndex, _numCandidates);
-        std::sort(peaks.begin(), peaks.end(), byMagnitude);
+        std::sort(peaks.begin(), peaks.end(), byMagnitudeComplex);
       }
 
       // Sort the candidates using position or magnitude
       switch ( _sort ) {
       case BYPOSITION:      
-        std::sort(peaks.begin(), peaks.begin() + candidateCount, byPosition);
+        std::sort(peaks.begin(), peaks.begin() + candidateCount, byPositionComplex);
         break;
 
       case BYMAGNITUDE:
         if (_numCandidates <= 0)
-          std::sort(peaks.begin(), peaks.begin() + candidateCount, byMagnitude);
+          std::sort(peaks.begin(), peaks.begin() + candidateCount, byMagnitudeComplex);
         break;
         
       case NOSORT:

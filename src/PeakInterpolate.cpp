@@ -49,19 +49,19 @@ void PeakInterpolate::setup(){
 }
 
 
-void PeakInterpolate::process(const MatrixXC& fft,
+void PeakInterpolate::process(const MatrixXR& input,
                               const MatrixXR& peakPositions, const MatrixXR& peakMagnitudes,
                               MatrixXR* peakPositionsInterp, MatrixXR* peakMagnitudesInterp) {
   
   DEBUG("PEAKINTERPOLATE: Processing");  
-  Real leftMag, leftPhase;
-  Real rightMag, rightPhase;
+  Real leftMag;
+  Real rightMag;
   Real mag, interpFactor;
   
-  (*peakPositionsInterp).resize(fft.rows(), peakPositions.cols());
-  (*peakMagnitudesInterp).resize(fft.rows(), peakPositions.cols());
+  (*peakPositionsInterp).resize(input.rows(), peakPositions.cols());
+  (*peakMagnitudesInterp).resize(input.rows(), peakPositions.cols());
   
-  _magnitudes = fft.cwise().abs();
+  _magnitudes = input.cwise().abs();
   
   for ( int row = 0 ; row < _magnitudes.rows(); row++ ) {
   

@@ -52,10 +52,10 @@ void PitchACF::setup(){
 void PitchACF::process(const MatrixXR& spectrum, MatrixXR* pitches, MatrixXR* saliencies){
   _acorr.process(spectrum, &_acorred);
   
-  _peak.process(_acorredC,
+  _peak.process(_acorred,
                 pitches, saliencies);
   
-  _peakInterp.process(_acorredC, (*pitches), (*saliencies),
+  _peakInterp.process(_acorred, (*pitches), (*saliencies),
                       pitches, saliencies);
 
   (*pitches) *= _samplerate / _fftSize;
