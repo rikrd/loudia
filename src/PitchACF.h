@@ -38,8 +38,6 @@ protected:
   Autocorrelation _acorr;
 
   MatrixXR _acorred;
-  MatrixXC _acorredC;
-  MatrixXR _phases;
 
 public:
   PitchACF(int fftSize, Real samplerate = 1.0, int minPeakWidth = 6, int peakCandidateCount = 10);
