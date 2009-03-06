@@ -22,7 +22,7 @@
 #include <algorithm>
 #include <vector>
 
-#include "PeakDetect.h"
+#include "PeakDetectComplex.h"
 
 using namespace std;
 using namespace Eigen;
@@ -30,6 +30,7 @@ using namespace Eigen;
 struct peak{
   Real pos;
   Real mag;
+  Real phase;
   
   // A peak is smaller (first in the list)
   // if it's magnitude is larger
@@ -38,15 +39,15 @@ struct peak{
   }
 };
 
-struct byMagnitudeComp{
+struct byMagnitudeComplexComp{
   bool operator() (peak i, peak j) { return ( i.mag > j.mag ); }
-} byMagnitude;
+} byMagnitudeComplex;
 
-struct byPositionComp{
+struct byPositionComplexComp{
   bool operator() (peak i, peak j) { return ( i.pos < j.pos ); }
-} byPosition;
+} byPositionComplex;
 
-PeakDetect::PeakDetect(int numPeaks, SortType sort, int minPeakWidth, int numCandidates, Real minPeakContrast) :
+PeakDetectComplex::PeakDetectComplex(int numPeaks, SortType sort, int minPeakWidth, int numCandidates, Real minPeakContrast) :
   _numPeaks(numPeaks),
   _minPeakWidth(minPeakWidth),
   _numCandidates(numCandidates),
@@ -54,36 +55,35 @@ PeakDetect::PeakDetect(int numPeaks, SortType sort, int minPeakWidth, int numCan
   _sort(sort)
 
 {
-  DEBUG("PEAKDETECT: Constructor numPeaks: " << _numPeaks 
+  DEBUG("PEAKDETECTCOMPLEX: Constructor numPeaks: " << _numPeaks 
         << ", minPeakWidth: " << _minPeakWidth
         << ", numCandidates: " << _numCandidates);
   
   setup();
 
-  DEBUG("PEAKDETECT: Constructed");
+  DEBUG("PEAKDETECTCOMPLEX: Constructed");
 }
 
-PeakDetect::~PeakDetect() {
+PeakDetectComplex::~PeakDetectComplex() {
   // TODO: Here we should free the buffers
   // but I don't know how to do that with MatrixXR and MatrixXR
   // I'm sure Nico will...
 }
 
 
-void PeakDetect::setup(){
+void PeakDetectComplex::setup(){
   // Prepare the buffers
-  DEBUG("PEAKDETECT: Setting up...");
+  DEBUG("PEAKDETECTCOMPLEX: Setting up...");
 
   reset();
 
-  DEBUG("PEAKDETECT: Finished set up...");
+  DEBUG("PEAKDETECTCOMPLEX: Finished set up...");
 }
 
 
-void PeakDetect::process(const MatrixXR& input, 
-                         MatrixXR* peakPositions, MatrixXR* peakMagnitudes){
-  DEBUG("PEAKDETECT: Processing");
-  
+void PeakDetectComplex::process(const MatrixXC& input, 
+                                MatrixXR* peakPositions, MatrixXR* peakMagnitudes, MatrixXR* peakPhases){
+  DEBUG("PEAKDETECTCOMPLEX: Processing");
   const int rows = input.rows();
 
   int numPeaks = _numPeaks;
@@ -91,7 +91,7 @@ void PeakDetect::process(const MatrixXR& input,
     numPeaks = input.cols();
   }
   
-  DEBUG("PEAKDETECT: Processing, input.shape: (" << rows << ", " << input.cols() << ")");
+  DEBUG("PEAKDETECTCOMPLEX: Processing, input.shape: (" << input.rows() << ", " << input.cols() << ")");
 
   (*peakPositions).resize(rows, numPeaks);
   (*peakPositions).setConstant(-1);
@@ -99,21 +99,25 @@ void PeakDetect::process(const MatrixXR& input,
   (*peakMagnitudes).resize(rows, numPeaks);
   (*peakMagnitudes).setConstant(-1);
 
-  _magnitudes = input.cwise().abs();
+  (*peakPhases).resize(rows, numPeaks);
+  (*peakPhases).setConstant(-1);
 
-  DEBUG("PEAKDETECT: Processing, _magnitudes.shape: (" << rows << ", " << _magnitudes.cols() << ")");
+  _magnitudes = input.cwise().abs();
+  _phases = input.cwise().angle();
+
+  DEBUG("PEAKDETECTCOMPLEX: Processing, _magnitudes.shape: (" << _magnitudes.rows() << ", " << _magnitudes.cols() << ")");
   
   int maxRow;
   int maxCol;
   
   Real maxVal;
   Real minVal;
-  
+
   vector<peak> peaks;
   peaks.reserve(input.cols());
-  
-  for ( int i = 0 ; i < rows; i++){
 
+  for ( int i = 0 ; i < rows; i++){
+    DEBUG("PEAKDETECTCOMPLEX: Processing, new row");
     peaks.clear();
     
     for ( int j = (_minPeakWidth / 2); j < _magnitudes.row(i).cols() - (_minPeakWidth / 2); j++) {
@@ -135,30 +139,30 @@ void PeakDetect::process(const MatrixXR& input,
         // If the contrast is bigger than what minPeakContrast says, then select as peak
         if ( maxVal - minVal >= _minPeakContrast ) {
 
-          peak p = {j, _magnitudes(i, j)};
+          peak p = {j, _magnitudes(i, j), _phases(i, j)};
           peaks.push_back(p);
-
         }
       }
     }
-      
+
+    DEBUG("PEAKDETECTCOMPLEX: Processing, get largest candidates");
     // Get the largest candidates
-    int candidateCount = (int)peaks.size();
+    int candidateCount = peaks.size();
     if(_numCandidates > 0) {
       candidateCount = min(candidateCount, _numCandidates);
-      std::sort(peaks.begin(), peaks.end(), byMagnitude);
+      std::sort(peaks.begin(), peaks.end(), byMagnitudeComplex);
     }
     
     // Sort the candidates using position or magnitude
     switch ( _sort ) {
     case BYPOSITION:      
-      std::sort(peaks.begin(), peaks.begin() + candidateCount, byPosition);
+      std::sort(peaks.begin(), peaks.begin() + candidateCount, byPositionComplex);
       break;
       
     case BYMAGNITUDE:
       // We have not done a candidate preselection, we must do the sorting
       if (_numCandidates <= 0)
-        std::sort(peaks.begin(), peaks.begin() + candidateCount, byMagnitude);
+        std::sort(peaks.begin(), peaks.begin() + candidateCount, byMagnitudeComplex);
       break;
       
     case NOSORT:
@@ -166,26 +170,30 @@ void PeakDetect::process(const MatrixXR& input,
       break;
     }
     
+    DEBUG("PEAKDETECTCOMPLEX: Processing, take first numPeaks");      
     // Take the first numPeaks
-    int peakCount = min(_numPeaks, candidateCount);      
+    int peakCount = min(numPeaks, candidateCount);
     // Put the peaks in the matrices
     for( int j = 0; j < peakCount; j++ ){
       (*peakMagnitudes)(i, j) = peaks[j].mag;
+      (*peakPhases)(i, j) = peaks[j].phase;
       (*peakPositions)(i, j) = peaks[j].pos;
-    } 
+    }
+
+    DEBUG("PEAKDETECTCOMPLEX: Processing, finished row");
   }
 
-  DEBUG("PEAKDETECT: Finished Processing");
+  DEBUG("PEAKDETECTCOMPLEX: Finished Processing");
 }
 
-void PeakDetect::reset(){
+void PeakDetectComplex::reset(){
   // Initial values
 }
 
-int PeakDetect::numPeaks() const {
+int PeakDetectComplex::numPeaks() const {
   return _numPeaks;
 }
 
-int PeakDetect::minPeakWidth() const {
+int PeakDetectComplex::minPeakWidth() const {
   return _minPeakWidth;
 }

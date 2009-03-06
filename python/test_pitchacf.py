@@ -79,7 +79,7 @@ for frame in stream:
     if interactivePlot:
         pylab.subplot(211)
         pylab.hold(False)
-        pylab.plot( wspec[:plotSize] )
+        pylab.plot( wspec[0, :plotSize] )
 
         acorred = acorr.process( wspec )
         

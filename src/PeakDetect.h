@@ -43,7 +43,6 @@ protected:
 
   // Internal variables
   MatrixXR _magnitudes;
-  MatrixXR _phases;
 
 public:
   PeakDetect(int numPeaks, SortType sort = BYMAGNITUDE, int minPeakWidth = 3, int numCandidates = -1, Real minPeakContrast = 0);
@@ -52,8 +51,8 @@ public:
 
   void setup();
 
-  void process(const MatrixXC& fft,
-               MatrixXR* peakPositions, MatrixXR* peakMagnitudes, MatrixXR* peakPhases);
+  void process(const MatrixXR& input,
+               MatrixXR* peakPositions, MatrixXR* peakMagnitudes);
 
   void reset();
 

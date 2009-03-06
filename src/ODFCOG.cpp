@@ -66,7 +66,7 @@ void ODFCOG::process(const MatrixXC& fft, MatrixXR* odfValue) {
 
   DEBUG("ODFCOG: Processing the peaks");
 
-  _peaker.process(fft.block(0, 0, rows, halfCols), &_peakPos, &_peakMag, &_peakArg);
+  _peaker.process(fft.block(0, 0, rows, halfCols).cwise().abs(), &_peakPos, &_peakMag);
 
   _peakCoger.process(fft.block(0, 0, rows, halfCols), _peakPos, &_cog);
 

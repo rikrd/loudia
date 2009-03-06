@@ -40,7 +40,6 @@ protected:
 
   MatrixXR _peakPos;
   MatrixXR _peakMag;
-  MatrixXR _peakArg;
 
   MatrixXR _cog;
 

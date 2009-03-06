@@ -16,54 +16,51 @@
 ** Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */                                                                          
 
+#ifndef PEAKDETECTCOMPLEX_H
+#define PEAKDETECTCOMPLEX_H
+
 #include "Typedefs.h"
 #include "Debug.h"
 
-#include "PitchACF.h"
-#include "Utils.h"
+#include <limits>
 
-using namespace std;
-using namespace Eigen;
+class PeakDetectComplex {
+public:
+  enum SortType {
+    NOSORT              = 0,
+    BYMAGNITUDE         = 1,
+    BYPOSITION          = 2
+  };
 
-PitchACF::PitchACF(int fftSize, Real samplerate, int minPeakWidth, int peakCandidateCount) :
-  _fftSize( fftSize ),
-  _halfSize( ( _fftSize / 2 ) + 1 ),
-  _samplerate( samplerate ),
-  _peak(1, PeakDetect::BYMAGNITUDE, minPeakWidth, peakCandidateCount),
-  _peakInterp(),
-  _acorr(_halfSize, _halfSize)
-{
-  DEBUG("PITCHACF: Construction fftSize: " << _fftSize
-        << " samplerate: " << _samplerate );
+protected:
+  // Internal parameters
+  int _numPeaks;
+  int _minPeakWidth;
+  int _numCandidates;
+  Real _minPeakContrast;
+    
+  SortType _sort;
 
-  setup();
-}
+  // Internal variables
+  MatrixXR _magnitudes;
+  MatrixXR _phases;
 
-PitchACF::~PitchACF(){}
+public:
+  PeakDetectComplex(int numPeaks, SortType sort = BYMAGNITUDE, int minPeakWidth = 3, int numCandidates = -1, Real minPeakContrast = 0);
 
-void PitchACF::setup(){
-  DEBUG("PITCHACF: Setting up...");
+  ~PeakDetectComplex();
 
-  reset();
+  void setup();
 
-  DEBUG("PITCHACF: Finished setup.");
-}
+  void process(const MatrixXC& input,
+               MatrixXR* peakPositions, MatrixXR* peakMagnitudes, MatrixXR* peakPhases);
 
-void PitchACF::process(const MatrixXR& spectrum, MatrixXR* pitches, MatrixXR* saliencies){
-  _acorr.process(spectrum, &_acorred);
-  
-  _peak.process(_acorred,
-                pitches, saliencies);
-  
-  _peakInterp.process(_acorred, (*pitches), (*saliencies),
-                      pitches, saliencies);
+  void reset();
 
-  (*pitches) *= _samplerate / _fftSize;
+  int numPeaks() const;
 
-  (*saliencies).cwise() /= _acorred.col(0);
-}
+  int minPeakWidth() const;
 
-void PitchACF::reset(){
-  // Initial values
+};
 
-}
+#endif  /* PEAKDETECTCOMPLEX_H */

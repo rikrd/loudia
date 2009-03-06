@@ -30,7 +30,6 @@ protected:
     
   // Internal variables
   MatrixXR _magnitudes;
-  MatrixXR _phases;
 
 public:
   PeakInterpolate();
@@ -39,9 +38,9 @@ public:
 
   void setup();
 
-  void process(const MatrixXC& fft, 
-               const MatrixXR& peakPositions, const MatrixXR& peakMagnitudes, const MatrixXR& peakPhases,
-               MatrixXR* peakPositionsInterp, MatrixXR* peakMagnitudesInterp, MatrixXR* peakPhasesInterp);
+  void process(const MatrixXR& input, 
+               const MatrixXR& peakPositions, const MatrixXR& peakMagnitudes,
+               MatrixXR* peakPositionsInterp, MatrixXR* peakMagnitudesInterp);
 
   void reset();
 
