@@ -143,7 +143,7 @@ void PitchInverseProblem::process(const MatrixXR& spectrum, MatrixXR* pitches, M
   _peakInterp.process((*freqs), (*pitches), (*saliencies),
                       pitches, saliencies);
 
-  (*pitches) = ((_f1 - _f0) / _numFreqCandidates) * (*pitches) + _f0;
+  (*pitches) = (((_f1 - _f0) / _numFreqCandidates) * (*pitches)).cwise() + _f0;
   
 }
 
