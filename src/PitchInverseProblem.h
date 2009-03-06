@@ -22,6 +22,9 @@
 #include "Typedefs.h"
 #include "Debug.h"
 
+#include "PeakDetect.h"
+#include "PeakInterpolate.h"
+
 #include <Eigen/LU>
 
 class PitchInverseProblem {
@@ -30,17 +33,15 @@ protected:
   int _halfSize;
   Real _f0;
   Real _f1;
-  Real _fPrec;
+  int _numMaxPitches;
   int _numHarmonics;
   int _numFreqCandidates;
-  int _numMaxPitches;
   int _peakBandwidth;
 
   Real _samplerate;
 
   Real _tMin;
   Real _tMax;
-  Real _tPrec;
   Real _alpha;
   Real _beta;
   Real _inharmonicity;
@@ -49,8 +50,14 @@ protected:
   MatrixXR _projectionMatrix;
   MatrixXR _inverseProjectionMatrix;
 
+  PeakDetect _peak;
+  PeakInterpolate _peakInterp;
+
+  MatrixXR _phases;
+
+
 public:
-  PitchInverseProblem(int fftSize, Real f0, Real f1, Real samplerate = 1.0, Real fPrec = 0.01, int numHarmonics = 10, int numFreqCandidates = -1, int maxNumPitches = 5, int peakBandwidth = 8);
+  PitchInverseProblem(int fftSize, Real f0, Real f1, Real samplerate = 1.0, int maxNumPitches = 5, int numHarmonics = 10, int numFreqCandidates = -1, int peakBandwidth = 8);
 
   ~PitchInverseProblem();
 

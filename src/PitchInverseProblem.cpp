@@ -25,26 +25,27 @@
 using namespace std;
 using namespace Eigen;
 
-PitchInverseProblem::PitchInverseProblem(int fftSize, Real f0, Real f1, Real samplerate, Real fPrec, int numHarmonics, int numFreqCandidates, int numMaxPitches, int peakBandwidth) :
+PitchInverseProblem::PitchInverseProblem(int fftSize, Real f0, Real f1, Real samplerate, int numMaxPitches, int numHarmonics, int numFreqCandidates, int peakBandwidth) :
   _fftSize( fftSize ),
   _halfSize( ( _fftSize / 2 ) + 1 ),
   _f0( f0 ),
   _f1( f1 ),
-  _fPrec( fPrec ),
+  _numMaxPitches( numMaxPitches ),
   _numHarmonics( numHarmonics ),
   _numFreqCandidates( numFreqCandidates == -1 ? _halfSize : numFreqCandidates ),
-  _numMaxPitches( numMaxPitches ),
   _peakBandwidth( peakBandwidth ),
-  _samplerate( samplerate )
+  _samplerate( samplerate ),
+  _peak(_numMaxPitches, PeakDetect::BYMAGNITUDE ),
+  _peakInterp()
+
 {
   DEBUG("PITCHINVERSEPROBLEM: Construction fftSize: " << _fftSize
         << " samplerate: " << _samplerate
         << " f0: " << _f0
         << " f1: " << _f1
-        << " fPrec: " << _fPrec
+        << " numMaxPitches: " << _numMaxPitches
         << " numHarmonics: " << _numHarmonics
         << " numFreqCandidates: " << _numFreqCandidates
-        << " numMaxPitches: " << _numMaxPitches
         << " peakBandwidth: " << _peakBandwidth);
 
   setup();
@@ -59,8 +60,6 @@ void PitchInverseProblem::setup(){
   _tMax = _samplerate / _f0;
   _tMin = _samplerate / _f1;
   
-  _tPrec = _fPrec;
-
   _regularisation = 2.0;
 
   // Params taken from Klapuri ISMIR 2006
@@ -77,7 +76,7 @@ void PitchInverseProblem::setup(){
   DEBUG("PITCHINVERSEPROBLEM: Setting up the projection matrix...");  
   for ( int row = 0; row < _projectionMatrix.rows(); row++ ) {
     for ( int col = 0; col < _projectionMatrix.cols() - 1; col++ ) {
-      for ( int harmonicIndex = 1; harmonicIndex < _numHarmonics+1; harmonicIndex++ ) {
+      for ( int harmonicIndex = 1; harmonicIndex < _numHarmonics + 1; harmonicIndex++ ) {
         Real f = freqs(0, col);
         Real mu = harmonicPosition(1.0/f, _tMin, _tMax, harmonicIndex);
         Real a = harmonicWeight(1.0/f, _tMin, _tMax, harmonicIndex);
@@ -133,6 +132,13 @@ void PitchInverseProblem::process(const MatrixXR& spectrum, MatrixXR* pitches, M
     DEBUG("PITCHINVERSEPROBLEM: Setting the result");
     (*freqs).row( row ) = _inverseProjectionMatrix * spectrum.row( row ).transpose();
   }
+
+  _peak.process((*freqs),
+                pitches, saliencies, &_phases);
+  
+  _peakInterp.process((*freqs), (*pitches), (*saliencies), _phases,
+                      pitches, saliencies, &_phases);
+  
 }
 
 void PitchInverseProblem::reset(){
