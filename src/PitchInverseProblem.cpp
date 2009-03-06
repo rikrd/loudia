@@ -133,11 +133,12 @@ void PitchInverseProblem::process(const MatrixXR& spectrum, MatrixXR* pitches, M
     (*freqs).row( row ) = _inverseProjectionMatrix * spectrum.row( row ).transpose();
   }
 
-  _peak.process((*freqs),
-                pitches, saliencies, &_phases);
   
-  _peakInterp.process((*freqs), (*pitches), (*saliencies), _phases,
-                      pitches, saliencies, &_phases);
+  _peak.process((*freqs),
+                pitches, saliencies);
+  
+  _peakInterp.process((*freqs), (*pitches), (*saliencies),
+                      pitches, saliencies);
   
 }
 

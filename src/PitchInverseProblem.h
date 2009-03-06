@@ -53,9 +53,6 @@ protected:
   PeakDetect _peak;
   PeakInterpolate _peakInterp;
 
-  MatrixXR _phases;
-
-
 public:
   PitchInverseProblem(int fftSize, Real f0, Real f1, Real samplerate = 1.0, int maxNumPitches = 5, int numHarmonics = 10, int numFreqCandidates = -1, int peakBandwidth = 8);
 
