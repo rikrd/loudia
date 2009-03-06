@@ -39,11 +39,11 @@ struct peak{
   }
 };
 
-struct byMagnitudeComp{
+struct byMagnitudeComplexComp{
   bool operator() (peak i, peak j) { return ( i.mag > j.mag ); }
 } byMagnitudeComplex;
 
-struct byPositionComp{
+struct byPositionComplexComp{
   bool operator() (peak i, peak j) { return ( i.pos < j.pos ); }
 } byPositionComplex;
 
@@ -55,7 +55,9 @@ PeakDetectComplex::PeakDetectComplex(int numPeaks, SortType sort, int minPeakWid
   _sort(sort)
 
 {
-  DEBUG("PEAKDETECTCOMPLEX: Constructor numPeaks: " << numPeaks << ", minPeakWidth: " << minPeakWidth);
+  DEBUG("PEAKDETECTCOMPLEX: Constructor numPeaks: " << _numPeaks 
+        << ", minPeakWidth: " << _minPeakWidth
+        << ", numCandidates: " << _numCandidates);
   
   setup();
 
@@ -80,9 +82,10 @@ void PeakDetectComplex::setup(){
 
 
 void PeakDetectComplex::process(const MatrixXC& input, 
-                         MatrixXR* peakPositions, MatrixXR* peakMagnitudes, MatrixXR* peakPhases){
+                                MatrixXR* peakPositions, MatrixXR* peakMagnitudes, MatrixXR* peakPhases){
   DEBUG("PEAKDETECTCOMPLEX: Processing");
-  
+  const int rows = input.rows();
+
   int numPeaks = _numPeaks;
   if( numPeaks == -1 ){
     numPeaks = input.cols();
@@ -90,13 +93,13 @@ void PeakDetectComplex::process(const MatrixXC& input,
   
   DEBUG("PEAKDETECTCOMPLEX: Processing, input.shape: (" << input.rows() << ", " << input.cols() << ")");
 
-  (*peakPositions).resize(input.rows(), numPeaks);
+  (*peakPositions).resize(rows, numPeaks);
   (*peakPositions).setConstant(-1);
 
-  (*peakMagnitudes).resize(input.rows(), numPeaks);
+  (*peakMagnitudes).resize(rows, numPeaks);
   (*peakMagnitudes).setConstant(-1);
 
-  (*peakPhases).resize(input.rows(), numPeaks);
+  (*peakPhases).resize(rows, numPeaks);
   (*peakPhases).setConstant(-1);
 
   _magnitudes = input.cwise().abs();
@@ -109,18 +112,18 @@ void PeakDetectComplex::process(const MatrixXC& input,
   
   Real maxVal;
   Real minVal;
-  
-  int peakIndex;
-  
-  for ( int i = 0 ; i < _magnitudes.rows(); i++){
-    vector<peak> peaks;
 
-    peakIndex = 0;
+  vector<peak> peaks;
+  peaks.reserve(input.cols());
 
-    // If we don't need sorting then only the first numPeaks peaks are needed
-    if( ( _sort == NOSORT ) && ( peakIndex > numPeaks ) ) break;
+  for ( int i = 0 ; i < rows; i++){
+    DEBUG("PEAKDETECTCOMPLEX: Processing, new row");
+    peaks.clear();
     
     for ( int j = (_minPeakWidth / 2); j < _magnitudes.row(i).cols() - (_minPeakWidth / 2); j++) {
+      // If we don't need sorting then only the first numPeaks peaks are needed
+      if( ( _sort == NOSORT ) && ( (int)peaks.size() > numPeaks ) ) break;
+
       int inf = j - (_minPeakWidth / 2);
       
       // Get the maximum value and position of a region (corresponding to the min bandwidth of the peak)
@@ -138,47 +141,48 @@ void PeakDetectComplex::process(const MatrixXC& input,
 
           peak p = {j, _magnitudes(i, j), _phases(i, j)};
           peaks.push_back(p);
-
-          peakIndex ++;
         }
-      }      
-      
-      // Get the largest candidates
-      int candidateCount = peakIndex;
-      if(_numCandidates > 0) {
-        candidateCount = min(peakIndex, _numCandidates);
-        std::sort(peaks.begin(), peaks.end(), byMagnitudeComplex);
       }
-
-      // Sort the candidates using position or magnitude
-      switch ( _sort ) {
-      case BYPOSITION:      
-        std::sort(peaks.begin(), peaks.begin() + candidateCount, byPositionComplex);
-        break;
-
-      case BYMAGNITUDE:
-        if (_numCandidates <= 0)
-          std::sort(peaks.begin(), peaks.begin() + candidateCount, byMagnitudeComplex);
-        break;
-        
-      case NOSORT:
-      default:
-        break;
-      }
-      
-      // Take the first numPeaks
-      int peakCount = min(_numPeaks, candidateCount);      
-      // Put the peaks in the matrices
-      for( int j = 0; j < peakCount; j++ ){
-        (*peakMagnitudes)(i, j) = peaks[j].mag;
-        (*peakPhases)(i, j) = peaks[j].phase;
-        (*peakPositions)(i, j) = peaks[j].pos;
-      }
-    
     }
+
+    DEBUG("PEAKDETECTCOMPLEX: Processing, get largest candidates");
+    // Get the largest candidates
+    int candidateCount = peaks.size();
+    if(_numCandidates > 0) {
+      candidateCount = min(candidateCount, _numCandidates);
+      std::sort(peaks.begin(), peaks.end(), byMagnitudeComplex);
+    }
+    
+    // Sort the candidates using position or magnitude
+    switch ( _sort ) {
+    case BYPOSITION:      
+      std::sort(peaks.begin(), peaks.begin() + candidateCount, byPositionComplex);
+      break;
+      
+    case BYMAGNITUDE:
+      // We have not done a candidate preselection, we must do the sorting
+      if (_numCandidates <= 0)
+        std::sort(peaks.begin(), peaks.begin() + candidateCount, byMagnitudeComplex);
+      break;
+      
+    case NOSORT:
+    default:
+      break;
+    }
+    
+    DEBUG("PEAKDETECTCOMPLEX: Processing, take first numPeaks");      
+    // Take the first numPeaks
+    int peakCount = min(numPeaks, candidateCount);
+    // Put the peaks in the matrices
+    for( int j = 0; j < peakCount; j++ ){
+      (*peakMagnitudes)(i, j) = peaks[j].mag;
+      (*peakPhases)(i, j) = peaks[j].phase;
+      (*peakPositions)(i, j) = peaks[j].pos;
+    }
+
+    DEBUG("PEAKDETECTCOMPLEX: Processing, finished row");
   }
 
-  
   DEBUG("PEAKDETECTCOMPLEX: Finished Processing");
 }
 
