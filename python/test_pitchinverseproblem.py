@@ -54,7 +54,7 @@ stream = pyricaudio.fft_ricaudio(stream, {'inputKey': 'windowed',
 
 minPeakWidth = 8
 peakCandidateCount = 4
-numMaxPitches = 5
+numMaxPitches = 2
 numHarmonics = 10
 numCandidates = 1024
 
@@ -103,8 +103,8 @@ if interactivePlot:
 
 specs = scipy.array( specs )
 wspecs = scipy.array( wspecs )
-pitches = scipy.array( pitches )[:, 0]
-saliencies = scipy.array( saliencies )[:, 0]
+pitches = scipy.array( pitches )[:, 0, :]
+saliencies = scipy.array( saliencies )[:, 0, :]
 freqss = scipy.array( freqss )[:,0,:]
 frameCount = specs.shape[0] - 1
 
@@ -121,12 +121,12 @@ if plot:
     pylab.imshow( scipy.flipud(freqss.T), aspect = 'auto' )
 
     pylab.subplot(312)
-    pylab.plot( pitches[:,0] )
+    pylab.plot( pitches[:,:] )
 
     draw_onsets(onsets)
 
     pylab.subplot(313)
-    pylab.plot( saliencies[:,0] )
+    pylab.plot( saliencies[:,:] )
 
     draw_onsets(onsets)
     

@@ -3,7 +3,7 @@
 import ricaudio
 import pylab
 
-plotFreqs = 2
+plotFreqs = 10
 
 pitchInverseProblem = ricaudio.PitchInverseProblem(4096, 50, 6000, 44100)
 a = pitchInverseProblem.projectionMatrix()

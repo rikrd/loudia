@@ -90,11 +90,11 @@ void PitchInverseProblem::setup(){
   MatrixXR sourceWeight = MatrixXR::Identity( _numFreqCandidates, _numFreqCandidates );
   MatrixXR targetWeight = MatrixXR::Identity( _halfSize, _halfSize );
 
-  MatrixXR invSourceWeight = LU<MatrixXR>( sourceWeight ).inverse();
+  MatrixXR invSourceWeight = ( sourceWeight ).inverse();
 
   DEBUG("PITCHINVERSEPROBLEM: Setting up the inversion...");
   // A = W^{-1} K^t [ K W^{-1} K^t + \lambda * I_N ]^{+}
-  _inverseProjectionMatrix = invSourceWeight * _projectionMatrix.transpose() * LU<MatrixXR>( (_projectionMatrix * invSourceWeight * _projectionMatrix.transpose()) + (_regularisation * MatrixXR::Identity( _halfSize, _halfSize )) ).inverse();
+  _inverseProjectionMatrix = invSourceWeight * _projectionMatrix.transpose() * ( (_projectionMatrix * invSourceWeight * _projectionMatrix.transpose()) + (_regularisation * MatrixXR::Identity( _halfSize, _halfSize )) ).inverse();
 
   DEBUG("PITCHINVERSEPROBLEM: Setting up the peak detector and interpolator...");
   _peak.setup();
@@ -107,10 +107,11 @@ void PitchInverseProblem::setup(){
 
 Real PitchInverseProblem::harmonicWeight(Real period, Real tLow, Real tUp, int harmonicIndex){
   return ((_samplerate / tLow) + _alpha) / ((harmonicIndex * _samplerate / tUp) + _beta);
+  //return ((1.0 / period) + _alpha) / (((Real)harmonicIndex / period) + _beta);
 }
 
 Real PitchInverseProblem::harmonicPosition(Real period, Real tLow, Real tUp, int harmonicIndex){
-  return (harmonicIndex / period * sqrt(1.0 + (pow(harmonicIndex, 2.0) - 1.0)*_inharmonicity));
+  return (harmonicIndex / period * sqrt(1.0 + (pow(harmonicIndex, 2.0) - 1.0) * _inharmonicity));
 }
 
 Real PitchInverseProblem::harmonicSpread(Real period, Real tLow, Real tUp, int harmonicIndex){
