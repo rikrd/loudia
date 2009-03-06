@@ -98,6 +98,10 @@ void PitchInverseProblem::setup(){
 
   //_inverseProjectionMatrix = _inverseProjectionMatrix.cwise().clipUnder();
 
+  DEBUG("PITCHINVERSEPROBLEM: Setting up the peak detector and interpolator...");
+  _peak.setup();
+  _peakInterp.setup();
+
   reset();
 
   DEBUG("PITCHINVERSEPROBLEM: Finished setup.");
@@ -144,7 +148,10 @@ void PitchInverseProblem::process(const MatrixXR& spectrum, MatrixXR* pitches, M
 
 void PitchInverseProblem::reset(){
   // Initial values
-
+  DEBUG("PITCHINVERSEPROBLEM: Resetting...");
+  _peak.reset();
+  _peakInterp.reset();
+  
 }
 
 void PitchInverseProblem::projectionMatrix(MatrixXR* matrix) const {
