@@ -16,50 +16,35 @@
 ** Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */                                                                          
 
-#ifndef PEAKDETECT_H
-#define PEAKDETECT_H
+#ifndef PEAKINTERPOLATECOMPLEX_H
+#define PEAKINTERPOLATECOMPLEX_H
 
 #include "Typedefs.h"
 #include "Debug.h"
 
-#include <limits>
+#include "Utils.h"
 
-class PeakDetect {
-public:
-  enum SortType {
-    NOSORT              = 0,
-    BYMAGNITUDE         = 1,
-    BYPOSITION          = 2
-  };
-
+class PeakInterpolateComplex {
 protected:
   // Internal parameters
-  int _numPeaks;
-  int _minPeakWidth;
-  int _numCandidates;
-  Real _minPeakContrast;
     
-  SortType _sort;
-
   // Internal variables
   MatrixXR _magnitudes;
+  MatrixXR _phases;
 
 public:
-  PeakDetect(int numPeaks, SortType sort = BYMAGNITUDE, int minPeakWidth = 3, int numCandidates = -1, Real minPeakContrast = 0);
+  PeakInterpolateComplex();
 
-  ~PeakDetect();
+  ~PeakInterpolateComplex();
 
   void setup();
 
-  void process(const MatrixXC& fft,
-               MatrixXR* peakPositions, MatrixXR* peakMagnitudes);
+  void process(const MatrixXC& fft, 
+               const MatrixXR& peakPositions, const MatrixXR& peakMagnitudes, const MatrixXR& peakPhases,
+               MatrixXR* peakPositionsInterp, MatrixXR* peakMagnitudesInterp, MatrixXR* peakPhasesInterp);
 
   void reset();
 
-  int numPeaks() const;
-
-  int minPeakWidth() const;
-
 };
 
-#endif  /* PEAKDETECT_H */
+#endif  /* PEAKINTERPOLATECOMPLEX_H */

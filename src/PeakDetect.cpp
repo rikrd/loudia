@@ -30,7 +30,6 @@ using namespace Eigen;
 struct peak{
   Real pos;
   Real mag;
-  Real phase;
   
   // A peak is smaller (first in the list)
   // if it's magnitude is larger
@@ -80,7 +79,7 @@ void PeakDetect::setup(){
 
 
 void PeakDetect::process(const MatrixXC& fft, 
-                         MatrixXR* peakPositions, MatrixXR* peakMagnitudes, MatrixXR* peakPhases){
+                         MatrixXR* peakPositions, MatrixXR* peakMagnitudes){
   DEBUG("PEAKDETECT: Processing");
   
   int numPeaks = _numPeaks;
@@ -96,11 +95,7 @@ void PeakDetect::process(const MatrixXC& fft,
   (*peakMagnitudes).resize(fft.rows(), numPeaks);
   (*peakMagnitudes).setConstant(-1);
 
-  (*peakPhases).resize(fft.rows(), numPeaks);
-  (*peakPhases).setConstant(-1);
-
   _magnitudes = fft.cwise().abs();
-  _phases = fft.cwise().angle();
 
   DEBUG("PEAKDETECT: Processing, _magnitudes.shape: (" << _magnitudes.rows() << ", " << _magnitudes.cols() << ")");
   
@@ -136,7 +131,7 @@ void PeakDetect::process(const MatrixXC& fft,
         // If the contrast is bigger than what minPeakContrast says, then select as peak
         if ( maxVal - minVal >= _minPeakContrast ) {
 
-          peak p = {j, _magnitudes(i, j), _phases(i, j)};
+          peak p = {j, _magnitudes(i, j)};
           peaks.push_back(p);
 
           peakIndex ++;
@@ -171,7 +166,6 @@ void PeakDetect::process(const MatrixXC& fft,
       // Put the peaks in the matrices
       for( int j = 0; j < peakCount; j++ ){
         (*peakMagnitudes)(i, j) = peaks[j].mag;
-        (*peakPhases)(i, j) = peaks[j].phase;
         (*peakPositions)(i, j) = peaks[j].pos;
       }
     
