@@ -54,7 +54,7 @@ stream = pyricaudio.fft_ricaudio(stream, {'inputKey': 'windowed',
 
 peakBandwidth = 4
 peakCandidateCount = 4
-numMaxPitches = 1
+numMaxPitches = 2
 numHarmonics = 10
 numCandidates = 700
 
