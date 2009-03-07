@@ -52,14 +52,14 @@ stream = pyricaudio.fft_ricaudio(stream, {'inputKey': 'windowed',
                                           'fftLength': fftSize})
 
 
-minPeakWidth = 8
+peakBandwidth = 4
 peakCandidateCount = 4
 numMaxPitches = 2
-numHarmonics = 10
+numHarmonics = 20
 numCandidates = 1024
 
-whitening = ricaudio.SpectralWhitening(fftSize, 50.0, 6000.0, samplerate)
-pitchInverseProblem = ricaudio.PitchInverseProblem(fftSize, 50, 2100, samplerate, numMaxPitches, numHarmonics, numCandidates)
+whitening = ricaudio.SpectralWhitening(fftSize, 50.0, 2100.0, samplerate)
+pitchInverseProblem = ricaudio.PitchInverseProblem(fftSize, 50, 2100, samplerate, numMaxPitches, numHarmonics, numCandidates, peakBandwidth)
 
 specs = []
 wspecs = []
