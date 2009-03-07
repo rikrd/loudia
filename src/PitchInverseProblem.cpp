@@ -25,7 +25,7 @@
 using namespace std;
 using namespace Eigen;
 
-PitchInverseProblem::PitchInverseProblem(int fftSize, Real f0, Real f1, Real samplerate, int numMaxPitches, int numHarmonics, int numFreqCandidates, int peakBandwidth) :
+PitchInverseProblem::PitchInverseProblem(int fftSize, Real f0, Real f1, Real samplerate, int numMaxPitches, int numHarmonics, int numFreqCandidates, Real peakBandwidth) :
   _fftSize( fftSize ),
   _halfSize( ( _fftSize / 2 ) + 1 ),
   _f0( f0 ),
@@ -56,9 +56,6 @@ PitchInverseProblem::~PitchInverseProblem(){
 
 void PitchInverseProblem::setup(){
   DEBUG("PITCHINVERSEPROBLEM: Setting up...");
-
-  _tMax = _samplerate / _f0;
-  _tMin = _samplerate / _f1;
   
   _regularisation = 2.0;
 
@@ -73,19 +70,43 @@ void PitchInverseProblem::setup(){
   _projectionMatrix.resize(_halfSize, freqs.cols());  // We add one that will be the noise component
   _projectionMatrix.setZero();
 
-  DEBUG("PITCHINVERSEPROBLEM: Setting up the projection matrix...");  
+  DEBUG("PITCHINVERSEPROBLEM: Setting up the projection matrix...");
+  
   for ( int row = 0; row < _projectionMatrix.rows(); row++ ) {
     for ( int col = 0; col < _projectionMatrix.cols(); col++ ) {
+      Real f = freqs(0, col);
+
       for ( int harmonicIndex = 1; harmonicIndex < _numHarmonics + 1; harmonicIndex++ ) {
-        Real f = freqs(0, col);
-        Real mu = harmonicPosition(1.0/f, _tMin, _tMax, harmonicIndex);
-        Real a = harmonicWeight(1.0/f, _tMin, _tMax, harmonicIndex);
-        Real fi = harmonicSpread(1.0/f, _tMin, _tMax, harmonicIndex);
-        
+        Real mu = harmonicPosition(f, _f0, _f1, harmonicIndex);
+        Real a = harmonicWeight(f, _f0, _f1, harmonicIndex);
+        Real fi = harmonicSpread(f, _f0, _f1, harmonicIndex);
+
         _projectionMatrix(row, col) += a * gaussian(row, mu, fi);
       }
     }
   }
+  
+  /*
+  MatrixXR gauss;
+  MatrixXR mu;
+  MatrixXR a;
+  MatrixXR fi;
+
+  //MatrixXR x;
+  //range(0, _numFreqCandidates, _numFreqCandidates, _projectionMatrix.rows(), &x);
+  
+  for ( int row = 0; row < _projectionMatrix.rows(); row++ ) {
+    for ( int harmonicIndex = 1; harmonicIndex < _numHarmonics + 1; harmonicIndex++ ) {
+      harmonicPosition(freqs, _f0, _f1, harmonicIndex, &mu);
+      harmonicWeight(freqs, _f0, _f1, harmonicIndex, &a);
+      harmonicSpread(freqs, _f0, _f1, harmonicIndex, &fi);
+
+      gaussian(row, mu, fi, &gauss);
+      
+      _projectionMatrix.row(row) += a.cwise() * gauss;
+    }
+  }
+  */
 
   MatrixXR sourceWeight = MatrixXR::Identity( _numFreqCandidates, _numFreqCandidates );
   MatrixXR targetWeight = MatrixXR::Identity( _halfSize, _halfSize );
@@ -105,16 +126,30 @@ void PitchInverseProblem::setup(){
   DEBUG("PITCHINVERSEPROBLEM: Finished setup.");
 }
 
-Real PitchInverseProblem::harmonicWeight(Real period, Real tLow, Real tUp, int harmonicIndex){
-  return ((_samplerate / tLow) + _alpha) / ((harmonicIndex * _samplerate / tUp) + _beta);
-  //return ((1.0 / period) + _alpha) / (((Real)harmonicIndex / period) + _beta);
+
+void PitchInverseProblem::harmonicWeight(MatrixXR f, Real fMin, Real fMax, int harmonicIndex, MatrixXR* result){
+  (*result) = MatrixXR::Constant(f.rows(), f.cols(), (fMax + _alpha) / ((harmonicIndex * fMin) + _beta));
 }
 
-Real PitchInverseProblem::harmonicPosition(Real period, Real tLow, Real tUp, int harmonicIndex){
-  return (harmonicIndex / period * sqrt(1.0 + (pow(harmonicIndex, 2.0) - 1.0) * _inharmonicity));
+void PitchInverseProblem::harmonicPosition(MatrixXR f, Real fMin, Real fMax, int harmonicIndex, MatrixXR* result){
+  (*result) = (harmonicIndex * f * sqrt(1.0 + (pow(harmonicIndex, 2.0) - 1.0) * _inharmonicity)) * (Real)_fftSize / (2.0 * (Real)_samplerate);
 }
 
-Real PitchInverseProblem::harmonicSpread(Real period, Real tLow, Real tUp, int harmonicIndex){
+void PitchInverseProblem::harmonicSpread(MatrixXR f, Real fMin, Real fMax, int harmonicIndex, MatrixXR* result){
+  (*result) = MatrixXR::Constant(f.rows(), f.cols(), _peakBandwidth);
+}
+
+Real PitchInverseProblem::harmonicWeight(Real f, Real fMin, Real fMax, int harmonicIndex){
+  //return ((_samplerate / tLow) + _alpha) / ((harmonicIndex * _samplerate / tUp) + _beta);
+  return ((harmonicIndex * f) + _beta) / ((harmonicIndex * f) + _alpha);
+  //return 1.0;
+}
+
+Real PitchInverseProblem::harmonicPosition(Real f, Real fMin, Real fMax, int harmonicIndex){
+  return (harmonicIndex * f * sqrt(1.0 + (pow(harmonicIndex, 2.0) - 1.0) * _inharmonicity)) * (Real)_fftSize / (2.0 * (Real)_samplerate);
+}
+
+Real PitchInverseProblem::harmonicSpread(Real f, Real fMin, Real fMax, int harmonicIndex){
   // TODO: change this by a spread function which might or might not change with the position
   //       or other things such as the chirp rate or inharmonicity error
   return _peakBandwidth;

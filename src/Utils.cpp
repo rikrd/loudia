@@ -608,3 +608,7 @@ Real nextPowerOf2(Real a, int factor){
 Real gaussian(Real x, Real mu, Real fi){
   return exp(- pow((x - mu), 2.0) / (2.0 * pow(fi, 2.0))) / (fi * sqrt(2.0 * M_PI));
 }
+
+void gaussian(Real x, MatrixXR mu, MatrixXR fi, MatrixXR* result){
+  (*result) = (((-mu).cwise() + x).cwise().square().cwise() / (2.0 * fi.cwise().square())).cwise().exp().cwise() / (sqrt(2.0 * M_PI) * fi);
+}

@@ -36,7 +36,7 @@ protected:
   int _numMaxPitches;
   int _numHarmonics;
   int _numFreqCandidates;
-  int _peakBandwidth;
+  Real _peakBandwidth;
 
   Real _samplerate;
 
@@ -54,7 +54,7 @@ protected:
   PeakInterpolate _peakInterp;
 
 public:
-  PitchInverseProblem(int fftSize, Real f0, Real f1, Real samplerate = 1.0, int maxNumPitches = 5, int numHarmonics = 10, int numFreqCandidates = -1, int peakBandwidth = 8);
+  PitchInverseProblem(int fftSize, Real f0, Real f1, Real samplerate = 1.0, int maxNumPitches = 5, int numHarmonics = 10, int numFreqCandidates = -1, Real peakBandwidth = 8);
 
   ~PitchInverseProblem();
 
@@ -64,11 +64,17 @@ public:
 
   void projectionMatrix(MatrixXR* matrix) const;
 
-  Real harmonicWeight(Real period, Real tLow, Real tUp, int harmonicIndex);
+  void harmonicWeight(MatrixXR f, Real fMin, Real fMax, int harmonicIndex, MatrixXR* result);
 
-  Real harmonicSpread(Real perdio, Real tLow, Real tUp, int harmonicIndex);
+  void harmonicSpread(MatrixXR f, Real fMin, Real fMax, int harmonicIndex, MatrixXR* result);
 
-  Real harmonicPosition(Real period, Real tLow, Real tUp, int harmonicIndex);
+  void harmonicPosition(MatrixXR f, Real fMin, Real fMax, int harmonicIndex, MatrixXR* result);
+
+  Real harmonicWeight(Real f, Real fMin, Real fMax, int harmonicIndex);
+
+  Real harmonicSpread(Real f, Real fMin, Real fMax, int harmonicIndex);
+
+  Real harmonicPosition(Real f, Real fMin, Real fMax, int harmonicIndex);
 
   void reset();
 };

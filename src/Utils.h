@@ -184,4 +184,6 @@ Real nextPowerOf2(Real a, int factor = 0);
 
 Real gaussian(Real x, Real mu, Real fi);
 
+void gaussian(Real x, MatrixXR mu, MatrixXR fi, MatrixXR* result);
+
 #endif  /* UTILS_H */
