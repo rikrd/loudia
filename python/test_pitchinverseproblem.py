@@ -54,9 +54,9 @@ stream = pyricaudio.fft_ricaudio(stream, {'inputKey': 'windowed',
 
 peakBandwidth = 4
 peakCandidateCount = 4
-numMaxPitches = 2
-numHarmonics = 20
-numCandidates = 1024
+numMaxPitches = 1
+numHarmonics = 10
+numCandidates = 700
 
 whitening = ricaudio.SpectralWhitening(fftSize, 50.0, 2100.0, samplerate)
 pitchInverseProblem = ricaudio.PitchInverseProblem(fftSize, 50, 2100, samplerate, numMaxPitches, numHarmonics, numCandidates, peakBandwidth)
@@ -110,7 +110,7 @@ frameCount = specs.shape[0] - 1
 
 if plot:
 
-    pitches[ saliencies < 0.001] = scipy.NaN
+    #pitches[ saliencies < 0.001] = scipy.NaN
 
     # Get the onsets
     annotation = os.path.splitext(filename)[0] + '.onset_annotated'
