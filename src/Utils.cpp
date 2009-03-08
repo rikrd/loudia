@@ -283,7 +283,7 @@ void range(Real start, Real end, int steps, int rows, InMatrixType* in){
   in->resize(rows, steps);
   
   for (int i = 0; i<steps; i++) {
-    (*in).col(i).setConstant( i*step + start );
+    (*in).col(i).setConstant( (typename InMatrixType::Scalar)(i*step + start) );
   }
 }
 
@@ -380,7 +380,7 @@ int comb(int N, int k) {
   
   int val = 1;
   for (int i = 0; i < min(k, N-k); i++) {
-    val = floor((val * (N - i)) / (i + 1));
+    val = (int)floor((val * (N - i)) / (i + 1));
   }
 
   return val;
@@ -406,7 +406,7 @@ void bilinear(const MatrixXC& b, const MatrixXC& a, Real fs, MatrixXR*  bout, Ma
         for ( int l = 0; l < (maxsize - i); l++ ) {
           
           if((k + l) == j)
-            val += comb(i, k) * comb(maxsize - i - 1, l) * b.col(bsize - 1 - i) * pow(2*fs, i) * pow(-1, k);
+            val += comb(i, k) * comb(maxsize - i - 1, l) * b.col(bsize - 1 - i) * pow(2*fs, (Real)i) * pow((Real)-1, (Real)k);
         }
       }
     }
@@ -422,7 +422,7 @@ void bilinear(const MatrixXC& b, const MatrixXC& a, Real fs, MatrixXR*  bout, Ma
         for ( int l = 0; l < (maxsize - i); l++ ) {
           
           if((k + l) == j)
-            val += comb(i, k) * comb(maxsize - i - 1, l) * a.col(asize - 1 - i) * pow(2*fs, i) * pow(-1, k);
+            val += comb(i, k) * comb(maxsize - i - 1, l) * a.col(asize - 1 - i) * pow((Real)2.0*fs, (Real)i) * pow((Real)-1, (Real)k);
         }
       }
     }
@@ -446,8 +446,8 @@ void raisedCosTransform(Real position, Real magnitude,
                         Real alpha, Real beta, 
                         MatrixXR* spectrum, int* begin, int* end, int bandwidth) {
   
-  (*begin) = max((position - bandwidth / 2.0), 0.0);
-  (*end) = min(ceil(position + bandwidth / 2.0 + 1), fftSize/2.0);
+  (*begin) = (int)max((position - bandwidth / 2.0), 0.0);
+  (*end) = (int)min(ceil(position + bandwidth / 2.0 + 1), fftSize/2.0);
   
   if ( (*end) <= (*begin) ) {
     DEBUG("ERROR: end (" << (*end) << ") must be higher than begin (" << (*begin) << ")");
@@ -599,7 +599,7 @@ void derivate(const MatrixXR& a, MatrixXR* b) {
   (*b).block(0, 1, rows, cols - 1) = a.block(0, 1, rows, cols - 1) - a.block(0, 0, rows, cols - 1);
 }
 
-Real nextPowerOf2(Real a, int factor){
-  if (a == 0) return pow(2, 1 + factor);
-  return pow(2, ceil(log2(a)) + factor);
+int nextPowerOf2(Real a, int factor){
+  if (a == 0) return (int)pow(2.0, 1.0 + (Real)factor);
+  return (int)pow(2.0, ceil(log2(a)) + (Real)factor);
 }

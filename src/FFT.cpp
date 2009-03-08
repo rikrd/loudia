@@ -78,8 +78,8 @@ void FFT::process(const MatrixXR& frames, MatrixXC* ffts){
     // Put the data in _in
     if(_zeroPhase){
 
-      int half_plus = ceil((Real)cols / 2.0);
-      int half_minus = floor((Real)cols / 2.0);
+      int half_plus = (int)ceil((Real)cols / 2.0);
+      int half_minus = (int)floor((Real)cols / 2.0);
       
       // Put second half of the frame at the beginning 
       Eigen::Map<MatrixXR>(_in, 1, _fftSize).block(0, 0, 1, half_plus) = frames.row(i).block(0, half_minus, 1, half_plus);

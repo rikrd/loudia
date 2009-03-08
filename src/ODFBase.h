@@ -33,7 +33,6 @@ public:
   virtual void process(const MatrixXC& fft, MatrixXR* odfValue) = 0;
   
   virtual void reset() = 0;
-
 };
 
 #endif  /* ODFBASE_H */
