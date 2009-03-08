@@ -74,8 +74,8 @@ Real PitchSaliency::saliency(Real period, Real deltaPeriod, Real tLow, Real tUp,
   
   for ( int m = 1; m < _numHarmonics; m++ ) {
     
-    int begin = round(m * _fftSize / (period + (deltaPeriod / 2.0)));
-    int end = min(round(m * _fftSize / (period - (deltaPeriod / 2.0))), cols - 1.0);
+    int begin = (int)round(m * _fftSize / (period + (deltaPeriod / 2.0)));
+    int end = min((int)round(m * _fftSize / (period - (deltaPeriod / 2.0))), cols - 1);
 
     if (begin < end) sum += harmonicWeight(period, tLow, tUp, m) * spectrum.block(0, begin, 1, end - begin).maxCoeff();
   }
