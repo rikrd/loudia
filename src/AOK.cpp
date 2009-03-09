@@ -75,7 +75,7 @@ void AOK::setup(){
 
   nlag = tlag + 1;	/* one-sided number of AF lags	*/
   mfft = po2(fftlen);
-  slen = 1.42*(nlag-1) + nraf + 3;	/* number of delayed samples to maintain	*/
+  slen = (int)(1.42*(nlag-1) + nraf + 3);	/* number of delayed samples to maintain	*/
   
   pi = 3.141592654;
   vol = (2.0*vol*nphi*nrad*nrad)/(pi*tlag);	/* normalize volume	*/
@@ -202,7 +202,7 @@ void AOK::reset(){
 }
 
 int AOK::frameSize() const{
-  return 2.42 * _windowSize + 3;
+  return (int)(2.42 * _windowSize + 3);
 }
 
 int AOK::fftSize() const{

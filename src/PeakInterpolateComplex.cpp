@@ -112,8 +112,8 @@ void PeakInterpolateComplex::process(const MatrixXC& input,
         (*peakMagnitudesInterp)(row, i) = mag - 0.25 * (leftMag - rightMag) * interpFactor;
 
         // Calculate the interpolated phase
-        leftPhase = _phases(row, floor((*peakPositionsInterp)(row, i)));
-        rightPhase = _phases(row, floor((*peakPositionsInterp)(row, i)) + 1);
+        leftPhase = _phases(row, (int)floor((*peakPositionsInterp)(row, i)));
+        rightPhase = _phases(row, (int)floor((*peakPositionsInterp)(row, i)) + 1);
         
         interpFactor = (interpFactor >= 0) ? interpFactor : interpFactor + 1;
         

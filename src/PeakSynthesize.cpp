@@ -56,7 +56,7 @@ void PeakSynthesize::process(const MatrixXR& trajPositions, const MatrixXR& traj
   
   DEBUG("PEAKSYNTHESIZE: Processing");
   
-  spectrum->resize(trajPositions.rows(), ceil(_fftSize/2.0));
+  spectrum->resize(trajPositions.rows(), (int)ceil(_fftSize/2.0));
   spectrum->setZero();
   
   MatrixXR trajMags;

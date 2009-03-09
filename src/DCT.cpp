@@ -85,7 +85,7 @@ void DCT::type1Matrix(MatrixXR* dctMatrix) {
   if ( _scale ) norm = sqrt(Real(2.0)/Real(length - 1));
   
   for(int i=0; i < length; i++){
-    (*dctMatrix)(i, length - 1) = norm * 0.5 * pow(-1, i);
+    (*dctMatrix)(i, length - 1) = norm * 0.5 * pow((Real)-1, (Real)i);
     for(int j=1; j < length-1; j++){
       (*dctMatrix)(i,j) = norm * cos(Real(j * i) * M_PI / Real(length - 1));
     }

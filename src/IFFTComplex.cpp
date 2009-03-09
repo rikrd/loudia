@@ -77,8 +77,8 @@ void IFFTComplex::process(const FrameMatrixType& ffts, MatrixXC* frames){
     // Take the data from _out
     if(_zeroPhase){
 
-      int half_plus = ceil((Real)_frameSize / 2.0);
-      int half_minus = floor((Real)_frameSize / 2.0);
+      int half_plus = (int)ceil((Real)_frameSize / 2.0);
+      int half_minus = (int)floor((Real)_frameSize / 2.0);
       
       // Take second half of the frame from the beginning 
       (*frames).row(i).block(0, half_minus, 1, half_plus) = Eigen::Map<MatrixXC>(reinterpret_cast< Complex* >(_out), 1, _fftSize).block(0, 0, 1, half_plus) / _fftSize;

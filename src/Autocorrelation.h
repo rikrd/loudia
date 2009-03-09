@@ -40,7 +40,7 @@ protected:
   IFFT _ifft;
 
 public:
-  Autocorrelation(int inputLength, int maxLag = std::numeric_limits<Real>::infinity(), int minLag = 0);
+  Autocorrelation(int inputLength, int maxLag = std::numeric_limits<int>::infinity(), int minLag = 0);
   Autocorrelation(int inputLength, int maxLag, int minLag, bool useFFT);
 
   ~Autocorrelation();

@@ -32,8 +32,8 @@ SpectralNoiseSuppression::SpectralNoiseSuppression(int fftSize, Real f0, Real f1
   _samplerate( samplerate ),
   _f0( f0 ),
   _f1( f1 ),
-  _k0( ( _f0 / _samplerate ) * _fftSize ),
-  _k1( ( _f1 / _samplerate ) * _fftSize )
+  _k0( (int)(( _f0 / _samplerate ) * _fftSize) ),
+  _k1( (int)(( _f1 / _samplerate ) * _fftSize) )
 {
   DEBUG("SPECTRALNOISESUPPRESSION: Construction fftSize: " << _fftSize
         << " samplerate: " << _samplerate
@@ -54,14 +54,14 @@ void SpectralNoiseSuppression::setup(){
   // Prepare the bands for the moving average
   int _halfSize = (_fftSize / 2) + 1;
 
-  Real minHalfBand = 100.0 / _samplerate * _fftSize / 2.0;
+  int minHalfBand = (int)(100.0 / _samplerate * _fftSize / 2.0);
 
   MatrixXI starts(_halfSize, 1);
   vector<MatrixXR> weights;
   weights.reserve(_halfSize);
   for ( int i = 0; i < _halfSize; i++ ) {
-    int halfBandUnder = max( minHalfBand,  (Real)(2.0/3.0*i));
-    int halfBandOver = max( minHalfBand,  (Real)(i/2.0*3.0));
+    int halfBandUnder = max( minHalfBand,  (int)(2.0 / 3.0 * i));
+    int halfBandOver = max( minHalfBand,  (int)(i / 2.0 * 3.0));
 
     int begin = max( i - halfBandUnder, 0 );
     int end = min( i + halfBandOver, _halfSize - 1 );

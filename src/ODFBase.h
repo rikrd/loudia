@@ -34,6 +34,7 @@ public:
   
   virtual void reset() = 0;
 
+  virtual ~ODFBase() {};
 };
 
 #endif  /* ODFBASE_H */

@@ -48,12 +48,12 @@ void convolve(const MatrixXR& a, const MatrixXR& b, MatrixXR* c);
  * returns the correlation of both
  */
 void correlate(const MatrixXC& a, const MatrixXC& b, MatrixXC* c, 
-               int _minlag = -std::numeric_limits<Real>::infinity(), 
-               int _maxlag = std::numeric_limits<Real>::infinity());
+               int _minlag = -std::numeric_limits<int>::infinity(), 
+               int _maxlag = std::numeric_limits<int>::infinity());
 
 void correlate(const MatrixXR& a, const MatrixXR& b, MatrixXR* c, 
-               int _minlag = -std::numeric_limits<Real>::infinity(), 
-               int _maxlag = std::numeric_limits<Real>::infinity());
+               int _minlag = -std::numeric_limits<int>::infinity(), 
+               int _maxlag = std::numeric_limits<int>::infinity());
 
 /**
  * Given a row matrix 
@@ -61,11 +61,11 @@ void correlate(const MatrixXR& a, const MatrixXR& b, MatrixXR* c,
  */
 void autocorrelate(const MatrixXR& a, MatrixXR* c, 
                    int _minlag = 0, 
-                   int _maxlag = std::numeric_limits<Real>::infinity());
+                   int _maxlag = std::numeric_limits<int>::infinity());
 
 void autocorrelate(const MatrixXC& a, MatrixXC* c, 
                    int _minlag = 0, 
-                   int _maxlag = std::numeric_limits<Real>::infinity());
+                   int _maxlag = std::numeric_limits<int>::infinity());
 
 
 /**
@@ -180,7 +180,7 @@ void freqz(const MatrixXR& b, const MatrixXR& w, MatrixXC* resp);
 
 void derivate(const MatrixXR& a, MatrixXR* b);
 
-Real nextPowerOf2(Real a, int factor = 0);
+int nextPowerOf2(Real a, int factor = 0);
 
 Real gaussian(Real x, Real mu, Real fi);
 
