@@ -366,11 +366,11 @@ void lowPassToLowPass(const MatrixXC& b, const MatrixXC& a, Real freq, MatrixXC*
   int start2 = max(asize - bsize, 0);
   
   for ( int i = 0; i < bsize; i++ ) {
-    (*bout).col(i) *= pwo.col( start2 + i ).cwise().inverse() * pwo.col( start1 );
+    (*bout).col(i).cwise() *= pwo.col( start2 + i ).cwise().inverse() * pwo.col( start1 );
   }
 
   for ( int i = 0; i < asize; i++ ) {
-    (*aout).col(i) *= pwo.col( start1 + i ).cwise().inverse() * pwo.col( start1 );
+    (*aout).col(i).cwise() *= pwo.col( start1 + i ).cwise().inverse() * pwo.col( start1 );
   }
 
 }
