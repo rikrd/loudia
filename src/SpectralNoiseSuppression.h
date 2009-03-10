@@ -38,7 +38,6 @@ protected:
   int _k1;
 
   MatrixXR _g;
-  MatrixXR _noise;
 
   Bands _bands;
 
@@ -49,7 +48,7 @@ public:
 
   void setup();
 
-  void process(const MatrixXR& spectrum, MatrixXR* result);
+  void process(const MatrixXR& spectrum, MatrixXR* noise, MatrixXR* result);
 
   void reset();
 };

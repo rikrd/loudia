@@ -64,7 +64,7 @@ if interactivePlot:
 for frame in stream:
     spec = scipy.array(abs(frame['fft']), dtype = scipy.float32)
 
-    result = supprnoise.process( spec )
+    result, noise = supprnoise.process( spec )
 
     print result
 
@@ -76,7 +76,8 @@ for frame in stream:
         pylab.subplot(212)
         pylab.hold(False)
         pylab.plot(result[0,:], label = 'Noise Suppressed Spectrum')
-
+        pylab.hold(True)
+        pylab.plot(noise[0,:], label = 'Noise')
     
     specs.append( spec )
     results.append( spec )
