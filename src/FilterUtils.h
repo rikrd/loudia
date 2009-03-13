@@ -70,6 +70,12 @@ void lowPassToHighPass(const MatrixXC& b, const MatrixXC& a, Real freq, MatrixXC
 void lowPassToBandPass(const MatrixXC& b, const MatrixXC& a, Real freq, Real freqStop, MatrixXC*  bout, MatrixXC*  aout);
 
 /**
+ * Convert from the b and a coefficients from low pass to band stop of an IIR filter with critical frequency 1.0
+ * to the coefficients with the critical frequency passed as argument
+ */
+void lowPassToBandStop(const MatrixXC& b, const MatrixXC& a, Real freq, Real freqStop, MatrixXC*  bout, MatrixXC*  aout);
+
+/**
  * Normalize to a first coefficient
  * 
  */

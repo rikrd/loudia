@@ -125,7 +125,6 @@ void lowPassToLowPass(const MatrixXC& b, const MatrixXC& a, Real freq, MatrixXC*
   normalize((*bout), (*aout));
 }
 
-
 void lowPassToHighPass(const MatrixXC& b, const MatrixXC& a, Real freq, MatrixXC*  bout, MatrixXC*  aout) {
   const int asize = a.cols();
   const int bsize = b.cols();
@@ -150,7 +149,6 @@ void lowPassToHighPass(const MatrixXC& b, const MatrixXC& a, Real freq, MatrixXC
 
   normalize((*bout), (*aout));
 }
-
 
 void lowPassToBandPass(const MatrixXC& b, const MatrixXC& a, Real freq, Real bandwidth, MatrixXC*  bout, MatrixXC*  aout) { 
   const int asize = a.cols();
@@ -197,8 +195,57 @@ void lowPassToBandPass(const MatrixXC& b, const MatrixXC& a, Real freq, Real ban
   }
 
   normalize((*bout), (*aout));
-  return;
 }
+
+
+void lowPassToBandStop(const MatrixXC& b, const MatrixXC& a, Real freq, Real bandwidth, MatrixXC*  bout, MatrixXC*  aout) { 
+  const int asize = a.cols();
+  const int bsize = b.cols();
+
+  const int rows = a.rows();
+
+  const int maxsize = max(asize - 1, bsize - 1);
+  
+  const int maxasize = 2 * maxsize;
+  const int maxbsize = 2 * maxsize;
+
+  const Real freqSq = freq * freq;
+
+  (*aout) = MatrixXC::Zero(rows, maxasize + 1);
+  (*bout) = MatrixXC::Zero(rows, maxbsize + 1);
+
+  for ( int j = 0; j < (maxbsize + 1); j++ ) {
+    MatrixXC val = MatrixXC::Zero(rows, 1);
+    
+    for ( int i = 0; i < bsize; i++ ) {
+      for ( int k = 0; k < (maxsize - i + 1); k++ ) {
+        if ( i + 2 * k == j ) {
+          val += (Real)comb(maxsize - i, k) * b.col(bsize - 1 - i) * pow(freqSq, (Real)(maxsize - i - k)) * pow(bandwidth, (Real)i);
+        }
+      }
+    }
+    
+    (*bout).col(maxbsize - j) = val;
+  }
+
+  for ( int j = 0; j < (maxasize + 1); j++ ) {
+    MatrixXC val = MatrixXC::Zero(rows, 1);
+    
+    for ( int i = 0; i < asize; i++ ) {
+      for ( int k = 0; k < (maxsize - i + 1); k++ ) {
+        if ( i + 2 * k == j ) {
+          val += (Real)comb(maxsize - i, k) * a.col(asize - 1 - i) * pow(freqSq, (Real)(maxsize - i - k)) * pow(bandwidth, (Real)i);
+        }
+      }
+    }
+    
+    (*aout).col(maxasize - j) = val;
+  }
+
+
+  normalize((*bout), (*aout));
+}
+
 
 void normalize(MatrixXC& b, MatrixXC& a) {
 

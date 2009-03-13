@@ -18,7 +18,7 @@ rp = 0.5
 order = 4
 
 rc = ricaudio.BandPass( order, freq, freqStop, rp, ricaudio.CHEBYSHEVI )
-sc_b, sc_a = scipy.signal.cheby1(order, rp, [freq, freqStop], btype='band', analog=0, output='ba')
+sc_b, sc_a = scipy.signal.cheby1(order, rp, [freq, freqStop], btype='bandpass', analog=0, output='ba')
 
 rc_b = rc.b().T
 rc_a = rc.a().T
@@ -29,10 +29,10 @@ if plot:
     plotFreqz(rc_b, rc_a, title = 'BandPass 1 order %d' % order)
 
 # Test with type I with odd order
-order = 11
+order = 7
 
 rc = ricaudio.BandPass( order, freq, freqStop, rp, ricaudio.CHEBYSHEVI )
-sc_b, sc_a = scipy.signal.cheby1( order, rp, [freq, freqStop], btype='band', analog=0, output='ba' )
+sc_b, sc_a = scipy.signal.cheby1( order, rp, [freq, freqStop], btype='bandpass', analog=0, output='ba' )
 
 rc_b = rc.b().T
 rc_a = rc.a().T
@@ -48,7 +48,7 @@ rp = 40
 order = 4
 
 rc = ricaudio.BandPass( order, freq, freqStop, rp, ricaudio.CHEBYSHEVII )
-sc_b, sc_a = scipy.signal.cheby2(order, rp, [freq, freqStop], btype='band', analog=0, output='ba')
+sc_b, sc_a = scipy.signal.cheby2(order, rp, [freq, freqStop], btype='bandpass', analog=0, output='ba')
 
 rc_b = rc.b().T
 rc_a = rc.a().T
@@ -60,10 +60,10 @@ if plot:
 
 
 # Test with type II with odd order
-order = 11
+order = 7
 
 rc = ricaudio.BandPass( order, freq, freqStop, rp, ricaudio.CHEBYSHEVII )
-sc_b, sc_a = scipy.signal.cheby2(order, rp, [freq, freqStop], btype='band', analog=0, output='ba')
+sc_b, sc_a = scipy.signal.cheby2(order, rp, [freq, freqStop], btype='bandpass', analog=0, output='ba')
 
 rc_b = rc.b().T
 rc_a = rc.a().T
