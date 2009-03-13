@@ -122,6 +122,7 @@ void lowPassToLowPass(const MatrixXC& b, const MatrixXC& a, Real freq, MatrixXC*
     (*aout).col(i).cwise() *= pwo.col( start1 + i ).cwise().inverse() * pwo.col( start1 );
   }
 
+  normalize((*bout), (*aout));
 }
 
 
@@ -146,8 +147,69 @@ void lowPassToHighPass(const MatrixXC& b, const MatrixXC& a, Real freq, MatrixXC
   
   (*aout) = (*aout).cwise() * pwo;
   (*bout) = (*bout).cwise() * pwo;
+
+  normalize((*bout), (*aout));
 }
 
+
+void lowPassToBandPass(const MatrixXC& b, const MatrixXC& a, Real freq, Real bandwidth, MatrixXC*  bout, MatrixXC*  aout) { 
+  const int asize = a.cols();
+  const int bsize = b.cols();
+
+  const int rows = a.rows();
+
+  const int maxsize = max(asize - 1, bsize - 1);
+  
+  const int maxasize = maxsize + asize - 1;
+  const int maxbsize = maxsize + bsize - 1;
+
+  const Real freqSq = freq * freq;
+
+  (*aout) = MatrixXC::Zero(rows, maxasize + 1);
+  (*bout) = MatrixXC::Zero(rows, maxbsize + 1);
+
+  for ( int j = 0; j < (maxbsize + 1); j++ ) {
+    MatrixXC val = MatrixXC::Zero(rows, 1);
+    
+    for ( int i = 0; i < bsize; i++ ) {
+      for ( int k = 0; k < (i + 1); k++ ) {
+        if ( maxsize - i + 2 * k == j ) {
+          val += (Real)comb(i, k) * b.col(bsize - 1 - i) * pow(freqSq, (Real)(i-k)) / pow(bandwidth, (Real)i);
+        }
+      }
+    }
+    
+    (*bout).col(maxbsize - j) = val;
+  }
+
+  for ( int j = 0; j < (maxasize + 1); j++ ) {
+    MatrixXC val = MatrixXC::Zero(rows, 1);
+    
+    for ( int i = 0; i < asize; i++ ) {
+      for ( int k = 0; k < (i + 1); k++ ) {
+        if ( maxsize - i + 2 * k == j ) {
+          val += (Real)comb(i, k) * a.col(asize - 1 - i) * pow(freqSq, (Real)(i-k)) / pow(bandwidth, (Real)i);
+        }
+      }
+    }
+
+    (*aout).col(maxasize - j) = val;
+  }
+
+  normalize((*bout), (*aout));
+  return;
+}
+
+void normalize(MatrixXC& b, MatrixXC& a) {
+
+  for (int i = 0; i < b.cols(); i++ ) {
+    b.col(i).cwise() /= a.col(0);
+  }
+
+  for (int i = a.cols()-1; i >= 0; i-- ) {
+    a.col(i).cwise() /= a.col(0);
+  }
+}
 
 void bilinear(const MatrixXC& b, const MatrixXC& a, Real fs, MatrixXR*  bout, MatrixXR*  aout) {
   const int asize = a.cols();

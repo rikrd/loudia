@@ -27,14 +27,13 @@
 using namespace std;
 using namespace Eigen;
 
-HighPass::HighPass( int order, Real freq, Real rippleDB, int channels, FilterType filterType) : 
+HighPass::HighPass( int order, Real freq, Real rippleDB, FilterType filterType, int channels) : 
   _order(order),
   _freq(freq),
   _rippleDB(rippleDB),
   _channels(channels),
   _filter(channels),
   _filterType(filterType)
-                                                                                           
 {
   DEBUG("HIGHPASS: Constructor order: " << order << 
         ", freq: " << freq << 

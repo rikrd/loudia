@@ -21,22 +21,24 @@
 
 #include <vector>
 
-#include "LowPass.h"
+#include "BandPass.h"
 #include "Utils.h"
 
 using namespace std;
 using namespace Eigen;
 
-LowPass::LowPass( int order, Real freq, Real rippleDB, FilterType filterType, int channels) : 
+BandPass::BandPass( int order, Real freq, Real freqStop, Real rippleDB, FilterType filterType, int channels) : 
   _order(order),
   _freq(freq),
+  _freqStop(freqStop),
   _rippleDB(rippleDB),
   _channels(channels),
   _filter(channels),
-  _filterType(filterType) 
+  _filterType(filterType)
 {
-  DEBUG("LOWPASS: Constructor order: " << order << 
+  DEBUG("BANDPASS: Constructor order: " << order << 
         ", freq: " << freq << 
+        ", freqStop: " << freqStop <<        
         ", rippleDB: " << rippleDB );
 
   if ( order < 1 ) {
@@ -45,13 +47,13 @@ LowPass::LowPass( int order, Real freq, Real rippleDB, FilterType filterType, in
   
   setup();
   
-  DEBUG("LOWPASS: Constructed");
+  DEBUG("BANDPASS: Constructed");
 }
 
-void LowPass::setup(){
-  DEBUG("LOWPASS: Setting up...");
+void BandPass::setup(){
+  DEBUG("BANDPASS: Setting up...");
 
-  DEBUG("LOWPASS: Getting zpk");  
+  DEBUG("BANDPASS: Getting zpk");  
   // Get the lowpass z, p, k
   MatrixXC zeros, poles;
   Real gain;
@@ -66,16 +68,16 @@ void LowPass::setup(){
     break;
   }
   
-  DEBUG("LOWPASS: zeros:" << zeros );
-  DEBUG("LOWPASS: poles:" << poles );
-  DEBUG("LOWPASS: gain:" << gain );
+  DEBUG("BANDPASS: zeros:" << zeros );
+  DEBUG("BANDPASS: poles:" << poles );
+  DEBUG("BANDPASS: gain:" << gain );
   
   // Convert zpk to ab coeffs
   MatrixXC a;
   MatrixXC b;
   zpkToCoeffs(zeros, poles, gain, &b, &a);
 
-  DEBUG("LOWPASS: Calculated the coeffs");
+  DEBUG("BANDPASS: Calculated the coeffs");
 
   // Since we cannot create matrices of Nx0
   // we have created at least one Zero in 0
@@ -88,20 +90,24 @@ void LowPass::setup(){
   // Get the warped critical frequency
   Real fs = 2.0;
   Real warped = 2.0 * fs * tan( M_PI * _freq / fs );
-  
+  Real warpedStop = 2.0 * fs * tan( M_PI * _freqStop / fs );
+
+  Real warpedCenter = sqrt(warped * warpedStop);
+  Real warpedBandwidth = warpedStop - warped;
+
   // Warpped coeffs
   MatrixXC wa;
   MatrixXC wb;
-  lowPassToLowPass(b, a, warped, &wb, &wa);
+  lowPassToBandPass(b, a, warpedCenter, warpedBandwidth, &wb, &wa);
 
-  DEBUG("LOWPASS: Calculated the low pass to low pass");
+  DEBUG("BANDPASS: Calculated the low pass to band pass");
   
   // Digital coeffs
   MatrixXR da;
   MatrixXR db;
   bilinear(wb, wa, fs, &db, &da);
   
-  DEBUG("LOWPASS: setup the coeffs");
+  DEBUG("BANDPASS: setup the coeffs");
 
   // Set the coefficients to the filter
   _filter.setA( da.transpose() );
@@ -109,22 +115,22 @@ void LowPass::setup(){
   
   _filter.setup();
   
-  DEBUG("LOWPASS: Finished set up...");
+  DEBUG("BANDPASS: Finished set up...");
 }
 
-void LowPass::a(MatrixXR* a) {
+void BandPass::a(MatrixXR* a) {
   _filter.a(a);
 }
 
-void LowPass::b(MatrixXR* b) {
+void BandPass::b(MatrixXR* b) {
   _filter.b(b);
 }
 
-void LowPass::process(MatrixXR samples, MatrixXR* filtered) {
+void BandPass::process(MatrixXR samples, MatrixXR* filtered) {
   _filter.process(samples, filtered);
 }
 
-void LowPass::reset(){
+void BandPass::reset(){
   // Initial values
   _filter.reset();
 }

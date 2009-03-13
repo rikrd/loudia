@@ -37,7 +37,7 @@ protected:
   FilterType _filterType;
 
 public:
-  HighPass(int order, Real freq, Real rippleDB, int channels = 1, FilterType filterType = CHEBYSHEVII);
+  HighPass(int order, Real freq, Real rippleDB, FilterType filterType = CHEBYSHEVII, int channels = 1);
 
   void setup();
 

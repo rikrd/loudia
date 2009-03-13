@@ -16,8 +16,8 @@
 ** Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */                                                                          
 
-#ifndef LOWPASS_H
-#define LOWPASS_H
+#ifndef BANDPASS_H
+#define BANDPASS_H
 
 #include "Typedefs.h"
 #include "Debug.h"
@@ -25,10 +25,12 @@
 #include "Filter.h"
 #include "FilterUtils.h"
 
-class LowPass {
+class BandPass {
 protected:
   int _order;
   Real _freq;
+  Real _freqStop;
+  Real _bandwidth;
   Real _rippleDB;
   int _channels;
   
@@ -37,7 +39,7 @@ protected:
   FilterType _filterType;
 
 public:
-  LowPass(int order, Real freq, Real rippleDB, FilterType filterType = CHEBYSHEVII, int channels = 1);
+  BandPass(int order, Real freq, Real freqStop, Real rippleDB, FilterType filterType = CHEBYSHEVII, int channels = 1);
 
   void setup();
 
@@ -49,4 +51,4 @@ public:
   void reset();
 };
 
-#endif  /* LOWPASS_H */
+#endif  /* BANDPASS_H */

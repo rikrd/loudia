@@ -16,7 +16,7 @@ fs = 8000
 rp = 0.05
 order = 4
 
-rc = ricaudio.LowPass( order, freq, rp, 1 )
+rc = ricaudio.LowPass( order, freq, rp, ricaudio.CHEBYSHEVI )
 sc_b, sc_a = scipy.signal.cheby1(order, rp, freq, btype='low', analog=0, output='ba')
 
 rc_b = rc.b().T
@@ -30,7 +30,7 @@ if plot:
 # Test with type I with odd order
 order = 11
 
-rc = ricaudio.LowPass( order, freq, rp, 1, ricaudio.CHEBYSHEVI )
+rc = ricaudio.LowPass( order, freq, rp, ricaudio.CHEBYSHEVI )
 sc_b, sc_a = scipy.signal.cheby1( order, rp, freq, btype='low', analog=0, output='ba' )
 
 rc_b = rc.b().T
@@ -46,7 +46,7 @@ if plot:
 rp = 40
 order = 4
 
-rc = ricaudio.LowPass( order, freq, rp, 1, ricaudio.CHEBYSHEVII )
+rc = ricaudio.LowPass( order, freq, rp, ricaudio.CHEBYSHEVII )
 sc_b, sc_a = scipy.signal.cheby2(order, rp, freq, btype='low', analog=0, output='ba')
 
 rc_b = rc.b().T
@@ -61,7 +61,7 @@ if plot:
 # Test with type II with odd order
 order = 11
 
-rc = ricaudio.LowPass( order, freq, rp, 1, ricaudio.CHEBYSHEVII )
+rc = ricaudio.LowPass( order, freq, rp, ricaudio.CHEBYSHEVII )
 sc_b, sc_a = scipy.signal.cheby2(order, rp, freq, btype='low', analog=0, output='ba')
 
 rc_b = rc.b().T

@@ -64,6 +64,18 @@ void lowPassToLowPass(const MatrixXC& b, const MatrixXC& a, Real freq, MatrixXC*
 void lowPassToHighPass(const MatrixXC& b, const MatrixXC& a, Real freq, MatrixXC*  bout, MatrixXC*  aout);
 
 /**
+ * Convert from the b and a coefficients from low pass to band pass of an IIR filter with critical frequency 1.0
+ * to the coefficients with the critical frequency passed as argument
+ */
+void lowPassToBandPass(const MatrixXC& b, const MatrixXC& a, Real freq, Real freqStop, MatrixXC*  bout, MatrixXC*  aout);
+
+/**
+ * Normalize to a first coefficient
+ * 
+ */
+void normalize(MatrixXC& b, MatrixXC& a);
+
+/**
  * Apply the biliniear transformations to a set of coefficients
  * 
  */
