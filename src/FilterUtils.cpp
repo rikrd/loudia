@@ -144,8 +144,8 @@ void lowPassToHighPass(const MatrixXC& b, const MatrixXC& a, Real freq, MatrixXC
 
   pwo = pwo.cwise().expN( freq );
   
-  (*aout) = (*aout).cwise() * pwo.cast<Complex>();
-  (*bout) = (*bout).cwise() * pwo.cast<Complex>();
+  (*aout) = (*aout).cwise() * pwo;
+  (*bout) = (*bout).cwise() * pwo;
 }
 
 

@@ -5,7 +5,7 @@ import scipy
 import scipy.signal
 from common import *
 
-plot = False
+plot = True
 
 atol = 1e-5
 
@@ -16,11 +16,14 @@ fs = 8000
 rp = 0.5
 order = 4
 
-rc = ricaudio.HighPass( order, freq, rp, 1 )
+rc = ricaudio.HighPass( order, freq, rp, 1, ricaudio.CHEBYSHEVI )
 sc_b, sc_a = scipy.signal.cheby1(order, rp, freq, btype='high', analog=0, output='ba')
 
 rc_b = rc.b().T
 rc_a = rc.a().T
+
+print rc_b
+print sc_b
 
 print scipy.allclose(sc_b, rc_b, atol = atol) and scipy.allclose(sc_a, rc_a, atol = atol)
 
