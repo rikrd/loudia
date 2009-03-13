@@ -12,13 +12,14 @@ atol = 1e-4
 freq = 0.2
 freqStop = 0.4
 fs = 8000
+rp = 0.05
+rs = 40
 
 ### Chebyshev I
 # Test with even order
-rp = 0.05
 order = 4
 
-rc = ricaudio.BandStop( order, freq, freqStop, rp, ricaudio.CHEBYSHEVI )
+rc = ricaudio.BandStop( order, freq, freqStop, ricaudio.CHEBYSHEVI, rp, rs )
 sc_b, sc_a = scipy.signal.cheby1(order, rp, [freq, freqStop], btype='bandstop', analog=0, output='ba')
 
 rc_b = rc.b().T
@@ -32,7 +33,7 @@ if plot:
 # Test with odd order
 order = 5
 
-rc = ricaudio.BandStop( order, freq, freqStop, rp, ricaudio.CHEBYSHEVI )
+rc = ricaudio.BandStop( order, freq, freqStop, ricaudio.CHEBYSHEVI, rp, rs )
 sc_b, sc_a = scipy.signal.cheby1( order, rp, [freq, freqStop], btype='bandstop', analog=0, output='ba' )
 
 rc_b = rc.b().T
@@ -46,11 +47,10 @@ if plot:
 
 ### Chebyshev II
 # Test with even order
-rp = 40
 order = 4
 
-rc = ricaudio.BandStop( order, freq, freqStop, rp, ricaudio.CHEBYSHEVII )
-sc_b, sc_a = scipy.signal.cheby2(order, rp, [freq, freqStop], btype='bandstop', analog=0, output='ba')
+rc = ricaudio.BandStop( order, freq, freqStop, ricaudio.CHEBYSHEVII, rp, rs )
+sc_b, sc_a = scipy.signal.cheby2(order, rs, [freq, freqStop], btype='bandstop', analog=0, output='ba')
 
 rc_b = rc.b().T
 rc_a = rc.a().T
@@ -64,8 +64,8 @@ if plot:
 # Test with odd order
 order = 5
 
-rc = ricaudio.BandStop( order, freq, freqStop, rp, ricaudio.CHEBYSHEVII )
-sc_b, sc_a = scipy.signal.cheby2(order, rp, [freq, freqStop], btype='bandstop', analog=0, output='ba')
+rc = ricaudio.BandStop( order, freq, freqStop, ricaudio.CHEBYSHEVII, rp, rs )
+sc_b, sc_a = scipy.signal.cheby2(order, rs, [freq, freqStop], btype='bandstop', analog=0, output='ba')
 
 rc_b = rc.b().T
 rc_a = rc.a().T
@@ -78,10 +78,9 @@ if plot:
 
 ### Butterworth
 # Test with even order
-rp = 40
 order = 4
 
-rc = ricaudio.BandStop( order, freq, freqStop, rp, ricaudio.BUTTERWORTH )
+rc = ricaudio.BandStop( order, freq, freqStop, ricaudio.BUTTERWORTH, rp, rs )
 sc_b, sc_a = scipy.signal.butter(order, [freq, freqStop], btype='bandstop', analog=0, output='ba')
 
 rc_b = rc.b().T
@@ -96,7 +95,7 @@ if plot:
 # Test with odd order
 order = 5
 
-rc = ricaudio.BandStop( order, freq, freqStop, rp, ricaudio.BUTTERWORTH )
+rc = ricaudio.BandStop( order, freq, freqStop, ricaudio.BUTTERWORTH, rp, rs )
 sc_b, sc_a = scipy.signal.butter(order, [freq, freqStop], btype='bandstop', analog=0, output='ba')
 
 rc_b = rc.b().T

@@ -29,7 +29,8 @@ class LowPass {
 protected:
   int _order;
   Real _freq;
-  Real _rippleDB;
+  Real _ripplePass;
+  Real _rippleStop;
   int _channels;
   
   Filter _filter;
@@ -37,7 +38,7 @@ protected:
   FilterType _filterType;
 
 public:
-  LowPass(int order, Real freq, Real rippleDB, FilterType filterType = CHEBYSHEVII, int channels = 1);
+  LowPass(int order, Real freq, FilterType filterType = CHEBYSHEVII, Real ripplePass = 0.05, Real rippleStop = 40.0, int channels = 1);
 
   void setup();
 

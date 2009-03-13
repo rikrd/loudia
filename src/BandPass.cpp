@@ -27,19 +27,21 @@
 using namespace std;
 using namespace Eigen;
 
-BandPass::BandPass( int order, Real freq, Real freqStop, Real rippleDB, FilterType filterType, int channels) : 
+BandPass::BandPass( int order, Real freq, Real freqStop, FilterType filterType, Real ripplePass, Real rippleStop, int channels ) : 
   _order(order),
   _freq(freq),
   _freqStop(freqStop),
-  _rippleDB(rippleDB),
+  _ripplePass(ripplePass),
+  _rippleStop(rippleStop),
   _channels(channels),
   _filter(channels),
-  _filterType(filterType)
+  _filterType(filterType) 
 {
-  DEBUG("BANDPASS: Constructor order: " << order << 
-        ", freq: " << freq << 
-        ", freqStop: " << freqStop <<        
-        ", rippleDB: " << rippleDB );
+  DEBUG("LOWPASS: Constructor order: " << _order 
+        << ", freq: " << _freq
+        << ", freqStop: " << _freqStop
+        << ", ripplePass: " << _ripplePass
+        << ", rippleStop: " << _rippleStop );
 
   if ( order < 1 ) {
     // Throw an exception
@@ -60,11 +62,11 @@ void BandPass::setup(){
 
   switch( _filterType ){
   case CHEBYSHEVI:
-    chebyshev1(_order, _rippleDB, _channels, &zeros, &poles, &gain);
+    chebyshev1(_order, _ripplePass, _channels, &zeros, &poles, &gain);
     break;
 
   case CHEBYSHEVII:
-    chebyshev2(_order, _rippleDB, _channels, &zeros, &poles, &gain);
+    chebyshev2(_order, _rippleStop, _channels, &zeros, &poles, &gain);
     break;
 
   case BUTTERWORTH:

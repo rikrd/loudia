@@ -30,8 +30,8 @@ protected:
   int _order;
   Real _freq;
   Real _freqStop;
-  Real _bandwidth;
-  Real _rippleDB;
+  Real _ripplePass;
+  Real _rippleStop;
   int _channels;
   
   Filter _filter;
@@ -39,7 +39,7 @@ protected:
   FilterType _filterType;
 
 public:
-  BandStop(int order, Real freq, Real freqStop, Real rippleDB, FilterType filterType = CHEBYSHEVII, int channels = 1);
+  BandStop(int order, Real freq, Real freqStop, FilterType filterType = CHEBYSHEVII, Real ripplePass = 0.05, Real rippleStop = 40.0, int channels = 1);
 
   void setup();
 

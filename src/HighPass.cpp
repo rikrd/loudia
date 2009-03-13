@@ -27,17 +27,19 @@
 using namespace std;
 using namespace Eigen;
 
-HighPass::HighPass( int order, Real freq, Real rippleDB, FilterType filterType, int channels) : 
+HighPass::HighPass( int order, Real freq, FilterType filterType, Real ripplePass, Real rippleStop, int channels) : 
   _order(order),
   _freq(freq),
-  _rippleDB(rippleDB),
+  _ripplePass(ripplePass),
+  _rippleStop(rippleStop),
   _channels(channels),
   _filter(channels),
   _filterType(filterType)
 {
-  DEBUG("HIGHPASS: Constructor order: " << order << 
-        ", freq: " << freq << 
-        ", rippleDB: " << rippleDB );
+  DEBUG("LOWPASS: Constructor order: " << _order 
+        << ", freq: " << _freq
+        << ", ripplePass: " << _ripplePass
+        << ", rippleStop: " << _rippleStop );
 
   if ( order < 1 ) {
     // Throw an exception
@@ -58,11 +60,11 @@ void HighPass::setup(){
 
   switch( _filterType ){
   case CHEBYSHEVI:
-    chebyshev1(_order, _rippleDB, _channels, &zeros, &poles, &gain);
+    chebyshev1(_order, _ripplePass, _channels, &zeros, &poles, &gain);
     break;
 
   case CHEBYSHEVII:
-    chebyshev2(_order, _rippleDB, _channels, &zeros, &poles, &gain);
+    chebyshev2(_order, _rippleStop, _channels, &zeros, &poles, &gain);
     break;
 
   case BUTTERWORTH:
