@@ -20,8 +20,9 @@
 #define UTILS_H
 
 #include "Typedefs.h"
-#include <limits>
+#include "Debug.h"
 
+#include <limits>
 
 /**
  * Given a matrix of polynomes (one per column)

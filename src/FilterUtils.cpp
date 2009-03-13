@@ -16,6 +16,10 @@
 ** Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */
 
+#include "FilterUtils.h"
+
+using namespace std;
+
 void chebyshev1(int order, Real rippleDB, int channels, MatrixXC* zeros, MatrixXC* poles, Real* gain) {
   (*zeros) = MatrixXC::Zero(channels, 1);
  

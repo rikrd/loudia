@@ -16,6 +16,14 @@
 ** Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */                                                                          
 
+#ifndef FILTERUTILS_H
+#define FILTERUTILS_H
+
+#include "Typedefs.h"
+#include "Debug.h"
+
+#include "Utils.h"
+
 enum FilterType {
   CHEBYSHEVI = 0,
   CHEBYSHEVII = 1
@@ -24,3 +32,5 @@ enum FilterType {
 void chebyshev1(int order, Real rippleDB, int channels, MatrixXC* zeros, MatrixXC* poles, Real* gain);
 
 void chebyshev2(int order, Real rippleDB, int channels, MatrixXC* zeros, MatrixXC* poles, Real* gain);
+
+#endif  /* FILTERUTILS_H */

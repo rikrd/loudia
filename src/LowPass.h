@@ -23,7 +23,7 @@
 #include "Debug.h"
 
 #include "Filter.h"
-#include "FiltersUtils.h"
+#include "FilterUtils.h"
 
 class LowPass {
 protected:
@@ -49,4 +49,4 @@ public:
   void reset();
 };
 
-#endif  /* CHEBYSHEV_H */
+#endif  /* LOWPASS_H */
