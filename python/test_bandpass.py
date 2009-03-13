@@ -7,7 +7,7 @@ from common import *
 
 plot = True
 
-atol = 1e-5
+atol = 1e-4
 
 freq = 0.2
 freqStop = 0.4
