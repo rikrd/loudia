@@ -16,11 +16,7 @@
 ** Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */                                                                          
 
-#include "Typedefs.h"
-#include "Debug.h"
-
 #include "Utils.h"
-
 
 /**
  * Given a matrix of polynomes (one per column)
@@ -331,50 +327,6 @@ void polar(const MatrixXR&  mag, const MatrixXR&  phase, MatrixXC* complex) {
   }
 }
 
-void coeffsToZpk(const MatrixXR&  b, const MatrixXR&  a, MatrixXC* zeros, MatrixXC* poles, Real* gain){
-  (*gain) = b(0, 0);
-  MatrixXR bTemp = b;
-  bTemp /= b(0, 0);
-  roots(bTemp, zeros);
-  roots(a, poles);
-}
-
-void zpkToCoeffs(const MatrixXC& zeros, const MatrixXC& poles, Real gain, MatrixXC*  b, MatrixXC*  a){
-  poly( zeros, b );
-  (*b) *= gain;
-  
-  poly( poles, a );
-}
-
-void lowPassToLowPass(const MatrixXC& b, const MatrixXC& a, Real freq, MatrixXC*  bout, MatrixXC*  aout) {
-  const int asize = a.cols();
-  const int bsize = b.cols();
-
-  const int rows = a.rows();
-
-  const int maxsize = max(asize, bsize);    
-
-  *aout = a;
-  *bout = b;
-
-  MatrixXR pwo;
-  range(maxsize-1, -1, maxsize, rows, &pwo);
-
-  pwo = pwo.cwise().expN( freq );
- 
-  int start1 = max(bsize - asize, 0);
-  int start2 = max(asize - bsize, 0);
-  
-  for ( int i = 0; i < bsize; i++ ) {
-    (*bout).col(i) *= pwo.col( start2 + i ).cwise().inverse() * pwo.col( start1 );
-  }
-
-  for ( int i = 0; i < asize; i++ ) {
-    (*aout).col(i) *= pwo.col( start1 + i ).cwise().inverse() * pwo.col( start1 );
-  }
-
-}
-
 int combination(int N, int k) {
   if ((k > N) || (N < 0) || (k < 0)) return 0;
   
@@ -384,56 +336,6 @@ int combination(int N, int k) {
   }
 
   return val;
-}
-
-void bilinear(const MatrixXC& b, const MatrixXC& a, Real fs, MatrixXR*  bout, MatrixXR*  aout) {
-  const int asize = a.cols();
-  const int bsize = b.cols();
-  const int maxsize = max(asize, bsize);
-  
-  const int rows = a.rows();
-  
-  (*aout).resize(rows, maxsize);
-  (*bout).resize(rows, maxsize);
-  
-  MatrixXC val;
-  
-  for ( int j = 0; j < maxsize; j++ ) {
-    val = MatrixXC::Zero(rows, 1);
-    
-    for ( int i = 0; i < bsize; i++ ) {
-      for ( int k = 0; k < i + 1; k++ ) {
-        for ( int l = 0; l < (maxsize - i); l++ ) {
-          
-          if((k + l) == j)
-            val += combination(i, k) * combination(maxsize - i - 1, l) * b.col(bsize - 1 - i) * pow(2*fs, (Real)i) * pow((Real)-1, (Real)k);
-        }
-      }
-    }
-    
-    (*bout).col(j) = val.real();
-  }
-
-  for ( int j = 0; j < maxsize; j++ ) {
-    val = MatrixXC::Zero(rows, 1);
-    
-    for ( int i = 0; i < asize; i++ ) {
-      for ( int k = 0; k < i + 1; k++ ) {
-        for ( int l = 0; l < (maxsize - i); l++ ) {
-          
-          if((k + l) == j)
-            val += combination(i, k) * combination(maxsize - i - 1, l) * a.col(asize - 1 - i) * pow((Real)2.0*fs, (Real)i) * pow((Real)-1, (Real)k);
-        }
-      }
-    }
-    
-    (*aout).col(j) = val.real();
-  }
-  
-}
-
-void bilinear(const MatrixXC& b, const MatrixXC& a, MatrixXR*  bout, MatrixXR*  aout) {
-  bilinear(b, a, 1.0, bout, aout);
 }
 
 Real asinc(int M, Real omega) {

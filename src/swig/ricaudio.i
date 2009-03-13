@@ -35,7 +35,8 @@ import_array();
 #include "PeakInterpolateComplex.h"
 #include "PeakContinue.h"
 #include "PeakSynthesize.h"
-#include "Chebyshev.h"
+#include "LowPass.h"
+#include "HighPass.h"
 #include "Unwrap.h"
 #include "ODFComplex.h"
 #include "ODF.h"
@@ -56,6 +57,7 @@ import_array();
 
 #include "MelScales.h"
 #include "Utils.h"
+#include "FilterUtils.h"
 %}
 
 %include "typemaps.i"
@@ -80,7 +82,8 @@ import_array();
 %include "PeakInterpolateComplex.h"
 %include "PeakContinue.h"
 %include "PeakSynthesize.h"
-%include "Chebyshev.h"
+%include "LowPass.h"
+%include "HighPass.h"
 %include "Unwrap.h"
 %include "ODFComplex.h"
 %include "ODF.h"
@@ -101,5 +104,6 @@ import_array();
 
 %include "MelScales.h"
 %include "Utils.h"
+%include "FilterUtils.h"
 
 %module ricaudio

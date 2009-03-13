@@ -16,41 +16,37 @@
 ** Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */                                                                          
 
-#ifndef SPECTRALNOISESUPPRESSION_H
-#define SPECTRALNOISESUPPRESSION_H
-
-#include <Eigen/StdVector>
+#ifndef HIGHPASS_H
+#define HIGHPASS_H
 
 #include "Typedefs.h"
 #include "Debug.h"
 
-#include "Bands.h"
+#include "Filter.h"
+#include "FilterUtils.h"
 
-class SpectralNoiseSuppression {
+class HighPass {
 protected:
-  int _fftSize;
-  Real _samplerate;
-
-  Real _f0;
-  Real _f1;
+  int _order;
+  Real _freq;
+  Real _rippleDB;
+  int _channels;
   
-  int _k0;
-  int _k1;
+  Filter _filter;
 
-  MatrixXR _g;
-
-  Bands _bands;
+  FilterType _filterType;
 
 public:
-  SpectralNoiseSuppression(int fftSize, Real f0, Real f1, Real samplerate = 1.0);
-
-  ~SpectralNoiseSuppression();
+  HighPass(int order, Real freq, Real rippleDB, int channels = 1, FilterType filterType = CHEBYSHEVII);
 
   void setup();
 
-  void process(const MatrixXR& spectrum, MatrixXR* noise, MatrixXR* result);
+  void process(MatrixXR samples, MatrixXR* filtered);
 
+  void a(MatrixXR* a);
+  void b(MatrixXR* b);
+  
   void reset();
 };
 
-#endif  /* SPECTRALNOISESUPPRESSION_H */
+#endif  /* HIGHPASS_H */

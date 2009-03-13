@@ -21,22 +21,22 @@
 
 #include <vector>
 
-#include "Chebyshev.h"
+#include "LowPass.h"
 #include "Utils.h"
 
 using namespace std;
 using namespace Eigen;
 
-Chebyshev::Chebyshev( int order, Real freq, Real rippleDB, int channels, ChebyshevType chebyshevType) : 
+LowPass::LowPass( int order, Real freq, Real rippleDB, int channels, FilterType filterType) : 
   _order(order),
   _freq(freq),
   _rippleDB(rippleDB),
   _channels(channels),
   _filter(channels),
-  _chebyshevType(chebyshevType)
+  _filterType(filterType)
                                                                                            
 {
-  DEBUG("CHEBYSHEV: Constructor order: " << order << 
+  DEBUG("LOWPASS: Constructor order: " << order << 
         ", freq: " << freq << 
         ", rippleDB: " << rippleDB );
 
@@ -46,97 +46,37 @@ Chebyshev::Chebyshev( int order, Real freq, Real rippleDB, int channels, Chebysh
   
   setup();
   
-  DEBUG("CHEBYSHEV: Constructed");
+  DEBUG("LOWPASS: Constructed");
 }
 
-void Chebyshev::chebyshev1(int order, Real rippleDB, int channels, MatrixXC* zeros, MatrixXC* poles, Real* gain) {
-  (*zeros) = MatrixXC::Zero(channels, 1);
- 
-  Real eps = sqrt(pow(10, (0.1 * rippleDB)) - 1.0);
+void LowPass::setup(){
+  DEBUG("LOWPASS: Setting up...");
 
-  MatrixXC n;
-  range(1, order + 1, order, channels, &n);
-
-  Real mu = 1.0 / order * log((1.0 + sqrt( 1 + eps * eps)) / eps);
-
-  MatrixXC theta = ((n * 2).cwise() - 1.0) / order * M_PI / 2.0;
-
-  (*poles) = -sinh(mu) * theta.cwise().sin() + Complex(0, 1) * cosh(mu) * theta.cwise().cos();
-
-  Complex gainComplex = 1.0;
-
-  for ( int i = 0; i < (*poles).cols(); i++ ) {
-    gainComplex *= -(*poles)(0, i);
-  }
-
-  (*gain) = gainComplex.real();
-  
-  if ( order % 2 == 0 ) {
-    (*gain) /= sqrt((1 + eps * eps));
-  }
-}
-
-void Chebyshev::chebyshev2(int order, Real rippleDB, int channels, MatrixXC* zeros, MatrixXC* poles, Real* gain) {
-  Real de = 1.0 / sqrt(pow(10, (0.1 * rippleDB)) - 1.0);
-  Real mu = asinh(1.0 / de) / order;
-
-  MatrixXC n;
-  if(order % 2) {
-    n.resize(channels, order - 1);
-    MatrixXC nFirst;
-    range(1, order , order/2, channels, &nFirst);
-
-    MatrixXC nSecond;
-    range(order + 2, (2 * order) + 1, order/2, channels, &nSecond);
-    
-    n << nFirst, nSecond;
-  } else{
-    n.resize(channels, order);
-    range(1, (2 * order) + 1, order, channels, &n);
-  }
-  
-  (*zeros) = (Complex(0,1) * ((n * M_PI) / (2.0 * order)).cwise().cos().cwise().inverse()).conjugate();
-
-  MatrixXC rng;
-  range(1, (2 * order) + 1, order, channels, &rng);
-  
-  (*poles) = (Complex(0,1) * (((M_PI * rng) / (2.0*order)).cwise() + M_PI / 2.0)).cwise().exp();
-
-  (*poles) = (((*poles).real().cast<Complex>() * sinh( mu )) + (Complex(0, 1) * cosh( mu ) * (*poles).imag().cast<Complex>())).cwise().inverse();
-
-  // TODO: gain should be a vector (one gain per channel)
-  (*gain) = ((-(*poles)).rowwise().prod().cwise() / (-(*zeros)).rowwise().prod()).real().sum();
-}
-
-
-void Chebyshev::setup(){
-  DEBUG("CHEBYSHEV: Setting up...");
-
-  DEBUG("CHEBYSHEV: Getting zpk");  
-  // Get the chebyshev z, p, k
+  DEBUG("LOWPASS: Getting zpk");  
+  // Get the lowpass z, p, k
   MatrixXC zeros, poles;
   Real gain;
 
-  switch( _chebyshevType ){
-  case I:
+  switch( _filterType ){
+  case CHEBYSHEVI:
     chebyshev1(_order, _rippleDB, _channels, &zeros, &poles, &gain);
     break;
 
-  case II:
+  case CHEBYSHEVII:
     chebyshev2(_order, _rippleDB, _channels, &zeros, &poles, &gain);
     break;
   }
   
-  DEBUG("CHEBYSHEV: zeros:" << zeros );
-  DEBUG("CHEBYSHEV: poles:" << poles );
-  DEBUG("CHEBYSHEV: gain:" << gain );
+  DEBUG("LOWPASS: zeros:" << zeros );
+  DEBUG("LOWPASS: poles:" << poles );
+  DEBUG("LOWPASS: gain:" << gain );
   
   // Convert zpk to ab coeffs
   MatrixXC a;
   MatrixXC b;
   zpkToCoeffs(zeros, poles, gain, &b, &a);
 
-  DEBUG("CHEBYSHEV: Calculated the coeffs");
+  DEBUG("LOWPASS: Calculated the coeffs");
 
   // Since we cannot create matrices of Nx0
   // we have created at least one Zero in 0
@@ -155,14 +95,14 @@ void Chebyshev::setup(){
   MatrixXC wb;
   lowPassToLowPass(b, a, warped, &wb, &wa);
 
-  DEBUG("CHEBYSHEV: Calculated the low pass to low pass");
+  DEBUG("LOWPASS: Calculated the low pass to low pass");
   
   // Digital coeffs
   MatrixXR da;
   MatrixXR db;
   bilinear(wb, wa, fs, &db, &da);
   
-  DEBUG("CHEBYSHEV: setup the coeffs");
+  DEBUG("LOWPASS: setup the coeffs");
 
   // Set the coefficients to the filter
   _filter.setA( da.transpose() );
@@ -170,22 +110,22 @@ void Chebyshev::setup(){
   
   _filter.setup();
   
-  DEBUG("CHEBYSHEV: Finished set up...");
+  DEBUG("LOWPASS: Finished set up...");
 }
 
-void Chebyshev::a(MatrixXR* a) {
+void LowPass::a(MatrixXR* a) {
   _filter.a(a);
 }
 
-void Chebyshev::b(MatrixXR* b) {
+void LowPass::b(MatrixXR* b) {
   _filter.b(b);
 }
 
-void Chebyshev::process(MatrixXR samples, MatrixXR* filtered) {
+void LowPass::process(MatrixXR samples, MatrixXR* filtered) {
   _filter.process(samples, filtered);
 }
 
-void Chebyshev::reset(){
+void LowPass::reset(){
   // Initial values
   _filter.reset();
 }

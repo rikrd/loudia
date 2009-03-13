@@ -64,19 +64,25 @@ if interactivePlot:
 for frame in stream:
     spec = scipy.array(abs(frame['fft']), dtype = scipy.float32)
 
-    result = supprnoise.process( spec )
-
-    print result
+    noise, result = supprnoise.process( spec )
 
     if interactivePlot:
         pylab.subplot(211)
         pylab.hold(False)
-        pylab.plot( spec )
         
+        specdb = ricaudio.magToDb(spec)
+        noisedb = ricaudio.magToDb(noise)
+
+        pylab.plot( specdb[0,:], label = 'Spectrum' )
+        pylab.hold(True)
+        pylab.plot( noisedb[0,:], label = 'Noise' )
+
+        resultdb = ricaudio.magToDb(result)
+
         pylab.subplot(212)
         pylab.hold(False)
-        pylab.plot(result[0,:], label = 'Noise Suppressed Spectrum')
-
+        pylab.plot(resultdb[0,:], label = 'Noise Suppressed Spectrum')
+        
     
     specs.append( spec )
     results.append( spec )

@@ -16,21 +16,16 @@
 ** Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */                                                                          
 
-#ifndef CHEBYSHEV_H
-#define CHEBYSHEV_H
+#ifndef LOWPASS_H
+#define LOWPASS_H
 
 #include "Typedefs.h"
 #include "Debug.h"
 
 #include "Filter.h"
+#include "FilterUtils.h"
 
-class Chebyshev {
-public:
-  enum ChebyshevType {
-    I = 0,
-    II = 1
-  };
-
+class LowPass {
 protected:
   int _order;
   Real _freq;
@@ -39,13 +34,10 @@ protected:
   
   Filter _filter;
 
-  ChebyshevType _chebyshevType;
-
-  void chebyshev1(int order, Real rippleDB, int channels, MatrixXC* zeros, MatrixXC* poles, Real* gain);
-  void chebyshev2(int order, Real rippleDB, int channels, MatrixXC* zeros, MatrixXC* poles, Real* gain);
+  FilterType _filterType;
 
 public:
-  Chebyshev(int order, Real freq, Real rippleDB, int channels = 1, ChebyshevType chebyshevType = I);
+  LowPass(int order, Real freq, Real rippleDB, int channels = 1, FilterType filterType = CHEBYSHEVII);
 
   void setup();
 
@@ -57,4 +49,4 @@ public:
   void reset();
 };
 
-#endif  /* CHEBYSHEV_H */
+#endif  /* LOWPASS_H */

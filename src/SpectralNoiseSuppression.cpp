@@ -80,7 +80,7 @@ void SpectralNoiseSuppression::setup(){
   DEBUG("SPECTRALNOISESUPPRESSION: Finished setup.");
 }
 
-void SpectralNoiseSuppression::process(const MatrixXR& spectrum, MatrixXR* result){
+void SpectralNoiseSuppression::process(const MatrixXR& spectrum, MatrixXR* noise, MatrixXR* result){
   const int rows = spectrum.rows();
   const int cols = spectrum.cols();
 
@@ -102,11 +102,11 @@ void SpectralNoiseSuppression::process(const MatrixXR& spectrum, MatrixXR* resul
   
   //DEBUG("SPECTRALNOISESUPPRESSION: Estimate spectral noise.");
   // Estimate spectral noise
-  _bands.process((*result), &_noise);
+  _bands.process((*result), noise);
   
   //DEBUG("SPECTRALNOISESUPPRESSION: Suppress spectral noise.");
   // Suppress spectral noise
-  (*result) = ((*result) - _noise).cwise().clipUnder();
+  (*result) = ((*result) - (*noise)).cwise().clipUnder();
 }
 
 void SpectralNoiseSuppression::reset(){
