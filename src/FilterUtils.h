@@ -16,45 +16,11 @@
 ** Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */                                                                          
 
-#ifndef CHEBYSHEV_H
-#define CHEBYSHEV_H
-
-#include "Typedefs.h"
-#include "Debug.h"
-
-#include "Filter.h"
-
-class Chebyshev {
-public:
-  enum ChebyshevType {
-    I = 0,
-    II = 1
-  };
-
-protected:
-  int _order;
-  Real _freq;
-  Real _rippleDB;
-  int _channels;
-  
-  Filter _filter;
-
-  ChebyshevType _chebyshevType;
-
-  void chebyshev1(int order, Real rippleDB, int channels, MatrixXC* zeros, MatrixXC* poles, Real* gain);
-  void chebyshev2(int order, Real rippleDB, int channels, MatrixXC* zeros, MatrixXC* poles, Real* gain);
-
-public:
-  Chebyshev(int order, Real freq, Real rippleDB, int channels = 1, ChebyshevType chebyshevType = I);
-
-  void setup();
-
-  void process(MatrixXR samples, MatrixXR* filtered);
-
-  void a(MatrixXR* a);
-  void b(MatrixXR* b);
-  
-  void reset();
+enum FilterType {
+  CHEBYSHEVI = 0,
+  CHEBYSHEVII = 1
 };
 
-#endif  /* CHEBYSHEV_H */
+void chebyshev1(int order, Real rippleDB, int channels, MatrixXC* zeros, MatrixXC* poles, Real* gain);
+
+void chebyshev2(int order, Real rippleDB, int channels, MatrixXC* zeros, MatrixXC* poles, Real* gain);
