@@ -79,6 +79,14 @@ void chebyshev2(int order, Real rippleDB, int channels, MatrixXC* zeros, MatrixX
   (*gain) = ((-(*poles)).rowwise().prod().cwise() / (-(*zeros)).rowwise().prod()).real().sum();
 }
 
+void butterworth(int order, int channels, MatrixXC* zeros, MatrixXC* poles, Real* gain) {
+  MatrixXC n;
+  range(1, order + 1, order + 1, &n);
+
+  (*zeros) = MatrixXC::Zero(channels, 1);
+  (*poles) = (((2*n).cwise() - 1) * Complex(0, 1) / (2.0 * order) * M_PI).cwise().exp() * Complex(0, 1);
+  (*gain) = 1.0;
+}
 
 void coeffsToZpk(const MatrixXR&  b, const MatrixXR&  a, MatrixXC* zeros, MatrixXC* poles, Real* gain){
   (*gain) = b(0, 0);

@@ -64,6 +64,10 @@ void LowPass::setup(){
   case CHEBYSHEVII:
     chebyshev2(_order, _rippleDB, _channels, &zeros, &poles, &gain);
     break;
+
+  case BUTTERWORTH:
+    butterworth(_order, _channels, &zeros, &poles, &gain);
+    break;
   }
   
   DEBUG("LOWPASS: zeros:" << zeros );
