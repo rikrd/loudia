@@ -5,7 +5,7 @@ import scipy
 import pylab
 import os
 
-def plotFreqz(b, a, w = None, npoints = None, title = '', db = False):
+def plotFreqz(b, a, w = None, npoints = None, title = '', db = False, createFigure = True, label = ''):
     # Create the omega array if necessary
     if npoints is None:
         npoints = 1000
@@ -22,13 +22,15 @@ def plotFreqz(b, a, w = None, npoints = None, title = '', db = False):
         mag = abs(d[:,0])
 
     import pylab
-    pylab.figure()
+    if createFigure:
+        pylab.figure()
+        
     pylab.subplot(2,1,1)
-    pylab.plot(w, mag)
+    pylab.plot(w, mag, label = label)
     pylab.title('%s \n Magnitude of the Frequency Response' % title)
 
     pylab.subplot(2,1,2)
-    pylab.plot(w, scipy.angle(d[:,0]))
+    pylab.plot(w, scipy.angle(d[:,0]), label = label)
     pylab.title('Angle of the Frequency Response')
 
 def get_onsets(filename, hop, samplerate, onsetError = 50.0):

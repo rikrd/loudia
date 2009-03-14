@@ -37,7 +37,7 @@ BandPass::BandPass( int order, Real freq, Real freqStop, FilterType filterType, 
   _filter(channels),
   _filterType(filterType) 
 {
-  DEBUG("LOWPASS: Constructor order: " << _order 
+  DEBUG("BANDPASS: Constructor order: " << _order 
         << ", freq: " << _freq
         << ", freqStop: " << _freqStop
         << ", ripplePass: " << _ripplePass
