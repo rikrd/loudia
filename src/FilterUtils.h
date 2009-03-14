@@ -27,7 +27,8 @@
 enum FilterType {
   CHEBYSHEVI = 0,
   CHEBYSHEVII = 1,
-  BUTTERWORTH = 2
+  BUTTERWORTH = 2,
+  BESSEL = 3
 };
 
 /**
@@ -44,6 +45,11 @@ void chebyshev2(int order, Real rippleDB, int channels, MatrixXC* zeros, MatrixX
  * Create the zeros, poles and gain of an analog prototype of a Butterworth filter.
  */
 void butterworth(int order, int channels, MatrixXC* zeros, MatrixXC* poles, Real* gain);
+
+/**
+ * Create the zeros, poles and gain of an analog prototype of a Bessel filter.
+ */
+void bessel(int order, int channels, MatrixXC* zeros, MatrixXC* poles, Real* gain);
 
 /**
  * Convert from the b and a coefficients of an IIR filter to the

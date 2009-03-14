@@ -72,6 +72,10 @@ void BandPass::setup(){
   case BUTTERWORTH:
     butterworth(_order, _channels, &zeros, &poles, &gain);
     break;
+
+  case BESSEL:
+    bessel(_order, _channels, &zeros, &poles, &gain);
+    break;
   }
   
   DEBUG("BANDPASS: zeros:" << zeros );

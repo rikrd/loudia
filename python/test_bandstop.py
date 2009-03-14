@@ -106,6 +106,37 @@ print scipy.allclose(sc_b, rc_b, atol = atol) and scipy.allclose(sc_a, rc_a, ato
 if plot:
     plotFreqz(rc_b, rc_a, title = 'BandStop Butterworth order %d' % order)
 
+
+### Bessel
+# Test with even order
+order = 4
+
+rc = ricaudio.BandStop( order, freq, freqStop, ricaudio.BESSEL, rp, rs )
+sc_b, sc_a = scipy.signal.bessel(order, [freq, freqStop], btype='bandstop', analog=0, output='ba')
+
+rc_b = rc.b().T
+rc_a = rc.a().T
+
+print scipy.allclose(sc_b, rc_b, atol = atol) and scipy.allclose(sc_a, rc_a, atol = atol)
+
+if plot:
+    plotFreqz(rc_b, rc_a, title = 'BandStop Bessel order %d' % order)
+
+
+# Test with odd order
+order = 5
+
+rc = ricaudio.BandStop( order, freq, freqStop, ricaudio.BESSEL, rp, rs )
+sc_b, sc_a = scipy.signal.bessel(order, [freq, freqStop], btype='bandstop', analog=0, output='ba')
+
+rc_b = rc.b().T
+rc_a = rc.a().T
+
+print scipy.allclose(sc_b, rc_b, atol = atol) and scipy.allclose(sc_a, rc_a, atol = atol)
+
+if plot:
+    plotFreqz(rc_b, rc_a, title = 'BandStop Bessel order %d' % order)
+
 if plot:
     import pylab
     pylab.show()
