@@ -5,16 +5,17 @@ from common import *
 import pylab
 import scipy.signal
 
-samplerate = 44100.0
+samplerate = 22050.0
 
 order = 15
-center = 400.0
-bandwidth = 20.0
+center = 1000.0
+bandwidth = 200.0
 ripplePass = 0.05
 rippleStop = 40
+npoints = 200
 
 btype = 'bandstop'
-ftype = 'cheby2'
+ftype = 'butter'
 
 btypes = {'lowpass': ricaudio.LowPass,
           'highpass': ricaudio.HighPass,
@@ -31,7 +32,7 @@ diffs = {}
 
 pylab.figure()
 pylab.hold( True )
-for bandwidth in range(20.0, 50.0, 10.0):
+for center in range(2000.0, 5000.0, 1000.0):
     freq = (center - bandwidth / 2.0) / samplerate
     freqStop = (center + bandwidth / 2.0) / samplerate
 
@@ -45,10 +46,11 @@ for bandwidth in range(20.0, 50.0, 10.0):
         f = ricaudioFilter(order, freq, ftypes[ftype],
                            ripplePass, rippleStop)
     
-    rb = f.b().T[:,:1]
+    rb = f.b().T#[:,:1]
     ra = f.a().T
 
     plotFreqz(rb, ra,
+              npoints = npoints,
               createFigure = False,
               label = 'ricaudio / %.1f Hz' % bandwidth,
               db = True)
@@ -59,7 +61,7 @@ for bandwidth in range(20.0, 50.0, 10.0):
                                     rp = rippleStop, rs = ripplePass)
     
     sa = scipy.array(scipy.reshape(sa, (1, sa.shape[0])), dtype = 'f4')
-    sb = scipy.array(scipy.reshape(sb, (1, sb.shape[0])), dtype = 'f4')[:,:1]
+    sb = scipy.array(scipy.reshape(sb, (1, sb.shape[0])), dtype = 'f4')#[:,:1]
 
     results[bandwidth] = scipy.allclose(sa, ra) and scipy.allclose(sb, rb)
     print ra
@@ -69,6 +71,7 @@ for bandwidth in range(20.0, 50.0, 10.0):
     #diffs[bandwidth] = (ra - sa, rb - sb)
     
     plotFreqz(sb, sa,
+              npoints = npoints,
               createFigure = False,
               label = 'scipy / %.1f Hz' % bandwidth,
               db = True)
