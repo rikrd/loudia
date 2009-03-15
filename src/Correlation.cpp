@@ -26,11 +26,11 @@
 using namespace std;
 using namespace Eigen;
 
-Correlation::Correlation(int inputLengthA, int inputLengthB, int maxLag, int minLag) :
+Correlation::Correlation(int inputLengthA, int inputLengthB, Real maxLag, Real minLag) :
   _inputLengthA( inputLengthA ),
   _inputLengthB( inputLengthB ),
-  _minLag( max(-max(_inputLengthA, _inputLengthB) + 1, minLag) ),
-  _maxLag( min( min(_inputLengthA, _inputLengthB), maxLag) ),
+  _minLag( (int)max((Real)-max(_inputLengthA, _inputLengthB) + 1, minLag) ),
+  _maxLag( (int)min((Real) min(_inputLengthA, _inputLengthB), maxLag) ),
   _useFFT( (_maxLag - _minLag) > 128 ),
   _fftSize(nextPowerOf2(((_inputLengthA + _inputLengthB) - 1)*2)),
   _fft( _fftSize, false ),
@@ -48,11 +48,11 @@ Correlation::Correlation(int inputLengthA, int inputLengthB, int maxLag, int min
 }
 
 
-Correlation::Correlation(int inputLengthA, int inputLengthB, int maxLag, int minLag, bool useFFT) :
+Correlation::Correlation(int inputLengthA, int inputLengthB, Real maxLag, Real minLag, bool useFFT) :
   _inputLengthA( inputLengthA ),
   _inputLengthB( inputLengthB ),
-  _minLag( max(-max(_inputLengthA, _inputLengthB) + 1, minLag) ),
-  _maxLag( min( min(_inputLengthA, _inputLengthB), maxLag) ),
+  _minLag( (int)max((Real)-max(_inputLengthA, _inputLengthB) + 1, minLag) ),
+  _maxLag( (int)min((Real) min(_inputLengthA, _inputLengthB), maxLag) ),
   _useFFT( useFFT ),
   _fftSize( nextPowerOf2(((_inputLengthA + _inputLengthB) - 1)*2) ),
   _fft( _fftSize, false ),
@@ -86,6 +86,9 @@ void Correlation::setup(){
 
 void Correlation::process(const MatrixXR& inputA, const MatrixXR& inputB, MatrixXR* correlation){
   const int rows = inputA.rows();
+
+  cout << inputA.rows() << " " << inputA.cols() << endl;
+  cout << inputB.rows() << " " << inputB.cols() << endl;
   
   if ( rows != inputB.rows() ) {
     // Thorw ValueError rows of A and B must be the same

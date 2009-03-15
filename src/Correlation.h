@@ -46,8 +46,8 @@ protected:
   MatrixXR _result;
 
 public:
-  Correlation(int inputLengthA, int inputLengthB, int maxLag = std::numeric_limits<int>::infinity(), int minLag = -std::numeric_limits<int>::infinity());
-  Correlation(int inputLengthA, int inputLengthB, int maxLag, int minLag, bool useFFT);
+  Correlation(int inputLengthA, int inputLengthB, Real maxLag = std::numeric_limits<Real>::infinity(), Real minLag = -std::numeric_limits<Real>::infinity());
+  Correlation(int inputLengthA, int inputLengthB, Real maxLag, Real minLag, bool useFFT);
 
   ~Correlation();
 

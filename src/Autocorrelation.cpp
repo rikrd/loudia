@@ -26,10 +26,10 @@
 using namespace std;
 using namespace Eigen;
 
-Autocorrelation::Autocorrelation(int inputLength, int maxLag, int minLag) :
+Autocorrelation::Autocorrelation(int inputLength, Real maxLag, Real minLag) :
   _inputLength( inputLength ),
-  _minLag( minLag ),
-  _maxLag( min(inputLength, maxLag) ),
+  _minLag( (int)max((Real)-inputLength + 1, minLag) ),
+  _maxLag( (int)min((Real)inputLength, maxLag) ),
   _useFFT( (_maxLag - _minLag) > 128 ),
   _fft( nextPowerOf2(((_maxLag - _minLag)-1)*2), false ),
   _ifft( nextPowerOf2(((_maxLag - _minLag)-1)*2), false )
@@ -43,10 +43,10 @@ Autocorrelation::Autocorrelation(int inputLength, int maxLag, int minLag) :
 }
 
 
-Autocorrelation::Autocorrelation(int inputLength, int maxLag, int minLag, bool useFFT) :
+Autocorrelation::Autocorrelation(int inputLength, Real maxLag, Real minLag, bool useFFT) :
   _inputLength( inputLength ),
-  _minLag( minLag ),
-  _maxLag( min(inputLength, maxLag) ),
+  _minLag( (int)max((Real)-inputLength + 1, minLag) ),
+  _maxLag( (int)min((Real)inputLength, maxLag) ),
   _useFFT( useFFT ),
   _fft( nextPowerOf2(((_maxLag - _minLag)-1)*2), false ),
   _ifft( nextPowerOf2(((_maxLag - _minLag)-1)*2), false )
