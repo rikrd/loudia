@@ -59,10 +59,8 @@ for center in range(2000.0, 5000.0, 1000.0):
     sb, sa = scipy.signal.iirfilter(order, [freq, freqStop],
                                     btype = btype, ftype = ftype,
                                     rp = ripplePass, rs = rippleStop)
-    
-    sa = scipy.array(scipy.reshape(sa, (1, sa.shape[0])), dtype = 'f4')
-    sb = scipy.array(scipy.reshape(sb, (1, sb.shape[0])), dtype = 'f4')#[:,:1]
 
+    
     results[bandwidth] = scipy.allclose(sa, ra) and scipy.allclose(sb, rb)
     print ra
     print sa

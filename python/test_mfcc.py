@@ -12,8 +12,8 @@ nCoeffs = 13
 minSpectrum = 1e-10
 power = 1
 
-a1 = scipy.array(scipy.zeros((1, 512)), dtype='f4')
-a2 = scipy.array(scipy.ones((1, 512)), dtype='f4')
+a1 = scipy.zeros(512)
+a2 = scipy.ones(512)
 
 # CRicaudio's solution # --------------------------------- #
 import ricaudio

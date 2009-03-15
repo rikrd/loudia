@@ -80,15 +80,15 @@ freqs, B = freqs_b_by_freqs(numFilters, lowFreq, highFreq, c, d)
 
 import ricaudio
 
-coeffsB1 = scipy.array(scipy.vstack((B0, B11, B2)) / gain, dtype = 'f4')
-coeffsB2 = scipy.array(scipy.vstack((B0, B12, B2)), dtype = 'f4')
-coeffsB3 = scipy.array(scipy.vstack((B0, B13, B2)), dtype = 'f4')
-coeffsB4 = scipy.array(scipy.vstack((B0, B14, B2)), dtype = 'f4')
+coeffsB1 = scipy.vstack((B0, B11, B2)) / gain
+coeffsB2 = scipy.vstack((B0, B12, B2))
+coeffsB3 = scipy.vstack((B0, B13, B2))
+coeffsB4 = scipy.vstack((B0, B14, B2))
 
-coeffsA = scipy.array(scipy.vstack((A0, A1, A2)), dtype = 'f4')
+coeffsA = scipy.vstack((A0, A1, A2))
 
 npoints = 10000
-w = scipy.arange(-scipy.pi, scipy.pi, 2*scipy.pi/(npoints), dtype = 'f4')
+w = scipy.arange(-scipy.pi, scipy.pi, 2*scipy.pi/npoints)
 
 d1 = ricaudio.freqz(coeffsB1, coeffsA, w)
 d2 = ricaudio.freqz(coeffsB2, coeffsA, w)

@@ -57,8 +57,8 @@ specs = []
 cogs = []
 
 for frame in stream:
-    samples = scipy.array(frame['samplesMono'], dtype = 'f4')
-    fft = scipy.array(frame['fft'][:fftSize/2], dtype = scipy.complex64)
+    samples = frame['samplesMono']
+    fft = frame['fft'][:fftSize/2]
 
     cog = odfcog.process( fft )
     

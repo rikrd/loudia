@@ -14,6 +14,6 @@ w = ricaudio.Window(frameSize, 0)
 m = ricaudio.FFT(fftSize, True)
 
 for i in range(100000):
-    a_random = scipy.array(scipy.random.random((1, frameSize)), dtype='f4')
+    a_random = scipy.random.random(frameSize)
     r_random = m.process(w.process(a_random))
 # -------------------------------------------------------- #

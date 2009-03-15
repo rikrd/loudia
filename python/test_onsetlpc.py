@@ -65,8 +65,8 @@ freqResps = []
 errors = []
 
 npoints = 1024
-w = scipy.arange(0, scipy.pi, scipy.pi/(fftSize/2. + 1), dtype = 'f4')
-b = scipy.array([[1]], dtype = 'f4')
+w = scipy.arange(0, scipy.pi, scipy.pi/(fftSize/2. + 1))
+b = scipy.array([[1]])
 
 if interactivePlot:
     pylab.ion()
@@ -76,8 +76,8 @@ if interactivePlot:
     pylab.gca().set_autoscale_on(False)
     
 for frame in stream:
-    samples = scipy.array(frame['windowed'], dtype = 'f4')
-    fft = scipy.array(frame['fft'], dtype = scipy.complex64)
+    samples = frame['windowed']
+    fft = frame['fft']
 
     lpcCoeffs, reflection, error = lpc.process( samples )
 
