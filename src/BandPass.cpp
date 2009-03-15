@@ -136,7 +136,7 @@ void BandPass::b(MatrixXR* b) {
   _filter.b(b);
 }
 
-void BandPass::process(MatrixXR samples, MatrixXR* filtered) {
+void BandPass::process(const MatrixXR& samples, MatrixXR* filtered) {
   _filter.process(samples, filtered);
 }
 

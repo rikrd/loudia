@@ -136,7 +136,7 @@ void BandStop::b(MatrixXR* b) {
   _filter.b(b);
 }
 
-void BandStop::process(MatrixXR samples, MatrixXR* filtered) {
+void BandStop::process(const MatrixXR& samples, MatrixXR* filtered) {
   _filter.process(samples, filtered);
 }
 

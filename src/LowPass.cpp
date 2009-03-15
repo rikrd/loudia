@@ -130,7 +130,7 @@ void LowPass::b(MatrixXR* b) {
   _filter.b(b);
 }
 
-void LowPass::process(MatrixXR samples, MatrixXR* filtered) {
+void LowPass::process(const MatrixXR& samples, MatrixXR* filtered) {
   _filter.process(samples, filtered);
 }
 

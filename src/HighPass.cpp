@@ -130,7 +130,7 @@ void HighPass::b(MatrixXR* b) {
   _filter.b(b);
 }
 
-void HighPass::process(MatrixXR samples, MatrixXR* filtered) {
+void HighPass::process(const MatrixXR& samples, MatrixXR* filtered) {
   _filter.process(samples, filtered);
 }
 

@@ -95,9 +95,9 @@ specs = []
 filtereds = []
 
 for frame in stream:
-    samples = scipy.array(frame['windowed'], dtype = scipy.float32)
-    fft = scipy.array(frame['fft'][:plotSize], dtype = scipy.complex64)
-    mag =  scipy.array(abs(fft), dtype = 'f4')
+    samples = frame['windowed']
+    fft = frame['fft'][:plotSize]
+    mag =  abs(fft)
     spec =  20.0 / scipy.log( 10.0 ) * scipy.log( abs( fft ) + 1e-7)
 
     if set(['phase', 'peak_phases']) | all_processes:
@@ -109,19 +109,20 @@ for frame in stream:
         peakLocs, peakMags, peakPhases =  peaker.process( fft )
 
         peakiLocs, peakiMags, peakiPhases = peakInterp.process( fft,
-                                                               scipy.array(peakLocs, dtype='f4'),
-                                                               scipy.array(peakMags, dtype='f4'),
-                                                               scipy.array(peakPhases, dtype='f4') )
+                                                                peakLocs,
+                                                                peakMags,
+                                                                peakPhases )
         
         trajLocs, trajMags = tracker.process( fft,
-                                              scipy.array(peakiLocs, dtype='f4'),
-                                              scipy.array(peakiMags, dtype='f4') )
+                                              peakiLocs,
+                                              peakiMags )
         
 
-        filtered = samples.T
-        
+        filtered = scipy.reshape(samples, (samples.shape[0], 1))
+
         for trajLoc in trajLocs[0, :]:
-            print trajLoc
+            if trajLoc == -1:
+                continue
             
             # Select the critical frequencies for the given trajectory
             freq = trajLoc / fftSize - 0.01
@@ -182,7 +183,7 @@ for frame in stream:
 
             if 'peak_phases' in processes:
                 if not (peakPos == -1).all():
-                    pylab.scatter(peakPos, phase[scipy.array(peakPos, dtype='i4')], c='r')
+                    pylab.scatter(peakPos, phase[peakPos], c='r')
     
             
             
