@@ -5,14 +5,14 @@ from common import *
 import pylab
 import scipy.signal
 
-samplerate = 22050.0
+samplerate = 44100.0
 
 order = 15
 center = 1000.0
 bandwidth = 200.0
 ripplePass = 0.05
 rippleStop = 40
-npoints = 200
+npoints = 1000
 
 btype = 'bandstop'
 ftype = 'butter'
@@ -58,7 +58,7 @@ for center in range(2000.0, 5000.0, 1000.0):
     # For Scipy
     sb, sa = scipy.signal.iirfilter(order, [freq, freqStop],
                                     btype = btype, ftype = ftype,
-                                    rp = rippleStop, rs = ripplePass)
+                                    rp = ripplePass, rs = rippleStop)
     
     sa = scipy.array(scipy.reshape(sa, (1, sa.shape[0])), dtype = 'f4')
     sb = scipy.array(scipy.reshape(sb, (1, sb.shape[0])), dtype = 'f4')#[:,:1]
