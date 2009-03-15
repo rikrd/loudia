@@ -70,19 +70,24 @@
     int newObject;
     PyArrayObject * in_array;
     
-    if ( array_type($input) == PyArray_FLOAT ) {
+    switch ( array_type($input) ) {
 
-      in_array = obj_to_array_contiguous_allow_conversion($input, PyArray_FLOAT, &newObject);
-
-    } else {
-
+    case PyArray_LONG:
+    case PyArray_DOUBLE:
       in_array = obj_to_array_contiguous_allow_conversion($input, PyArray_DOUBLE, &newObject);
+      break;
 
+    case PyArray_INT:
+    case PyArray_FLOAT:
+    default:
+      in_array = obj_to_array_contiguous_allow_conversion($input, PyArray_FLOAT, &newObject);
+      break;
+      
     }
 
     if( in_array == NULL ){
       PyErr_SetString(PyExc_ValueError,
-                      "array must be of type float (dtype = 'float32')");
+                      "array could not be created");
       
       return NULL;
     }
@@ -107,27 +112,24 @@
     }
 
     $1 = &temp;
-    
-    float * in_data_f;
-    double * in_data_d;
 
     // prepare the input array
     switch( array_type($input) ) {
 
-    case PyArray_FLOAT:
-      in_data_f = ( float *)array_data( in_array );
-      (*$1) = Eigen::Map<MatrixXfscipy>(in_data_f, in_rows, in_cols).cast<Real>();
+    case PyArray_LONG:
+    case PyArray_DOUBLE:
+      (*$1) = Eigen::Map<MatrixXdscipy>((double*)array_data( in_array ), in_rows, in_cols).cast<Real>();
       break;
 
-    case PyArray_DOUBLE:
-      in_data_d = ( double *)array_data( in_array );
-      (*$1) = Eigen::Map<MatrixXdscipy>(in_data_d, in_rows, in_cols).cast<Real>();
+    case PyArray_INT:
+    case PyArray_FLOAT:
+      (*$1) = Eigen::Map<MatrixXfscipy>((float*)array_data( in_array ), in_rows, in_cols).cast<Real>();
       break;
       
     default:
       PyErr_SetString(PyExc_ValueError,
-                      "array must be of type float or double (dtype = scipy.complex64 or dtype = scipy.complex128)");
-      break;
+                      "array must be of type int, float, long or double");
+      return NULL;
     }
 }
 
@@ -139,20 +141,27 @@
     // create array from input
     int newObject;
     PyArrayObject * in_array;
-    
-    if ( array_type($input) == PyArray_CFLOAT ) {
 
-      in_array = obj_to_array_contiguous_allow_conversion($input, PyArray_CFLOAT, &newObject);
+    switch ( array_type($input) ) {
 
-    } else {
-
+    case PyArray_LONG:
+    case PyArray_DOUBLE:
+    case PyArray_CDOUBLE:
       in_array = obj_to_array_contiguous_allow_conversion($input, PyArray_CDOUBLE, &newObject);
+      break;
 
+    case PyArray_INT:
+    case PyArray_FLOAT:
+    case PyArray_CFLOAT:
+    default:
+      in_array = obj_to_array_contiguous_allow_conversion($input, PyArray_CFLOAT, &newObject);
+      break;
+      
     }
 
     if( in_array == NULL ){
       PyErr_SetString(PyExc_ValueError,
-                      "array must be of type float (dtype = scipy.complex64)");
+                      "array could not be created");
       
       return NULL;
     }
@@ -177,27 +186,26 @@
     }
 
     $1 = &temp;
-    
-    std::complex< float >* in_data_cf;
-    std::complex< double >* in_data_cd;
 
     // prepare the input array
     switch( array_type($input) ) {
 
-    case PyArray_CFLOAT:
-      in_data_cf = (std::complex< float >*)array_data( in_array );
-      (*$1) = Eigen::Map<MatrixXcfscipy>(in_data_cf, in_rows, in_cols).cast<Complex>();
+    case PyArray_LONG:
+    case PyArray_DOUBLE:
+    case PyArray_CDOUBLE:
+      (*$1) = Eigen::Map<MatrixXcdscipy>((std::complex<double> *) array_data( in_array ), in_rows, in_cols).cast<Complex>();
       break;
 
-    case PyArray_CDOUBLE:
-      in_data_cd = (std::complex< double >*)array_data( in_array );
-      (*$1) = Eigen::Map<MatrixXcdscipy>(in_data_cd, in_rows, in_cols).cast<Complex>();
+    case PyArray_INT:
+    case PyArray_FLOAT:
+    case PyArray_CFLOAT:
+      (*$1) = Eigen::Map<MatrixXcfscipy>((std::complex<float> *) array_data( in_array ), in_rows, in_cols).cast<Complex>();
       break;
       
     default:
       PyErr_SetString(PyExc_ValueError,
-                      "array must be of type float or double (dtype = scipy.complex64 or dtype = scipy.complex128)");
-      break;
+                      "array must be of type complex int, complex float, complex long or complex double");
+      return NULL;
     }
 }
 

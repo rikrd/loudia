@@ -37,6 +37,9 @@ typedef int Integer;
 typedef float Real;
 typedef std::complex< Real > Complex;
 
+typedef std::complex< float > complex_float;
+typedef std::complex< double > complex_double;
+
 // Types for vector values
 typedef Eigen::Matrix< Integer, 1, Eigen::Dynamic > RowXI;
 typedef Eigen::Matrix< Real, 1, Eigen::Dynamic > RowXR;

@@ -11,7 +11,7 @@ def plotFreqz(b, a, w = None, npoints = None, title = '', db = False, createFigu
         npoints = 1000
 
     if w is None:
-        w = scipy.arange(-scipy.pi, scipy.pi, 2*scipy.pi/(npoints), dtype = 'f4')
+        w = scipy.arange(-scipy.pi, scipy.pi, 2*scipy.pi/(npoints))
 
     # Calculate the frequency response
     d = ricaudio.freqz(b.T, a.T, w)
@@ -78,7 +78,7 @@ def framer_audio(loader, size, hop):
 
     nchannels = loader.get_channels()
     nframes = loader.get_nframes()
-    samples = scipy.zeros((size, nchannels), dtype = 'f4')
+    samples = scipy.zeros((size, nchannels))
     
     while cursor < nframes:
         nframes_read = min(size, nframes-cursor)
@@ -102,7 +102,7 @@ def framer_array(arr, size, hop):
     cursor = 0L
 
     nframes = arr.shape[0]
-    samples = scipy.zeros((size, arr.shape[1]), dtype = 'f4')
+    samples = scipy.zeros((size, arr.shape[1]))
     
     while cursor < nframes:
         nframes_read = min(size, nframes-cursor)

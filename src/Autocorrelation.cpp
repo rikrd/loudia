@@ -75,8 +75,8 @@ void Autocorrelation::setup(){
   DEBUG("AUTOCORRELATION: Finished setup.");
 }
 
-void Autocorrelation::process(const MatrixXR& input, MatrixXR* autocorrelation){
-  const int rows = input.rows();
+void Autocorrelation::process(const MatrixXR& frames, MatrixXR* autocorrelation){
+  const int rows = frames.rows();
 
   (*autocorrelation).resize(rows, _maxLag - _minLag);
   
@@ -84,7 +84,7 @@ void Autocorrelation::process(const MatrixXR& input, MatrixXR* autocorrelation){
 
     MatrixXC temp;
     MatrixXR temp2;
-    _fft.process(input, &temp);
+    _fft.process(frames, &temp);
     
     temp.cwise() *= temp.conjugate();
     
@@ -94,7 +94,7 @@ void Autocorrelation::process(const MatrixXR& input, MatrixXR* autocorrelation){
 
   } else {
     
-    correlate(input, input, autocorrelation, _minLag, _maxLag);
+    correlate(frames, frames, autocorrelation, _minLag, _maxLag);
 
   }
 }

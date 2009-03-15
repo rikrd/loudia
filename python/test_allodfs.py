@@ -62,8 +62,8 @@ ffts = []
 odfs = {}
 
 for frame in stream:
-    fft = scipy.array(frame['fft'][:fftSize/2], dtype = scipy.complex64)
-    mag =  scipy.array(abs(fft), dtype = 'f4')
+    fft = scipy.array(frame['fft'][:fftSize/2])
+    mag =  abs(fft)
     spec =  20.0 / scipy.log( 10.0 ) * scipy.log( abs( fft ) + 1e-7)[:plotSize]
 
     ffts.append( fft )
