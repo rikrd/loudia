@@ -56,4 +56,10 @@ typedef Eigen::Matrix< Integer, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor,
 typedef Eigen::Matrix< Real, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor, Eigen::Dynamic, Eigen::Dynamic > MatrixXRscipy;
 typedef Eigen::Matrix< Complex, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor, Eigen::Dynamic, Eigen::Dynamic > MatrixXCscipy;
 
+typedef Eigen::Matrix< float, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor, Eigen::Dynamic, Eigen::Dynamic > MatrixXfscipy;
+typedef Eigen::Matrix< double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor, Eigen::Dynamic, Eigen::Dynamic > MatrixXdscipy;
+
+typedef Eigen::Matrix< std::complex< float >, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor, Eigen::Dynamic, Eigen::Dynamic > MatrixXcfscipy;
+typedef Eigen::Matrix< std::complex< double >, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor, Eigen::Dynamic, Eigen::Dynamic > MatrixXcdscipy;
+
 #endif // TYPEDEFS_H

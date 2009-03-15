@@ -50,7 +50,7 @@
          const MatrixXR,
          MatrixXR &,
          const MatrixXR & {
-  $1 = type_match(array_type($input), PyArray_FLOAT);
+  $1 = (array_type($input) == PyArray_FLOAT) || (array_type($input) == PyArray_DOUBLE);
 }
 
 %typecheck(SWIG_TYPECHECK_FLOAT_ARRAY) 
@@ -59,15 +59,26 @@
          const MatrixXC,
          MatrixXC &,
          const MatrixXC & {
-  $1 = type_match(array_type($input), PyArray_CFLOAT);
+  $1 = (array_type($input) == PyArray_CFLOAT) || (array_type($input) == PyArray_CDOUBLE);
 }
 
 %typemap(in,
          fragment="NumPy_Fragments") 
          const MatrixXR & (MatrixXR temp) {
 
+    // create array from input
     int newObject;
-    PyArrayObject * in_array = obj_to_array_contiguous_allow_conversion($input, PyArray_FLOAT, &newObject);
+    PyArrayObject * in_array;
+    
+    if ( array_type($input) == PyArray_FLOAT ) {
+
+      in_array = obj_to_array_contiguous_allow_conversion($input, PyArray_FLOAT, &newObject);
+
+    } else {
+
+      in_array = obj_to_array_contiguous_allow_conversion($input, PyArray_DOUBLE, &newObject);
+
+    }
 
     if( in_array == NULL ){
       PyErr_SetString(PyExc_ValueError,
@@ -76,12 +87,13 @@
       return NULL;
     }
     
+    // require one or two dimensions
     int dims[] = {1, 2};
     require_dimensions_n(in_array, dims, 2);
 
+    // get the dimensions
     int in_rows;
     int in_cols;
-
     if(array_numdims(in_array) == 2){
 
       in_rows = array_size(in_array, 0);
@@ -94,12 +106,29 @@
 
     }
 
-    // prepare the input array  
-    Real* in_data = (Real*)array_data(in_array);
-    Eigen::Map<MatrixXRscipy> in_matrix(in_data, in_rows, in_cols);
-
     $1 = &temp;
-    (*$1) = in_matrix;
+    
+    float * in_data_f;
+    double * in_data_d;
+
+    // prepare the input array
+    switch( array_type($input) ) {
+
+    case PyArray_FLOAT:
+      in_data_f = ( float *)array_data( in_array );
+      (*$1) = Eigen::Map<MatrixXfscipy>(in_data_f, in_rows, in_cols).cast<Real>();
+      break;
+
+    case PyArray_DOUBLE:
+      in_data_d = ( double *)array_data( in_array );
+      (*$1) = Eigen::Map<MatrixXdscipy>(in_data_d, in_rows, in_cols).cast<Real>();
+      break;
+      
+    default:
+      PyErr_SetString(PyExc_ValueError,
+                      "array must be of type float or double (dtype = scipy.complex64 or dtype = scipy.complex128)");
+      break;
+    }
 }
 
 
@@ -107,8 +136,19 @@
          fragment="NumPy_Fragments") 
          const MatrixXC & (MatrixXC temp) {
 
+    // create array from input
     int newObject;
-    PyArrayObject * in_array = obj_to_array_contiguous_allow_conversion($input, PyArray_CFLOAT, &newObject);
+    PyArrayObject * in_array;
+    
+    if ( array_type($input) == PyArray_CFLOAT ) {
+
+      in_array = obj_to_array_contiguous_allow_conversion($input, PyArray_CFLOAT, &newObject);
+
+    } else {
+
+      in_array = obj_to_array_contiguous_allow_conversion($input, PyArray_CDOUBLE, &newObject);
+
+    }
 
     if( in_array == NULL ){
       PyErr_SetString(PyExc_ValueError,
@@ -117,12 +157,13 @@
       return NULL;
     }
     
+    // require one or two dimensions
     int dims[] = {1, 2};
     require_dimensions_n(in_array, dims, 2);
 
+    // get the dimensions
     int in_rows;
     int in_cols;
-
     if(array_numdims(in_array) == 2){
 
       in_rows = array_size(in_array, 0);
@@ -134,94 +175,33 @@
       in_cols = array_size(in_array, 0);
 
     }
-
-    // prepare the input array  
-    Complex* in_data = (Complex*)array_data(in_array);
-    Eigen::Map<MatrixXCscipy> in_matrix(in_data, in_rows, in_cols);
 
     $1 = &temp;
-    (*$1) = in_matrix;
-}
-
-
-%typemap(in,
-         fragment="NumPy_Fragments") 
-         MatrixXR {
-
-    int newObject;
-    PyArrayObject * in_array = obj_to_array_contiguous_allow_conversion($input, PyArray_FLOAT, &newObject);
-
-    if( in_array == NULL ){
-      PyErr_SetString(PyExc_ValueError,
-                      "array must be of type float (dtype = 'float32')");
-      
-      return NULL;
-    }
     
-    int dims[] = {1, 2};
-    require_dimensions_n(in_array, dims, 2);
+    std::complex< float >* in_data_cf;
+    std::complex< double >* in_data_cd;
 
-    int in_rows;
-    int in_cols;
+    // prepare the input array
+    switch( array_type($input) ) {
 
-    if(array_numdims(in_array) == 2){
+    case PyArray_CFLOAT:
+      in_data_cf = (std::complex< float >*)array_data( in_array );
+      (*$1) = Eigen::Map<MatrixXcfscipy>(in_data_cf, in_rows, in_cols).cast<Complex>();
+      break;
 
-      in_rows = array_size(in_array, 0);
-      in_cols = array_size(in_array, 1);
-
-    }else{
-
-      in_rows = 1;
-      in_cols = array_size(in_array, 0);
-
-    }
-
-    // prepare the input array  
-    Real* in_data = (Real*)array_data(in_array);
-    Eigen::Map<MatrixXRscipy> in_matrix(in_data, in_rows, in_cols);
-
-    $1 = in_matrix;
-}
-
-%typemap(in,
-         fragment="NumPy_Fragments")
-         MatrixXC {
-
-    int newObject;
-    PyArrayObject * in_array = obj_to_array_contiguous_allow_conversion($input, PyArray_CFLOAT, &newObject);
-    
-    if( in_array == NULL ){
-      PyErr_SetString(PyExc_ValueError,
-                      "array must be of type complex float (dtype = 'complex64')");
+    case PyArray_CDOUBLE:
+      in_data_cd = (std::complex< double >*)array_data( in_array );
+      (*$1) = Eigen::Map<MatrixXcdscipy>(in_data_cd, in_rows, in_cols).cast<Complex>();
+      break;
       
-      return NULL;
+    default:
+      PyErr_SetString(PyExc_ValueError,
+                      "array must be of type float or double (dtype = scipy.complex64 or dtype = scipy.complex128)");
+      break;
     }
-
-    int dims[] = {1, 2};
-    require_dimensions_n(in_array, dims, 2);
-
-    int in_rows;
-    int in_cols;
-
-    if(array_numdims(in_array) == 2){
-
-      in_rows = array_size(in_array, 0);
-      in_cols = array_size(in_array, 1);
-
-    }else{
-
-      in_rows = 1;
-      in_cols = array_size(in_array, 0);
-
-    }
-
-    // prepare the input array  
-    Complex* in_data = (Complex*)array_data(in_array);
-
-    Eigen::Map<MatrixXCscipy> in_matrix(in_data, in_rows, in_cols);
-
-    $1 = in_matrix;
 }
+
+
 
 %typemap(in, numinputs = 0) 
          MatrixXR* (MatrixXR temp) {
