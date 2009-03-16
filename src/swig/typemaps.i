@@ -79,10 +79,14 @@
 
     case PyArray_INT:
     case PyArray_FLOAT:
-    default:
       in_array = obj_to_array_contiguous_allow_conversion($input, PyArray_FLOAT, &newObject);
       break;
+
+    default:
+      PyErr_SetString(PyExc_ValueError,
+                      "array must be of type int, float, long or double");
       
+      return NULL;
     }
 
     if( in_array == NULL ){
@@ -153,9 +157,13 @@
     case PyArray_INT:
     case PyArray_FLOAT:
     case PyArray_CFLOAT:
-    default:
       in_array = obj_to_array_contiguous_allow_conversion($input, PyArray_CFLOAT, &newObject);
       break;
+    
+    default:
+      PyErr_SetString(PyExc_ValueError,
+                      "array must be of type complex int, complex float, complex long or complex double");
+      return NULL;
       
     }
 
