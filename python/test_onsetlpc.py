@@ -71,9 +71,9 @@ for frame in stream:
         pylab.hold( True )
         pylab.plot( w, freqResp[0, :], label = 'LPC' )
         
-    specs.append( spec[0, :] )
+    specs.append( spec[0, :plotSize] )
     lpcs.append( lpcCoeffs[0] )
-    freqResps.append( freqResp[0, :] )
+    freqResps.append( freqResp[0, :plotSize] )
     errors.append( error[0] )
 
 if interactivePlot:
