@@ -11,21 +11,18 @@ frameSize = 128
 fftSize = 512
 samplerate = 8000
 
-a_zeros = scipy.array(scipy.zeros((1, frameSize)), dtype='f4')
-a_ones = scipy.array(scipy.ones((1, frameSize)), dtype='f4')
-a_random = scipy.array(scipy.random.random((1, frameSize)), dtype='f4')
-
-a_sine = a_zeros
-for i in range(harmonics):
-    a_sine[0, :] += scipy.array(scipy.cos(2 * scipy.pi * i * fundamental * scipy.arange(frameSize) / samplerate), dtype='f4')
+a_zeros = scipy.zeros( frameSize )
+a_ones = scipy.ones( frameSize )
+a_random = scipy.random.random( frameSize )
+a_sine = scipy.cos(2 * scipy.pi * 440 * scipy.arange( frameSize ) / samplerate + scipy.pi/4.0)
 
 a_sine += (a_random - 0.5) * 1.0
 
 # Ricaudio's solution # --------------------------------- #
 window = ricaudio.Window(frameSize, ricaudio.Window.HAMMING)
 fft = ricaudio.FFT(fftSize)
-peaks = ricaudio.PeakDetect(5, 4)
-peaksinterp = ricaudio.PeakInterpolate()
+peaks = ricaudio.PeakDetectComplex(5, 4)
+peaksinterp = ricaudio.PeakInterpolateComplex()
 trajs = ricaudio.PeakContinue(5, 4, 3)
 
 

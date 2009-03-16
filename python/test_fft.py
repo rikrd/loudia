@@ -9,10 +9,10 @@ frameSize = 121
 fftSize = 512
 samplerate = 8000
 
-a_zeros = scipy.zeros(frameSize)
-a_ones = scipy.ones(frameSize)
+a_zeros = scipy.zeros( frameSize )
+a_ones = scipy.ones( frameSize )
 a_random = scipy.random.random( frameSize )
-a_sine = scipy.cos(2 * scipy.pi * 440 * scipy.arange(frameSize) / samplerate + scipy.pi/4.0)
+a_sine = scipy.cos(2 * scipy.pi * 440 * scipy.arange( frameSize ) / samplerate + scipy.pi/4.0)
 
 # Ricaudio's solution # --------------------------------- #
 w = ricaudio.Window(frameSize, ricaudio.Window.RECTANGULAR)
