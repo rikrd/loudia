@@ -71,7 +71,7 @@ for frame in stream:
         pylab.hold( True )
         pylab.plot( w, freqResp[0, :], label = 'LPC' )
         
-    specs.append( spec )
+    specs.append( spec[0, :] )
     lpcs.append( lpcCoeffs[0] )
     freqResps.append( freqResp[0, :] )
     errors.append( error[0] )

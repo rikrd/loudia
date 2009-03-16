@@ -1,59 +1,32 @@
 #!/usr/bin/env python
 
 import ricaudio
-from sepel.inputs import pyricaudio
+from common import *
 import pylab
 import os, sys, wave
 import scipy
-from common import *
 
 interactivePlot = False
 plot = True
 
 filename = sys.argv[1]
 
-# Samplerate of the file
-wavfile = wave.open(filename,'r')
-samplerate = float(wavfile.getframerate())
-wavfile.close()
-
 frameSize = 4096
 frameStep = 1024
-
-frameSizeTime = frameSize / 44100.0
-frameStepTime = frameStep / 44100.0
 
 fftSize = 4096
 plotSize = fftSize / 4
 
 bandwidth = 4 * fftSize/frameSize
-analysisLimit = scipy.inf
-
-# Creation of the pipeline        
-stream = pyricaudio.sndfilereader({'filename': filename,
-                                   'windowSizeInTime': frameSizeTime,
-                                   'windowStepInTime': frameStepTime,
-                                   'encodingKey': 'encoding',
-                                   'channelCountKey': 'channelCount',
-                                   'samplesOriginalKey': 'samples',
-                                   'samplesKey': 'samplesMono',
-                                   'samplerateKey': 'samplerate',
-                                   'timestampBeginKey': 'timestampBegin',
-                                   'timestampEndKey': 'timestampEnd',
-                                   'limit':analysisLimit})
-
-stream = pyricaudio.window_ricaudio(stream, {'inputKey': 'samplesMono',
-                                             'outputKey': 'windowed',
-                                             'windowType': 'hamming'})
-
-stream = pyricaudio.fft_ricaudio(stream, {'inputKey': 'windowed',
-                                          'outputKey': 'fft',
-                                          'zeroPhase': True,
-                                          'fftLength': fftSize})
-
 
 minPeakWidth = 8
+
 peakCandidateCount = 4
+
+stream, samplerate, nframes, nchannels, loader = get_framer_audio(filename, frameSize, frameStep)
+
+ffter = ricaudio.FFT( fftSize )
+windower = ricaudio.Window( frameSize, ricaudio.Window.BLACKMANHARRIS )
 whitening = ricaudio.SpectralWhitening(fftSize, 50.0, 6000.0, samplerate)
 pitchACF = ricaudio.PitchACF(fftSize, samplerate, minPeakWidth, peakCandidateCount)
 acorr = ricaudio.Autocorrelation(fftSize/2+1, fftSize/2+1)
@@ -71,7 +44,8 @@ if interactivePlot:
     pylab.gca().set_autoscale_on(False)
 
 for frame in stream:
-    spec = abs(frame['fft'])
+    fft = ffter.process( windower.process( frame ) )
+    spec =  ricaudio.magToDb( abs( fft ) )
     
     wspec = whitening.process( spec )
     pitch, saliency = pitchACF.process( wspec )
@@ -89,8 +63,8 @@ for frame in stream:
         pylab.hold(True)
         pylab.stem( pitch/samplerate*fftSize, saliency )
         
-    specs.append( spec )
-    wspecs.append( wspec )
+    specs.append( spec[0, :] )
+    wspecs.append( wspec[0, :] )
     pitches.append( pitch )
     saliencies.append( saliency )
 
@@ -105,9 +79,9 @@ saliencies = scipy.array( saliencies )[:, 0]
 frameCount = specs.shape[0] - 1
 
 if plot:
-
-    pitches[ saliencies < 0.001] = scipy.NaN
-
+    saliencies[ pitches < 0 ] = scipy.nan
+    pitches[ pitches < 0 ] = scipy.nan
+    
     # Get the onsets
     annotation = os.path.splitext(filename)[0] + '.onset_annotated'
     onsets = get_onsets(annotation, frameStep, samplerate)

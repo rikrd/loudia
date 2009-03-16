@@ -50,7 +50,6 @@ subplots = len( odfNames ) + 1
 # Get the onsets
 annotation = os.path.splitext(filename)[0] + '.onset_annotated'
 onsets = []
-
 if os.path.isfile(annotation):
     onsets = get_onsets(annotation, frameStep, samplerate, onsetError = onsetError)
         

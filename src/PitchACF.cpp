@@ -58,8 +58,8 @@ void PitchACF::process(const MatrixXR& spectrum, MatrixXR* pitches, MatrixXR* sa
   _peakInterp.process(_acorred, (*pitches), (*saliencies),
                       pitches, saliencies);
 
-  (*pitches) *= _samplerate / _fftSize;
-
+  (*pitches) *= 2.0 * _samplerate / _fftSize;
+  
   (*saliencies).cwise() /= _acorred.col(0);
 }
 
