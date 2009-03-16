@@ -28,7 +28,7 @@ bandwidth = 8 * fftSize / frameSize
 peakCount = 4
 window = ricaudio.Window(frameSize, ricaudio.Window.BLACKMANHARRIS)
 fft = ricaudio.FFT(fftSize)
-peaks = ricaudio.PeakDetect(peakCount, bandwidth)
+peaks = ricaudio.PeakDetectComplex(peakCount, bandwidth)
 cogs = ricaudio.PeakCOG(fftSize, bandwidth)
 
 peakCogs = []
@@ -39,7 +39,7 @@ if plotInteractive:
     
 for i in range((signalSize - frameSize)/frameStep):
     a_sine = sinenoise[i*frameStep:(i*frameStep+frameSize)].T
-  
+    
     r_sine_windowed = window.process(a_sine)
     r_sine_fft = fft.process(r_sine_windowed)
     r_sine_peakpos, r_sine_peakmag, r_sine_peakphase = peaks.process(r_sine_fft)
@@ -49,7 +49,7 @@ for i in range((signalSize - frameSize)/frameStep):
         pylab.clf()
         pylab.hold(True)
         pylab.plot(abs(r_sine_fft[0,:]))
-        pylab.stem(r_sine_peakpos[0,:], abs(r_sine_fft[0,:])[scipy.array(r_sine_peakpos[0,:], dtype = 'i4')])
+        pylab.stem(r_sine_peakpos[0,:], abs(r_sine_fft[0,:])[r_sine_peakpos[0,:]])
         
         pylab.hold(False)
         
