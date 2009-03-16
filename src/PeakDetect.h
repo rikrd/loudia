@@ -51,7 +51,7 @@ public:
 
   void setup();
 
-  void process(const MatrixXR& input,
+  void process(const MatrixXR& frames,
                MatrixXR* peakPositions, MatrixXR* peakMagnitudes);
 
   void reset();

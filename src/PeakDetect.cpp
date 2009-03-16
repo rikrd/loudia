@@ -80,18 +80,18 @@ void PeakDetect::setup(){
 }
 
 
-void PeakDetect::process(const MatrixXR& input, 
+void PeakDetect::process(const MatrixXR& frames, 
                          MatrixXR* peakPositions, MatrixXR* peakMagnitudes){
   DEBUG("PEAKDETECT: Processing");
   
-  const int rows = input.rows();
+  const int rows = frames.rows();
 
   int numPeaks = _numPeaks;
   if( numPeaks == -1 ){
-    numPeaks = input.cols();
+    numPeaks = frames.cols();
   }
   
-  DEBUG("PEAKDETECT: Processing, input.shape: (" << rows << ", " << input.cols() << ")");
+  DEBUG("PEAKDETECT: Processing, frames.shape: (" << rows << ", " << frames.cols() << ")");
 
   (*peakPositions).resize(rows, numPeaks);
   (*peakPositions).setConstant(-1);
@@ -99,7 +99,7 @@ void PeakDetect::process(const MatrixXR& input,
   (*peakMagnitudes).resize(rows, numPeaks);
   (*peakMagnitudes).setConstant(-1);
 
-  _magnitudes = input.cwise().abs();
+  _magnitudes = frames.cwise().abs();
 
   DEBUG("PEAKDETECT: Processing, _magnitudes.shape: (" << rows << ", " << _magnitudes.cols() << ")");
   
@@ -110,7 +110,7 @@ void PeakDetect::process(const MatrixXR& input,
   Real minVal;
   
   vector<peak> peaks;
-  peaks.reserve(input.cols());
+  peaks.reserve(frames.cols());
   
   for ( int i = 0 ; i < rows; i++){
 
