@@ -1,26 +1,19 @@
 #!/usr/bin/env python
 
 import ricaudio
-from sepel.inputs import pyricaudio
+from common import *
 import pylab
 import sys
 import scipy
 
 
 interactivePlotting = False
-
 plotSpectrumTrajs = True
-
 plotDetSpecSynth = True
-
 plotDetSpecDiff = True
-
 plotTrajs = True
-
 plotMags = False
-
 plotLocs = False
-
 plotOdf = True
 
 filename = sys.argv[1]
@@ -28,37 +21,12 @@ filename = sys.argv[1]
 frameSize = 1024 
 frameStep = 256
 
-frameSizeTime = frameSize / 44100.0
-frameStepTime = frameStep / 44100.0
-
 fftSize = 2048
 
-analysisLimit = 1000.0
+stream, samplerate, nframes, nchannels, loader = get_framer_audio(filename, frameSize, frameStep)
 
-# Creation of the pipeline        
-stream = pyricaudio.sndfilereader({'filename': filename,
-                                   'windowSizeInTime': frameSizeTime,
-                                   'windowStepInTime': frameStepTime,
-                                   'encodingKey': 'encoding',
-                                   'channelCountKey': 'channelCount',
-                                   'samplesOriginalKey': 'samples',
-                                   'samplesKey': 'samplesMono',
-                                   'samplerateKey': 'samplerate',
-                                   'timestampBeginKey': 'timestampBegin',
-                                   'timestampEndKey': 'timestampEnd',
-                                   'limit':analysisLimit})
-
-
-stream = pyricaudio.window_ricaudio(stream, {'inputKey': 'samplesMono',
-                                             'outputKey': 'windowed',
-                                             'windowType': 'hamming'})
-
-stream = pyricaudio.fft_ricaudio(stream, {'inputKey': 'windowed',
-                                          'outputKey': 'fft',
-                                          'zeroPhase': True,
-                                          'fftLength': fftSize})
-
-
+windower = ricaudio.Window( frameSize, ricaudio.Window.HAMMING )
+ffter = ricaudio.FFT( fftSize )
 
 subplots = {1 : ['mag', 'peaki_mags', 'resid_mag', 'synth_mag', 'traj_mags'],
             2 : ['phase', 'peak_phases']}
@@ -96,9 +64,9 @@ specsResid = []
 specsMagsResid = []
 
 for frame in stream:
-    fft = frame['fft'][:plotSize]
-    mag =  abs(fft)
-    spec =  20.0 / scipy.log( 10.0 ) * scipy.log( abs( fft ) + 1e-7)
+    samples = frame
+    fft = ffter.process( windower.process( frame ) )[0, :plotSize]
+    spec =  ricaudio.magToDb( abs( fft ) )[0, :plotSize]
 
     if set(['phase', 'peak_phases']) | all_processes:
         phase =  scipy.angle( fft )
