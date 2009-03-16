@@ -25,9 +25,8 @@ preEmphasis = 0.975
 
 stream, samplerate, nframes, nchannels, loader = get_framer_audio(filename, frameSize, frameStep)
 
-ffter = ricaudio.FFT( fftSize )
 windower = ricaudio.Window( frameSize, ricaudio.Window.HAMMING )
-
+ffter = ricaudio.FFT( fftSize )
 lpc = ricaudio.LPC(frameSize, numCoeffs, preEmphasis)
 lpcr = ricaudio.LPCResidual(frameSize)
 
@@ -49,12 +48,11 @@ if interactivePlot:
     
 for frame in stream:
     fft = ffter.process( windower.process( frame ) )[0, :]
+    spec =  ricaudio.magToDb( abs( fft ) )
     
     lpcCoeffs, reflection, error = lpc.process( frame )
 
     lpcResidual = lpcr.process( frame, lpcCoeffs )
-
-    spec =  ricaudio.magToDb( abs( fft ) )
     
     freqResp = ricaudio.magToDb( abs( ricaudio.freqz( b * scipy.sqrt( abs( error[0] ) ), lpcCoeffs.T, w ) ).T )
     
