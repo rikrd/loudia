@@ -26,12 +26,13 @@
 using namespace std;
 using namespace Eigen;
 
-ODFHFC::ODFHFC(int fftLength) :
+ODFHFC::ODFHFC(int fftSize) :
   ODFBase(),
-  _fftLength(fftLength)
+  _fftSize( fftSize ),
+  _halfSize( _fftSize / 2 + 1 )
 {
   
-  DEBUG("ODFHFC: Constructor fftLength: " << _fftLength);
+  DEBUG("ODFHFC: Constructor fftSize: " << _fftSize);
   
   setup();
 }
@@ -44,8 +45,7 @@ void ODFHFC::setup() {
   DEBUG("ODFHFC: Setting up...");
 
   // Create the vector with the weights (weights are the frequency bin indices)
-  const int halfFFTlen = (int)ceil(_fftLength / 2.0);
-  range(0, halfFFTlen, halfFFTlen, &_freqBin);
+  range(0, _halfSize, _halfSize, &_freqBin);
   
   reset();
 
@@ -57,17 +57,13 @@ void ODFHFC::process(const MatrixXC& fft, MatrixXR* odfValue) {
   DEBUG("ODFHFC: Processing windowed");
   const int rows = fft.rows();
   const int cols = fft.cols();
-  const int halfCols = min((int)ceil(_fftLength / 2.0), cols);
-  
-  (*odfValue).resize(rows, 1);
-  _spectrumAbs.resize(rows, halfCols);
 
-  DEBUG("ODFHFC: Spectrum resized rows: " << rows << " halfCols: " << halfCols);
+  (*odfValue).resize(rows, 1);
   
-  _spectrumAbs = fft.block(0, 0, rows, halfCols).cwise().abs();  
+  _spectrumAbs = fft.cwise().abs();  
 
   for (int row = 0; row < rows; row ++) {
-    (*odfValue).row(row) = _spectrumAbs.row(row) * _freqBin.block(0, 0, 1, halfCols).transpose() / halfCols;
+    (*odfValue).row(row) = _spectrumAbs.row(row) * _freqBin.block(0, 0, 1, cols).transpose() / cols;
   }
   
   DEBUG("ODFHFC: Finished Processing");

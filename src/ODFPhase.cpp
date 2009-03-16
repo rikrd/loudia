@@ -27,15 +27,16 @@
 using namespace std;
 using namespace Eigen;
 
-ODFPhase::ODFPhase(int fftLength, bool weighted, bool normalize) :
+ODFPhase::ODFPhase(int fftSize, bool weighted, bool normalize) :
   ODFBase(),
-  _fftLength(fftLength),
-  _weighted(weighted),
-  _normalize(normalize),
-  _unwrap((int)(fftLength / 2.0))
+  _fftSize( fftSize ),
+  _halfSize( _fftSize / 2 + 1 ),
+  _weighted( weighted ),
+  _normalize( normalize ),
+  _unwrap( _halfSize )
 {
   
-  DEBUG("ODFPhase: Constructor fftLength: " << _fftLength);
+  DEBUG("ODFPhase: Constructor fftSize: " << _fftSize);
   
   setup();
 }
@@ -58,26 +59,18 @@ void ODFPhase::setup() {
 void ODFPhase::process(const MatrixXC& fft, MatrixXR* odfValue) {
   DEBUG("ODFPhase: Processing windowed");
   const int rows = fft.rows();
-  const int cols = fft.cols();
-  const int halfCols = min((int)ceil(_fftLength / 2.0), cols);
   
   if ( rows < 3 ) {
     // Throw ValueError, it must have a minimum of 3 rows
   }
 
   (*odfValue).resize(rows - 2, 1);
-
-  DEBUG("ODFPhase: Spectrum resized rows: " << rows << " halfCols: " << halfCols);
   
-  _spectrum = fft.block(0, 0, rows, halfCols);
-
-  DEBUG("ODFPhase: Specturum halved");
-
-  _unwrap.process(_spectrum.cwise().angle(), &_unwrappedAngle);
+  _unwrap.process(fft.cwise().angle(), &_unwrappedAngle);
 
   DEBUG("ODFPhase: Processing unwrapped");
   
-  phaseDeviation(_spectrum, _unwrappedAngle, odfValue);
+  phaseDeviation(fft, _unwrappedAngle, odfValue);
   
   DEBUG("ODFPhase: Finished Processing");
 }

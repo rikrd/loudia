@@ -29,7 +29,7 @@
 class ODFCOG : public ODFBase {
 protected:
   // Internal parameters
-  int _fftLength;
+  int _fftSize;
   int _peakCount;
   int _bandwidth;
   
@@ -47,7 +47,7 @@ protected:
   PeakCOG _peakCoger;
   
 public:
-  ODFCOG(int fftLength, int bandwidth = 6, int peakCount = 40);
+  ODFCOG(int fftSize, int bandwidth = 6, int peakCount = 40);
 
   ~ODFCOG();
 

@@ -26,12 +26,12 @@
 using namespace std;
 using namespace Eigen;
 
-ODFSpectralFlux::ODFSpectralFlux(int fftLength) :
+ODFSpectralFlux::ODFSpectralFlux(int fftSize) :
   ODFBase(),
-  _fftLength(fftLength)
+  _fftSize( fftSize )
 {
   
-  DEBUG("ODFSpectralFlux: Constructor fftLength: " << _fftLength);
+  DEBUG("ODFSpectralFlux: Constructor fftSize: " << _fftSize);
   
   setup();
 }
@@ -53,8 +53,7 @@ void ODFSpectralFlux::process(const MatrixXC& fft, MatrixXR* odfValue) {
   DEBUG("ODFSpectralFlux: Processing windowed");
   const int rows = fft.rows();
   const int cols = fft.cols();
-  const int halfCols = min((int)ceil(_fftLength / 2.0), cols);
-  
+
   if ( rows < 2 ) {
     // Throw ValueError, it must have a minimum of 2 rows
   }
@@ -62,15 +61,13 @@ void ODFSpectralFlux::process(const MatrixXC& fft, MatrixXR* odfValue) {
   (*odfValue).resize(rows - 1, 1);
   (*odfValue).row(0).setZero();
   
-  DEBUG("ODFSpectralFlux: Spectrum resized rows: " << rows << " halfCols: " << halfCols);
+  DEBUG("ODFSpectralFlux: Spectrum resized rows: " << rows );
+    
+  _spectrumAbs = fft.cwise().abs();
   
-  _spectrum = fft.block(0, 0, rows, halfCols);
-  
-  _spectrumAbs = _spectrum.cwise().abs();
-  
-  (*odfValue) = (_spectrumAbs.block(1, 0, rows-1, halfCols) \
-                 - _spectrumAbs.block(0, 0, rows-1, halfCols)           \
-                 ).cwise().clipUnder().rowwise().sum() / halfCols;
+  (*odfValue) = (_spectrumAbs.block(1, 0, rows - 1, cols) \
+                 - _spectrumAbs.block(0, 0, rows - 1, cols) \
+                 ).cwise().clipUnder().rowwise().sum() / cols;
   
   DEBUG("ODFSpectralFlux: Finished Processing");
 }

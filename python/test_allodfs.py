@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 
-from sepel.inputs import pyricaudio
 import ricaudio
 from common import *
 import pylab
@@ -13,46 +12,16 @@ filename = sys.argv[1]
 # and the estimated onsets in milliseconds (ms)
 onsetError = 50.0
 
-# Samplerate of the file
-wavfile = wave.open(filename,'r')
-samplerate = float(wavfile.getframerate())
-wavfile.close()
-
 frameSize = 1024 
 frameStep = 512
-
-frameSizeTime = frameSize / 44100.0
-frameStepTime = frameStep / 44100.0
 
 fftSize = 2048*2
 plotSize = fftSize / 8
 
-analysisLimit = scipy.inf
-
-# Creation of the pipeline        
-stream = pyricaudio.sndfilereader({'filename': filename,
-                                   'windowSizeInTime': frameSizeTime,
-                                   'windowStepInTime': frameStepTime,
-                                   'encodingKey': 'encoding',
-                                   'channelCountKey': 'channelCount',
-                                   'samplesOriginalKey': 'samples',
-                                   'samplesKey': 'samplesMono',
-                                   'samplerateKey': 'samplerate',
-                                   'timestampBeginKey': 'timestampBegin',
-                                   'timestampEndKey': 'timestampEnd',
-                                   'limit':analysisLimit})
+stream, samplerate, nframes, nchannels, loader = get_framer_audio(filename, frameSize, frameStep)
 
 
-stream = pyricaudio.window_ricaudio(stream, {'inputKey': 'samplesMono',
-                                             'outputKey': 'windowed',
-                                             'windowType': 'hamming'})
-
-stream = pyricaudio.fft_ricaudio(stream, {'inputKey': 'windowed',
-                                          'outputKey': 'fft',
-                                          'zeroPhase': True,
-                                          'fftLength': fftSize})
-
-
+# Take all the ODF availables
 odfNames = [(getattr(ricaudio.ODF, i), i) for i in dir(ricaudio.ODF)
             if type(getattr(ricaudio.ODF, i)) == int]
 
@@ -62,10 +31,12 @@ specs = []
 ffts = []
 odfs = {}
 
+ffter = ricaudio.FFT( fftSize )
+windower = ricaudio.Window( frameSize, ricaudio.Window.HAMMING )
+
 for frame in stream:
-    fft = scipy.array(frame['fft'][:fftSize/2])
-    mag =  abs(fft)
-    spec =  20.0 / scipy.log( 10.0 ) * scipy.log( abs( fft ) + 1e-7)[:plotSize]
+    fft = ffter.process( windower.process( frame ) )[0, :]
+    spec =  ricaudio.magToDb( abs( fft ) )[0, :plotSize]
 
     ffts.append( fft )
     specs.append( spec )
@@ -74,7 +45,7 @@ ffts = scipy.array( ffts )
 specs = scipy.array( specs )
 
 frameCount = specs.shape[0] - 1
-subplots = len(odfNames) + 1
+subplots = len( odfNames ) + 1
 
 # Get the onsets
 annotation = os.path.splitext(filename)[0] + '.onset_annotated'

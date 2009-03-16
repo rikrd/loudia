@@ -27,14 +27,14 @@
 class ODFMKL : public ODFBase {
 protected:
   // Internal parameters
-  int _fftLength;
+  int _fftSize;
   Real _minSpectrum;
   
   // Internal variables
   MatrixXR _spectrumAbs;
 
 public:
-  ODFMKL(int fftLength, Real _minSpectrum = 1e-7);
+  ODFMKL(int fftSize, Real _minSpectrum = 1e-7);
 
   ~ODFMKL();
 

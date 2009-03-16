@@ -27,14 +27,13 @@
 class ODFSpectralFlux : public ODFBase {
 protected:
   // Internal parameters
-  int _fftLength;
+  int _fftSize;
   
   // Internal variables
-  MatrixXC _spectrum;
   MatrixXR _spectrumAbs;
 
 public:
-  ODFSpectralFlux(int fftLength);
+  ODFSpectralFlux(int fftSize);
 
   ~ODFSpectralFlux();
 

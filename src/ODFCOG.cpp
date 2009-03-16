@@ -26,16 +26,16 @@
 using namespace std;
 using namespace Eigen;
 
-ODFCOG::ODFCOG(int fftLength, int peakCount, int bandwidth) :
+ODFCOG::ODFCOG(int fftSize, int peakCount, int bandwidth) :
   ODFBase(),
-  _fftLength(fftLength),
-  _peakCount(peakCount),
-  _bandwidth(bandwidth),
-  _peaker(peakCount, PeakDetect::BYMAGNITUDE, bandwidth),
-  _peakCoger(fftLength, bandwidth)
+  _fftSize( fftSize ),
+  _peakCount( peakCount ),
+  _bandwidth( bandwidth ),
+  _peaker( peakCount, PeakDetect::BYMAGNITUDE, bandwidth ),
+  _peakCoger( fftSize, bandwidth )
 {
   
-  DEBUG("ODFCOG: Constructor fftLength: " << _fftLength);
+  DEBUG("ODFCOG: Constructor fftSize: " << _fftSize);
   
   setup();
 }
@@ -59,16 +59,14 @@ void ODFCOG::setup() {
 void ODFCOG::process(const MatrixXC& fft, MatrixXR* odfValue) {
   DEBUG("ODFCOG: Processing windowed");
   const int rows = fft.rows();
-  const int cols = fft.cols();
-  const int halfCols = min((int)ceil(_fftLength / 2.0), cols);
   
   (*odfValue).resize(rows, 1);
 
   DEBUG("ODFCOG: Processing the peaks");
 
-  _peaker.process(fft.block(0, 0, rows, halfCols).cwise().abs(), &_peakPos, &_peakMag);
+  _peaker.process(fft.cwise().abs(), &_peakPos, &_peakMag);
 
-  _peakCoger.process(fft.block(0, 0, rows, halfCols), _peakPos, &_cog);
+  _peakCoger.process(fft, _peakPos, &_cog);
 
   (*odfValue) = _cog.cwise().clipUnder().rowwise().sum();
   

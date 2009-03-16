@@ -26,13 +26,13 @@
 using namespace std;
 using namespace Eigen;
 
-ODFMKL::ODFMKL(int fftLength, Real minSpectrum) :
+ODFMKL::ODFMKL(int fftSize, Real minSpectrum) :
   ODFBase(),
-  _fftLength(fftLength),
+  _fftSize(fftSize),
   _minSpectrum(minSpectrum)
 {
   
-  DEBUG("ODFMKL: Constructor fftLength: " << _fftLength);
+  DEBUG("ODFMKL: Constructor fftSize: " << _fftSize);
   
   setup();
 }
@@ -54,18 +54,16 @@ void ODFMKL::process(const MatrixXC& fft, MatrixXR* odfValue) {
   DEBUG("ODFMKL: Processing windowed");
   const int rows = fft.rows();
   const int cols = fft.cols();
-  const int halfCols = min((int)ceil(_fftLength / 2.0), cols);
   
   if ( rows < 2 ) {
     // Throw ValueError, it must have a minimum of 2 rows
   }
 
   (*odfValue).resize(rows - 1, 1);
-  _spectrumAbs.resize(rows, halfCols);
 
-  DEBUG("ODFMKL: Spectrum resized rows: " << rows << " halfCols: " << halfCols);
+  DEBUG("ODFMKL: Spectrum resized rows: " << rows);
   
-  _spectrumAbs = fft.block(0, 0, rows, halfCols).cwise().abs();
+  _spectrumAbs = fft.cwise().abs();
 
   (*odfValue) = (_spectrumAbs.block(1, 0, rows-1, cols).cwise() \
                  * (_spectrumAbs.block(1, 0, rows-1, cols).cwise() \

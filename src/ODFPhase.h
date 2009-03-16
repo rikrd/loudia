@@ -28,14 +28,14 @@
 class ODFPhase : public ODFBase {
 protected:
   // Internal parameters
-  int _fftLength;
+  int _fftSize;
+  int _halfSize;
   bool _weighted;
   bool _normalize;
   
   // Internal variables
   Unwrap _unwrap;
-
-  MatrixXC _spectrum;
+  
   MatrixXR _unwrappedAngle;
   MatrixXR _phaseDiff;
   MatrixXR _instFreq;
@@ -43,7 +43,7 @@ protected:
   void phaseDeviation(const MatrixXC& spectrum, const MatrixXR& spectrumArg, MatrixXR* odfValue);
 
 public:
-  ODFPhase(int fftLength, bool weighted = false, bool normalize = false);
+  ODFPhase(int fftSize, bool weighted = false, bool normalize = false);
 
   ~ODFPhase();
 

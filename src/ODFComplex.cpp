@@ -27,14 +27,15 @@
 using namespace std;
 using namespace Eigen;
 
-ODFComplex::ODFComplex(int fftLength, bool rectified) :
+ODFComplex::ODFComplex(int fftSize, bool rectified) :
   ODFBase(),
-  _fftLength(fftLength),
-  _rectified(rectified),
-  _unwrap((int)(fftLength / 2.0))
+  _fftSize( fftSize ),
+  _halfSize( _fftSize / 2 + 1 ),
+  _rectified( rectified ),
+  _unwrap( _halfSize )
 {
   
-  DEBUG("ODFComplex: Constructor fftLength: " << _fftLength);
+  DEBUG("ODFComplex: Constructor fftSize: " << _fftSize);
   
   setup();
 }
@@ -57,27 +58,18 @@ void ODFComplex::setup() {
 void ODFComplex::process(const MatrixXC& fft, MatrixXR* odfValue) {
   DEBUG("ODFComplex: Processing windowed");
   const int rows = fft.rows();
-  const int cols = fft.cols();
-  const int halfCols = min((int)ceil(_fftLength / 2.0), cols);
   
   if ( rows < 3 ) {
     // Throw ValueError, it must have a minimum of 3 rows
   }
 
   (*odfValue).resize(rows - 2, 1);
-  _spectrum.resize(rows, halfCols);
 
-  DEBUG("ODFComplex: Spectrum resized rows: " << rows << " halfCols: " << halfCols);
-  
-  _spectrum = fft.block(0, 0, rows, halfCols);
-
-  DEBUG("ODFComplex: Spectrum halved");
-
-  _unwrap.process(_spectrum.cwise().angle(), &_unwrappedAngle);
+  _unwrap.process(fft.cwise().angle(), &_unwrappedAngle);
 
   DEBUG("ODFComplex: Processing unwrapped");
   
-  spectralDistanceEuclidean(_spectrum, _spectrum.cwise().abs(), _unwrappedAngle, odfValue);
+  spectralDistanceEuclidean(fft, fft.cwise().abs(), _unwrappedAngle, odfValue);
   
   DEBUG("ODFComplex: Finished Processing");
 }

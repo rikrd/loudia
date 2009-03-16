@@ -28,13 +28,13 @@
 class ODFComplex : public ODFBase {
 protected:
   // Internal parameters
-  int _fftLength;
+  int _fftSize;
+  int _halfSize;
   bool _rectified;
   
   // Internal variables
   Unwrap _unwrap;
 
-  MatrixXC _spectrum;
   MatrixXC _unwrappedSpectrum;
   MatrixXR _unwrappedAngle;
   MatrixXC _spectrumPredict;
@@ -43,7 +43,7 @@ protected:
   void spectralDistanceEuclidean(const MatrixXC& spectrum, const MatrixXR& spectrumAbs, const MatrixXR& spectrumArg, MatrixXR* odfValues);
 
 public:
-  ODFComplex(int fftLength, bool rectified = false);
+  ODFComplex(int fftSize, bool rectified = false);
 
   ~ODFComplex();
 
