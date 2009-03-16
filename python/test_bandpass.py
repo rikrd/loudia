@@ -28,7 +28,7 @@ rc_a = rc.a().T
 print scipy.allclose(sc_b, rc_b, atol = atol) and scipy.allclose(sc_a, rc_a, atol = atol)
 
 if plot:
-    plotFreqz(rc_b, rc_a, title = 'BandPass Chebyshev I order %d' % order)
+    plot_freqz(rc_b, rc_a, title = 'BandPass Chebyshev I order %d' % order)
 
 # Test with odd order
 order = 5
@@ -42,7 +42,7 @@ rc_a = rc.a().T
 print scipy.allclose(sc_b, rc_b, atol = atol) and scipy.allclose(sc_a, rc_a, atol = atol)
 
 if plot:
-    plotFreqz(rc_b, rc_a, title = 'BandPass Chebyshev I order %d' % order)
+    plot_freqz(rc_b, rc_a, title = 'BandPass Chebyshev I order %d' % order)
 
 
 ### Chebyshev II
@@ -58,7 +58,7 @@ rc_a = rc.a().T
 print scipy.allclose(sc_b, rc_b, atol = atol) and scipy.allclose(sc_a, rc_a, atol = atol)
 
 if plot:
-    plotFreqz(rc_b, rc_a, title = 'BandPass Chebyshev II order %d' % order)
+    plot_freqz(rc_b, rc_a, title = 'BandPass Chebyshev II order %d' % order)
 
 
 # Test with odd order
@@ -73,7 +73,7 @@ rc_a = rc.a().T
 print scipy.allclose(sc_b, rc_b, atol = atol) and scipy.allclose(sc_a, rc_a, atol = atol)
 
 if plot:
-    plotFreqz(rc_b, rc_a, title = 'BandPass Chebyshev II order %d' % order)
+    plot_freqz(rc_b, rc_a, title = 'BandPass Chebyshev II order %d' % order)
 
 
 ### Butterworth
@@ -89,7 +89,7 @@ rc_a = rc.a().T
 print scipy.allclose(sc_b, rc_b, atol = atol) and scipy.allclose(sc_a, rc_a, atol = atol)
 
 if plot:
-    plotFreqz(rc_b, rc_a, title = 'BandPass Butterworth order %d' % order)
+    plot_freqz(rc_b, rc_a, title = 'BandPass Butterworth order %d' % order)
 
 
 # Test with odd order
@@ -104,7 +104,7 @@ rc_a = rc.a().T
 print scipy.allclose(sc_b, rc_b, atol = atol) and scipy.allclose(sc_a, rc_a, atol = atol)
 
 if plot:
-    plotFreqz(rc_b, rc_a, title = 'BandPass Butterworth order %d' % order)
+    plot_freqz(rc_b, rc_a, title = 'BandPass Butterworth order %d' % order)
 
 
 ### Bessel
@@ -120,7 +120,7 @@ rc_a = rc.a().T
 print scipy.allclose(sc_b, rc_b, atol = atol) and scipy.allclose(sc_a, rc_a, atol = atol)
 
 if plot:
-    plotFreqz(rc_b, rc_a, title = 'BandPass Bessel order %d' % order)
+    plot_freqz(rc_b, rc_a, title = 'BandPass Bessel order %d' % order)
 
 
 # Test with odd order
@@ -135,7 +135,7 @@ rc_a = rc.a().T
 print scipy.allclose(sc_b, rc_b, atol = atol) and scipy.allclose(sc_a, rc_a, atol = atol)
 
 if plot:
-    plotFreqz(rc_b, rc_a, title = 'BandPass Bessel order %d' % order)
+    plot_freqz(rc_b, rc_a, title = 'BandPass Bessel order %d' % order)
 
 
 if plot:

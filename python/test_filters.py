@@ -49,11 +49,11 @@ for center in range(2000.0, 5000.0, 1000.0):
     rb = f.b().T#[:,:1]
     ra = f.a().T
 
-    plotFreqz(rb, ra,
-              npoints = npoints,
-              createFigure = False,
-              label = 'ricaudio / %.1f Hz' % bandwidth,
-              db = True)
+    plot_freqz(rb, ra,
+               npoints = npoints,
+               createFigure = False,
+               label = 'ricaudio / %.1f Hz' % bandwidth,
+               db = True)
 
     # For Scipy
     sb, sa = scipy.signal.iirfilter(order, [freq, freqStop],
@@ -68,11 +68,11 @@ for center in range(2000.0, 5000.0, 1000.0):
     print sb
     #diffs[bandwidth] = (ra - sa, rb - sb)
     
-    plotFreqz(sb, sa,
-              npoints = npoints,
-              createFigure = False,
-              label = 'scipy / %.1f Hz' % bandwidth,
-              db = True)
+    plot_freqz(sb, sa,
+               npoints = npoints,
+               createFigure = False,
+               label = 'scipy / %.1f Hz' % bandwidth,
+               db = True)
 
 print str(results)
 print str(diffs)

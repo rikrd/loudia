@@ -5,7 +5,7 @@ import scipy
 import pylab
 import os
 
-def plotFreqz(b, a, w = None, npoints = None, title = '', db = False, createFigure = True, label = ''):
+def plot_freqz(b, a, w = None, npoints = None, title = '', db = False, createFigure = True, label = ''):
     # Create the omega array if necessary
     if npoints is None:
         npoints = 1000
