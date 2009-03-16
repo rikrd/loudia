@@ -5,7 +5,7 @@ import scipy
 import scipy.signal
 
 # Test the magToDb <-> dbToMag
-i = scipy.array([[1,2,3,4,5,6]], dtype = 'f4')
+i = scipy.arange(1, 7)
 a = ricaudio.magToDb(i)
 o = ricaudio.dbToMag(a)
 
@@ -32,8 +32,8 @@ print 'poly, plus zero:', scipy.allclose(rr[0,:-1], rs)
 
 
 # Test the zpk <--> coeffs functions
-z = scipy.array([1, -0.96, 0.80], dtype = 'f4')
-p = scipy.array([1, 0.5, 0.5], dtype = 'f4')
+z = [1, -0.96, 0.80]
+p = [1, 0.5, 0.5]
 k = 1.2
 
 ra, rb = ricaudio.zpkToCoeffs(z, p, k)
@@ -43,8 +43,8 @@ print 'zpkToCoeffs: ', scipy.allclose(rb, sb) and scipy.allclose(ra, sa)
 
 
 # Test the lpTolp functions
-a = scipy.array([1, -0.96, 0.80], dtype = 'f4')
-b = scipy.array([1, 0.5, 0.5], dtype = 'f4')
+a = [1, -0.96, 0.80]
+b = [1, 0.5, 0.5]
 
 freq = 0.23
 
@@ -59,8 +59,8 @@ sc = scipy.comb(5, 3)
 print 'comb: ', round(sc) == round(rc)
 
 # Test the bilinear function
-a = scipy.array([10, -0.96, 0.80], dtype = 'f4')
-b = scipy.array([156, 0.5, 0.5], dtype = 'f4')
+a = [10, -0.96, 0.80]
+b = [156, 0.5, 0.5]
 
 rb, ra = ricaudio.bilinear(b, a, 1.0)
 sb, sa = scipy.signal.bilinear(b, a)

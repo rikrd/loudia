@@ -62,26 +62,26 @@ if interactivePlot:
     pylab.gca().set_autoscale_on(False)
 
 for frame in stream:
-    spec = scipy.array(abs(frame['fft']), dtype = scipy.float32)
+    spec = abs(frame['fft'])
 
     noise, result = supprnoise.process( spec )
 
     if interactivePlot:
-        pylab.subplot(211)
-        pylab.hold(False)
+        pylab.subplot( 211 )
+        pylab.hold( False )
         
-        specdb = ricaudio.magToDb(spec)
-        noisedb = ricaudio.magToDb(noise)
+        specdb = ricaudio.magToDb( spec )
+        noisedb = ricaudio.magToDb( noise )
 
         pylab.plot( specdb[0,:], label = 'Spectrum' )
-        pylab.hold(True)
+        pylab.hold( True )
         pylab.plot( noisedb[0,:], label = 'Noise' )
 
-        resultdb = ricaudio.magToDb(result)
+        resultdb = ricaudio.magToDb( result )
 
-        pylab.subplot(212)
-        pylab.hold(False)
-        pylab.plot(resultdb[0,:], label = 'Noise Suppressed Spectrum')
+        pylab.subplot( 212 )
+        pylab.hold( False )
+        pylab.plot( resultdb[0,:], label = 'Noise Suppressed Spectrum')
         
     
     specs.append( spec )

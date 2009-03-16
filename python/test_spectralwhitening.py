@@ -62,7 +62,7 @@ if interactivePlot:
     pylab.gca().set_autoscale_on(False)
 
 for frame in stream:
-    spec = scipy.array(abs(frame['fft']), dtype = scipy.float32)
+    spec = abs(frame['fft'])
 
     result = whitening.process( spec )
 

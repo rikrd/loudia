@@ -96,8 +96,8 @@ specsResid = []
 specsMagsResid = []
 
 for frame in stream:
-    fft = scipy.array(frame['fft'][:plotSize], dtype = scipy.complex64)
-    mag =  scipy.array(abs(fft), dtype = 'f4')
+    fft = frame['fft'][:plotSize]
+    mag =  abs(fft)
     spec =  20.0 / scipy.log( 10.0 ) * scipy.log( abs( fft ) + 1e-7)
 
     if set(['phase', 'peak_phases']) | all_processes:
@@ -109,13 +109,13 @@ for frame in stream:
         peakLocs, peakMags, peakPhases =  peaker.process( fft )
 
         peakiLocs, peakiMags, peakiPhases = peakInterp.process( fft,
-                                                               scipy.array(peakLocs, dtype='f4'),
-                                                               scipy.array(peakMags, dtype='f4'),
-                                                               scipy.array(peakPhases, dtype='f4') )
+                                                               peakLocs,
+                                                               peakMags,
+                                                               peakPhases )
         
         trajLocs, trajMags = tracker.process( fft,
-                                              scipy.array(peakiLocs, dtype='f4'),
-                                              scipy.array(peakiMags, dtype='f4') )
+                                              peakiLocs,
+                                              peakiMags )
 
         specSynth = peakSynth.process( trajLocs,
                                        trajMags )
@@ -192,7 +192,7 @@ for frame in stream:
 
             if 'peak_phases' in processes:
                 if not (peakPos == -1).all():
-                    pylab.scatter(peakPos, phase[scipy.array(peakPos, dtype='i4')], c='r')
+                    pylab.scatter(peakPos, phase[peakPos], c='r')
     
             
             
