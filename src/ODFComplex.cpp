@@ -35,7 +35,7 @@ ODFComplex::ODFComplex(int fftSize, bool rectified) :
   _unwrap( _halfSize )
 {
   
-  DEBUG("ODFComplex: Constructor fftSize: " << _fftSize);
+  DEBUG("ODFCOMPLEX: Constructor fftSize: " << _fftSize);
   
   setup();
 }
@@ -45,18 +45,18 @@ ODFComplex::~ODFComplex() {}
 
 void ODFComplex::setup() {
   // Prepare the buffers
-  DEBUG("ODFComplex: Setting up...");
+  DEBUG("ODFCOMPLEX: Setting up...");
 
   _unwrap.setup();
 
   reset();
 
-  DEBUG("ODFComplex: Finished set up...");
+  DEBUG("ODFCOMPLEX: Finished set up...");
 }
 
 
 void ODFComplex::process(const MatrixXC& fft, MatrixXR* odfValue) {
-  DEBUG("ODFComplex: Processing windowed");
+  DEBUG("ODFCOMPLEX: Processing windowed");
   const int rows = fft.rows();
   
   if ( rows < 3 ) {
@@ -67,11 +67,11 @@ void ODFComplex::process(const MatrixXC& fft, MatrixXR* odfValue) {
 
   _unwrap.process(fft.cwise().angle(), &_unwrappedAngle);
 
-  DEBUG("ODFComplex: Processing unwrapped");
+  DEBUG("ODFCOMPLEX: Processing unwrapped");
   
   spectralDistanceEuclidean(fft, fft.cwise().abs(), _unwrappedAngle, odfValue);
   
-  DEBUG("ODFComplex: Finished Processing");
+  DEBUG("ODFCOMPLEX: Finished Processing");
 }
 
 void ODFComplex::spectralDistanceEuclidean(const MatrixXC& spectrum, const MatrixXR& spectrumAbs, const MatrixXR& spectrumArg, MatrixXR* odfValue) {

@@ -52,7 +52,7 @@ annotation = os.path.splitext(filename)[0] + '.onset_annotated'
 onsets = []
 
 if os.path.isfile(annotation):
-    onsets = get_onsets(annotation, frameStep, samplerate)
+    onsets = get_onsets(annotation, frameStep, samplerate, onsetError = onsetError)
         
 pylab.figure()
 pylab.hold(True)

@@ -36,7 +36,7 @@ ODFPhase::ODFPhase(int fftSize, bool weighted, bool normalize) :
   _unwrap( _halfSize )
 {
   
-  DEBUG("ODFPhase: Constructor fftSize: " << _fftSize);
+  DEBUG("ODFPHASE: Constructor fftSize: " << _fftSize);
   
   setup();
 }
@@ -46,18 +46,18 @@ ODFPhase::~ODFPhase() {}
 
 void ODFPhase::setup() {
   // Prepare the buffers
-  DEBUG("ODFPhase: Setting up...");
+  DEBUG("ODFPHASE: Setting up...");
 
   _unwrap.setup();
 
   reset();
 
-  DEBUG("ODFPhase: Finished set up...");
+  DEBUG("ODFPHASE: Finished set up...");
 }
 
 
 void ODFPhase::process(const MatrixXC& fft, MatrixXR* odfValue) {
-  DEBUG("ODFPhase: Processing windowed");
+  DEBUG("ODFPHASE: Processing windowed");
   const int rows = fft.rows();
   
   if ( rows < 3 ) {
@@ -68,11 +68,11 @@ void ODFPhase::process(const MatrixXC& fft, MatrixXR* odfValue) {
   
   _unwrap.process(fft.cwise().angle(), &_unwrappedAngle);
 
-  DEBUG("ODFPhase: Processing unwrapped");
+  DEBUG("ODFPHASE: Processing unwrapped");
   
   phaseDeviation(fft, _unwrappedAngle, odfValue);
   
-  DEBUG("ODFPhase: Finished Processing");
+  DEBUG("ODFPHASE: Finished Processing");
 }
 
 void ODFPhase::phaseDeviation(const MatrixXC& spectrum, const MatrixXR& spectrumArg, MatrixXR* odfValue) {

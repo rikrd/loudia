@@ -31,7 +31,7 @@ ODFSpectralFlux::ODFSpectralFlux(int fftSize) :
   _fftSize( fftSize )
 {
   
-  DEBUG("ODFSpectralFlux: Constructor fftSize: " << _fftSize);
+  DEBUG("ODFSPECTRALFLUX: Constructor fftSize: " << _fftSize);
   
   setup();
 }
@@ -41,16 +41,16 @@ ODFSpectralFlux::~ODFSpectralFlux() {}
 
 void ODFSpectralFlux::setup() {
   // Prepare the buffers
-  DEBUG("ODFSpectralFlux: Setting up...");
+  DEBUG("ODFSPECTRALFLUX: Setting up...");
 
   reset();
 
-  DEBUG("ODFSpectralFlux: Finished set up...");
+  DEBUG("ODFSPECTRALFLUX: Finished set up...");
 }
 
 
 void ODFSpectralFlux::process(const MatrixXC& fft, MatrixXR* odfValue) {
-  DEBUG("ODFSpectralFlux: Processing windowed");
+  DEBUG("ODFSPECTRALFLUX: Processing windowed");
   const int rows = fft.rows();
   const int cols = fft.cols();
 
@@ -61,7 +61,7 @@ void ODFSpectralFlux::process(const MatrixXC& fft, MatrixXR* odfValue) {
   (*odfValue).resize(rows - 1, 1);
   (*odfValue).row(0).setZero();
   
-  DEBUG("ODFSpectralFlux: Spectrum resized rows: " << rows );
+  DEBUG("ODFSPECTRALFLUX: Spectrum resized rows: " << rows );
     
   _spectrumAbs = fft.cwise().abs();
   
@@ -69,7 +69,7 @@ void ODFSpectralFlux::process(const MatrixXC& fft, MatrixXR* odfValue) {
                  - _spectrumAbs.block(0, 0, rows - 1, cols) \
                  ).cwise().clipUnder().rowwise().sum() / cols;
   
-  DEBUG("ODFSpectralFlux: Finished Processing");
+  DEBUG("ODFSPECTRALFLUX: Finished Processing");
 }
 
 void ODFSpectralFlux::reset() {
