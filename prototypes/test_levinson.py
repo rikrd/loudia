@@ -53,7 +53,6 @@ def levinson(A, y, ncoeffs = scipy.inf):
 
 
 def levinson2(A, y, ncoeffs = scipy.inf):
-    A = scipy.array(A, dtype = 'f4')
     ncoeffs = min(ncoeffs, A.shape[1])
     
     a = scipy.zeros( ncoeffs )
@@ -85,7 +84,6 @@ def levinson2(A, y, ncoeffs = scipy.inf):
 
 
 def levinsonSymmetricConstrainA1(A, y, ncoeffs = scipy.inf):
-    A = scipy.array(A, dtype = 'f4')
     ncoeffs = min(ncoeffs, A.shape[1])
     
     eps = A[0,0]
