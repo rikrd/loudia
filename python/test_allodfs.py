@@ -1,7 +1,8 @@
 #!/usr/bin/env python
 
-import ricaudio
 from sepel.inputs import pyricaudio
+import ricaudio
+from common import *
 import pylab
 import os, sys, wave
 import scipy
@@ -80,17 +81,7 @@ annotation = os.path.splitext(filename)[0] + '.onset_annotated'
 onsets = []
 
 if os.path.isfile(annotation):
-    onsetsTimes = [float(o) for o in open(annotation, 'r').readlines()]
-    onsetsCenter = [int(o * samplerate / frameStep) for o in onsetsTimes]
-    onsetsLeft = [int((o - (onsetError / 1000.0)) * samplerate / frameStep) for o in onsetsTimes]
-    onsetsRight = [int((o + (onsetError / 1000.0)) * samplerate / frameStep) for o in onsetsTimes]
-    onsets = zip(onsetsLeft, onsetsCenter, onsetsRight)
-    
-def drawOnsets():
-    # Draw the onsets
-    for onsetLeft, onsetCenter, onsetRight in onsets:
-        pylab.axvspan( xmin = onsetLeft, xmax = onsetRight, facecolor = 'green', linewidth = 0, alpha = 0.25)
-        pylab.axvline( x = onsetCenter, color = 'black', linewidth = 1.1)
+    onsets = get_onsets(annotation, frameStep, samplerate)
         
 pylab.figure()
 pylab.hold(True)
@@ -98,7 +89,7 @@ pylab.subplot(subplots, 1, 1)
 
 pylab.imshow( scipy.flipud(specs.T), aspect = 'auto' )
 
-drawOnsets()
+draw_onsets( onsets )
 
 pylab.title( 'Spectrogram' )
 ax = pylab.gca()
@@ -124,7 +115,7 @@ for i, (odfType, odfName) in enumerate(odfNames):
     pylab.subplot(subplots, 1, i+2)
     pylab.plot(odfValues[:,0])
 
-    drawOnsets()
+    draw_onsets( onsets )
 
     pylab.title( odfName.replace('_', ' ').capitalize() )
     ax = pylab.gca()
