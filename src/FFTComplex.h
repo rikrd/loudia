@@ -25,9 +25,9 @@
 #include <fftw3.h>
 
 /** 
-  * \class FFTComplex
+  * @class FFTComplex
   *
-  * \brief Fast Fourier Transform processor units for Complex data.
+  * @brief Fast Fourier Transform processor units for Complex data.
   *
   * This class represents a processor unit to perform Fast Fourier Transforms on Real data.
   * It allows to calculate the Discrete Fourier Transform (DFT) of N-point vectors of Real values,
@@ -39,7 +39,7 @@
   * Optionally the processor unit can perform a shift N/2 rotation 
   * of the input data and zero pad the signal in the center to allow a zero phase transform.
   *
-  * \sa FFT, IFFT, IFFTComplex
+  * @sa FFT, IFFT, IFFTComplex
   */
 class FFTComplex{
 protected:
@@ -59,7 +59,7 @@ protected:
 
 public:
   /** 
-   * \brief Fast Fourier Transform processor units for Complex data.
+   * @brief Fast Fourier Transform processor units for Complex data.
    *
    * This class represents a processor unit to perform Fast Fourier Transforms on Real data.
    * It allows to calculate the Discrete Fourier Transform (DFT) of N-point vectors of Real values,
@@ -71,7 +71,7 @@ public:
    * Optionally the processor unit can perform a shift N/2 rotation 
    * of the input data and zero pad the signal in the center to allow a zero phase transform.
    *
-   * \sa FFT, IFFT, IFFTComplex
+   * @sa FFT, IFFT, IFFTComplex
    */
   FFTComplex(int frameSize, int fftSize, bool zeroPhase = true);
   ~FFTComplex();
