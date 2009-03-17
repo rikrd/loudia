@@ -116,7 +116,7 @@ int Autocorrelation::minLag() const {
 }
   
 void Autocorrelation::setMinLag( int lag ) {
-  _minLag = max(-_inputSize + 1, lag);  
+  _minLag = min(_inputSize, max(-_inputSize + 1, lag));  
 }
 
 int Autocorrelation::maxLag() const {
@@ -124,7 +124,7 @@ int Autocorrelation::maxLag() const {
 }
   
 void Autocorrelation::setMaxLag( int lag ) {
-  _maxLag = min(_inputSize, lag);
+  _maxLag = min(_inputSize, max(-_inputSize + 1, lag));
 }
 
 bool Autocorrelation::useFFT() const {

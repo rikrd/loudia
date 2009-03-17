@@ -58,26 +58,106 @@ protected:
   IFFT _ifft;
 
 public:
+  /**
+     Constructs an Autocorrelation object with the specified @a inputSize, 
+     @a maxLag and @a minLag settings.
+     
+     @param inputSize size of the inputs arrays to be autocorrelated,
+     must be > 0.
+     The algorithm performs faster for sizes which are a power of 2.
+     
+     @param maxLag maximum lag to be calculated
+     @param minLag minimum lag to be calculated
+     @param useFFT determines whether or not to use the FFT method
+  */
   Autocorrelation(int inputSize = 1024, int maxLag = std::numeric_limits<int>::max(), int minLag = 0);
   Autocorrelation(int inputSize, int maxLag, int minLag, bool useFFT);
 
+  /**
+     Destroys the Autocorrelation algorithm and frees its resources.
+  */
   ~Autocorrelation();
 
   void setup();
   void reset();
 
-  void process(const MatrixXR& input, MatrixXR* autocorrelation);
+  /**
+     Performs an autocorrelation on each of the rows of @a frames.
+     Puts the resulting autocorrelations in the rows of @a autocorrelation.
+     
+     @param frames matrix of Real values.  The number of columns of @a 
+     frames must be equal to the inputSize property.
+     
+     @param autocorrelation pointer to a matrix of Real values for the output.  The matrix should
+     have the same number of rows as @a frames and maxLag - minLag columns.
 
+     Note that if the output matrix is not of the required size it will be resized, 
+     reallocating a new memory space if necessary.
+  */
+  void process(const MatrixXR& frames, MatrixXR* autocorrelation);
+
+  /**
+     Returns the size of the input arrays to be autocorrelated.
+     The default is 1024.
+     
+     @sa setInputSize()
+  */
   int inputSize() const;  
+
+  /**
+     Specifies the @a size of the input.
+     The given @a size must be higher than 0.
+     Note that if @a size is a power of 2 the algorithm will perform faster.
+     
+     @sa inputSize()
+  */
   void setInputSize( int size );
 
+  /**
+     Returns the minimum lag to be calculated.
+     The default is 0.
+     
+     @sa maxLag(), setMinLag(), setMaxLag()
+  */
   int minLag() const;  
+  
+  /**
+     Specifies the minimum @a lag of the autocorrelation.
+     The given @a lag will be constratined between -inputSize + 1 and inputSize.
+     
+     @sa minLag(), maxLag(), setMaxLag()
+  */  
   void setMinLag( int lag );
 
+  /**
+     Returns the maximum lag to be calculated.
+     The default is inputSize.
+     
+     @sa minLag(), setMinLag(), setMaxLag()
+  */
   int maxLag() const;  
+  
+  /**
+     Specifies the maximum @a lag of the autocorrelation.
+     The given @a lag will be constratined between -inputSize + 1 and inputSize.
+     
+     @sa minLag(), maxLag(), setMinLag()
+  */
   void setMaxLag( int lag );
 
+  /**
+     Returns @c true if the FFT method should be used for the autocorrelation.
+     The default is True for inputSize larger than 128; otherwise it is False.
+     
+     @sa setUseFFT()
+  */
   bool useFFT() const;  
+  
+  /**
+     Specifies whether the autocorrelation should be performed using the FFT method.
+     
+     @sa useFFT()
+  */
   void setUseFFT( bool useFFT );
 };
 

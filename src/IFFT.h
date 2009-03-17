@@ -87,11 +87,13 @@ public:
      
      @param frame pointer to a matrix of Real values for the output.  The matrix should
      have the same number of rows as @a fft and fftSize columns.  
-     Note that if the output matrix is not of the required size
-     it will be resized, reallocating a new memory space if necessary.
+
      Note that if the zeroPhase setting is true, the resulting IFFT transforms
      will be rotated to compensate for Zero Phase method that may have been performed
      when the FFT had been done.
+
+     Note that if the output matrix is not of the required size it will be resized, 
+     reallocating a new memory space if necessary.
   */
   void process(const MatrixXC& fft, MatrixXR* frame);
   

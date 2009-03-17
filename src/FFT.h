@@ -87,12 +87,13 @@ public:
      puts the resulting FFT in the rows of @a fft.
      
      @param frames matrix of Real values.  The number of columns of @a frames must
-     be smaller or equal to the fftSize parameter of the constructor.
+     be smaller or equal to the fftSize property.
      
      @param fft pointer to a matrix of Complex values for the output.  The matrix should
-     have the same number of rows as @a frames and (fftSize / 2) + 1 columns.  If the output
-     matrix is not of the required size it will be resized, reallocating a new memory space if
-     necessary.
+     have the same number of rows as @a frames and (fftSize / 2) + 1 columns. 
+
+     Note that if the output matrix is not of the required size it will be resized, 
+     reallocating a new memory space if necessary.
   */
   void process(const MatrixXR& frames, MatrixXC* fft);
 
