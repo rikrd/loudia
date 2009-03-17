@@ -24,6 +24,32 @@
 
 #include <fftw3.h>
 
+/** 
+  * \class FFT
+  *
+  * \brief Fast Fourier Transform processor units for Real data.
+  *
+  * This class represents a processor unit to perform Fast Fourier Transforms on Real data.
+  * It allows to calculate the Discrete Fourier Transform (DFT) of N-point vectors of Real values,
+  * returning M-point vectors of Complex values.
+  *
+  *
+  * The algorithm works the fastest when M is a power of 2.
+  * When M is different than N the input data is zero padded.
+  *
+  * \link #zerophase zero phase method\endlink
+  * \target zerophase
+  * Optionally one might perform a N/2 rotation of the
+  * input data and zero pad the signal in the center to
+  * allow a zero phase transform.
+  *
+  * Since the input is Real valued, the DFT will be symmetric
+  * and only half of the output is needed.
+  * This processing unit is the (M / 2 + 1)-point array corresponding
+  * to positive frequencies.
+  *
+  * \sa FFTComplex, IFFT, IFFTComplex
+  */
 class FFT{
 protected:
   int _fftSize;
@@ -37,6 +63,16 @@ protected:
   
 
 public:
+  /*!
+    Constructs an FFT object with the specified \a fftSize and \a
+    zeroPhase setting.
+
+    \a fftSize must be > 0, it is the target size of the transform.
+    The algorithm performs faster for sizes which are a power of 2.
+
+    The \a zeroPhase setting determines whether
+    or not to perform the \l{FFT}{zero phase} method.
+  */
   FFT(int fftSize, bool zeroPhase = true);
   ~FFT();
   
