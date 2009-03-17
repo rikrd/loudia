@@ -27,10 +27,28 @@
 
 #include <limits>
 
+/**
+  * @class Autocorrelation
+  *
+  * @brief Autocorrelation algorithm.
+  *
+  * This class represents an object to perform a correlation of a vector with itself.
+  *
+  * The correlation can be performed using two methods:
+  * -# Direct method 
+  * -# FFT method
+  *
+  * The Direct method performs faster than the FFT method on vectors of small sizes.
+  * The critical size of the vector depends on the platform.
+  *
+  * @author Ricard Marxer
+  *
+  * @sa Correlation, PitchACF
+  */
 class Autocorrelation {
 protected:
   // Internal parameters
-  int _inputLength;
+  int _inputSize;
   int _minLag;
   int _maxLag;
   bool _useFFT;
@@ -40,16 +58,27 @@ protected:
   IFFT _ifft;
 
 public:
-  Autocorrelation(int inputLength, Real maxLag = std::numeric_limits<Real>::infinity(), Real minLag = 0);
-  Autocorrelation(int inputLength, Real maxLag, Real minLag, bool useFFT);
+  Autocorrelation(int inputSize = 1024, int maxLag = std::numeric_limits<int>::max(), int minLag = 0);
+  Autocorrelation(int inputSize, int maxLag, int minLag, bool useFFT);
 
   ~Autocorrelation();
 
   void setup();
+  void reset();
 
   void process(const MatrixXR& input, MatrixXR* autocorrelation);
 
-  void reset();
+  int inputSize() const;  
+  void setInputSize( int size );
+
+  int minLag() const;  
+  void setMinLag( int lag );
+
+  int maxLag() const;  
+  void setMaxLag( int lag );
+
+  bool useFFT() const;  
+  void setUseFFT( bool useFFT );
 };
 
 #endif  /* AUTOCORRELATION_H */

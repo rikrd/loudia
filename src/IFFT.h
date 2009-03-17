@@ -43,7 +43,7 @@
   *
   * @author Ricard Marxer
   *
-  * @sa FFTComplex, IFFT, IFFTComplex
+  * @sa FFT, FFTComplex, IFFTComplex
   */
 class IFFT{
 protected:

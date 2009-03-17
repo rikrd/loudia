@@ -26,15 +26,15 @@
 using namespace std;
 using namespace Eigen;
 
-Autocorrelation::Autocorrelation(int inputLength, Real maxLag, Real minLag) :
-  _inputLength( inputLength ),
-  _minLag( (int)max((Real)-inputLength + 1, minLag) ),
-  _maxLag( (int)min((Real)inputLength, maxLag) ),
+Autocorrelation::Autocorrelation(int inputSize, int maxLag, int minLag) :
+  _inputSize( inputSize ),
+  _minLag( max(-inputSize + 1, minLag) ),
+  _maxLag( min(inputSize, maxLag) ),
   _useFFT( (_maxLag - _minLag) > 128 ),
   _fft( nextPowerOf2(((_maxLag - _minLag)-1)*2), false ),
   _ifft( nextPowerOf2(((_maxLag - _minLag)-1)*2), false )
 {
-  DEBUG("AUTOCORRELATION: Construction inputLength: " << _inputLength
+  DEBUG("AUTOCORRELATION: Construction inputSize: " << _inputSize
         << " minLag: " << _minLag
         << " maxLag: " << _maxLag
         << " useFFT: " << _useFFT);
@@ -43,15 +43,15 @@ Autocorrelation::Autocorrelation(int inputLength, Real maxLag, Real minLag) :
 }
 
 
-Autocorrelation::Autocorrelation(int inputLength, Real maxLag, Real minLag, bool useFFT) :
-  _inputLength( inputLength ),
-  _minLag( (int)max((Real)-inputLength + 1, minLag) ),
-  _maxLag( (int)min((Real)inputLength, maxLag) ),
+Autocorrelation::Autocorrelation(int inputSize, int maxLag, int minLag, bool useFFT) :
+  _inputSize( inputSize ),
+  _minLag( max(-inputSize + 1, minLag) ),
+  _maxLag( min(inputSize, maxLag) ),
   _useFFT( useFFT ),
   _fft( nextPowerOf2(((_maxLag - _minLag)-1)*2), false ),
   _ifft( nextPowerOf2(((_maxLag - _minLag)-1)*2), false )
 {
-  DEBUG("AUTOCORRELATION: Construction inputLength: " << _inputLength
+  DEBUG("AUTOCORRELATION: Construction inputSize: " << _inputSize
         << " minLag: " << _minLag
         << " maxLag: " << _maxLag
         << " useFFT: " << _useFFT);
@@ -101,4 +101,36 @@ void Autocorrelation::process(const MatrixXR& frames, MatrixXR* autocorrelation)
 
 void Autocorrelation::reset(){
   // Initial values
+}
+
+int Autocorrelation::inputSize() const {
+  return _inputSize;
+}
+  
+void Autocorrelation::setInputSize( int size ) {
+  _inputSize = size;
+}
+
+int Autocorrelation::minLag() const {
+  return _minLag;
+}
+  
+void Autocorrelation::setMinLag( int lag ) {
+  _minLag = max(-_inputSize + 1, lag);  
+}
+
+int Autocorrelation::maxLag() const {
+  return _maxLag;
+}
+  
+void Autocorrelation::setMaxLag( int lag ) {
+  _maxLag = min(_inputSize, lag);
+}
+
+bool Autocorrelation::useFFT() const {
+  return _useFFT;
+}  
+
+void Autocorrelation::setUseFFT( bool useFFT ) {
+  _useFFT = useFFT;
 }
