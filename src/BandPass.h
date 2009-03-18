@@ -78,7 +78,7 @@ public:
      @a stopFrequency, @a filterType, @a ripplePass and @a attenuationStop parameters
      given.
   */
-  BandPass(int order = 4, Real startFrequency = 0.2, Real stopFrequency = 0.4, FilterType filterType = CHEBYSHEVII, Real ripplePass = 0.05, Real attenuationStop = 40.0);
+  BandPass(int order = 4, Real startFrequency = 0.0, Real stopFrequency = 1.0, FilterType filterType = CHEBYSHEVII, Real ripplePass = 0.05, Real attenuationStop = 40.0);
 
   void setup();
   void reset();
@@ -87,52 +87,105 @@ public:
 
   /**
      Return in @a a the single column matrix @a a coefficients.
+
+     @sa b
   */
   void a( MatrixXR* a ) const;
   
   /**
      Return in @a b the single column matrix @a b coefficients.
+
+     @sa a
   */
   void b( MatrixXR* b ) const;
 
   /**
      Return the order of the filter.
      The default is 4.
-  */  
+
+     @sa setOrder
+  */
   int order() const;
+
+  /**
+     Specifies the @a order of the filter.
+     The given @a order must be higher than 0.
+     Note that orders higher than 25 are not allowed for Bessel filters.
+     
+     @sa order
+  */
   void setOrder( int order );
 
   /**
      Return the start frequency of the filter.
-     The default is 0.2.
+     The default is 0.0.
+
+     @sa startFrequency, stopFrequency, setStartFrequency, setStopFrequency
   */  
   Real startFrequency() const;  
+
+  /**
+     Specifies the start normalized @a frequency of the filter.
+     The given @a frequency must be in the range of 0 to 1.
+     
+     @sa startFrequency, stopFrequency, setStopFrequency
+  */
   void setStartFrequency( Real frequency );
 
   /**
      Return the stop frequency of the filter.
-     The default is 0.4.
+     The default is 1.0.
+
+     @sa startFrequency, setStartFrequency, setStopFrequency
   */  
   Real stopFrequency() const;  
+
+  /**
+     Specifies the stop normalized @a frequency of the filter.
+     The given @a frequency must be in the range of 0 to 1.
+     
+     @sa startFrequency, stopFrequency, setStartFrequency
+  */
   void setStopFrequency( Real frequency );
 
   /**
      Return the filter type.
      The default is CHEBYSHEVII.
+     The given @a frequency must be in the range of 0 to 1.
+
+     @sa setFilterType, order, setOrder
   */
   FilterType filterType() const;
+
+  /**
+     Specifies the filter @a type.
+     
+     @sa startFrequency, stopFrequency, setStartFrequency
+  */
   void setFilterType( FilterType type );
 
   /**
-     Return the pass ripple in dB.
-     The default is 0.05.
+     @property BandPass::passRipple
+     @brief the ripple of the pass band in dB
+     
+     Note that this property only has an effect if 
+     the filter type used is CHEBYSHEVI.
+     By default it is 0.05.
+
+     @sa stopAttenuation
   */
   Real passRipple() const;
   void setPassRipple( Real rippleDB );
 
   /**
-     Return the stop attenuation in dB.
-     The default is 40.0.
+     @property BandPass::stopAttenuation
+     @brief the attenuation of the stop band in dB
+     
+     Note that this property only has an effect if 
+     the filter type used is CHEBYSHEVII.
+     By default it is 40.0.
+
+     @sa passRipple
   */
   Real stopAttenuation() const;
   void setStopAttenuation( Real attenuationDB );
