@@ -56,7 +56,7 @@ protected:
 
 public:
   /**
-     Constructs a Bands object with the a single band covering the entire array.
+     Constructs a Bands object with a single band covering the entire array.
   */
   Bands();
   
@@ -96,11 +96,15 @@ public:
 
   /**
      Return the vector of weights.
+     
+     @sa starts, bandWeights, setStartsWeights
   */
   std::vector<MatrixXR> weights() const;
 
   /**
      Return in @a bandWeights the weights of the band given by the index @a band.
+     
+     @sa weights
   */
   void bandWeights(int band, MatrixXR* bandWeights) const;
 
