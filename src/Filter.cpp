@@ -231,11 +231,11 @@ void Filter::setupCoeffs() {
 
 }
 
-void Filter::a(MatrixXR* a){
+void Filter::a(MatrixXR* a) const {
   (*a) = _a;
 }
 
-void Filter::b(MatrixXR* b){
+void Filter::b(MatrixXR* b) const {
   (*b) = _b;
 }
 

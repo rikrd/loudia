@@ -59,8 +59,8 @@ public:
   void setA(const MatrixXR& a);
   void setB(const MatrixXR& b);
 
-  void a(MatrixXR* a);
-  void b(MatrixXR* b);
+  void a(MatrixXR* a) const;
+  void b(MatrixXR* b) const;
 
   int channels() const;
 

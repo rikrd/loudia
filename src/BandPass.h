@@ -25,13 +25,37 @@
 #include "Filter.h"
 #include "FilterUtils.h"
 
+/**
+  * @class BandPass
+  *
+  * @brief Algorithm to create and apply band pass filters.
+  *
+  * This class represents an object to create and apply band pass filters.
+  * Additionally the coefficients, zeros, poles and gains of the created filters
+  * can be retrieved.
+  *
+  * 4 types of filters are implemented:
+  * -# Chebyshev I
+  * -# Chebyshev II
+  * -# Bessel
+  * -# Butterworth
+  *
+  * For Chebyshev I filters 
+  *
+  * Note that the number of rows of the starts matrix and the size of the vector of weights must
+  * be the same, and this will be the number of bands.
+  *
+  * @author Ricard Marxer
+  *
+  * @sa MelBands
+  */
 class BandPass {
 protected:
   int _order;
-  Real _freq;
-  Real _freqStop;
-  Real _ripplePass;
-  Real _rippleStop;
+  Real _startFrequency;
+  Real _stopFrequency;
+  Real _passRipple;
+  Real _stopAttenuation;
   int _channels;
   
   Filter _filter;
@@ -39,16 +63,33 @@ protected:
   FilterType _filterType;
 
 public:
-  BandPass(int order, Real freq, Real freqStop, FilterType filterType = CHEBYSHEVII, Real ripplePass = 0.05, Real rippleStop = 40.0, int channels = 1);
+  BandPass(int order = 4, Real startFrequency = 0.2, Real stopFrequency = 0.4, FilterType filterType = CHEBYSHEVII, Real ripplePass = 0.05, Real attenuationStop = 40.0);
 
   void setup();
-
-  void process(const MatrixXR& samples, MatrixXR* filtered);
-
-  void a(MatrixXR* a);
-  void b(MatrixXR* b);
-  
   void reset();
+
+  void process( const MatrixXR& samples, MatrixXR* filtered );
+
+  void a( MatrixXR* a ) const;
+  void b( MatrixXR* b ) const;
+  
+  int order() const;
+  void setOrder( int order );
+
+  Real startFrequency() const;  
+  void setStartFrequency( Real frequency );
+
+  Real stopFrequency() const;  
+  void setStopFrequency( Real frequency );
+
+  FilterType filterType() const;
+  void setFilterType( FilterType type );
+
+  Real passRipple() const;
+  void setPassRipple( Real rippleDB );
+
+  Real stopAttenuation() const;
+  void setStopAttenuation( Real attenuationDB );
 };
 
 #endif  /* BANDPASS_H */

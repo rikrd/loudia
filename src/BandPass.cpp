@@ -27,21 +27,21 @@
 using namespace std;
 using namespace Eigen;
 
-BandPass::BandPass( int order, Real freq, Real freqStop, FilterType filterType, Real ripplePass, Real rippleStop, int channels ) : 
-  _order(order),
-  _freq(freq),
-  _freqStop(freqStop),
-  _ripplePass(ripplePass),
-  _rippleStop(rippleStop),
-  _channels(channels),
-  _filter(channels),
-  _filterType(filterType) 
+BandPass::BandPass( int order, Real startFrequency, Real stopFrequency, FilterType filterType, Real passRipple, Real stopAttenuation ) : 
+  _order( order ),
+  _startFrequency( startFrequency ),
+  _stopFrequency( stopFrequency ),
+  _passRipple( passRipple ),
+  _stopAttenuation( stopAttenuation ),
+  _channels( 1 ),
+  _filter( _channels ),
+  _filterType( filterType ) 
 {
   DEBUG("BANDPASS: Constructor order: " << _order 
-        << ", freq: " << _freq
-        << ", freqStop: " << _freqStop
-        << ", ripplePass: " << _ripplePass
-        << ", rippleStop: " << _rippleStop );
+        << ", startFrequency: " << _startFrequency
+        << ", stopFrequency: " << _stopFrequency
+        << ", passRipple: " << _passRipple
+        << ", stopAttenuation: " << _stopAttenuation );
 
   if ( order < 1 ) {
     // Throw an exception
@@ -62,11 +62,11 @@ void BandPass::setup(){
 
   switch( _filterType ){
   case CHEBYSHEVI:
-    chebyshev1(_order, _ripplePass, _channels, &zeros, &poles, &gain);
+    chebyshev1(_order, _passRipple, _channels, &zeros, &poles, &gain);
     break;
 
   case CHEBYSHEVII:
-    chebyshev2(_order, _rippleStop, _channels, &zeros, &poles, &gain);
+    chebyshev2(_order, _stopAttenuation, _channels, &zeros, &poles, &gain);
     break;
 
   case BUTTERWORTH:
@@ -99,8 +99,8 @@ void BandPass::setup(){
 
   // Get the warped critical frequency
   Real fs = 2.0;
-  Real warped = 2.0 * fs * tan( M_PI * _freq / fs );
-  Real warpedStop = 2.0 * fs * tan( M_PI * _freqStop / fs );
+  Real warped = 2.0 * fs * tan( M_PI * _startFrequency / fs );
+  Real warpedStop = 2.0 * fs * tan( M_PI * _stopFrequency / fs );
 
   Real warpedCenter = sqrt(warped * warpedStop);
   Real warpedBandwidth = warpedStop - warped;
@@ -128,11 +128,11 @@ void BandPass::setup(){
   DEBUG("BANDPASS: Finished set up...");
 }
 
-void BandPass::a(MatrixXR* a) {
+void BandPass::a(MatrixXR* a) const{
   _filter.a(a);
 }
 
-void BandPass::b(MatrixXR* b) {
+void BandPass::b(MatrixXR* b) const{
   _filter.b(b);
 }
 
@@ -143,4 +143,58 @@ void BandPass::process(const MatrixXR& samples, MatrixXR* filtered) {
 void BandPass::reset(){
   // Initial values
   _filter.reset();
+}
+
+int BandPass::order() const{
+  return _order;
+}
+
+void BandPass::setOrder( int order ){
+  _order = order;
+  setup();
+}
+
+Real BandPass::startFrequency() const{
+  return _startFrequency;
+}
+  
+void BandPass::setStartFrequency( Real frequency ){
+  _startFrequency = frequency;
+  setup();
+}
+
+Real BandPass::stopFrequency() const{
+  return _stopFrequency;
+}
+  
+void BandPass::setStopFrequency( Real frequency ){
+  _stopFrequency = frequency;
+  setup();
+}
+
+FilterType BandPass::filterType() const{
+  return _filterType;
+}
+
+void BandPass::setFilterType( FilterType type ){
+  _filterType = type;
+  setup();
+}
+
+Real BandPass::passRipple() const{
+  return _passRipple;
+}
+
+void BandPass::setPassRipple( Real rippleDB ){
+  _passRipple = rippleDB;
+  setup();
+}
+
+Real BandPass::stopAttenuation() const{
+  return _stopAttenuation;
+}
+
+void BandPass::setStopAttenuation( Real attenuationDB ){
+  _stopAttenuation = attenuationDB;
+  setup();
 }
