@@ -69,22 +69,34 @@
   *
   * @author Ricard Marxer
   *
-  * @sa LowPass, HighPass, BandStop
+  * @sa Filter
   */
 class IIRFilter {
 public:
+  /**
+    @enum IIRFilter::FilterType
+    @brief Specifies the type of the filter.
+
+    @sa filterType
+  */
   enum FilterType {
-    CHEBYSHEVI = 0,
-    CHEBYSHEVII = 1,
-    BUTTERWORTH = 2,
-    BESSEL = 3
+    CHEBYSHEVI = 0 /** < Chebyshev Type-I filter */,
+    CHEBYSHEVII = 1 /** < Chebyshev Type-II filter */,
+    BUTTERWORTH = 2 /** < Butterworth filter */,
+    BESSEL = 3 /** < Bessel filter */
   };
 
+  /**
+    @enum IIRFilter::BandType
+    @brief Specifies the type of the band.
+    
+    @sa bandType
+  */
   enum BandType {
-    LOWPASS = 0,
-    HIGHPASS = 1,
-    BANDPASS = 2,
-    BANDSTOP = 3
+    LOWPASS = 0 /** < Low pass filter */,
+    HIGHPASS = 1 /** < High pass filter */,
+    BANDPASS = 2 /** < Band pass filter */,
+    BANDSTOP = 3 /** < Band stop filter */
   };
 
 protected:
@@ -111,6 +123,21 @@ public:
   void setup();
   void reset();
 
+    /**
+     Performs a filtering of each of the cols of @a samples.
+     Puts the resulting filtered in the cols of @a filtered.
+     
+     @param samples matrix of Real values.  A column represents a channel and a row 
+     represents a time index.
+     
+     @param filtered pointer to a matrix of Real values for the output.  The matrix should
+     have the same number of rows and columns as @a samples.
+     
+     Note that if the output matrix is not of the required size it will be resized, 
+     reallocating a new memory space if necessary.
+     
+     @sa Filter::process
+  */
   void process( const MatrixXR& samples, MatrixXR* filtered );
 
   /**
