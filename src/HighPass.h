@@ -35,10 +35,10 @@ protected:
   
   Filter _filter;
 
-  FilterType _filterType;
+  FilterMethod _filterMethod;
 
 public:
-  HighPass(int order, Real freq, FilterType filterType = CHEBYSHEVII, Real ripplePass = 0.05, Real rippleStop = 40.0, int channels = 1);
+  HighPass(int order, Real freq, FilterMethod filterMethod = CHEBYSHEVII, Real ripplePass = 0.05, Real rippleStop = 40.0, int channels = 1);
 
   void setup();
 

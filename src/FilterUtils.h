@@ -24,7 +24,7 @@
 
 #include "Utils.h"
 
-enum FilterType {
+enum FilterMethod {
   CHEBYSHEVI = 0,
   CHEBYSHEVII = 1,
   BUTTERWORTH = 2,

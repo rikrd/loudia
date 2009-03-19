@@ -36,10 +36,10 @@ protected:
   
   Filter _filter;
 
-  FilterType _filterType;
+  FilterMethod _filterMethod;
 
 public:
-  BandStop(int order, Real freq, Real freqStop, FilterType filterType = CHEBYSHEVII, Real ripplePass = 0.05, Real rippleStop = 40.0, int channels = 1);
+  BandStop(int order, Real freq, Real freqStop, FilterMethod filterMethod = CHEBYSHEVII, Real ripplePass = 0.05, Real rippleStop = 40.0, int channels = 1);
 
   void setup();
 

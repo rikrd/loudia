@@ -21,25 +21,26 @@
 
 #include <vector>
 
-#include "BandPass.h"
+#include "IIRFilter.h"
 #include "Utils.h"
 
 using namespace std;
 using namespace Eigen;
 
-BandPass::BandPass( int order, Real startFrequency, Real stopFrequency, FilterMethod filterMethod, Real passRipple, Real stopAttenuation ) : 
+IIRFilter::IIRFilter( int order, Real lowFrequency, Real highFrequency, BandType bandType, FilterType filterType, Real passRipple, Real stopAttenuation ) : 
   _order( order ),
-  _startFrequency( startFrequency ),
-  _stopFrequency( stopFrequency ),
+  _lowFrequency( lowFrequency ),
+  _highFrequency( highFrequency ),
   _passRipple( passRipple ),
   _stopAttenuation( stopAttenuation ),
   _channels( 1 ),
   _filter( _channels ),
-  _filterMethod( filterMethod ) 
+  _filterType( filterType ), 
+  _bandType( bandType )
 {
-  DEBUG("BANDPASS: Constructor order: " << _order 
-        << ", startFrequency: " << _startFrequency
-        << ", stopFrequency: " << _stopFrequency
+  DEBUG("IIRFILTER: Constructor order: " << _order 
+        << ", lowFrequency: " << _lowFrequency
+        << ", highFrequency: " << _highFrequency
         << ", passRipple: " << _passRipple
         << ", stopAttenuation: " << _stopAttenuation );
 
@@ -49,18 +50,18 @@ BandPass::BandPass( int order, Real startFrequency, Real stopFrequency, FilterMe
   
   setup();
   
-  DEBUG("BANDPASS: Constructed");
+  DEBUG("IIRFILTER: Constructed");
 }
 
-void BandPass::setup(){
-  DEBUG("BANDPASS: Setting up...");
+void IIRFilter::setup(){
+  DEBUG("IIRFILTER: Setting up...");
 
-  DEBUG("BANDPASS: Getting zpk");  
+  DEBUG("IIRFILTER: Getting zpk");  
   // Get the lowpass z, p, k
   MatrixXC zeros, poles;
   Real gain;
 
-  switch( _filterMethod ){
+  switch( _filterType ){
   case CHEBYSHEVI:
     chebyshev1(_order, _passRipple, _channels, &zeros, &poles, &gain);
     break;
@@ -78,16 +79,16 @@ void BandPass::setup(){
     break;
   }
   
-  DEBUG("BANDPASS: zeros:" << zeros );
-  DEBUG("BANDPASS: poles:" << poles );
-  DEBUG("BANDPASS: gain:" << gain );
+  DEBUG("IIRFILTER: zeros:" << zeros );
+  DEBUG("IIRFILTER: poles:" << poles );
+  DEBUG("IIRFILTER: gain:" << gain );
   
   // Convert zpk to ab coeffs
   MatrixXC a;
   MatrixXC b;
   zpkToCoeffs(zeros, poles, gain, &b, &a);
 
-  DEBUG("BANDPASS: Calculated the coeffs");
+  DEBUG("IIRFILTER: Calculated the coeffs");
 
   // Since we cannot create matrices of Nx0
   // we have created at least one Zero in 0
@@ -99,25 +100,44 @@ void BandPass::setup(){
 
   // Get the warped critical frequency
   Real fs = 2.0;
-  Real warped = 2.0 * fs * tan( M_PI * _startFrequency / fs );
-  Real warpedStop = 2.0 * fs * tan( M_PI * _stopFrequency / fs );
-
+  Real warped = 2.0 * fs * tan( M_PI * _lowFrequency / fs );
+  
+  Real warpedStop = 2.0 * fs * tan( M_PI * _highFrequency / fs );
   Real warpedCenter = sqrt(warped * warpedStop);
   Real warpedBandwidth = warpedStop - warped;
 
   // Warpped coeffs
   MatrixXC wa;
   MatrixXC wb;
-  lowPassToBandPass(b, a, warpedCenter, warpedBandwidth, &wb, &wa);
 
-  DEBUG("BANDPASS: Calculated the low pass to band pass");
+  DEBUG("IIRFILTER: Create the band type filter from the analog prototype");
+
+  switch( _bandType ){
+  case LOWPASS:
+    lowPassToLowPass(b, a, warped, &wb, &wa);
+    break;
+    
+  case HIGHPASS:
+    lowPassToHighPass(b, a, warped, &wb, &wa);  
+    break;
+
+  case BANDPASS:
+    lowPassToBandPass(b, a, warpedCenter, warpedBandwidth, &wb, &wa);
+    break;
+    
+  case BANDSTOP:
+    lowPassToBandStop(b, a, warpedCenter, warpedBandwidth, &wb, &wa);
+    break;
+  }
+
+  DEBUG("IIRFILTER: Calculated the low pass to band pass");
   
   // Digital coeffs
   MatrixXR da;
   MatrixXR db;
   bilinear(wb, wa, fs, &db, &da);
   
-  DEBUG("BANDPASS: setup the coeffs");
+  DEBUG("IIRFILTER: setup the coeffs");
 
   // Set the coefficients to the filter
   _filter.setA( da.transpose() );
@@ -125,76 +145,85 @@ void BandPass::setup(){
   
   _filter.setup();
   
-  DEBUG("BANDPASS: Finished set up...");
+  DEBUG("IIRFILTER: Finished set up...");
 }
 
-void BandPass::a(MatrixXR* a) const{
+void IIRFilter::a(MatrixXR* a) const{
   _filter.a(a);
 }
 
-void BandPass::b(MatrixXR* b) const{
+void IIRFilter::b(MatrixXR* b) const{
   _filter.b(b);
 }
 
-void BandPass::process(const MatrixXR& samples, MatrixXR* filtered) {
+void IIRFilter::process(const MatrixXR& samples, MatrixXR* filtered) {
   _filter.process(samples, filtered);
 }
 
-void BandPass::reset(){
+void IIRFilter::reset(){
   // Initial values
   _filter.reset();
 }
 
-int BandPass::order() const{
+int IIRFilter::order() const{
   return _order;
 }
 
-void BandPass::setOrder( int order ){
+void IIRFilter::setOrder( int order ){
   _order = order;
   setup();
 }
 
-Real BandPass::startFrequency() const{
-  return _startFrequency;
+Real IIRFilter::lowFrequency() const{
+  return _lowFrequency;
 }
   
-void BandPass::setStartFrequency( Real frequency ){
-  _startFrequency = frequency;
+void IIRFilter::setLowFrequency( Real frequency ){
+  _lowFrequency = frequency;
   setup();
 }
 
-Real BandPass::stopFrequency() const{
-  return _stopFrequency;
+Real IIRFilter::highFrequency() const{
+  return _highFrequency;
 }
   
-void BandPass::setStopFrequency( Real frequency ){
-  _stopFrequency = frequency;
+void IIRFilter::setHighFrequency( Real frequency ){
+  _highFrequency = frequency;
   setup();
 }
 
-FilterMethod BandPass::filterMethod() const{
-  return _filterMethod;
+IIRFilter::FilterType IIRFilter::filterType() const{
+  return _filterType;
 }
 
-void BandPass::setFilterMethod( FilterMethod type ){
-  _filterMethod = type;
+void IIRFilter::setFilterType( FilterType type ){
+  _filterType = type;
   setup();
 }
 
-Real BandPass::passRipple() const{
+IIRFilter::BandType IIRFilter::bandType() const{
+  return _bandType;
+}
+
+void IIRFilter::setBandType( BandType type ){
+  _bandType = type;
+  setup();
+}
+
+Real IIRFilter::passRipple() const{
   return _passRipple;
 }
 
-void BandPass::setPassRipple( Real rippleDB ){
+void IIRFilter::setPassRipple( Real rippleDB ){
   _passRipple = rippleDB;
   setup();
 }
 
-Real BandPass::stopAttenuation() const{
+Real IIRFilter::stopAttenuation() const{
   return _stopAttenuation;
 }
 
-void BandPass::setStopAttenuation( Real attenuationDB ){
+void IIRFilter::setStopAttenuation( Real attenuationDB ){
   _stopAttenuation = attenuationDB;
   setup();
 }

@@ -27,7 +27,7 @@
 using namespace std;
 using namespace Eigen;
 
-BandStop::BandStop( int order, Real freq, Real freqStop, FilterType filterType, Real ripplePass, Real rippleStop, int channels ) : 
+BandStop::BandStop( int order, Real freq, Real freqStop, FilterMethod filterMethod, Real ripplePass, Real rippleStop, int channels ) : 
   _order(order),
   _freq(freq),
   _freqStop(freqStop),
@@ -35,7 +35,7 @@ BandStop::BandStop( int order, Real freq, Real freqStop, FilterType filterType, 
   _rippleStop(rippleStop),
   _channels(channels),
   _filter(channels),
-  _filterType(filterType) 
+  _filterMethod(filterMethod) 
 {
   DEBUG("LOWPASS: Constructor order: " << _order 
         << ", freq: " << _freq
@@ -60,7 +60,7 @@ void BandStop::setup(){
   MatrixXC zeros, poles;
   Real gain;
 
-  switch( _filterType ){
+  switch( _filterMethod ){
   case CHEBYSHEVI:
     chebyshev1(_order, _ripplePass, _channels, &zeros, &poles, &gain);
     break;

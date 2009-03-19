@@ -27,14 +27,14 @@
 using namespace std;
 using namespace Eigen;
 
-LowPass::LowPass( int order, Real freq, FilterType filterType, Real ripplePass, Real rippleStop, int channels) : 
+LowPass::LowPass( int order, Real freq, FilterMethod filterMethod, Real ripplePass, Real rippleStop, int channels) : 
   _order(order),
   _freq(freq),
   _ripplePass(ripplePass),
   _rippleStop(rippleStop),
   _channels(channels),
   _filter(channels),
-  _filterType(filterType) 
+  _filterMethod(filterMethod) 
 {
   DEBUG("LOWPASS: Constructor order: " << _order 
         << ", freq: " << _freq
@@ -58,7 +58,7 @@ void LowPass::setup(){
   MatrixXC zeros, poles;
   Real gain;
 
-  switch( _filterType ){
+  switch( _filterMethod ){
   case CHEBYSHEVI:
     chebyshev1(_order, _ripplePass, _channels, &zeros, &poles, &gain);
     break;
