@@ -95,9 +95,11 @@ void Bands::starts(MatrixXI* result) const {
   (*result) = _starts;
 }
 
-void Bands::setStartsWeights(const MatrixXI& starts, std::vector<MatrixXR> weights) {
+void Bands::setStartsWeights(const MatrixXI& starts, std::vector<MatrixXR> weights, bool callSetup ) {
   _weights = weights;
   _starts = starts;
+  
+  if ( callSetup ) setup();
 }
 
 int Bands::bands() const {

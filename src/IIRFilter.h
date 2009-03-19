@@ -169,7 +169,7 @@ public:
      
      @sa order
   */
-  void setOrder( int order );
+  void setOrder( int order, bool callSetup = true );
 
   /**
      Return the low frequency of the filter.
@@ -185,7 +185,7 @@ public:
      
      @sa lowFrequency, highFrequency, setHighFrequency
   */
-  void setLowFrequency( Real frequency );
+  void setLowFrequency( Real frequency, bool callSetup = true );
 
   /**
      Return the stop frequency of the filter.
@@ -201,7 +201,7 @@ public:
      
      @sa lowFrequency, highFrequency, setLowFrequency
   */
-  void setHighFrequency( Real frequency );
+  void setHighFrequency( Real frequency, bool callSetup = true );
 
   /**
      Return the filter type.
@@ -217,7 +217,7 @@ public:
      
      @sa lowFrequency, highFrequency, setLowFrequency
   */
-  void setFilterType( FilterType type );
+  void setFilterType( FilterType type, bool callSetup = true );
 
   /**
      @property IIRFilter::bandType
@@ -228,7 +228,7 @@ public:
      @sa filterType
   */
   BandType bandType() const;
-  void setBandType( BandType type );
+  void setBandType( BandType type, bool callSetup = true );
 
   /**
      @property IIRFilter::passRipple
@@ -241,7 +241,7 @@ public:
      @sa stopAttenuation
   */
   Real passRipple() const;
-  void setPassRipple( Real rippleDB );
+  void setPassRipple( Real rippleDB, bool callSetup = true );
 
   /**
      @property IIRFilter::stopAttenuation
@@ -254,7 +254,7 @@ public:
      @sa passRipple
   */
   Real stopAttenuation() const;
-  void setStopAttenuation( Real attenuationDB );
+  void setStopAttenuation( Real attenuationDB, bool callSetup = true );
 };
 
 #endif  /* BANDPASS_H */

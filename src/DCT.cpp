@@ -139,25 +139,25 @@ DCT::DCTType DCT::dctType() const{
   return _dctType;
 }
 
-void DCT::setDctType( DCTType type ) {
+void DCT::setDctType( DCTType type, bool callSetup ) {
   _dctType = type;
-  setup();
+  if ( callSetup ) setup();
 }
 
 int DCT::inputSize() const{
   return _inputSize;
 }
 
-void DCT::setInputSize( int size ) {
+void DCT::setInputSize( int size, bool callSetup ) {
   _inputSize = size;
-  setup();
+  if ( callSetup ) setup();
 }
 
 int DCT::dctSize() const{
   return _dctSize;
 }
 
-void DCT::setDctSize( int size ) {
+void DCT::setDctSize( int size, bool callSetup ) {
   _dctSize = size;
-  setup();
+  if ( callSetup ) setup();
 }

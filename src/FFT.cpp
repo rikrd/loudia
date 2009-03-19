@@ -136,15 +136,16 @@ int FFT::fftSize() const{
   return _fftSize;
 }
 
-void FFT::setFftSize( int size ) {
+void FFT::setFftSize( int size, bool callSetup ) {
   _fftSize = size;
-  setup();
+  if ( callSetup ) setup();
 }
 
 bool FFT::zeroPhase() const{
   return _zeroPhase;
 }
 
-void FFT::setZeroPhase( bool zeroPhase ) {
+void FFT::setZeroPhase( bool zeroPhase, bool callSetup ) {
   _zeroPhase = zeroPhase;
+  if ( callSetup ) setup();
 }

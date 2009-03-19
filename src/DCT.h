@@ -31,7 +31,7 @@
   * The algorithm takes as input N-point vectors of Real values 
   * and returns M-point vectors of Real values.
   *
-  * 4 types of DCT are implemented:
+  * 5 types of DCT are implemented:
   * -# Type I
   * -# Type II
   * -# Type III
@@ -117,7 +117,7 @@ public:
      By default it is OCTAVE.
   */
   DCTType dctType() const;
-  void setDctType( DCTType type );
+  void setDctType( DCTType type, bool callSetup = true );
 
   /**
      @property DCT::inputSize
@@ -126,7 +126,7 @@ public:
      By default it is 1024.
   */
   int inputSize() const;
-  void setInputSize( int size );
+  void setInputSize( int size, bool callSetup = true );
 
   /**
      @property DCT::dctSize
@@ -139,7 +139,7 @@ public:
      By default it is 1024.
   */
   int dctSize() const;
-  void setDctSize( int size );
+  void setDctSize( int size, bool callSetup = true );
 };
 
 #endif  /* DCT_H */

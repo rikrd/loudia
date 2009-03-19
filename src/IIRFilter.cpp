@@ -169,61 +169,61 @@ int IIRFilter::order() const{
   return _order;
 }
 
-void IIRFilter::setOrder( int order ){
+void IIRFilter::setOrder( int order, bool callSetup ){
   _order = order;
-  setup();
+  if ( callSetup ) setup();
 }
 
 Real IIRFilter::lowFrequency() const{
   return _lowFrequency;
 }
   
-void IIRFilter::setLowFrequency( Real frequency ){
+void IIRFilter::setLowFrequency( Real frequency, bool callSetup ){
   _lowFrequency = frequency;
-  setup();
+  if ( callSetup ) setup();
 }
 
 Real IIRFilter::highFrequency() const{
   return _highFrequency;
 }
   
-void IIRFilter::setHighFrequency( Real frequency ){
+void IIRFilter::setHighFrequency( Real frequency, bool callSetup ){
   _highFrequency = frequency;
-  setup();
+  if ( callSetup ) setup();
 }
 
 IIRFilter::FilterType IIRFilter::filterType() const{
   return _filterType;
 }
 
-void IIRFilter::setFilterType( FilterType type ){
+void IIRFilter::setFilterType( FilterType type, bool callSetup ){
   _filterType = type;
-  setup();
+  if ( callSetup ) setup();
 }
 
 IIRFilter::BandType IIRFilter::bandType() const{
   return _bandType;
 }
 
-void IIRFilter::setBandType( BandType type ){
+void IIRFilter::setBandType( BandType type, bool callSetup ){
   _bandType = type;
-  setup();
+  if ( callSetup ) setup();
 }
 
 Real IIRFilter::passRipple() const{
   return _passRipple;
 }
 
-void IIRFilter::setPassRipple( Real rippleDB ){
+void IIRFilter::setPassRipple( Real rippleDB, bool callSetup ){
   _passRipple = rippleDB;
-  setup();
+  if ( callSetup ) setup();
 }
 
 Real IIRFilter::stopAttenuation() const{
   return _stopAttenuation;
 }
 
-void IIRFilter::setStopAttenuation( Real attenuationDB ){
+void IIRFilter::setStopAttenuation( Real attenuationDB, bool callSetup ){
   _stopAttenuation = attenuationDB;
-  setup();
+  if ( callSetup ) setup();
 }

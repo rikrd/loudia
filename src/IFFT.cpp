@@ -127,15 +127,16 @@ int IFFT::fftSize() const{
   return _fftSize;
 }
 
-void IFFT::setFftSize( int size ) {
+void IFFT::setFftSize( int size, bool callSetup ) {
   _fftSize = size;
-  setup();
+  if ( callSetup ) setup();
 }
 
 bool IFFT::zeroPhase() const{
   return _zeroPhase;
 }
 
-void IFFT::setZeroPhase( bool zeroPhase ) {
+void IFFT::setZeroPhase( bool zeroPhase, bool callSetup ) {
   _zeroPhase = zeroPhase;
+  if ( callSetup ) setup();
 }

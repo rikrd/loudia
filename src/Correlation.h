@@ -123,7 +123,7 @@ public:
      
      @sa inputSizeA(), inputSizeB(), setInputSizeB()
   */
-  void setInputSizeA( int size );
+  void setInputSizeA( int size, bool callSetup = true );
 
   /**
      Returns the size of the second of the input arrays to be correlated.
@@ -140,7 +140,7 @@ public:
      
      @sa inputSizeA(), inputSizeB(), setInputSizeA()
   */
-  void setInputSizeB( int size );
+  void setInputSizeB( int size, bool callSetup = true );
 
   /**
      Returns the minimum lag to be calculated.
@@ -157,7 +157,7 @@ public:
 
      @sa minLag(), maxLag(), setMaxLag()
   */  
-  void setMinLag( int lag );
+  void setMinLag( int lag, bool callSetup = true );
 
   /**
      Returns the maximum lag to be calculated.
@@ -175,7 +175,7 @@ public:
 
      @sa minLag(), maxLag(), setMinLag()
   */
-  void setMaxLag( int lag );
+  void setMaxLag( int lag, bool callSetup = true );
 
   /**
      Returns @c true if the FFT method should be used for the correlation.
@@ -190,7 +190,7 @@ public:
      
      @sa useFFT()
   */
-  void setUseFFT( bool useFFT );
+  void setUseFFT( bool useFFT, bool callSetup = true );
 };
 
 #endif  /* CORRELATION_H */

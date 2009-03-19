@@ -24,13 +24,6 @@
 
 #include "Utils.h"
 
-enum FilterMethod {
-  CHEBYSHEVI = 0,
-  CHEBYSHEVII = 1,
-  BUTTERWORTH = 2,
-  BESSEL = 3
-};
-
 /**
  * Create the zeros, poles and gain of an analog prototype of a Chebyshev Type I filter.
  */

@@ -24,12 +24,12 @@
 using namespace std;
 using namespace Eigen;
 
-Window::Window(int frameSize, Window::WindowType windowType) :
-  _frameSize( frameSize ),
+Window::Window(int inputSize, Window::WindowType windowType) :
+  _inputSize( inputSize ),
   _windowType( windowType ),
-  _window( MatrixXR::Ones(1, _frameSize) )
+  _window( MatrixXR::Ones(1, _inputSize) )
 {
-  DEBUG("WINDOW: Constructor frameSize: " << frameSize << 
+  DEBUG("WINDOW: Constructor inputSize: " << inputSize << 
         ", windowType: " << windowType);
 
   setup();
@@ -45,36 +45,36 @@ void Window::setup(){
   switch(_windowType){
 
   case RECTANGULAR:
-    _window = MatrixXR::Ones(1, _frameSize);
+    _window = MatrixXR::Ones(1, _inputSize);
     break;
 
   case HANN:
   case HANNING:
-    _window = hann(_frameSize);
+    _window = hann(_inputSize);
     break;
 
   case HAMMING:
-    _window = hamming(_frameSize);
+    _window = hamming(_inputSize);
     break;
 
   case COSINE:
-    _window = hamming(_frameSize);
+    _window = hamming(_inputSize);
     break;
     
   case BLACKMAN:
-    _window = blackman(_frameSize);
+    _window = blackman(_inputSize);
     break;
 
   case NUTTALL:
-    _window = nuttall(_frameSize);
+    _window = nuttall(_inputSize);
     break;
 
   case BLACKMANHARRIS:
-    _window = blackmanHarris(_frameSize);
+    _window = blackmanHarris(_inputSize);
     break;
 
   case BLACKMANNUTTALL:
-    _window = blackmanNuttall(_frameSize);
+    _window = blackmanNuttall(_inputSize);
     break;
   case CUSTOM:
     break;
@@ -173,7 +173,7 @@ MatrixXR Window::blackmanNuttall(int length){
 
 template<typename FrameMatrixType, typename WindowedMatrixType>
 void Window::process(const FrameMatrixType& frames, WindowedMatrixType* windowedFrames){
-  (*windowedFrames).resize(frames.rows(), _frameSize);
+  (*windowedFrames).resize(frames.rows(), _inputSize);
 
   for (int i = 0; i < frames.rows(); i++){
     // Process and set
@@ -198,22 +198,37 @@ void Window::process(const MatrixXR& frames, MatrixXR* windowedFrames){
 void Window::reset(){
 }
 
-int Window::frameSize() const{
-  return _frameSize;
+int Window::inputSize() const{
+  return _inputSize;
 }
+
+void Window::setInputSize( int size, bool callSetup ) {
+  _inputSize = size;
+  if ( callSetup ) setup();
+}
+
 
 Window::WindowType Window::windowType() const{
   return _windowType;
 }
 
+void Window::setWindowType( WindowType type, bool callSetup ) {
+  _windowType = type;
+  if ( callSetup ) setup();
+}
+
+
 MatrixXR Window::window() const{
   return _window;
 }
 
-void Window::setWindow(MatrixXR window){
-  if (window.cols() != _frameSize || window.rows() != 1) {
+void Window::setWindow( MatrixXR window, bool callSetup ){
+  if (window.cols() != _inputSize || window.rows() != 1) {
     // Throw exception wrong window size
   }
-  
+
+  setWindowType(CUSTOM, false);
   _window = window;
+
+  if ( callSetup ) setup();
 }

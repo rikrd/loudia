@@ -114,7 +114,7 @@ public:
      
      @sa fftSize()
   */
-  void setFftSize( int size );
+  void setFftSize( int size, bool callSetup = true );
 
   /**
      Returns the zero phase setting.  The default is True.
@@ -128,7 +128,7 @@ public:
      
      @sa zeroPhase()
   */
-  void setZeroPhase( bool zeroPhase );
+  void setZeroPhase( bool zeroPhase, bool callSetup = true );
 
 };
 

@@ -111,7 +111,7 @@ public:
      
      @sa inputSize()
   */
-  void setInputSize( int size );
+  void setInputSize( int size, bool callSetup = true );
 
   /**
      Returns the minimum lag to be calculated.
@@ -127,7 +127,7 @@ public:
      
      @sa minLag(), maxLag(), setMaxLag()
   */  
-  void setMinLag( int lag );
+  void setMinLag( int lag, bool callSetup = true );
 
   /**
      Returns the maximum lag to be calculated.
@@ -143,7 +143,7 @@ public:
      
      @sa minLag(), maxLag(), setMinLag()
   */
-  void setMaxLag( int lag );
+  void setMaxLag( int lag, bool callSetup = true );
 
   /**
      Returns @c true if the FFT method should be used for the autocorrelation.
@@ -158,7 +158,7 @@ public:
      
      @sa useFFT()
   */
-  void setUseFFT( bool useFFT );
+  void setUseFFT( bool useFFT, bool callSetup = true );
 };
 
 #endif  /* AUTOCORRELATION_H */

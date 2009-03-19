@@ -123,7 +123,7 @@ public:
      Note that the number of rows of starts and the size of weights should be the same and
      will determine the number of bands.
   */
-  void setStartsWeights(const MatrixXI& starts, std::vector<MatrixXR> weights);
+  void setStartsWeights(const MatrixXI& starts, std::vector<MatrixXR> weights, bool callSetup = true);
 };
 
 #endif  /* BANDS_H */

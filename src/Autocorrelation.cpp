@@ -107,30 +107,34 @@ int Autocorrelation::inputSize() const {
   return _inputSize;
 }
   
-void Autocorrelation::setInputSize( int size ) {
+void Autocorrelation::setInputSize( int size, bool callSetup ) {
   _inputSize = size;
+  if ( callSetup ) setup();
 }
 
 int Autocorrelation::minLag() const {
   return _minLag;
 }
   
-void Autocorrelation::setMinLag( int lag ) {
+void Autocorrelation::setMinLag( int lag, bool callSetup ) {
   _minLag = min(_inputSize, max(-_inputSize + 1, lag));  
+  if ( callSetup ) setup();
 }
 
 int Autocorrelation::maxLag() const {
   return _maxLag;
 }
   
-void Autocorrelation::setMaxLag( int lag ) {
+void Autocorrelation::setMaxLag( int lag, bool callSetup ) {
   _maxLag = min(_inputSize, max(-_inputSize + 1, lag));
+  if ( callSetup ) setup();
 }
 
 bool Autocorrelation::useFFT() const {
   return _useFFT;
 }  
 
-void Autocorrelation::setUseFFT( bool useFFT ) {
+void Autocorrelation::setUseFFT( bool useFFT, bool callSetup ) {
   _useFFT = useFFT;
+  if ( callSetup ) setup();
 }
