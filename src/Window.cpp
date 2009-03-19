@@ -218,11 +218,11 @@ void Window::setWindowType( WindowType type, bool callSetup ) {
 }
 
 
-MatrixXR Window::window() const{
+const MatrixXR& Window::window() const{
   return _window;
 }
 
-void Window::setWindow( MatrixXR window, bool callSetup ){
+void Window::setWindow( const MatrixXR& window, bool callSetup ){
   if (window.cols() != _inputSize || window.rows() != 1) {
     // Throw exception wrong window size
   }

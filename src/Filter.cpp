@@ -24,18 +24,6 @@
 using namespace std;
 using namespace Eigen;
 
-Filter::Filter() : 
-  _channels( 1 )
-{
-  DEBUG("FILTER: Constructor");
-
-  setA(MatrixXR::Ones(1, _channels));
-  setB(MatrixXR::Ones(1, _channels));
-
-  setup();
-}
-
-
 Filter::Filter(int channels) : 
   _channels( channels )
 {
@@ -62,13 +50,6 @@ Filter::Filter(const MatrixXR& b,
     
   setup();
 }
-
-Filter::~Filter() {
-  // TODO: Here we should free the buffers
-  // but I don't know how to do that with MatrixXR and MatrixXR
-  // I'm sure Nico will...
-}
-
 
 void Filter::setup(){
   // Prepare the buffers
@@ -154,18 +135,22 @@ void Filter::process(const MatrixXR& samples, MatrixXR* output){
 }
 
 
-void Filter::setA(const MatrixXR& a){
+void Filter::setA( const MatrixXR& a, bool callSetup ){
   _ina = a;
 
-  setupCoeffs();
-  setupState();
+  if ( callSetup ) {
+    setupCoeffs();
+    setupState();
+  }
 }
 
-void Filter::setB(const MatrixXR& b){
+void Filter::setB( const MatrixXR& b, bool callSetup ){
   _inb = b;
 
-  setupCoeffs();
-  setupState();
+  if ( callSetup ) {
+    setupCoeffs();
+    setupState();
+  }
 }
 
 void Filter::setupCoeffs() {
@@ -247,6 +232,12 @@ void Filter::reset(){
 
 int Filter::channels() const {
   return _channels;
+}
+
+void Filter::setChannels( int channels, bool callSetup ) {
+  _channels = channels;
+  
+  if ( callSetup ) setup();  
 }
 
 int Filter::length() const {

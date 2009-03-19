@@ -154,8 +154,8 @@ public:
 
      By default it is a single row matrix with all values set to 1.0.
   */  
-  MatrixXR window() const;
-  void setWindow( MatrixXR window, bool callSetup = true );
+  const MatrixXR& window() const;
+  void setWindow( const MatrixXR& window, bool callSetup = true );
 };
 
 #endif  /* WINDOW_H */

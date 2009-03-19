@@ -123,9 +123,9 @@ public:
   void setup();
   void reset();
 
-    /**
-     Performs a filtering of each of the cols of @a samples.
-     Puts the resulting filtered in the cols of @a filtered.
+  /**
+     Performs a filtering of each of the columns of @a samples.
+     Puts the resulting filtered in the columns of @a filtered.
      
      @param samples matrix of Real values.  A column represents a channel and a row 
      represents a time index.
