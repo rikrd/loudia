@@ -80,9 +80,9 @@ public:
      @param minLag minimum lag to be calculated
      @param useFFT determines whether or not to use the FFT method
   */
-  Correlation(int inputSizeA, int inputSizeB, int maxLag = std::numeric_limits<int>::max(), int minLag = -std::numeric_limits<int>::max());
   Correlation(int inputSizeA, int inputSizeB, int maxLag, int minLag, bool useFFT);
-
+  Correlation(int inputSizeA, int inputSizeB, int maxLag = std::numeric_limits<int>::max(), int minLag = -std::numeric_limits<int>::max());
+  
   /**
      Destroys the Correlation algorithm and frees its resources.
   */
@@ -110,7 +110,7 @@ public:
      Note that if the output matrix is not of the required size it will be resized, 
      reallocating a new memory space if necessary.
   */
-  void process(const MatrixXR& framesA, const MatrixXR& framesB, MatrixXR* autocorrelation);
+  void process(const MatrixXR& framesA, const MatrixXR& framesB, MatrixXR* correlation);
 
   /**
      Returns the size of the first input arrays to be correlated.
