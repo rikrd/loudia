@@ -54,10 +54,16 @@
   */
 class PeakDetect {
 public:
+  /**
+    @enum PeakDetect::SortMethod
+    @brief Specifies the way to sort the peak candidates before returning them.
+
+    @sa sortMethod
+  */
   enum SortMethod {
-    NONE              = 0,
-    BYMAGNITUDE       = 1,
-    BYPOSITION        = 2
+    NONE              = 0 /** < No sorting is performed */,
+    BYMAGNITUDE       = 1 /** < Sorts the peak candidates by decreasing order of magnitude */,
+    BYPOSITION        = 2 /** < Sorts the peak candidates by increasing order of position */
   };
 
 protected:
