@@ -27,9 +27,9 @@
 /**
   * @class PeakInterpolate
   *
-  * @brief Algorithm to interpolate peaks in a vector Real values.
+  * @brief Algorithm to interpolate peaks in a vector of Real values.
   *
-  * This class represents an object to interpolate peaks in a Real value vector.
+  * This class represents an object to interpolate peaks in a vector of Real values.
   * The algorithm interpolates the positions and magnitudes of a set of peaks, given
   * the original frame, peak positions and peak magnidutes.
   *

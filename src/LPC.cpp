@@ -25,17 +25,17 @@
 using namespace std;
 using namespace Eigen;
 
-LPC::LPC(int frameSize, int numCoeffs, Real preEmphasis) : 
-  _frameSize( frameSize ), 
-  _numCoeffs( numCoeffs ),
+LPC::LPC(int inputSize, int coefficientCount, Real preEmphasis) : 
+  _inputSize( inputSize ), 
+  _coefficientCount( coefficientCount ),
   _preEmphasis( preEmphasis ),
-  _acorrelation( _frameSize, _numCoeffs + 1 )
+  _acorrelation( _inputSize, _coefficientCount + 1 )
 {
-  DEBUG("LPC: Constructor frameSize: " << _frameSize 
-        << ", numCoeffs: " << _numCoeffs
+  DEBUG("LPC: Constructor inputSize: " << _inputSize 
+        << ", coefficientCount: " << _coefficientCount
         << ", preEmphasis: " << _preEmphasis);
 
-  if (_numCoeffs > _frameSize) {
+  if (_coefficientCount > _inputSize) {
     // Thorw ValueError, the number of coefficients must be smaller or equal than the frame size.
   }
   
@@ -69,7 +69,7 @@ void LPC::process(const MatrixXR& frame, MatrixXR* lpcCoeffs, MatrixXR* reflecti
   const int rows = frame.rows();
   const int cols = frame.cols();
 
-  if ( cols != _frameSize ) {
+  if ( cols != _inputSize ) {
     // Throw ValueError, the frames passed are the wrong size
   }
   
@@ -87,12 +87,12 @@ void LPC::process(const MatrixXR& frame, MatrixXR* lpcCoeffs, MatrixXR* reflecti
   DEBUG("LPC: Processing autocorrelation");
 
   _acorrelation.process(_pre, &_acorr);
-  //autocorrelate(_pre, &_acorr, 0, _numCoeffs + 1);
+  //autocorrelate(_pre, &_acorr, 0, _coefficientCount + 1);
   
   DEBUG("LPC: Processing Levinson-Durbin recursion");
 
-  (*lpcCoeffs).resize(rows, _numCoeffs);
-  (*reflectionCoeffs).resize(rows, _numCoeffs - 1);
+  (*lpcCoeffs).resize(rows, _coefficientCount);
+  (*reflectionCoeffs).resize(rows, _coefficientCount - 1);
   (*error).resize(rows, 1);
   
   // Initial values of the LPC coefficients
@@ -110,7 +110,7 @@ void LPC::process(const MatrixXR& frame, MatrixXR* lpcCoeffs, MatrixXR* reflecti
     if ((_acorr.cwise() == 0.).all())
       continue;
 
-    for ( int i = 1; i < _numCoeffs; i++ ) {
+    for ( int i = 1; i < _coefficientCount; i++ ) {
       gamma = _acorr(row, i);
       
       // TODO: fix this when Eigen allows reverse()
@@ -154,6 +154,30 @@ void LPC::reset(){
 
 }
 
-int LPC::numCoeffs() const {
-  return _numCoeffs;
+int LPC::inputSize() const {
+  return _inputSize;
+}
+  
+void LPC::setInputSize( int size, bool callSetup ) {
+  _inputSize = size;
+  if ( callSetup ) setup();
+}
+
+
+int LPC::coefficientCount() const {
+  return _coefficientCount;
+}
+
+void LPC::setCoefficientCount( int count, bool callSetup ) {
+  _coefficientCount = count;
+  if ( callSetup ) setup();
+}
+
+Real LPC::preEmphasis() const {
+  return _preEmphasis;
+}
+
+void LPC::setPreEmphasis( Real coefficient, bool callSetup ) {
+  _preEmphasis = coefficient;
+  if ( callSetup ) setup();
 }

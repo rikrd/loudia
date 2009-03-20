@@ -120,12 +120,20 @@ public:
   void setDctType( DCTType type, bool callSetup = true );
 
   /**
-     @property DCT::inputSize
-     @brief the input size of the DCT
+     Returns the size of the input arrays.
+     The default is 1024.
      
-     By default it is 1024.
+     @sa setInputSize()
   */
-  int inputSize() const;
+  int inputSize() const;  
+
+  /**
+     Specifies the @a size of the input.
+     The given @a size must be higher than 0.
+     Note that if @a size is a power of 2 the algorithm will perform faster.
+     
+     @sa inputSize()
+  */
   void setInputSize( int size, bool callSetup = true );
 
   /**
