@@ -27,7 +27,7 @@
 /** 
   * @class FFTComplex
   *
-  * @brief Fast Fourier Transform processor units for Complex data.
+  * @brief Algorithm to perform a Fast Fourier Transform of a vector of Complex values.
   *
   * This class represents a processor unit to perform Fast Fourier Transforms on Real data.
   * It allows to calculate the Discrete Fourier Transform (DFT) of N-point vectors of Real values,

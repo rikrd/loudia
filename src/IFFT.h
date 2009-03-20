@@ -27,7 +27,8 @@
 /**
   * @class IFFT
   *
-  * @brief Inverse Fast Fourier Transform (IFFT) algorithm for an FFT of Real data.
+  * @brief Algorithm to perform an Inverse Fast Fourier Transform of a vector of Complex 
+  * values representing the positive frequencies half of a symmetric FFT.
   *
   * This class represents an object to perform 
   * Inverse Fast Fourier Transforms (IFFT) on an FFT of Real data.

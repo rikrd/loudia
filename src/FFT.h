@@ -27,7 +27,7 @@
 /**
   * @class FFT
   *
-  * @brief Fast Fourier Transform processor unit for Real data.
+  * @brief Algorithm to perform a Fast Fourier Transform of a vector of Real values.
   *
   * This class represents an object to perform Fast Fourier Transforms (FFT) on Real data.
   * The FFT is a fast implementation of a Discrete Fourier Transform (DFT).

@@ -120,7 +120,7 @@ public:
 
   /**
      Determines the @a starts positions and @a weights of the bands.
-     Note that the number of rows of starts and the size of weights should be the same and
+     Note that the number of rows of @a starts and the size of @a weights should be the same and
      will determine the number of bands.
   */
   void setStartsWeights(const MatrixXI& starts, std::vector<MatrixXR> weights, bool callSetup = true);

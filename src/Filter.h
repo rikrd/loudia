@@ -25,7 +25,7 @@
 /**
   * @class Filter
   *
-  * @brief Algorithm to apply one or several IIR filter given the Real value coefficients.
+  * @brief Algorithm to apply one or several IIR filters given the Real value coefficients.
   *
   * This class represents an object to apply one or several IIR filters.
   * The coefficients must be manually set by the user.  To create and use

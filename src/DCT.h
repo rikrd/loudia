@@ -25,7 +25,7 @@
 /**
   * @class DCT
   *
-  * @brief Discrete Cosine Transform processor unit for Real data.
+  * @brief Algorithm to perform a Discrete Cosine Transform of a vector of Real values.
   *
   * This class represents an object to perform Discrete Cosine Transform (DCT) on Real data.
   * The algorithm takes as input N-point vectors of Real values 

@@ -30,7 +30,7 @@
 /**
   * @class Autocorrelation
   *
-  * @brief Autocorrelation algorithm.
+  * @brief Algorithm to perform an autocorrelation of vectors of Real values.
   *
   * This class represents an object to perform a correlation of a vector with itself.
   *

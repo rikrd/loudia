@@ -97,7 +97,7 @@ public:
   */
   void process(const MatrixXR& frames, 
                const MatrixXR& peakPositions, const MatrixXR& peakMagnitudes,
-               MatrixXR* peakPositionsInterp, MatrixXR* peakMagnitudesInterp);
+               MatrixXR* peakPositionsInterpolated, MatrixXR* peakMagnitudesInterpolated);
 
 };
 

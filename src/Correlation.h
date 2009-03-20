@@ -30,7 +30,7 @@
 /**
   * @class Correlation
   *
-  * @brief Correlation algorithm.
+  * @brief Algorithm to perform an correlation of two vectors of Real values.
   *
   * This class represents an object to perform a correlation of two vectors.
   *

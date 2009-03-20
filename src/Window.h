@@ -25,7 +25,8 @@
 /**
   * @class Window
   *
-  * @brief Windowing processor unit for Real or Complex data.
+  * @brief Algorithm to create and apply several type of windows on vectors of Real 
+  * or Complex values.
   *
   * This class represents an object to apply a window on frames of Real or Complex data.
   * The algorithm takes as input N-point vectors of Real (or Complex) values 
@@ -43,10 +44,10 @@
   * -# Blackman Nuttall
   *
   * The Window type can be selected using the 
-  * @l Window::windowType property.
+  * Window::windowType property.
   *
   * Additionally a Custom window can be set using 
-  * the @l Window::window property.
+  * the Window::window property.
   *
   * @author Ricard Marxer
   *
@@ -71,7 +72,7 @@ public:
     NUTTALL             = 7 /** < Nuttall window */,
     BLACKMANNUTTALL     = 8 /** < Blackman-Nuttall window */,
     CUSTOM              = 9 /** < Custom window. Note that this window type must be select
-                             when setting the window using @l Window::setWindow()*/
+                             when setting the window using Window::setWindow()*/
   };
 
 protected:
@@ -150,7 +151,7 @@ public:
      The number of cols of the window must be equal to inputSize.
      
      Note that when the window is set, using Window::setWindow(),
-     the @l Window::windowType property is automatically set to CUSTOM.
+     the Window::windowType property is automatically set to CUSTOM.
 
      By default it is a single row matrix with all values set to 1.0.
   */  

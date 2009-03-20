@@ -34,14 +34,14 @@
   * the indices of the peaks and the values of the peaks in
   * separate matrices.
   * 
-  * The maximum number of peaks can be specified using @l setPeakCount.
+  * The maximum number of peaks can be specified using setPeakCount().
   * 
   * The resulting peak arrays may be sorted by position or by magnitude. This can be
-  * specified using @l setSortMethod.
+  * specified using setSortMethod().
   *
   * When sorting by position it may be interesting to specify a number of candidates, in order
   * to perform a preselection of the highest valued peaks before sorting.  This can be specified
-  * using @l setCandidateCount
+  * using setCandidateCount().
   *
   * The implementation consists in running a sliding windows along the vector in search of 
   * indices which whose value is the maximum of the window.  The size of the window

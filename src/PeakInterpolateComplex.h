@@ -25,25 +25,25 @@
 #include "Utils.h"
 
 /**
-  * @class PeakInterpolate
-  *
-  * @brief Algorithm to interpolate peaks in a vector Real values.
-  *
-  * This class represents an object to interpolate peaks in a Real value vector.
-  * The algorithm interpolates the positions and magnitudes of a set of peaks, given
-  * the original frame, peak positions and peak magnidutes.
-  *
-  * The interpolation consists in fitting a parabola (quadratic interpolation) on the 
-  * point of the peak and the two points surrounding it. 
-  *
-  * Note that the interpolation is performed in the decibel domain, and in order to 
-  * avoid innecessary transformations the resulting interpolated peak magnitudes
-  * are returned in decibels.
-  *
-  * @author Ricard Marxer
-  *
-  * @sa PeakDetect, PeakDetectComplex, PeakInterpolate, PeakInterpolateComplex, PeakContinue, PeakContinueComplex
-  */
+ * @class PeakInterpolateComplex
+ *
+ * @brief Algorithm to interpolate peaks in a vector Real values.
+ *
+ * This class represents an object to interpolate peaks in a Real value vector.
+ * The algorithm interpolates the positions and magnitudes of a set of peaks, given
+ * the original frame, peak positions and peak magnidutes.
+ *
+ * The interpolation consists in fitting a parabola (quadratic interpolation) on the 
+ * point of the peak and the two points surrounding it. 
+ *
+ * Note that the interpolation is performed in the decibel domain, and in order to 
+ * avoid innecessary transformations the resulting interpolated peak magnitudes
+ * are returned in decibels.
+ *
+ * @author Ricard Marxer
+ *
+ * @sa PeakDetect, PeakDetectComplex, PeakInterpolate, PeakInterpolateComplex, PeakContinue, PeakContinueComplex
+ */
 class PeakInterpolateComplex {
 protected:
   // Internal parameters
@@ -91,19 +91,23 @@ public:
      @a peakMagnitudes and @a peakPhases. 
      
      @param peakMagnitudesInterpolated pointer to a matrix of Real values for the peak magnitudes.
-     The matrix should have the same number of rows and columns as @a peakPositions
-     and @a peakMagnitudes.
+     The matrix should have the same number of rows and columns as @a peakPositions, 
+     @a peakMagnitudes and @a peakPhases. 
      Note that the units of this matrix are decibels.
 
+     @param peakPhasesInterpolated pointer to a matrix of Real values for the peak phases.
+     The matrix should have the same number of rows and columns as @a peakPositions, 
+     @a peakMagnitudes and @a peakPhases. 
+     
      Note that peaks with positions values smaller than 0.0 (usually -1.0) are not considered peaks and will not
      be interpolated or modified.
      
      Note that if the output matrices are not of the required size they will be resized, 
      reallocating a new memory space if necessary.
   */
-  void process(const MatrixXC& input, 
+  void process(const MatrixXC& frames, 
                const MatrixXR& peakPositions, const MatrixXR& peakMagnitudes, const MatrixXR& peakPhases,
-               MatrixXR* peakPositionsInterp, MatrixXR* peakMagnitudesInterp, MatrixXR* peakPhasesInterp);
+               MatrixXR* peakPositionsInterpolated, MatrixXR* peakMagnitudesInterpolated, MatrixXR* peakPhasesInterpolated);
 
 
 };
