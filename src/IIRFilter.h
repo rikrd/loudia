@@ -74,7 +74,7 @@
 class IIRFilter {
 public:
   /**
-    @enum IIRFilter::FilterType
+    @enum FilterType
     @brief Specifies the type of the filter.
 
     @sa filterType
@@ -87,7 +87,7 @@ public:
   };
 
   /**
-    @enum IIRFilter::BandType
+    @enum BandType
     @brief Specifies the type of the band.
     
     @sa bandType

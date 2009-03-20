@@ -30,7 +30,7 @@
 /**
   * @class Correlation
   *
-  * @brief Algorithm to perform an correlation of two vectors of Real values.
+  * @brief Algorithm to perform the correlation between two vectors of Real values.
   *
   * This class represents an object to perform a correlation of two vectors.
   *
@@ -38,8 +38,20 @@
   * -# Direct method 
   * -# FFT method
   *
-  * The Direct method performs faster than the FFT method on vectors of small sizes.
-  * The critical sizes of the vectors depends on the platform.
+  * The Direct method consists in applying the correlation formula directly
+  * in the time domain.
+  *
+  * The FFT method consists in performing an Fast Fourier Transform of each
+  * of the vectors and multiply the first by the conjugate of the second.
+  * Finally the algorithm applies
+  * an IFFT to the result of the multiplication in order to obtain the 
+  * autocorrelation for all the time lags.
+  *
+  * The Direct method performs faster than the FFT method only
+  * on vectors of small sizes. The decision point for selecting one of
+  * the two methods depends on the platform.
+  *
+  * The method performed can be specified using setUseFFT().
   *
   * @author Ricard Marxer
   *

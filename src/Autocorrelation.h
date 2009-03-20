@@ -38,8 +38,20 @@
   * -# Direct method 
   * -# FFT method
   *
-  * The Direct method performs faster than the FFT method on vectors of small sizes.
-  * The critical size of the vector depends on the platform.
+  * The Direct method consists in applying the correlation formula directly
+  * in the time domain.
+  *
+  * The FFT method consists in performing an Fast Fourier Transform of the
+  * vector and multiply it by its conjugate.
+  * Finally the algorithm applies an IFFT to the result of the 
+  * multiplication in order to obtain the autocorrelation for all
+  * the time lags.
+  *
+  * The Direct method performs faster than the FFT method only
+  * on vectors of small sizes. The decision point for selecting one of
+  * the two methods depends on the platform.
+  *
+  * The method performed can be specified using setUseFFT().
   *
   * @author Ricard Marxer
   *
@@ -70,8 +82,8 @@ public:
      @param minLag minimum lag to be calculated
      @param useFFT determines whether or not to use the FFT method
   */
-  Autocorrelation(int inputSize = 1024, int maxLag = std::numeric_limits<int>::max(), int minLag = 0);
   Autocorrelation(int inputSize, int maxLag, int minLag, bool useFFT);
+  Autocorrelation(int inputSize = 1024, int maxLag = std::numeric_limits<int>::max(), int minLag = 0);
 
   /**
      Destroys the Autocorrelation algorithm and frees its resources.
