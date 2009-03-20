@@ -28,13 +28,13 @@
 class MFCC {
 protected:
   // Internal parameters
-  Real _lowFreq;
-  Real _highFreq;
-  int _numBands;
+  Real _lowFrequency;
+  Real _highFrequency;
+  int _bandCount;
   Real _samplerate;
-  int _fftLength;
+  int _fftSize;
 
-  int _numCoeffs;
+  int _coefficientCount;
   
   Real _minSpectrum;
   Real _power;
@@ -47,21 +47,109 @@ protected:
   MatrixXR _coeffs;
 
 public:
-  MFCC(Real lowFreq, Real highFreq, int numBands, Real samplerate, int fftLength, int numCoeffs, Real minSpectrum = 1e-10, Real power = 1.0);
+  MFCC(Real lowFrequency = 300.0, Real highFrequency = 16000.0, int bandCount = 40.0, Real samplerate = 44100.0, int fftSize = 1024, int coefficientCount = 13, Real minSpectrum = 1e-10, Real power = 1.0);
 
   ~MFCC();
 
+  void reset();
   void setup();
 
-  void process(const MatrixXR& spectrum, MatrixXR* mfccCoeffs);
+  void process(const MatrixXR& spectrum, MatrixXR* mfccCoefficients);
 
-  void reset();
+  /**
+     Returns the number of coefficients to be calculated.
+     The default is 13.
+     
+     @sa setCoefficientCount()
+  */
+  int coefficientCount() const;
 
-  int numCoeffs() const;
+  /**
+     Specifies the @a count of coefficients to be calculated.
+     The given @a count must be in the range between 0 and (input size - 1).
+          
+     @sa coefficientCount()
+  */
+  void setCoefficientCount( int count, bool callSetup = true );
 
-  Real lowFreq() const;
+  /**
+     Returns the number of bands to be performed.
+     The default is 40.
+     
+     @sa setBandCount()
+  */
+  int bandCount() const;
 
-  Real highFreq() const;
+  /**
+     Specifies the @a count of bands to be performed.
+          
+     @sa bandCount()
+  */
+  void setBandCount( int count, bool callSetup = true );
+
+  /**
+     Return the low frequency of the MFCC.
+     The default is 300.0.
+
+     @sa lowFrequency, highFrequency, setLowFrequency, setHighFrequency
+  */  
+  Real lowFrequency() const;  
+
+  /**
+     Specifies the low @a frequency of the MFCC.
+     The given @a frequency must be in the range of 0 to the samplerate / 2.
+     
+     @sa lowFrequency, highFrequency, setHighFrequency
+  */
+  void setLowFrequency( Real frequency, bool callSetup = true );
+
+  /**
+     Return the high frequency of the MFCC.
+     The default is 16000.0.
+
+     @sa lowFrequency, setLowFrequency, setHighFrequency
+  */  
+  Real highFrequency() const;  
+
+  /**
+     Specifies the high @a frequency of the MFCC.
+     The given @a frequency must be in the range of 0 to the samplerate / 2.
+
+     @sa lowFrequency, highFrequency, setLowFrequency
+  */
+  void setHighFrequency( Real frequency, bool callSetup = true );
+
+  /**
+     Return the samplerate frequency of the input signal.
+     The default is 44100.0.
+
+     @sa setSamplerate
+  */  
+  Real samplerate() const;  
+
+  /**
+     Specifies the samplerate @a frequency of the input signal.
+     
+     @sa samplerate
+  */
+  void setSamplerate( Real frequency, bool callSetup = true );
+
+  /**
+     Returns the size of the FFT to be performed.
+     The default is 1024.
+     
+     @sa setFftSize()
+  */
+  int fftSize() const;
+
+  /**
+     Specifies the @a size of the FFT to be performed.
+     The given @a size must be higher than 0.
+     Note that if @a size is a power of 2 will perform faster.
+     
+     @sa fftSize()
+  */
+  void setFftSize( int size, bool callSetup = true );
 
 };
 

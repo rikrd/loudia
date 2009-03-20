@@ -26,23 +26,24 @@
 using namespace std;
 using namespace Eigen;
 
-MFCC::MFCC(Real lowFreq, Real highFreq, int numBands, Real samplerate, int fftLength, int numCoeffs, Real minSpectrum, Real power) : 
-  _lowFreq( lowFreq ),
-  _highFreq( highFreq ),
-  _numBands( numBands ),
+MFCC::MFCC(Real lowFrequency, Real highFrequency, int bandCount, Real samplerate, int fftSize, int coefficientCount, Real minSpectrum, Real power) : 
+  _lowFrequency( lowFrequency ),
+  _highFrequency( highFrequency ),
+  _bandCount( bandCount ),
   _samplerate( samplerate ),
-  _fftLength( fftLength ),
-  _numCoeffs( numCoeffs ),
+  _fftSize( fftSize ),
+  _coefficientCount( coefficientCount ),
   _minSpectrum( minSpectrum ),
   _power( power ),
-  _melbands(lowFreq, highFreq, numBands, samplerate, fftLength), _dct(numBands, numCoeffs) 
+  _melbands(lowFrequency, highFrequency, bandCount, samplerate, fftSize),
+  _dct(bandCount, coefficientCount) 
 {
-  DEBUG("MFCC: Constructor lowFreq: " << lowFreq << 
-        ", highFreq: " << highFreq << 
-        ", numBands: " << numBands << 
+  DEBUG("MFCC: Constructor lowFrequency: " << lowFrequency << 
+        ", highFrequency: " << highFrequency << 
+        ", bandCount: " << bandCount << 
         ", samplerate: "<< samplerate << 
-        ", fftLength: " << fftLength << 
-        ", numCoeffs: " << numCoeffs);
+        ", fftSize: " << fftSize << 
+        ", coefficientCount: " << coefficientCount);
   
   setup();
 }
@@ -54,7 +55,18 @@ void MFCC::setup(){
   // Prepare the buffers
   DEBUG("MFCC: Setting up...");
 
+  // TODO: when the MelBands will support accessors, uncomment this
+  /*
+  _melbands.setInputSize( _fftSize, false );
+  _melbands.setSamplerate( _samplerate, false );
+  _melbands.setLowFrequency( _lowFrequency, false );
+  _melbands.setHighFrequency( _highFrequency, false );
+  _melbands.setBandCount( _bandCount, false );
+  */
   _melbands.setup();
+
+  _dct.setInputSize( _bandCount, false );
+  _dct.setDctSize( _coefficientCount, false );
   _dct.setup();
   
   reset();
@@ -63,7 +75,7 @@ void MFCC::setup(){
 
 
 void MFCC::process(const MatrixXR& spectrum, MatrixXR* mfccCoeffs){
-  (*mfccCoeffs).resize(spectrum.rows(), _numCoeffs);
+  (*mfccCoeffs).resize(spectrum.rows(), _coefficientCount);
   
   for ( int i = 0; i < spectrum.rows(); i++) {  
     DEBUG("MFCC: Processing Melbands");
@@ -91,21 +103,67 @@ void MFCC::process(const MatrixXR& spectrum, MatrixXR* mfccCoeffs){
 
 void MFCC::reset(){
   // Initial values
-  _bands = MatrixXR::Zero(1, _numBands);
-  _coeffs = MatrixXR::Zero(1, _numCoeffs);
+  _bands = MatrixXR::Zero(1, _bandCount);
+  _coeffs = MatrixXR::Zero(1, _coefficientCount);
 
   _melbands.reset();
   _dct.reset();
 }
 
-int MFCC::numCoeffs() const {
-  return _numCoeffs;
+int MFCC::coefficientCount() const {
+  return _coefficientCount;
 }
 
-Real MFCC::lowFreq() const {
-  return _lowFreq;
+Real BandFilter::lowFrequency() const{
+  return _lowFrequency;
+}
+  
+void MFCC::setLowFrequency( Real frequency, bool callSetup ){
+  _lowFrequency = frequency;
+  if ( callSetup ) setup();
 }
 
-Real MFCC::highFreq() const {
-  return _highFreq;
+Real MFCC::highFrequency() const{
+  return _highFrequency;
+}
+  
+void MFCC::setHighFrequency( Real frequency, bool callSetup ){
+  _highFrequency = frequency;
+  if ( callSetup ) setup();
+}
+
+Real MFCC::samplerate() const{
+  return _samplerate;
+}
+  
+void MFCC::setSamplerate( Real frequency, bool callSetup ){
+  _samplerate = frequency;
+  if ( callSetup ) setup();
+}
+
+int MFCC::coefficientCount() const {
+  return _coefficientCount;
+}
+
+void MFCC::setCoefficientCount( int count, bool callSetup ) {
+  _coefficientCount = count;
+  if ( callSetup ) setup();
+}
+
+int MFCC::bandCount() const {
+  return _bandCount;
+}
+
+void MFCC::setBandCount( int count, bool callSetup ) {
+  _bandCount = count;
+  if ( callSetup ) setup();
+}
+
+int MFCC::fftSize() const{
+  return _fftSize;
+}
+
+void MFCC::setFftSize( int size, bool callSetup ) {
+  _fftSize = size;
+  if ( callSetup ) setup();
 }
