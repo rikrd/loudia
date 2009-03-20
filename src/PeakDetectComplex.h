@@ -50,7 +50,7 @@
   *
   * @author Ricard Marxer
   *
-  * @sa PeakDetectComplex, PeakInterpolate, PeakInterpolateComplex, PeakContinue, PeakContinueComplex
+  * @sa PeakDetect, PeakDetectComplex, PeakInterpolate, PeakInterpolateComplex, PeakContinue, PeakContinueComplex
   */
 class PeakDetectComplex {
 public:
@@ -108,6 +108,10 @@ public:
 
      @param peakPhases pointer to a matrix of Real values for the peak phases.
      The matrix should have the same number of rows as @a frames and @l peakCount columns. 
+
+     Note that if the count of peaks detect is lower than @l peakCount some values
+     of the resulting arrays will be set to -1.0 in order to indicate that it is not
+     a peak.
 
      Note that if the output matrices are not of the required size they will be resized, 
      reallocating a new memory space if necessary.
