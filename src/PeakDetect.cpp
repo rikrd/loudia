@@ -85,18 +85,13 @@ void PeakDetect::process(const MatrixXR& frames,
   DEBUG("PEAKDETECT: Processing");
   
   const int rows = frames.rows();
-
-  int peakCount = _peakCount;
-  if( peakCount == -1 ){
-    peakCount = frames.cols();
-  }
   
   DEBUG("PEAKDETECT: Processing, frames.shape: (" << rows << ", " << frames.cols() << ")");
 
-  (*peakPositions).resize(rows, peakCount);
+  (*peakPositions).resize(rows, _peakCount);
   (*peakPositions).setConstant(-1);
 
-  (*peakMagnitudes).resize(rows, peakCount);
+  (*peakMagnitudes).resize(rows, _peakCount);
   (*peakMagnitudes).setConstant(-1);
 
   _magnitudes = frames.cwise().abs();
@@ -118,7 +113,7 @@ void PeakDetect::process(const MatrixXR& frames,
     
     for ( int j = (_minimumPeakWidth / 2); j < _magnitudes.row(i).cols() - (_minimumPeakWidth / 2); j++) {
       // If we don't need sorting then only the first peakCount peaks are needed
-      if( ( _sortMethod == NONE ) && ( (int)peaks.size() > peakCount ) ) break;
+      if( ( _sortMethod == NONE ) && ( (int)peaks.size() > _peakCount ) ) break;
 
       int inf = j - (_minimumPeakWidth / 2);
       
