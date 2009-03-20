@@ -24,6 +24,31 @@
 
 #include <fftw3.h>
 
+
+/**
+  * @class IFFTComplex
+  *
+  * @brief Algorithm to perform an Inverse Fast Fourier Transform of a vector of Complex 
+  * values representing the full FFT.
+  *
+  * The IFFT is a fast implementation of an Inverse Discrete Fourier Transform (IDFT).
+  * The algorithm takes as input M point vectors of Complex 
+  * values (M being the FFT size), and returns N point vectors of Real 
+  * values (N being the frame size).
+  *
+  * Note that N can be smaller than M.
+  * In this case the last ( M - N ) coefficients
+  * will be discarded, since it assumes that zero padding has been made
+  * at the end of the frame prior to the forward FFT transfor.
+  *
+  * Alternatively the algorithm can undo the center zeropadding and
+  * the N/2 rotation if done durnig the FFT forward transform.
+  * This is specified by using the setZeroPhase() method.
+  *
+  * @author Ricard Marxer
+  *
+  * @sa FFT, FFTComplex, IFFT
+  */
 class IFFTComplex{
 protected:
   int _fftSize;

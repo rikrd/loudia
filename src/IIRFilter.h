@@ -16,8 +16,8 @@
 ** Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */                                                                          
 
-#ifndef IIRFILTER_H
-#define IIRFILTER_H
+#ifndef BANDFILTER_H
+#define BANDFILTER_H
 
 #include "Typedefs.h"
 #include "Debug.h"
@@ -26,11 +26,12 @@
 #include "FilterUtils.h"
 
 /**
-  * @class IIRFilter
+  * @class BandFilter
   *
-  * @brief Algorithm to create and apply several types of IIR filters.
+  * @brief Algorithm to create and apply several types of low pass, high pass, 
+  * band pass and band stop filters.
   *
-  * This class represents an object to create and apply several types of IIR filters.
+  * This class represents an object to create and apply several types of band filters.
   * Additionally the coefficients, zeros, poles and gains of the created filters
   * can be retrieved.
   *
@@ -71,7 +72,7 @@
   *
   * @sa Filter
   */
-class IIRFilter {
+class BandFilter {
 public:
   /**
     @enum FilterType
@@ -80,10 +81,10 @@ public:
     @sa filterType
   */
   enum FilterType {
-    CHEBYSHEVI = 0 /** < Chebyshev Type-I filter */,
-    CHEBYSHEVII = 1 /** < Chebyshev Type-II filter */,
-    BUTTERWORTH = 2 /** < Butterworth filter */,
-    BESSEL = 3 /** < Bessel filter */
+    CHEBYSHEVI = 0 /**< Chebyshev Type-I filter */,
+    CHEBYSHEVII = 1 /**< Chebyshev Type-II filter */,
+    BUTTERWORTH = 2 /**< Butterworth filter */,
+    BESSEL = 3 /**< Bessel filter */
   };
 
   /**
@@ -93,10 +94,10 @@ public:
     @sa bandType
   */
   enum BandType {
-    LOWPASS = 0 /** < Low pass filter */,
-    HIGHPASS = 1 /** < High pass filter */,
-    BANDPASS = 2 /** < Band pass filter */,
-    BANDSTOP = 3 /** < Band stop filter */
+    LOWPASS = 0 /**< Low pass filter */,
+    HIGHPASS = 1 /**< High pass filter */,
+    BANDPASS = 2 /**< Band pass filter */,
+    BANDSTOP = 3 /**< Band stop filter */
   };
 
 protected:
@@ -118,7 +119,7 @@ public:
      @a highFrequency, @a filterType, @a ripplePass and @a attenuationStop parameters
      given.
   */
-  IIRFilter(int order = 4, Real lowFrequency = 0.0, Real highFrequency = 1.0, BandType bandType = LOWPASS, FilterType filterType = CHEBYSHEVII, Real ripplePass = 0.05, Real attenuationStop = 40.0);
+  BandFilter(int order = 4, Real lowFrequency = 0.0, Real highFrequency = 1.0, BandType bandType = LOWPASS, FilterType filterType = CHEBYSHEVII, Real ripplePass = 0.05, Real attenuationStop = 40.0);
 
   void setup();
   void reset();
@@ -220,7 +221,7 @@ public:
   void setFilterType( FilterType type, bool callSetup = true );
 
   /**
-     @property IIRFilter::bandType
+     @property BandFilter::bandType
      @brief the type of the band of the filter
      
      By default it is LOWPASS.
@@ -231,7 +232,7 @@ public:
   void setBandType( BandType type, bool callSetup = true );
 
   /**
-     @property IIRFilter::passRipple
+     @property BandFilter::passRipple
      @brief the ripple of the pass band in dB
      
      Note that this property only has an effect if 
@@ -244,7 +245,7 @@ public:
   void setPassRipple( Real rippleDB, bool callSetup = true );
 
   /**
-     @property IIRFilter::stopAttenuation
+     @property BandFilter::stopAttenuation
      @brief the attenuation of the stop band in dB
      
      Note that this property only has an effect if 
@@ -257,4 +258,4 @@ public:
   void setStopAttenuation( Real attenuationDB, bool callSetup = true );
 };
 
-#endif  /* BANDPASS_H */
+#endif  /* BANDFILTER_H */

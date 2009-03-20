@@ -44,10 +44,10 @@
   * -# Blackman Nuttall
   *
   * The Window type can be selected using the 
-  * Window::windowType property.
+  * setWindowType() method.
   *
-  * Additionally a Custom window can be set using 
-  * the Window::window property.
+  * Additionally a Custom window can be specified using 
+  * the setWindow() method.
   *
   * @author Ricard Marxer
   *
@@ -56,23 +56,23 @@
 class Window{
 public:
   /**
-    @enum Window::WindowType
+    @enum WindowType
     @brief Specifies the type of the window.
 
     @sa windowType
   */
   enum WindowType {
-    RECTANGULAR         = 0 /** < Rectangular window */,
-    HANN                = 1 /** < Hann window */,
-    HANNING             = 2 /** < Alias for a Hann window */,
-    HAMMING             = 3 /** < Hamming window */,
-    COSINE              = 4 /** < Cosine window */,
-    BLACKMAN            = 5 /** < Blackman window */,
-    BLACKMANHARRIS      = 6 /** < Blackman-Harris window */,
-    NUTTALL             = 7 /** < Nuttall window */,
-    BLACKMANNUTTALL     = 8 /** < Blackman-Nuttall window */,
-    CUSTOM              = 9 /** < Custom window. Note that this window type must be select
-                             when setting the window using Window::setWindow()*/
+    RECTANGULAR         = 0 /**< Rectangular window */,
+    HANN                = 1 /**< Hann window */,
+    HANNING             = 2 /**< Alias for a Hann window */,
+    HAMMING             = 3 /**< Hamming window */,
+    COSINE              = 4 /**< Cosine window */,
+    BLACKMAN            = 5 /**< Blackman window */,
+    BLACKMANHARRIS      = 6 /**< Blackman-Harris window */,
+    NUTTALL             = 7 /**< Nuttall window */,
+    BLACKMANNUTTALL     = 8 /**< Blackman-Nuttall window */,
+    CUSTOM              = 9 /**< Custom window. Note that this window type must be select
+                             when setting the window using setWindow()*/
   };
 
 protected:
@@ -135,27 +135,36 @@ public:
   void setInputSize( int size, bool callSetup = true );
   
   /**
-     @property Window::windowType
-     @brief the type of the window
+     Return the type of the window
      
      By default it is RECTANGULAR.
   */
   WindowType windowType() const;
+  
+  /**
+     Specify the type of the window.
+  */
   void setWindowType( WindowType type, bool callSetup = true );
 
-
   /**
-     @property Window::window
-     @brief the single row matrix of Real values representing the window
+     Return the single row matrix of Real values representing the window.
      
-     The number of cols of the window must be equal to inputSize.
+     The number of cols of the window will be equal to inputSize.
      
-     Note that when the window is set, using Window::setWindow(),
-     the Window::windowType property is automatically set to CUSTOM.
-
      By default it is a single row matrix with all values set to 1.0.
   */  
   const MatrixXR& window() const;
+
+  /**
+     Specify the single row matrix of Real values representing the window.
+     
+     The number of cols of the window must be equal to inputSize.
+     
+     Note that when the window is set, using setWindow(),
+     the window type is automatically set to CUSTOM.
+
+     By default it is a single row matrix with all values set to 1.0.
+  */
   void setWindow( const MatrixXR& window, bool callSetup = true );
 };
 

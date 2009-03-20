@@ -27,10 +27,10 @@
 /**
   * @class PeakDetect
   *
-  * @brief Algorithm to find peaks in a vector Real values.
+  * @brief Algorithm to find peaks in a vector of Real values.
   *
-  * This class represents an object to find peaks in a Real value vector.
-  * The algorithem finds a maximum number of peaks and returns 
+  * This class represents an object to find peaks in a vector of Real values.
+  * The algorithm finds a maximum number of peaks and returns 
   * the indices of the peaks and the values of the peaks in
   * separate matrices.
   * 
@@ -55,15 +55,15 @@
 class PeakDetect {
 public:
   /**
-    @enum PeakDetect::SortMethod
+    @enum SortMethod
     @brief Specifies the way to sort the peak candidates before returning them.
 
     @sa sortMethod
   */
   enum SortMethod {
-    NONE              = 0 /** < No sorting is performed */,
-    BYMAGNITUDE       = 1 /** < Sorts the peak candidates by decreasing order of magnitude */,
-    BYPOSITION        = 2 /** < Sorts the peak candidates by increasing order of position */
+    NONE              = 0 /**< No sorting is performed */,
+    BYMAGNITUDE       = 1 /**< Sorts the peak candidates by decreasing order of magnitude */,
+    BYPOSITION        = 2 /**< Sorts the peak candidates by increasing order of position */
   };
 
 protected:
@@ -116,7 +116,7 @@ public:
                MatrixXR* peakPositions, MatrixXR* peakMagnitudes);
 
   /**
-     @property PeakDetect::peakCount
+     @property peakCount
      @brief the maximum number of peaks to return.
      
      By default it is 1024 / 3.
@@ -125,7 +125,7 @@ public:
   void setPeakCount( int count, bool callSetup = true );
 
   /**
-     @property PeakDetect::minimumPeakWidth
+     @property minimumPeakWidth
      @brief the minimum width of a peak for it to be detected.
      
      By default it is 3.

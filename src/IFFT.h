@@ -30,17 +30,23 @@
   * @brief Algorithm to perform an Inverse Fast Fourier Transform of a vector of Complex 
   * values representing the positive frequencies half of a symmetric FFT.
   *
-  * This class represents an object to perform 
-  * Inverse Fast Fourier Transforms (IFFT) on an FFT of Real data.
-  *
   * The IFFT is a fast implementation of an Inverse Discrete Fourier Transform (IDFT).
-  * The algorithm takes as input (M / 2 + 1)-point vectors of Complex values 
-  * and returns M-point vectors of Real values.
+  * The algorithm takes as input (M / 2 + 1) point vectors of Complex 
+  * values (M being the FFT size), and returns N point vectors of Real 
+  * values (N being the frame size).
   *
-  * @link #zerophase zero phase method@endlink
-  * Optionally the algorithm can perform a N/2 rotation of the
-  * input data and zero pad it in the center of the rotated data to
-  * allow a zero phase DFT transformation.
+  * The input of the IFFT is assumed to be the positive frequencies half of an M point
+  * magnitude symmetric and phase antisymmetric FFT.  Therefore the result is a Real value 
+  * vector.
+  *
+  * Note that N can be smaller than M.
+  * In this case the last ( M - N ) coefficients
+  * will be discarded, since it assumes that zero padding has been made
+  * at the end of the frame prior to the forward FFT transform.
+  *
+  * Alternatively the algorithm can undo the center zeropadding and
+  * the N/2 rotation if done durnig the FFT forward transform.
+  * This is specified by using the setZeroPhase() method.
   *
   * @author Ricard Marxer
   *

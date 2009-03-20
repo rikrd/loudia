@@ -31,21 +31,20 @@
   *
   * This class represents an object to perform Fast Fourier Transforms (FFT) on Real data.
   * The FFT is a fast implementation of a Discrete Fourier Transform (DFT).
-  * The algorithm takes as input N-point vectors of Real values 
-  * and returns M-point vectors of Complex values.
+  * The algorithm takes as input N-point vectors of Real values (N being the frame size)
+  * and returns (M / 2 + 1) point vectors of Complex values (M being the FFT size).
   *
-  * The algorithm works fastest when M is a power of 2.
-  * When M is different than N the input data is zero padded.
+  * Note that the algorithm works fastest when M is a power of 2.
   *
-  * The @link #zerophase Zero Phase method@endlink
-  * Optionally the algorithm can perform a N/2 rotation of the
-  * input data and zero pad it in the center of the rotated data to
-  * allow a zero phase DFT transformation.
-  *
-  * Since the input is Real valued, the DFT will be symmetric
+  * Since the input is Real valued, the FFT will be symmetric
   * and only half of the output is needed.
   * This processing unit will only return the (M / 2 + 1)-point array 
   * corresponding to positive frequencies of the FFT.
+  *
+  * When M is different than N the input data is zero padded at the end.
+  * Alternatively the algorithm can perform an N/2 rotation and zero pad the center
+  * before the FFT to allow a zero phase transform.
+  * This is done by using the setZeroPhase() method.
   *
   * @author Ricard Marxer
   *
@@ -73,7 +72,7 @@ public:
      The algorithm performs faster for sizes which are a power of 2.
      
      @param zeroPhase determines whether
-     or not to perform the @l{FFT}{zerophase} method.
+     or not to perform the zero phase transform.
   */
   FFT(int fftSize = 1024, bool zeroPhase = true);
   

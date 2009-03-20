@@ -24,22 +24,26 @@
 
 #include <fftw3.h>
 
-/** 
+/**
   * @class FFTComplex
   *
   * @brief Algorithm to perform a Fast Fourier Transform of a vector of Complex values.
   *
-  * This class represents a processor unit to perform Fast Fourier Transforms on Real data.
-  * It allows to calculate the Discrete Fourier Transform (DFT) of N-point vectors of Real values,
-  * returning M-point vectors of Complex values.
+  * This class represents an object to perform Fast Fourier Transforms (FFT) on Real data.
+  * The FFT is a fast implementation of a Discrete Fourier Transform (DFT).
+  * The algorithm takes as input N point vectors of Real values (N being the frame size) 
+  * and returns M point vectors of Complex values (M being the FFT size).
   *
+  * Note that the algorithm works fastest when M is a power of 2.
   *
-  * The algorithm works the fastest when M is a power of 2.
-  * When M is different than N the input data is zero padded.
-  * Optionally the processor unit can perform a shift N/2 rotation 
-  * of the input data and zero pad the signal in the center to allow a zero phase transform.
+  * When M is different than N the input data is zero padded at the end.
+  * Alternatively the algorithm can perform an N/2 rotation and zero pad the center
+  * before the FFT to allow a zero phase transform.
+  * This is done by using the setZeroPhase() method.
   *
-  * @sa FFT, IFFT, IFFTComplex
+  * @author Ricard Marxer
+  *
+  * @sa FFTComplex, IFFT, IFFTComplex
   */
 class FFTComplex{
 protected:
@@ -58,32 +62,75 @@ protected:
 
 
 public:
-  /** 
-   * @brief Fast Fourier Transform processor units for Complex data.
-   *
-   * This class represents a processor unit to perform Fast Fourier Transforms on Real data.
-   * It allows to calculate the Discrete Fourier Transform (DFT) of N-point vectors of Real values,
-   * returning M-point vectors of Complex values.
-   *
-   *
-   * The algorithm works the fastest when M is a power of 2.
-   * When M is different than N the input data is zero padded.
-   * Optionally the processor unit can perform a shift N/2 rotation 
-   * of the input data and zero pad the signal in the center to allow a zero phase transform.
-   *
-   * @sa FFT, IFFT, IFFTComplex
-   */
+  /**
+     Constructs an FFT object with the specified @a fftSize and @a
+     zeroPhase setting.
+     
+     @param frameSize size of the frame must be > 0, 
+     it is the size of the input frames.
+     
+     @param fftSize size of the FFT transform must be > 0, 
+     it is the target size of the transform.
+     The algorithm performs faster for sizes which are a power of 2.
+     
+     @param zeroPhase determines whether
+     or not to perform the zero phase transform.
+  */
   FFTComplex(int frameSize, int fftSize, bool zeroPhase = true);
+  
+  /**
+     Destroys the algorithm and frees its resources.
+  */
   ~FFTComplex();
   
+  /**
+     Performs a Fast Fourier Transform on each of the rows of @a frames and
+     puts the resulting FFT in the rows of @a fft.
+     
+     @param frames matrix of Real values.  The number of columns of @a frames must
+     be equal to the frameSize property.
+     
+     @param fft pointer to a matrix of Complex values for the output.  The matrix should
+     have the same number of rows as @a frames and (fftSize / 2) + 1 columns. 
+
+     Note that if the output matrix is not of the required size it will be resized, 
+     reallocating a new memory space if necessary.
+  */
   void process(const MatrixXC& frames, MatrixXC* fft);
   void process(const MatrixXR& frames, MatrixXC* fft);
   
   void setup();
   void reset();
 
-  int frameSize() const;
+  /**
+     Returns the size of the FFT to be performed.  The default is 1024.
+     
+     @sa setFftSize()
+  */
   int fftSize() const;
+
+  /**
+     Specifies the @a size of the FFT to be performed.
+     The given @a size must be higher than 0.
+     Note that if @a size is a power of 2 will perform faster.
+     
+     @sa fftSize()
+  */
+  void setFftSize( int size, bool callSetup = true );
+
+  /**
+     Returns the zero phase setting.  The default is True.
+     
+     @sa setZeroPhase()
+  */
+  bool zeroPhase() const;
+
+  /**
+     Specifies the @a zeroPhase setting.
+     
+     @sa zeroPhase()
+  */
+  void setZeroPhase( bool zeroPhase, bool callSetup = true );
 };
 
 #endif  /* FFTCOMPLEX_H */

@@ -105,10 +105,20 @@ void FFTComplex::process(const MatrixXC& frames, MatrixXC* ffts){
 void FFTComplex::reset(){
 }
 
-int FFTComplex::frameSize() const{
-  return _frameSize;
-}
-
 int FFTComplex::fftSize() const{
   return _fftSize;
+}
+
+void FFTComplex::setFftSize( int size, bool callSetup ) {
+  _fftSize = size;
+  if ( callSetup ) setup();
+}
+
+bool FFTComplex::zeroPhase() const{
+  return _zeroPhase;
+}
+
+void FFTComplex::setZeroPhase( bool zeroPhase, bool callSetup ) {
+  _zeroPhase = zeroPhase;
+  if ( callSetup ) setup();
 }

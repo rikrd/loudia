@@ -55,11 +55,11 @@ public:
     @sa dctType
   */
   enum DCTType {
-    I = 0 /** < DCT Type-I */,
-    II = 1 /** < DCT Type-II */,
-    III = 2 /** < DCT Type-III */,
-    IV = 3 /** < DCT Type-IV */,
-    OCTAVE = 4 /** < Octave's implementation */
+    I = 0 /**< DCT Type-I */,
+    II = 1 /**< DCT Type-II */,
+    III = 2 /**< DCT Type-III */,
+    IV = 3 /**< DCT Type-IV */,
+    OCTAVE = 4 /**< Octave's implementation */
   };
 
 protected:
