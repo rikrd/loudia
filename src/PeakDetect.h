@@ -99,13 +99,13 @@ public:
      
      @param frames matrix of Real values.
      
-     @param peakPositions pointer to a matrix of Real values (but always Integers) for the output.
+     @param peakPositions pointer to a matrix of Real values (but always Integers) for the peak indices.
      The matrix should have the same number of rows as @a frames and @l peakCount columns. 
 
-     @param peakMagnitudes pointer to a matrix of Real values for the output.
+     @param peakMagnitudes pointer to a matrix of Real values for the peak magnitudes.
      The matrix should have the same number of rows as @a frames and @l peakCount columns. 
 
-     Note that if the output matrix is not of the required size it will be resized, 
+     Note that if the output matrices are not of the required size they will be resized, 
      reallocating a new memory space if necessary.
   */
   void process(const MatrixXR& frames,
