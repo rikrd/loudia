@@ -46,17 +46,17 @@ struct byPositionComp{
   bool operator() (peak i, peak j) { return ( i.pos < j.pos ); }
 } byPosition;
 
-PeakDetect::PeakDetect(int numPeaks, SortType sort, int minPeakWidth, int numCandidates, Real minPeakContrast) :
-  _numPeaks(numPeaks),
-  _minPeakWidth(minPeakWidth),
-  _numCandidates(numCandidates),
-  _minPeakContrast(minPeakContrast),
-  _sort(sort)
+PeakDetect::PeakDetect(int peakCount, SortMethod sortMethod, int minimumPeakWidth, int candidateCount, Real minimumPeakContrast) :
+  _peakCount( peakCount ),
+  _minimumPeakWidth( minimumPeakWidth ),
+  _candidateCount( candidateCount ),
+  _minimumPeakContrast( minimumPeakContrast ),
+  _sortMethod( sortMethod )
 
 {
-  DEBUG("PEAKDETECT: Constructor numPeaks: " << _numPeaks 
-        << ", minPeakWidth: " << _minPeakWidth
-        << ", numCandidates: " << _numCandidates);
+  DEBUG("PEAKDETECT: Constructor peakCount: " << _peakCount 
+        << ", minimumPeakWidth: " << _minimumPeakWidth
+        << ", candidateCount: " << _candidateCount);
   
   setup();
 
@@ -86,17 +86,17 @@ void PeakDetect::process(const MatrixXR& frames,
   
   const int rows = frames.rows();
 
-  int numPeaks = _numPeaks;
-  if( numPeaks == -1 ){
-    numPeaks = frames.cols();
+  int peakCount = _peakCount;
+  if( peakCount == -1 ){
+    peakCount = frames.cols();
   }
   
   DEBUG("PEAKDETECT: Processing, frames.shape: (" << rows << ", " << frames.cols() << ")");
 
-  (*peakPositions).resize(rows, numPeaks);
+  (*peakPositions).resize(rows, peakCount);
   (*peakPositions).setConstant(-1);
 
-  (*peakMagnitudes).resize(rows, numPeaks);
+  (*peakMagnitudes).resize(rows, peakCount);
   (*peakMagnitudes).setConstant(-1);
 
   _magnitudes = frames.cwise().abs();
@@ -116,24 +116,24 @@ void PeakDetect::process(const MatrixXR& frames,
 
     peaks.clear();
     
-    for ( int j = (_minPeakWidth / 2); j < _magnitudes.row(i).cols() - (_minPeakWidth / 2); j++) {
-      // If we don't need sorting then only the first numPeaks peaks are needed
-      if( ( _sort == NOSORT ) && ( (int)peaks.size() > numPeaks ) ) break;
+    for ( int j = (_minimumPeakWidth / 2); j < _magnitudes.row(i).cols() - (_minimumPeakWidth / 2); j++) {
+      // If we don't need sorting then only the first peakCount peaks are needed
+      if( ( _sortMethod == NONE ) && ( (int)peaks.size() > peakCount ) ) break;
 
-      int inf = j - (_minPeakWidth / 2);
+      int inf = j - (_minimumPeakWidth / 2);
       
       // Get the maximum value and position of a region (corresponding to the min bandwidth of the peak)
       // of the spectrum
-      maxVal = _magnitudes.row(i).segment(inf, _minPeakWidth).maxCoeff( &maxRow, &maxCol );
+      maxVal = _magnitudes.row(i).segment(inf, _minimumPeakWidth).maxCoeff( &maxRow, &maxCol );
       
       // If the position of the maximum value is the center, then consider it as a peak candidate
-      if ( maxCol == floor(_minPeakWidth / 2) ) {
+      if ( maxCol == floor(_minimumPeakWidth / 2) ) {
 
         // Get the mininum value of the region
-        minVal = _magnitudes.row(i).segment(inf, _minPeakWidth).minCoeff();
+        minVal = _magnitudes.row(i).segment(inf, _minimumPeakWidth).minCoeff();
 
-        // If the contrast is bigger than what minPeakContrast says, then select as peak
-        if ( maxVal - minVal >= _minPeakContrast ) {
+        // If the contrast is bigger than what minimumPeakContrast says, then select as peak
+        if ( maxVal - minVal >= _minimumPeakContrast ) {
 
           peak p = {j, _magnitudes(i, j)};
           peaks.push_back(p);
@@ -144,30 +144,30 @@ void PeakDetect::process(const MatrixXR& frames,
       
     // Get the largest candidates
     int candidateCount = (int)peaks.size();
-    if(_numCandidates > 0) {
-      candidateCount = min(candidateCount, _numCandidates);
+    if(_candidateCount > 0) {
+      candidateCount = min(candidateCount, _candidateCount);
       std::sort(peaks.begin(), peaks.end(), byMagnitude);
     }
     
     // Sort the candidates using position or magnitude
-    switch ( _sort ) {
+    switch ( _sortMethod ) {
     case BYPOSITION:      
       std::sort(peaks.begin(), peaks.begin() + candidateCount, byPosition);
       break;
       
     case BYMAGNITUDE:
       // We have not done a candidate preselection, we must do the sorting
-      if (_numCandidates <= 0)
+      if (_candidateCount <= 0)
         std::sort(peaks.begin(), peaks.begin() + candidateCount, byMagnitude);
       break;
       
-    case NOSORT:
+    case NONE:
     default:
       break;
     }
     
-    // Take the first numPeaks
-    int peakCount = min(_numPeaks, candidateCount);      
+    // Take the first peakCount
+    int peakCount = min(_peakCount, candidateCount);      
     // Put the peaks in the matrices
     for( int j = 0; j < peakCount; j++ ){
       (*peakMagnitudes)(i, j) = peaks[j].mag;
@@ -182,10 +182,47 @@ void PeakDetect::reset(){
   // Initial values
 }
 
-int PeakDetect::numPeaks() const {
-  return _numPeaks;
+int PeakDetect::peakCount() const {
+  return _peakCount;
 }
 
-int PeakDetect::minPeakWidth() const {
-  return _minPeakWidth;
+void PeakDetect::setPeakCount( int count, bool callSetup ) {
+  _peakCount = count;
+  if ( callSetup ) setup();  
+}
+
+int PeakDetect::candidateCount() const {
+  return _candidateCount;
+}
+
+void PeakDetect::setCandidateCount( int count, bool callSetup ) {
+  _candidateCount = count;
+  if ( callSetup ) setup();  
+}
+
+int PeakDetect::minimumPeakWidth() const {
+  return _minimumPeakWidth;
+}
+
+void PeakDetect::setMinimumPeakWidth( int width, bool callSetup ) {
+  _minimumPeakWidth = width;
+  if ( callSetup ) setup();
+}
+
+int PeakDetect::minimumPeakContrast() const {
+  return _minimumPeakContrast;
+}
+
+void PeakDetect::setMinimumPeakContrast( Real contrast, bool callSetup ) {
+  _minimumPeakContrast = contrast;
+  if ( callSetup ) setup();
+}
+
+PeakDetect::SortMethod PeakDetect::sortMethod() const {
+  return _sortMethod;
+}
+
+void PeakDetect::setSortMethod( SortMethod method, bool callSetup ) {
+  _sortMethod = method;
+  if ( callSetup ) setup();  
 }
