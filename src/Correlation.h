@@ -68,7 +68,11 @@ public:
      Constructs an Autocorrelation object with the specified @a inputSize, 
      @a maxLag and @a minLag settings.
      
-     @param inputSize size of the inputs arrays to be autocorrelated,
+     @param inputSizeA size of the first input arrays to be autocorrelated,
+     must be > 0.
+     The algorithm performs faster for sizes which are a power of 2.
+
+     @param inputSizeB size of the second input arrays to be autocorrelated,
      must be > 0.
      The algorithm performs faster for sizes which are a power of 2.
      

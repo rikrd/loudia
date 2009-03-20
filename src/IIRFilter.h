@@ -41,12 +41,12 @@
   * -# Band Stop
   *
   * The band type can be selected using the 
-  * IIRFilter::setBandType() taking as argument a BandType.
+  * setBandType() taking as argument a BandType.
   *
   * The critical frequencies are specified using 
-  * IIRFilter::setLowFrequency() and IIRFilter::setHighFrequency().
+  * setLowFrequency() and setHighFrequency().
   * Note that for low pass and high pass filters which have one single critical frequency
-  * only IIRFilter::setLowFrequency() has an effect.
+  * only setLowFrequency() has an effect.
   *
   * 4 types of filters are implemented:
   * -# Chebyshev I
@@ -55,16 +55,16 @@
   * -# Butterworth
   *
   * The filter type can be selected using the 
-  * IIRFilter::setFilterType() taking as argument a FilterType.
+  * setFilterType() taking as argument a FilterType.
   *
-  * The order of the filters can be specified using IIRFilter::setOrder().
+  * The order of the filters can be specified using setOrder().
   *
   * For Chebyshev I filters the pass band ripple can be specified using
-  * IIRFilter::setPassRipple().  Note that this method has no effect if
+  * setPassRipple().  Note that this method has no effect if
   * a different type of filter is used.
   * 
   * For Chebyshev II filters the stop band attenuation is specified using
-  * IIRFilter::setStopAttenuation().  Note that this method has no effect if
+  * setStopAttenuation().  Note that this method has no effect if
   * a different type of filter is used.
   *
   * @author Ricard Marxer
