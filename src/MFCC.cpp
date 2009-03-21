@@ -163,3 +163,12 @@ void MFCC::setFftSize( int size, bool callSetup ) {
   _fftSize = size;
   if ( callSetup ) setup();
 }
+
+Real MFCC::power() const{
+  return _power;
+}
+  
+void MFCC::setPower( Real factor, bool callSetup ){
+  _power = factor;
+  if ( callSetup ) setup();
+}

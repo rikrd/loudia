@@ -151,6 +151,21 @@ public:
   */
   void setFftSize( int size, bool callSetup = true );
 
+  /**
+     Return the factor to which the bands are powered.
+     The default is 1.0.
+
+     @sa setPower
+  */  
+  Real power() const;  
+
+  /**
+     Specifies the @a factor to which the bands are powered.
+     
+     @sa power
+  */
+  void setPower( Real factor, bool callSetup = true );
+
 };
 
 #endif  /* MFCC_H */
