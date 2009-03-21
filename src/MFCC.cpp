@@ -110,11 +110,7 @@ void MFCC::reset(){
   _dct.reset();
 }
 
-int MFCC::coefficientCount() const {
-  return _coefficientCount;
-}
-
-Real BandFilter::lowFrequency() const{
+Real MFCC::lowFrequency() const{
   return _lowFrequency;
 }
   

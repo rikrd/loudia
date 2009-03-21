@@ -40,7 +40,7 @@
   *
   * R a = r
   *
-  * where R is the Topelitz matrix made of the first M - 1 autocorrelation 
+  * where R is the Toeplitz matrix made of the first M - 1 autocorrelation 
   * coefficients of the input vector and r is a vector made of M - 1 
   * autocorrelation coefficients starting from the second of the input
   * vector.
