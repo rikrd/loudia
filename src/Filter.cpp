@@ -24,10 +24,11 @@
 using namespace std;
 using namespace Eigen;
 
-Filter::Filter(int channelCount) : 
-  _channelCount( channelCount )
+Filter::Filter(int channelCount)
 {
   DEBUG("FILTER: Constructor channelCount:" << channelCount);
+
+  setChannelCount( channelCount, false );
 
   setA(MatrixXR::Ones(1, _channelCount));
   setB(MatrixXR::Ones(1, _channelCount));
@@ -38,12 +39,13 @@ Filter::Filter(int channelCount) :
 
 Filter::Filter(const MatrixXR& b,
                const MatrixXR& a,
-               int channelCount) :
-  _channelCount( channelCount )
+               int channelCount)
 {
 
   DEBUG("FILTER: Constructor channelCount:" << channelCount);
   DEBUG("FILTER: Constructor b:" << b.transpose() << ", a:" << a.transpose());
+
+  setChannelCount( channelCount, false );
 
   setA( a );
   setB( b );
