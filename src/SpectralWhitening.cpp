@@ -149,6 +149,15 @@ void SpectralWhitening::setFftSize( int size, bool callSetup ) {
   if ( callSetup ) setup();
 }
 
+MelBands::ScaleType SpectralWhitening::scaleType() const{
+  return _scaleType;
+}
+
+void SpectralWhitening::setScaleType( MelBands::ScaleType type, bool callSetup ) {
+  _scaleType = type;
+  if ( callSetup ) setup();
+}
+
 Real SpectralWhitening::compressionFactor() const{
   return _compressionFactor;
 }

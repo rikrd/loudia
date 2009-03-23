@@ -33,7 +33,8 @@
   * of Real values.  Which is a useful technique to make the peaks of a spectrum magnitude 
   * stand out in harmonic sounds.
   *
-  *
+  * This implementation consists in calculating the Mel bands and create a linear interpolation
+  * between these to be used as a wheighting parameter of the spectrum's compression. 
   *
   * The samplerate and FFT size of the input spectrum are specified using setSamplerate() and
   * setFftSize().
@@ -214,12 +215,12 @@ public:
      
      By default it is GREENWOOD.
   */
-  ScaleType scaleType() const;
+  MelBands::ScaleType scaleType() const;
   
   /**
      Specify the type of the frequency warping scale.
   */
-  void setScaleType( ScaleType type, bool callSetup = true );
+  void setScaleType( MelBands::ScaleType type, bool callSetup = true );
   
   
 };
