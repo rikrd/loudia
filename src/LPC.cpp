@@ -25,19 +25,19 @@
 using namespace std;
 using namespace Eigen;
 
-LPC::LPC(int inputSize, int coefficientCount, Real preEmphasis) : 
-  _inputSize( inputSize ), 
-  _coefficientCount( coefficientCount ),
-  _preEmphasis( preEmphasis ),
-  _acorrelation( _inputSize, _coefficientCount + 1 )
+LPC::LPC(int inputSize, int coefficientCount, Real preEmphasis) 
 {
-  DEBUG("LPC: Constructor inputSize: " << _inputSize 
-        << ", coefficientCount: " << _coefficientCount
-        << ", preEmphasis: " << _preEmphasis);
+  DEBUG("LPC: Constructor inputSize: " << inputSize 
+        << ", coefficientCount: " << coefficientCount
+        << ", preEmphasis: " << preEmphasis);
 
-  if (_coefficientCount > _inputSize) {
+  if ( coefficientCount > inputSize ) {
     // Thorw ValueError, the number of coefficients must be smaller or equal than the frame size.
   }
+  
+  setInputSize( inputSize, false ); 
+  setCoefficientCount( coefficientCount, false );
+  setPreEmphasis( preEmphasis, false );
   
   setup();
 }
@@ -48,16 +48,17 @@ LPC::~LPC() {}
 void LPC::setup(){
   // Prepare the buffers
   DEBUG("LPC: Setting up...");
-
+  
   if ( _preEmphasis != 0.0 ) {
     MatrixXR preCoeffs(2, 1);
     preCoeffs << 1, -_preEmphasis;
     _preFilter.setB( preCoeffs );
   }
-
-  _preFilter.setup();
+  
+  _acorrelation.setInputSize( _inputSize, false );
+  _acorrelation.setMaxLag( _coefficientCount + 1, false );
   _acorrelation.setup();
-
+  
   reset();
   
   DEBUG("LPC: Finished set up...");

@@ -47,7 +47,7 @@
   *
   * Optionally a pre-emphasis FIR filter may be applied to the input vector
   * in order to enhance estimation of higher frequencies. The pre-emphasis filter
-  * consists of a 2 coefficient filter of the form b = [1, b1] where usually:
+  * consists of a 2 coefficient filter of the form b = [1, -b1] where usually:
   *
   * 0.96 <= b1 <= 0.99
   *
