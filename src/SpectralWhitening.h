@@ -24,6 +24,31 @@
 
 #include "MelBands.h"
 
+/**
+  * @class SpectralWhitening
+  *
+  * @brief Algorithm to whiten the magnitude of spectrums represented as vectors of Real values.
+  *
+  * This class represents an object to perform spectral whitening on vectors 
+  * of Real values.  Which is a useful technique to make the peaks of a spectrum magnitude 
+  * stand out in harmonic sounds.
+  *
+  *
+  *
+  * The samplerate and FFT size of the input spectrum are specified using setSamplerate() and
+  * setFftSize().
+  *
+  * The frequency limits of the Mel scale mapping are specified using setLowFrequency() and
+  * setHighFrequency().
+  *
+  * The number of Mel bands is specified using setBandCount().
+  *
+  * The compression factor of the whitening process is specified by setCompressionFactor().
+  *
+  * @author Ricard Marxer
+  *
+  * @sa MelBands, Bands, PeakDetect
+  */
 class SpectralWhitening {
 protected:
   int _fftSize;
