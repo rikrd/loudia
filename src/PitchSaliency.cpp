@@ -48,6 +48,8 @@ PitchSaliency::~PitchSaliency(){}
 
 void PitchSaliency::setup(){
   DEBUG("PITCHSALIENCY: Setting up...");
+  
+  _halfSize = ( _fftSize / 2 ) + 1;
 
   _tMax = _samplerate / _f0;
   _tMin = _samplerate / _f1;

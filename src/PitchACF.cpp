@@ -44,6 +44,8 @@ PitchACF::~PitchACF(){}
 void PitchACF::setup(){
   DEBUG("PITCHACF: Setting up...");
 
+  _halfSize = ( _fftSize / 2 ) + 1;
+  
   reset();
 
   DEBUG("PITCHACF: Finished setup.");

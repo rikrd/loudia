@@ -47,10 +47,10 @@ public:
   ~SpectralNoiseSuppression();
 
   void setup();
+  void reset();
 
   void process(const MatrixXR& spectrum, MatrixXR* noise, MatrixXR* result);
 
-  void reset();
 };
 
 #endif  /* SPECTRALNOISESUPPRESSION_H */

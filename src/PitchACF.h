@@ -45,10 +45,10 @@ public:
   ~PitchACF();
 
   void setup();
+  void reset();
 
   void process(const MatrixXR& spectrum, MatrixXR* pitches, MatrixXR* saliencies);
 
-  void reset();
 };
 
 #endif  /* PITCHACF_H */

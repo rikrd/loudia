@@ -51,7 +51,15 @@ SpectralWhitening::~SpectralWhitening(){}
 void SpectralWhitening::setup(){
   DEBUG("SPECTRALWHITENING: Setting up...");
 
+  _halfSize = ( _fftSize / 2 ) + 1;
+  
   // Setup the bands
+  _bands.setLowFrequency( _lowFrequency, false );
+  _bands.setHighFrequency( _highFrequency, false );
+  _bands.setBandCount(_bandCount, false );
+  _bands.setSamplerate( _samplerate, false );
+  _bands.setFftSize(_fftSize, false );
+  _bands.setScaleType( _scaleType, false ); 
   _bands.setup();
 
   _bands.centers(&_centers);

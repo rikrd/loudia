@@ -25,16 +25,34 @@
 class ODFBase {
 protected:
   // Internal parameters
-
+  int _fftSize;
+  int _halfSize;
+  
   // Internal variables
 public:
   virtual void setup() = 0;
+  virtual void reset() = 0;
   
   virtual void process(const MatrixXC& fft, MatrixXR* odfValue) = 0;
   
-  virtual void reset() = 0;
-
   virtual ~ODFBase() {};
+
+  /**
+     Returns the size of the FFT that has been performed for the input.
+     The default is 1024.
+     
+     @sa setFftSize()
+  */
+  int fftSize() const;
+
+  /**
+     Specifies the @a size of the FFT that has been performed for the input.
+     The given @a size must be higher than 0.
+     
+     @sa fftSize()
+  */
+  void setFftSize( int size, bool callSetup = true );
+
 };
 
 #endif  /* ODFBASE_H */

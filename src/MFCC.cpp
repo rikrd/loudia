@@ -55,14 +55,11 @@ void MFCC::setup(){
   // Prepare the buffers
   DEBUG("MFCC: Setting up...");
 
-  // TODO: when the MelBands will support accessors, uncomment this
-  /*
-  _melbands.setInputSize( _fftSize, false );
+  _melbands.setFftSize( _fftSize, false );
   _melbands.setSamplerate( _samplerate, false );
   _melbands.setLowFrequency( _lowFrequency, false );
   _melbands.setHighFrequency( _highFrequency, false );
   _melbands.setBandCount( _bandCount, false );
-  */
   _melbands.setup();
 
   _dct.setInputSize( _bandCount, false );

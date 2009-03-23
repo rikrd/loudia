@@ -77,6 +77,8 @@ void IFFT::setup(){
     fftwf_free( _out );
   }
   
+  _halfSize = ( _fftSize / 2 ) + 1;
+
   // Allocate the ressources needed  
   _in = (fftwf_complex*) fftwf_malloc(sizeof(fftwf_complex) * _halfSize );
   _out = (Real*) fftwf_malloc(sizeof(Real) * _fftSize);

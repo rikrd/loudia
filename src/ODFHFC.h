@@ -26,24 +26,21 @@
 
 class ODFHFC : public ODFBase {
 protected:
-  // Internal parameters
-  int _fftSize;
-  int _halfSize;
-  
+  // Internal parameters  
+
   // Internal variables
   MatrixXR _spectrumAbs;
   MatrixXR _freqBin;
 
 public:
-  ODFHFC(int fftSize);
+  ODFHFC( int fftSize = 1024 );
 
   ~ODFHFC();
 
   void setup();
+  void reset();
 
   void process(const MatrixXC& fft, MatrixXR* odfValue);
-
-  void reset();
 
 };
 

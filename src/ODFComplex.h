@@ -48,10 +48,10 @@ public:
   ~ODFComplex();
 
   void setup();
+  void reset();
 
   void process(const MatrixXC& fft, MatrixXR* odfValue);
 
-  void reset();
 
 };
 
