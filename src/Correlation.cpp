@@ -26,44 +26,36 @@
 using namespace std;
 using namespace Eigen;
 
-Correlation::Correlation(int inputSizeA, int inputSizeB, int maxLag, int minLag) :
-  _inputSizeA( inputSizeA ),
-  _inputSizeB( inputSizeB ),
-  _minLag( max(-max(_inputSizeA, _inputSizeB) + 1, minLag) ),
-  _maxLag( min( min(_inputSizeA, _inputSizeB), maxLag) ),
-  _useFFT( (_maxLag - _minLag) > 128 ),
-  _fftSize(nextPowerOf2(((_inputSizeA + _inputSizeB) - 1)*2)),
-  _fft( _fftSize, false ),
-  _ifft( _fftSize, false )
-
+Correlation::Correlation(int inputSizeA, int inputSizeB, int maxLag, int minLag)
 {
-  DEBUG("CORRELATION: Construction inputSizeA: " << _inputSizeA
-        << " inputSizeB: " << _inputSizeB
-        << " minLag: " << _minLag
-        << " maxLag: " << _maxLag
-        << " useFFT: " << _useFFT
-        << " fftSize: " << _fftSize);
+  DEBUG("CORRELATION: Construction inputSizeA: " << inputSizeA
+        << " inputSizeB: " << inputSizeB
+        << " minLag: " << minLag
+        << " maxLag: " << maxLag);
+
+  setInputSizeA( inputSizeA, false );
+  setInputSizeB( inputSizeB, false );
+  setMinLag( minLag, false );
+  setMaxLag( maxLag, false );
+  setUseFft( (_maxLag - _minLag) > 128, false );
 
   setup();
 }
 
 
-Correlation::Correlation(int inputSizeA, int inputSizeB, int maxLag, int minLag, bool useFFT) :
-  _inputSizeA( inputSizeA ),
-  _inputSizeB( inputSizeB ),
-  _minLag( max(-max(_inputSizeA, _inputSizeB) + 1, minLag) ),
-  _maxLag( min( min(_inputSizeA, _inputSizeB), maxLag) ),
-  _useFFT( useFFT ),
-  _fftSize( nextPowerOf2(((_inputSizeA + _inputSizeB) - 1)*2) ),
-  _fft( _fftSize, false ),
-  _ifft( _fftSize, false )
+Correlation::Correlation(int inputSizeA, int inputSizeB, int maxLag, int minLag, bool useFft)
 {
-  DEBUG("CORRELATION: Construction inputSizeA: " << _inputSizeA
-        << " inputSizeB: " << _inputSizeB
-        << " minLag: " << _minLag
-        << " maxLag: " << _maxLag
-        << " useFFT: " << _useFFT
-        << " fftSize: " << _fftSize);
+  DEBUG("CORRELATION: Construction inputSizeA: " << inputSizeA
+        << " inputSizeB: " << inputSizeB
+        << " minLag: " << minLag
+        << " maxLag: " << maxLag
+        << " useFft: " << useFft);
+  
+  setInputSizeA( inputSizeA, false );
+  setInputSizeB( inputSizeB, false );
+  setMinLag( minLag, false );
+  setMaxLag( maxLag, false );
+  setUseFft( useFft, false );
   
   setup();
 }
@@ -74,12 +66,15 @@ void Correlation::setup(){
   // Prepare the buffers
   DEBUG("CORRELATION: Setting up...");
 
-  if ( _useFFT ) {
+  if ( _useFft ) {
     _fftSize = nextPowerOf2( ( (_inputSizeA + _inputSizeB) - 1) * 2 );
-
-    _fft.setFftSize( _fftSize );
+    
+    _fft.setFftSize( _fftSize, false );
+    _fft.setZeroPhase( false, false );
     _fft.setup();
-    _ifft.setFftSize( _fftSize );
+
+    _ifft.setFftSize( _fftSize, false );
+    _ifft.setZeroPhase( false, false );
     _ifft.setup();
   }
   
@@ -97,7 +92,7 @@ void Correlation::process(const MatrixXR& inputA, const MatrixXR& inputB, Matrix
   
   (*correlation).resize(rows, _maxLag - _minLag);
   
-  if ( _useFFT ) {
+  if ( _useFft ) {
     
     _fft.process(inputA, &_fftA);
     _fft.process(inputB, &_fftB);
@@ -148,7 +143,7 @@ void Correlation::setMinLag( int lag, bool callSetup ) {
   }
 
   _minLag = max(-max(_inputSizeA, _inputSizeB) + 1, lag);
-  _minLag = min( min(_inputSizeA, _inputSizeB), lag);  
+  _minLag = min( min(_inputSizeA, _inputSizeB), _minLag);  
   if ( callSetup ) setup();
 }
 
@@ -162,15 +157,15 @@ void Correlation::setMaxLag( int lag, bool callSetup ) {
   }
  
   _maxLag = max(-max(_inputSizeA, _inputSizeB) + 1, lag);
-  _maxLag = min( min(_inputSizeA, _inputSizeB), lag);  
+  _maxLag = min( min(_inputSizeA, _inputSizeB), _maxLag);  
   if ( callSetup ) setup();
 }
 
-bool Correlation::useFFT() const {
-  return _useFFT;
+bool Correlation::useFft() const {
+  return _useFft;
 }  
 
-void Correlation::setUseFFT( bool useFFT, bool callSetup ) {
-  _useFFT = useFFT;
+void Correlation::setUseFft( bool useFft, bool callSetup ) {
+  _useFft = useFft;
   if ( callSetup ) setup();
 }

@@ -73,8 +73,54 @@ public:
   void setup();
   void reset();
 
-  int frameSize() const;
+  /**
+     Returns the size of the FFT to be processed.
+     The default is 1024.
+     
+     @sa setFftSize()
+  */
   int fftSize() const;
+
+  /**
+     Specifies the @a size of the FFT to be processed.
+     The given @a size must be higher than 0.
+     Note that if @a size is a power of 2 will perform faster.
+     
+     @sa fftSize()
+  */
+  void setFftSize( int size, bool callSetup = true );
+
+  /**
+     Returns the size of the target frame.
+     The default is 1024.
+     
+     @sa setFrameSize()
+  */
+  int frameSize() const;
+
+  /**
+     Specifies the @a size of the target frame.
+     The given @a size must be higher than 0.
+     Note that if @a size is a power of 2 will perform faster.
+     
+     @sa frameSize()
+  */
+  void setFrameSize( int size, bool callSetup = true );
+
+  /**
+     Returns the zero phase setting.
+     The default is true.
+     
+     @sa setZeroPhase()
+  */
+  bool zeroPhase() const;
+
+  /**
+     Specifies the @a zeroPhase setting.
+     
+     @sa zeroPhase()
+  */
+  void setZeroPhase( bool zeroPhase, bool callSetup = true );
 };
 
 #endif  /* IFFTCOMPLEX_H */

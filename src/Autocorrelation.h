@@ -51,7 +51,7 @@
   * on vectors of small sizes. The decision point for selecting one of
   * the two methods depends on the platform.
   *
-  * The method performed can be specified using setUseFFT().
+  * The method performed can be specified using setUseFft().
   *
   * @author Ricard Marxer
   *
@@ -63,7 +63,7 @@ protected:
   int _inputSize;
   int _minLag;
   int _maxLag;
-  bool _useFFT;
+  bool _useFft;
 
   // Internal variables
   FFT _fft;
@@ -80,9 +80,9 @@ public:
      
      @param maxLag maximum lag to be calculated
      @param minLag minimum lag to be calculated
-     @param useFFT determines whether or not to use the FFT method
+     @param useFft determines whether or not to use the FFT method
   */
-  Autocorrelation(int inputSize, int maxLag, int minLag, bool useFFT);
+  Autocorrelation(int inputSize, int maxLag, int minLag, bool useFft);
   Autocorrelation(int inputSize = 1024, int maxLag = std::numeric_limits<int>::max(), int minLag = 0);
 
   /**
@@ -161,16 +161,16 @@ public:
      Returns @c true if the FFT method should be used for the autocorrelation.
      The default is True for inputSize larger than 128; otherwise it is False.
      
-     @sa setUseFFT()
+     @sa setUseFft()
   */
-  bool useFFT() const;  
+  bool useFft() const;  
   
   /**
      Specifies whether the autocorrelation should be performed using the FFT method.
      
-     @sa useFFT()
+     @sa useFft()
   */
-  void setUseFFT( bool useFFT, bool callSetup = true );
+  void setUseFft( bool useFft, bool callSetup = true );
 };
 
 #endif  /* AUTOCORRELATION_H */

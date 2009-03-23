@@ -26,35 +26,32 @@
 using namespace std;
 using namespace Eigen;
 
-Autocorrelation::Autocorrelation(int inputSize, int maxLag, int minLag) :
-  _inputSize( inputSize ),
-  _minLag( max(-inputSize + 1, minLag) ),
-  _maxLag( min(inputSize, maxLag) ),
-  _useFFT( (_maxLag - _minLag) > 128 ),
-  _fft( nextPowerOf2(((_maxLag - _minLag)-1)*2), false ),
-  _ifft( nextPowerOf2(((_maxLag - _minLag)-1)*2), false )
+Autocorrelation::Autocorrelation(int inputSize, int maxLag, int minLag)
 {
-  DEBUG("AUTOCORRELATION: Construction inputSize: " << _inputSize
-        << " minLag: " << _minLag
-        << " maxLag: " << _maxLag
-        << " useFFT: " << _useFFT);
+  DEBUG("AUTOCORRELATION: Construction inputSize: " << inputSize
+        << " minLag: " << minLag
+        << " maxLag: " << maxLag);
+
+  setInputSize( inputSize, false );
+  setMinLag( minLag, false );
+  setMaxLag( maxLag, false );
+  setUseFft( (_maxLag - _minLag) > 128, false );
 
   setup();
 }
 
 
-Autocorrelation::Autocorrelation(int inputSize, int maxLag, int minLag, bool useFFT) :
-  _inputSize( inputSize ),
-  _minLag( max(-inputSize + 1, minLag) ),
-  _maxLag( min(inputSize, maxLag) ),
-  _useFFT( useFFT ),
-  _fft( nextPowerOf2(((_maxLag - _minLag)-1)*2), false ),
-  _ifft( nextPowerOf2(((_maxLag - _minLag)-1)*2), false )
+Autocorrelation::Autocorrelation(int inputSize, int maxLag, int minLag, bool useFft)
 {
-  DEBUG("AUTOCORRELATION: Construction inputSize: " << _inputSize
-        << " minLag: " << _minLag
-        << " maxLag: " << _maxLag
-        << " useFFT: " << _useFFT);
+  DEBUG("AUTOCORRELATION: Construction inputSize: " << inputSize
+        << " minLag: " << minLag
+        << " maxLag: " << maxLag
+        << " useFft: " << useFft);
+  
+  setInputSize( inputSize, false );
+  setMinLag( minLag, false );
+  setMaxLag( maxLag, false );
+  setUseFft( useFft, false );
   
   setup();
 }
@@ -65,7 +62,13 @@ void Autocorrelation::setup(){
   // Prepare the buffers
   DEBUG("AUTOCORRELATION: Setting up...");
 
-  if ( _useFFT ) {
+  if ( _useFft ) {
+    _fft.setFftSize( nextPowerOf2(((_maxLag - _minLag)-1)*2), false );
+    _fft.setZeroPhase( false, false );
+    
+    _ifft.setFftSize( nextPowerOf2(((_maxLag - _minLag)-1)*2), false );
+    _ifft.setZeroPhase( false, false );
+
     _fft.setup();
     _ifft.setup();
   }
@@ -80,7 +83,7 @@ void Autocorrelation::process(const MatrixXR& frames, MatrixXR* autocorrelation)
 
   (*autocorrelation).resize(rows, _maxLag - _minLag);
   
-  if ( _useFFT ) {
+  if ( _useFft ) {
 
     MatrixXC temp;
     MatrixXR temp2;
@@ -130,11 +133,11 @@ void Autocorrelation::setMaxLag( int lag, bool callSetup ) {
   if ( callSetup ) setup();
 }
 
-bool Autocorrelation::useFFT() const {
-  return _useFFT;
+bool Autocorrelation::useFft() const {
+  return _useFft;
 }  
 
-void Autocorrelation::setUseFFT( bool useFFT, bool callSetup ) {
-  _useFFT = useFFT;
+void Autocorrelation::setUseFft( bool useFft, bool callSetup ) {
+  _useFft = useFft;
   if ( callSetup ) setup();
 }

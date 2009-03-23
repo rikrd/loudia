@@ -106,7 +106,7 @@ protected:
   Real _highFrequency;
   Real _passRipple;
   Real _stopAttenuation;
-  int _channels;
+  int _channelCount;
   
   Filter _filter;
 

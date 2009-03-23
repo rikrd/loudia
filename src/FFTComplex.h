@@ -119,6 +119,23 @@ public:
   void setFftSize( int size, bool callSetup = true );
 
   /**
+     Returns the size of the frame to be processed.
+     The default is 1024.
+     
+     @sa setFrameSize()
+  */
+  int frameSize() const;
+
+  /**
+     Specifies the @a size of the frame to be processed.
+     The given @a size must be higher than 0.
+     Note that if @a size is a power of 2 will perform faster.
+     
+     @sa frameSize()
+  */
+  void setFrameSize( int size, bool callSetup = true );
+
+  /**
      Returns the zero phase setting.  The default is True.
      
      @sa setZeroPhase()

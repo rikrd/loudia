@@ -28,25 +28,26 @@ using namespace std;
 using namespace Eigen;
 
 BandFilter::BandFilter( int order, Real lowFrequency, Real highFrequency, BandType bandType, FilterType filterType, Real passRipple, Real stopAttenuation ) : 
-  _order( order ),
-  _lowFrequency( lowFrequency ),
-  _highFrequency( highFrequency ),
-  _passRipple( passRipple ),
-  _stopAttenuation( stopAttenuation ),
-  _channels( 1 ),
-  _filter( _channels ),
-  _filterType( filterType ), 
-  _bandType( bandType )
+  _channelCount( 1 ),
+  _filter( _channelCount )
 {
-  DEBUG("BANDFILTER: Constructor order: " << _order 
-        << ", lowFrequency: " << _lowFrequency
-        << ", highFrequency: " << _highFrequency
-        << ", passRipple: " << _passRipple
-        << ", stopAttenuation: " << _stopAttenuation );
+  DEBUG("BANDFILTER: Constructor order: " << order 
+        << ", lowFrequency: " << lowFrequency
+        << ", highFrequency: " << highFrequency
+        << ", passRipple: " << passRipple
+        << ", stopAttenuation: " << stopAttenuation );
 
   if ( order < 1 ) {
     // Throw an exception
   }
+
+  setOrder( order, false );
+  setLowFrequency( lowFrequency, false );
+  setHighFrequency( highFrequency, false );
+  setPassRipple( passRipple, false );
+  setStopAttenuation( stopAttenuation, false );
+  setFilterType( filterType, false ); 
+  setBandType( bandType, false );
   
   setup();
   
@@ -56,6 +57,8 @@ BandFilter::BandFilter( int order, Real lowFrequency, Real highFrequency, BandTy
 void BandFilter::setup(){
   DEBUG("BANDFILTER: Setting up...");
 
+  _filter.setChannelCount( _channelCount, false );
+
   DEBUG("BANDFILTER: Getting zpk");  
   // Get the lowpass z, p, k
   MatrixXC zeros, poles;
@@ -63,19 +66,19 @@ void BandFilter::setup(){
 
   switch( _filterType ){
   case CHEBYSHEVI:
-    chebyshev1(_order, _passRipple, _channels, &zeros, &poles, &gain);
+    chebyshev1(_order, _passRipple, _channelCount, &zeros, &poles, &gain);
     break;
 
   case CHEBYSHEVII:
-    chebyshev2(_order, _stopAttenuation, _channels, &zeros, &poles, &gain);
+    chebyshev2(_order, _stopAttenuation, _channelCount, &zeros, &poles, &gain);
     break;
 
   case BUTTERWORTH:
-    butterworth(_order, _channels, &zeros, &poles, &gain);
+    butterworth(_order, _channelCount, &zeros, &poles, &gain);
     break;
 
   case BESSEL:
-    bessel(_order, _channels, &zeros, &poles, &gain);
+    bessel(_order, _channelCount, &zeros, &poles, &gain);
     break;
   }
   

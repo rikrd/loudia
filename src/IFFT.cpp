@@ -25,15 +25,15 @@ using namespace std;
 using namespace Eigen;
 
 IFFT::IFFT(int fftSize, bool zeroPhase) :
-  _fftSize( fftSize ),
-  _zeroPhase( zeroPhase ),
-  _halfSize( _fftSize / 2 + 1 ),
   _in( NULL ),
   _out( NULL ),
   _fftplan( NULL )
 {
   DEBUG("IFFT: Constructor fftSize: " << fftSize 
         << ", zeroPhase: " << zeroPhase);
+
+  setFftSize( fftSize, false );
+  setZeroPhase( zeroPhase, false );
   
   setup();
   

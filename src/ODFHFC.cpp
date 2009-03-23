@@ -31,7 +31,7 @@ ODFHFC::ODFHFC(int fftSize) :
 {
   
   DEBUG("ODFHFC: Constructor fftSize: " << _fftSize);
-  setFftSize( fftSize );
+  setFftSize( fftSize, false );
   setup();
 }
 
