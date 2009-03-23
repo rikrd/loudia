@@ -100,12 +100,12 @@ public:
      @param frames matrix of Real values.
      
      @param peakPositions pointer to a matrix of Real values (but always Integers) for the peak indices.
-     The matrix should have the same number of rows as @a frames and @l peakCount columns. 
+     The matrix should have the same number of rows as @a frames and peakCount columns. 
 
      @param peakMagnitudes pointer to a matrix of Real values for the peak magnitudes.
-     The matrix should have the same number of rows as @a frames and @l peakCount columns. 
+     The matrix should have the same number of rows as @a frames and peakCount columns. 
 
-     Note that if the count of peaks detect is lower than @l peakCount some values
+     Note that if the count of peaks detect is lower than peakCount some values
      of the resulting arrays will be set to -1.0 in order to indicate that it is not
      a peak.
 
@@ -116,26 +116,32 @@ public:
                MatrixXR* peakPositions, MatrixXR* peakMagnitudes);
 
   /**
-     @property peakCount
-     @brief the maximum number of peaks to return.
+     Returns the maximum number of peaks to be detected by the algorithm.
      
      By default it is 1024 / 3.
   */
   int peakCount() const;
+
+  /**
+     Specifies the maximum peak @a count to be detected by the algorithm.
+     If <= 0, then all possible peaks are detected.
+  */
   void setPeakCount( int count, bool callSetup = true );
 
   /**
-     @property minimumPeakWidth
-     @brief the minimum width of a peak for it to be detected.
+     Returns the minimum width of a peak for it to be detected.
      
      By default it is 3.
   */
   int minimumPeakWidth() const;
+
+  /**
+     Specifies the minimum @a width of a peak for it to be detected.
+  */
   void setMinimumPeakWidth( int width, bool callSetup = true );
 
   /**
-     @property PeakDetect::candidateCount
-     @brief the number of highest value candidates to be considered before sorting.
+     Returns the number of highest value candidates to be considered before sorting.
 
      Note that if the value is <= 0, then no preselection is performed
      and all detected peaks are considered as candidates.
@@ -143,11 +149,17 @@ public:
      By default it is -1.
   */
   int candidateCount() const;
+
+  /**
+     Specifies the number of highest value candidates to be considered before sorting.
+
+     Note that if the value is <= 0, then no preselection is performed
+     and all detected peaks are considered as candidates.
+  */
   void setCandidateCount( int count, bool callSetup = true );
 
   /**
-     @property PeakDetect::minimumPeakContrast
-     @brief the minimum contrast of a peak for it to be detected.
+     Returns the minimum contrast of a peak for it to be detected.
      
      The contrast is considered of a peak is the maximum value minus the minimum value
      of all the points in the peak detection running window.
@@ -155,18 +167,25 @@ public:
      By default it is 0.0.
   */
   int minimumPeakContrast() const;
+
+  /**
+     Specifies the minimum contrast of a peak for it to be detected.
+     
+     The contrast is considered of a peak is the maximum value minus the minimum value
+     of all the points in the peak detection running window.
+  */
   void setMinimumPeakContrast( Real contrast, bool callSetup = true );
 
   /**
-     @property PeakDetect::sortMethod
-     @brief the method for  to be detected.
-     
-     The contrast is considered of a peak is the difference between the maximum and minimum
-     of all the values in the peak detection running window.
+     Returns the method for sorting the peaks.
      
      By default it is BYMAGNITUDE.
   */
   SortMethod sortMethod() const;
+
+  /**
+     Specifies the method for sorting the peaks.
+  */
   void setSortMethod( SortMethod method, bool callSetup = true );
 };
 

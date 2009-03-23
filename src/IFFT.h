@@ -74,8 +74,8 @@ public:
      it is the target size of the transform.
      The algorithm performs faster for sizes which are a power of 2.
      
-     @param zeroPhase determines whether
-     or not the @l{FFT}{zerophase} method was performed.
+     @param zeroPhase specifies whether
+     or not the zero phase method was performed.
   */
   IFFT(int fftSize = 1024, bool zeroPhase = true);
   
@@ -90,7 +90,7 @@ public:
      
      @param fft matrix of Complex values.  The number of columns of @a fft must
      be equal to the (fftSize / 2) + 1, 
-     where fftSize is parameter of the constructor or specified by IFFT::setFftSize().
+     where fftSize is parameter of the constructor or specified by setFftSize().
      
      @param frame pointer to a matrix of Real values for the output.  The matrix should
      have the same number of rows as @a fft and fftSize columns.  

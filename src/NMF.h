@@ -106,7 +106,7 @@ public:
      Note that if the output matrices are not of the required sizes they will be resized, 
      reallocating a new memory space if necessary.
   */
-  void process(const MatrixXR& frames, MatrixXR* gains, MatrixXR* componennts);
+  void process(const MatrixXR& frames, MatrixXR* gains, MatrixXR* components);
 
   /**
      Returns the size of the input arrays.

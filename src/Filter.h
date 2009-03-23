@@ -30,12 +30,12 @@
   * This class represents an object to apply one or several IIR filters.
   * The coefficients must be manually set by the user.  To create and use
   * some special parametrized filters such as Low Pass, High Pass, Band Pass and Band Stop
-  * filters refer to @l IIRFilter.
+  * filters refer to IIRFilter.
   *
-  * For Complex coefficient filters, refer to @l FilterComplex.
+  * For Complex coefficient filters, refer to FilterComplex.
   *
   * This filter implementation allows single and multiple channel filtering.
-  * The number of channels is defined by the @l channels property.
+  * The number of channels is specified using the setChannelCount().
   * The a and b coefficients of the filter are specified by two matrices of
   * Real values. The rows of the matrix are the time indices of the filter
   * and the columns (if more than one) are the channels.
@@ -59,7 +59,7 @@
   *
   * Note that in all cases the number of columns in a and b coefficients matrices
   * must be the same.
-  * Note that the @l channels determines the number of output channels in any situation
+  * Note that the channel count determines the number of output channels in any situation
   * and is therefore must be equal to the maximum number of channels between input and 
   * coefficient matrices.
   *
@@ -70,7 +70,7 @@
 class Filter {
 protected:
   // Internal parameters
-  int _channels; 
+  int _channelCount; 
   int _length;
 
   // Internal variables
@@ -88,11 +88,11 @@ protected:
 
 public:
   /**
-     Constructs a band pass filter object with the given @a channels, @a b,
+     Constructs a band pass filter object with the given @a channelCount, @a b,
      and @a a coefficients given.
   */
-  Filter(int channels = 1);
-  Filter(const MatrixXR& b, const MatrixXR& a, int channels);
+  Filter(int channelCount = 1);
+  Filter(const MatrixXR& b, const MatrixXR& a, int channelCount);
 
   void setup();
   void reset();
@@ -115,8 +115,7 @@ public:
   void process(const MatrixXR& samples, MatrixXR* filtered);
 
   /**
-     @property Filter::a
-     @brief the a coefficients of the filter
+     Returns the a coefficients of the filter
      
      Both the b and a coefficients matrices are normalized
      by the first row of the a coefficients matrix.
@@ -126,18 +125,33 @@ public:
      result in NaN.
      
      Note that the number of columns in a and b must be the same,
-     and that it must be equal to 1 or Filter::channels.
+     and that it must be equal to 1 or Filter::channelCount.
 
      By default it is a single element matrix of value 1.0.
 
-     @sa Filter::b
+     @sa setA(), b(), setB()
   */
   void a( MatrixXR* a ) const;
+
+  /**
+     Specifies the a coefficients of the filter
+     
+     Both the b and a coefficients matrices are normalized
+     by the first row of the a coefficients matrix.
+     
+     Note that if the first row of the a coefficients matrix
+     has elements to zero, some of the filtered samples will 
+     result in NaN.
+     
+     Note that the number of columns in a and b must be the same,
+     and that it must be equal to 1 or Filter::channelCount.
+     
+     @sa a(), b(), setB()
+  */
   void setA( const MatrixXR& a, bool callSetup = true );
 
   /**
-     @property Filter::b
-     @brief the b coefficients of the filter
+     Returns the b coefficients of the filter
      
      Both the b and a coefficients matrices are normalized
      by the first row of the a coefficients matrix.
@@ -147,18 +161,33 @@ public:
      result in NaN.
 
      Note that the number of columns in a and b must be the same,
-     and that it must be equal to 1 or Filter::channels.
+     and that it must be equal to 1 or the channel count.
      
      By default it is a single element matrix of value 1.0.
 
-     @sa Filter::a
+     @sa setB(), a(), setA()
   */
   void b( MatrixXR* b ) const;
+
+  /**
+     Specifies the b coefficients of the filter
+     
+     Both the b and a coefficients matrices are normalized
+     by the first row of the a coefficients matrix.
+     
+     Note that if the first row of the a coefficients matrix
+     has elements to zero, some of the filtered samples will 
+     result in NaN.
+
+     Note that the number of columns in a and b must be the same,
+     and that it must be equal to 1 or the channel count.
+     
+     @sa b(), a(), setA()
+  */
   void setB( const MatrixXR& b, bool callSetup = true );
 
   /**
-     @property Filter::channels
-     @brief the number of output channles of the filter
+     Returns the number of output channles of the filter
      
      Note that the number of channels must be equal to the 
      number of columns in a and b or to the number of columns
@@ -166,8 +195,16 @@ public:
      
      By default it is 1.
   */
-  int channels() const;
-  void setChannels( int channels, bool callSetup = true );
+  int channelCount() const;
+
+  /**
+     Specifies the number of output channles of the filter
+     
+     Note that the number of channels must be equal to the 
+     number of columns in a and b or to the number of columns
+     in the input matrix.
+  */
+  void setChannelCount( int count, bool callSetup = true );
 
 
   /**

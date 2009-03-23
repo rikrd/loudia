@@ -49,7 +49,7 @@
 class DCT {
 public:
   /**
-    @enum DCT::DCTType
+    @enum DCTType
     @brief Specifies the type of the DCT.
 
     @sa dctType
@@ -111,12 +111,15 @@ public:
   void process(const MatrixXR& frames, MatrixXR* dct);
 
   /**
-     @property DCT::dctType
-     @brief the type of the DCT
+     Returns the type of the DCT
      
      By default it is OCTAVE.
   */
   DCTType dctType() const;
+
+  /**
+     Specifies the type of the DCT
+  */
   void setDctType( DCTType type, bool callSetup = true );
 
   /**
@@ -137,8 +140,7 @@ public:
   void setInputSize( int size, bool callSetup = true );
 
   /**
-     @property DCT::dctSize
-     @brief the output size of the DCT
+     Returns the output size of the DCT
      
      Note that the result will when performing
      the DCT at the most inputSize coefficients
@@ -147,6 +149,16 @@ public:
      By default it is 1024.
   */
   int dctSize() const;
+
+  /**
+     Specifies the output size of the DCT
+     
+     Note that the result will when performing
+     the DCT at the most inputSize coefficients
+     will be outputed.
+     
+     By default it is 1024.
+  */
   void setDctSize( int size, bool callSetup = true );
 };
 
