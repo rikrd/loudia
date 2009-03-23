@@ -3,6 +3,7 @@
 # Create input
 import scipy
 import ricaudio
+import pylab
 
 plot = False
 frameSize = 121
@@ -48,7 +49,6 @@ if plot:
     s_ang = scipy.angle(s_sine).T
     s_max = max(s_abs)
 
-    import pylab
     pylab.subplot(211)
     pylab.hold(True)
     pylab.plot(r_abs, label = 'Ricaudio')
@@ -60,4 +60,27 @@ if plot:
     pylab.plot(s_abs*s_ang/s_max, label = 'Scipy')
     
     pylab.legend()
+
+
+fftSize = 1024
+
+m = ricaudio.FFT(fftSize, False)
+r_zeros = m.process(w.process(a_zeros))
+r_ones = m.process(w.process(a_ones))
+r_random = m.process(w.process(a_random))
+r_sine = m.process(w.process(a_sine))
+
+s_zeros = scipy.fft(a_zeros, fftSize)[:fftSize/2+1]
+s_ones = scipy.fft(a_ones, fftSize)[:fftSize/2+1]
+s_random = scipy.fft(a_random, fftSize)[:fftSize/2+1]
+s_sine = scipy.fft(a_sine, fftSize)[:fftSize/2+1]
+
+atol = 1e-5
+
+print scipy.allclose(r_zeros, s_zeros, atol = atol)
+print scipy.allclose(r_ones, s_ones, atol = atol)
+print scipy.allclose(r_random, s_random, atol = atol)
+print scipy.allclose(r_sine, s_sine, atol = atol)
+
+if plot:
     pylab.show()

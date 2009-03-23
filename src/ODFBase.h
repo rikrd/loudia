@@ -30,7 +30,7 @@ protected:
   
   // Internal variables
 public:
-  virtual void setup() = 0;
+  void setup();
   virtual void reset() = 0;
   
   virtual void process(const MatrixXC& fft, MatrixXR* odfValue) = 0;

@@ -27,13 +27,11 @@ using namespace std;
 using namespace Eigen;
 
 ODFHFC::ODFHFC(int fftSize) :
-  ODFBase(),
-  _fftSize( fftSize ),
-  _halfSize( _fftSize / 2 + 1 )
+  ODFBase()
 {
   
   DEBUG("ODFHFC: Constructor fftSize: " << _fftSize);
-  
+  setFftSize( fftSize );
   setup();
 }
 
@@ -43,6 +41,8 @@ ODFHFC::~ODFHFC() {}
 void ODFHFC::setup() {
   // Prepare the buffers
   DEBUG("ODFHFC: Setting up...");
+
+  ODFBase::setup();
 
   // Create the vector with the weights (weights are the frequency bin indices)
   range(0, _halfSize, _halfSize, &_freqBin);
