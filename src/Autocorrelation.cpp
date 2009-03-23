@@ -120,7 +120,7 @@ int Autocorrelation::minLag() const {
 }
   
 void Autocorrelation::setMinLag( int lag, bool callSetup ) {
-  _minLag = min(_inputSize, max(-_inputSize + 1, lag));  
+  _minLag = min(_inputSize + 1, max(-_inputSize + 1, lag));  
   if ( callSetup ) setup();
 }
 
@@ -129,7 +129,7 @@ int Autocorrelation::maxLag() const {
 }
   
 void Autocorrelation::setMaxLag( int lag, bool callSetup ) {
-  _maxLag = min(_inputSize, max(-_inputSize + 1, lag));
+  _maxLag = min(_inputSize + 1, max(-_inputSize + 1, lag));
   if ( callSetup ) setup();
 }
 
