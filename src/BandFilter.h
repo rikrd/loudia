@@ -221,40 +221,61 @@ public:
   void setFilterType( FilterType type, bool callSetup = true );
 
   /**
-     @property BandFilter::bandType
-     @brief the type of the band of the filter
+     Return the type of the band of the filter.
      
      By default it is LOWPASS.
 
-     @sa filterType
+     @sa setBandType()
   */
   BandType bandType() const;
+
+  /**
+     Specifies the type of the band of the filter.
+     
+     @sa bandType()
+  */
   void setBandType( BandType type, bool callSetup = true );
 
   /**
-     @property BandFilter::passRipple
-     @brief the ripple of the pass band in dB
+     Returns the ripple of the pass band in dB
      
      Note that this property only has an effect if 
      the filter type used is CHEBYSHEVI.
      By default it is 0.05.
 
-     @sa stopAttenuation
+     @sa setPassRipple(), stopAttenuation(), setStopAttenuation()
   */
   Real passRipple() const;
+
+  /**
+     Specifies the ripple of the pass band in dB
+     
+     Note that this property only has an effect if 
+     the filter type used is CHEBYSHEVI.
+     
+     @sa passRipple(), stopAttenuation(), setStopAttenuation()
+  */
   void setPassRipple( Real rippleDB, bool callSetup = true );
 
   /**
-     @property BandFilter::stopAttenuation
-     @brief the attenuation of the stop band in dB
+     Returns the attenuation of the stop band in dB
      
      Note that this property only has an effect if 
      the filter type used is CHEBYSHEVII.
      By default it is 40.0.
 
-     @sa passRipple
+     @sa passRipple(), setPassRipple(), setStopAttenuation()
   */
   Real stopAttenuation() const;
+
+  /**
+     Specifies the attenuation of the stop band in dB
+     
+     Note that this property only has an effect if 
+     the filter type used is CHEBYSHEVII.
+     
+     @sa passRipple(), setPassRipple(), stopAttenuation()
+  */
   void setStopAttenuation( Real attenuationDB, bool callSetup = true );
 };
 

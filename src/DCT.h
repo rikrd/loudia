@@ -39,7 +39,7 @@
   * -# Octave's Implementation
   *
   * The DCT type can be selected using the 
-  * DCT::setDCTType() taking as argument a DCTType.
+  * setDCTType() taking as argument a DCTType.
   *
   *
   * @author Ricard Marxer

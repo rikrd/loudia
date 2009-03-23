@@ -126,12 +126,15 @@ public:
   void process(const MatrixXR& frames, MatrixXC* windowedFrames);
 
   /**
-     @property Window::inputSize
-     @brief the input size of the algorithm.
+     Returns the input size of the algorithm.
      
      By default it is 1024.
   */
   int inputSize() const;
+  
+  /**
+     Specifies the input size of the algorithm.
+  */
   void setInputSize( int size, bool callSetup = true );
   
   /**
