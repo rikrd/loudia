@@ -196,6 +196,22 @@ public:
   void setFftSize( int size, bool callSetup = true );
 
   /**
+     Return the type of the frequency warping scale.
+     
+     By default it is GREENWOOD.
+     
+     @sa setScaleType()
+  */
+  MelBands::ScaleType scaleType() const;
+  
+  /**
+     Specify the type of the frequency warping scale.
+     
+     @sa scaleType()
+  */
+  void setScaleType( MelBands::ScaleType type, bool callSetup = true );
+
+  /**
      Return the compression factor of the whitening.
      The default is 0.33.
 
@@ -208,20 +224,7 @@ public:
      
      @sa compressionFactor
   */
-  void setCompressionFactor( Real factor, bool callSetup = true );
-
-  /**
-     Return the type of the frequency warping scale.
-     
-     By default it is GREENWOOD.
-  */
-  MelBands::ScaleType scaleType() const;
-  
-  /**
-     Specify the type of the frequency warping scale.
-  */
-  void setScaleType( MelBands::ScaleType type, bool callSetup = true );
-  
+  void setCompressionFactor( Real factor, bool callSetup = true );  
   
 };
 
