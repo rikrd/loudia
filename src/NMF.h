@@ -141,6 +141,22 @@ public:
   void setComponentCount( int count, bool callSetup = true );
 
   /**
+     Returns the number of iterations of the solver.
+     The default is 10.
+     
+     @sa setIterationCount()
+  */
+  int iterationCount() const;
+
+  /**
+     Specifies the @a count of iterations of the solver.
+     The given @a count must be greater than 0.
+          
+     @sa iterationCount()
+  */
+  void setIterationCount( int count, bool callSetup = true );
+
+  /**
      Returns the epsilon.
      The default is 1e-6.
      
