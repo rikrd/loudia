@@ -25,6 +25,37 @@
 #include "MelBands.h"
 #include "DCT.h"
 
+/**
+  * @class MFCC
+  *
+  * @brief Algorithm to calculate the Mel-frequency Cepstrum Coefficients of vectors of Real values.
+  *
+  * This class represents an object to perform a 
+  * Mel-frequency Cepstrum Coefficients (MFCC) on vectors 
+  * of Real values.  Which is a useful technique creating a sparse representation
+  * of a spectrum magnitude.  The algorithm estimates a set of M coefficients
+  * which should be similar for perceptually similar sounds.
+  *
+  * The MFCCs are calculated by taking the Discrete Cosine Transform (DCT) 
+  * of the values of the Mel log powers.  The Mel log powers are calculated 
+  * by applying the logarithm to the vaules of the Mel Bands (MelBands). The Mel Bands
+  * are triangular overlapping windows applied on the power spectrum mapped onto the
+  * Mel-frequency scale.
+  *
+  * The samplerate and FFT size of the input spectrum are specified using setSamplerate() and
+  * setFftSize().
+  *
+  * The frequency limits of the Mel scale mapping are specified using setLowFrequency() and
+  * setHighFrequency().
+  *
+  * The number of Mel bands is specified using setBandCount().
+  *
+  * The number of resulting DCT coefficients is specified by setCoefficientCount().
+  *
+  * @author Ricard Marxer
+  *
+  * @sa MelBands, Bands, LPC
+  */
 class MFCC {
 protected:
   // Internal parameters
@@ -47,14 +78,54 @@ protected:
   MatrixXR _coeffs;
 
 public:
-  MFCC(Real lowFrequency = 300.0, Real highFrequency = 16000.0, int bandCount = 40.0, Real samplerate = 44100.0, int fftSize = 1024, int coefficientCount = 13, Real minSpectrum = 1e-10, Real power = 1.0);
+  /**
+     Constructs an MFCC object with the specified @a lowFrequency, @a highFrequency, 
+     @a bandCount, @a samplerate, @a fftSize, @a coefficientCount, @a minSpectrum and
+     @a power settings.
+     
+     @param lowFrequency frequency of the lowest Mel band,
+     must be greater than zero 0 and lower than half the samplerate.
+     
+     @param highFrequency frequency of the highest Mel band,
+     must be greater than zero 0 and lower than half the samplerate.
+ 
+     @param bandCount number of Mel bands.
+     
+     @param samplerate samplerate frequency of the input signal.
 
+     @param fftSize size of the FFT.
+     
+     @param coefficientCount number of DCT coefficients to be estimated.
+     
+     @param minSpectrum value to which the spectrum is clipped before performing the logarithm.
+     
+     @param power value to which to power the band values before performing the DCT.  
+  */  
+  MFCC(Real lowFrequency = 300.0, Real highFrequency = 16000.0, int bandCount = 40.0, Real samplerate = 44100.0, int fftSize = 1024, int coefficientCount = 13, Real minSpectrum = 1e-10, Real power = 1.0);
+  
+  /**
+     Destroys the algorithm and frees its resources.
+  */
   ~MFCC();
 
   void reset();
   void setup();
 
-  void process(const MatrixXR& spectrum, MatrixXR* mfccCoefficients);
+  /**
+     Performs an MFCC on each of the rows of @a frames.
+     Puts the resulting MFCC coefficients in the rows of @a mfccCoefficients.
+     
+     @param spectrums matrix of Real values representing the magnitude of the spectrum.
+     The number of columns of @a spectrum must be equal to the fftSize / 2 + 1 where 
+     fftSize is specified using setFftSize().
+     
+     @param mfccCoefficients pointer to a matrix of Real values for the MFCC coefficients.
+     The matrix should have the same number of rows as @a spectrums and coefficientCount columns.
+     
+     Note that if the output matrices are not of the required sizes they will be resized, 
+     reallocating a new memory space if necessary.
+  */
+  void process(const MatrixXR& spectrums, MatrixXR* mfccCoefficients);
 
   /**
      Returns the number of coefficients to be calculated.
