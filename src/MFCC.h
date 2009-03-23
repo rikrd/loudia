@@ -115,7 +115,7 @@ public:
      Performs an MFCC on each of the rows of @a frames.
      Puts the resulting MFCC coefficients in the rows of @a mfccCoefficients.
      
-     @param spectrums matrix of Real values representing the magnitude of the spectrum.
+     @param spectrums matrix of Real values representing one spectrum magnitude per row.
      The number of columns of @a spectrum must be equal to the fftSize / 2 + 1 where 
      fftSize is specified using setFftSize().
      
@@ -206,7 +206,7 @@ public:
   void setSamplerate( Real frequency, bool callSetup = true );
 
   /**
-     Returns the size of the FFT to be performed.
+     Returns the size of the FFT that has been performed for the input.
      The default is 1024.
      
      @sa setFftSize()
@@ -214,9 +214,8 @@ public:
   int fftSize() const;
 
   /**
-     Specifies the @a size of the FFT to be performed.
+     Specifies the @a size of the FFT that has been performed for the input.
      The given @a size must be higher than 0.
-     Note that if @a size is a power of 2 will perform faster.
      
      @sa fftSize()
   */
