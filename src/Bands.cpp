@@ -33,7 +33,7 @@ Bands::Bands() :
 }
 
 
-Bands::Bands(MatrixXI starts, vector<MatrixXR> weights) {
+Bands::Bands(MatrixXI starts, std::vector<MatrixXR> weights) {
   DEBUG("BANDS: Constructor starts: " << starts);
 
   if ( starts.rows() != (int)weights.size() ) {
