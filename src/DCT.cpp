@@ -25,10 +25,7 @@ using namespace std;
 using namespace Eigen;
 
 DCT::DCT(int inputSize, int dctSize, bool scale, DCTType dctType) :
-  _inputSize( inputSize ),
-  _dctSize( dctSize ),
-  _scale( scale ),
-  _dctType( dctType )
+  _scale( scale )
 {
   DEBUG("DCT: Construction inputSize: " << inputSize 
         << ", dctSize: " << dctSize 
@@ -38,6 +35,10 @@ DCT::DCT(int inputSize, int dctSize, bool scale, DCTType dctType) :
     // TODO: Throw an exception since dctSize is the number of coefficients to output and it cannot output more
     return;
   }
+
+  setInputSize( inputSize, false );
+  setDctSize( dctSize, false );
+  setDctType( dctType, false );
 
   setup();
 }
