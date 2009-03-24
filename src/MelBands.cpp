@@ -27,13 +27,7 @@
 using namespace std;
 using namespace Eigen;
 
-MelBands::MelBands(Real lowFrequency, Real highFrequency, int bandCount, Real samplerate, int fftSize, ScaleType scaleType) :
-  _lowFrequency( lowFrequency ),
-  _highFrequency( highFrequency ),
-  _bandCount( bandCount ),
-  _samplerate( samplerate ),
-  _fftSize( fftSize ),
-  _scaleType( scaleType )
+MelBands::MelBands(Real lowFrequency, Real highFrequency, int bandCount, Real samplerate, int fftSize, ScaleType scaleType) 
 {
   
   DEBUG("MELBANDS: Constructor lowFrequency: " << _lowFrequency << 
@@ -43,13 +37,20 @@ MelBands::MelBands(Real lowFrequency, Real highFrequency, int bandCount, Real sa
         ", fftSize: " << _fftSize << 
         ", scaleType:" << _scaleType);
 
-  if ( _lowFrequency >= _highFrequency ) {
+  if ( lowFrequency >= highFrequency ) {
     // Throw an exception, highFrequency must be higher than lowFrequency
   }
 
-  if ( _bandCount <= 0 ) {
+  if ( bandCount <= 0 ) {
     // Throw an exception, bandCount must be higher than 0
   }
+  
+  setLowFrequency( lowFrequency, false );
+  setHighFrequency( highFrequency, false );
+  setBandCount( bandCount, false );
+  setSamplerate( samplerate, false );
+  setFftSize( fftSize, false );
+  setScaleType( scaleType, false );
   
   setup();
   

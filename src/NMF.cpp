@@ -26,17 +26,18 @@
 using namespace std;
 using namespace Eigen;
 
-NMF::NMF(int inputSize, int componentCount, int iterationCount, Real epsilon) :
-  _inputSize(inputSize),
-  _componentCount(componentCount),
-  _iterationCount(iterationCount),
-  _epsilon(epsilon)
+NMF::NMF(int inputSize, int componentCount, int iterationCount, Real epsilon)
 {
   
-  DEBUG("NMF: Constructor inputSize: " << _inputSize
-        << " componentCount: " << _componentCount
-        << " iterationCount: " << _iterationCount );
+  DEBUG("NMF: Constructor inputSize: " << inputSize
+        << " componentCount: " << componentCount
+        << " iterationCount: " << iterationCount );
   
+  setInputSize( inputSize, false );
+  setComponentCount( componentCount, false );
+  setIterationCount( iterationCount, false );
+  setEpsilon( epsilon, false );
+
   setup();
 }
 

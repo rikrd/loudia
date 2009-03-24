@@ -25,23 +25,22 @@
 using namespace std;
 using namespace Eigen;
 
-SpectralWhitening::SpectralWhitening(int fftSize, Real lowFrequency, Real highFrequency, Real samplerate, Real compressionFactor, int bandCount, MelBands::ScaleType scaleType) :
-  _fftSize( fftSize ),
-  _halfSize( ( _fftSize / 2 ) + 1 ),
-  _lowFrequency( lowFrequency ),
-  _highFrequency( highFrequency ),
-  _samplerate( samplerate ),
-  _compressionFactor( compressionFactor ),
-  _bandCount( bandCount ),
-  _scaleType( scaleType ),
-  _bands( _lowFrequency, _highFrequency, _bandCount, _samplerate, _fftSize, _scaleType)
+SpectralWhitening::SpectralWhitening(int fftSize, Real lowFrequency, Real highFrequency, Real samplerate, Real compressionFactor, int bandCount, MelBands::ScaleType scaleType)
 {
-  DEBUG("SPECTRALWHITENING: Construction fftSize: " << _fftSize
-        << " samplerate: " << _samplerate
-        << " compressionFactor: " << _compressionFactor
-        << " bandCount: " << _bandCount
-        << " lowFrequency: " << _lowFrequency
-        << " highFrequency: " << _highFrequency );
+  DEBUG("SPECTRALWHITENING: Construction fftSize: " << fftSize
+        << " samplerate: " << samplerate
+        << " compressionFactor: " << compressionFactor
+        << " bandCount: " << bandCount
+        << " lowFrequency: " << lowFrequency
+        << " highFrequency: " << highFrequency );
+
+  setFftSize( fftSize, false );
+  setLowFrequency( lowFrequency, false );
+  setHighFrequency( highFrequency, false );
+  setBandCount( bandCount, false );
+  setSamplerate( samplerate, false );
+  setScaleType( scaleType, false );
+  setCompressionFactor( compressionFactor, false );
 
   setup();
 }

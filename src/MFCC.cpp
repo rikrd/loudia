@@ -27,16 +27,7 @@ using namespace std;
 using namespace Eigen;
 
 MFCC::MFCC(Real lowFrequency, Real highFrequency, int bandCount, Real samplerate, int fftSize, int coefficientCount, Real minSpectrum, Real power) : 
-  _lowFrequency( lowFrequency ),
-  _highFrequency( highFrequency ),
-  _bandCount( bandCount ),
-  _samplerate( samplerate ),
-  _fftSize( fftSize ),
-  _coefficientCount( coefficientCount ),
-  _minSpectrum( minSpectrum ),
-  _power( power ),
-  _melbands(lowFrequency, highFrequency, bandCount, samplerate, fftSize),
-  _dct(bandCount, coefficientCount) 
+  _minSpectrum( minSpectrum )
 {
   DEBUG("MFCC: Constructor lowFrequency: " << lowFrequency << 
         ", highFrequency: " << highFrequency << 
@@ -44,6 +35,14 @@ MFCC::MFCC(Real lowFrequency, Real highFrequency, int bandCount, Real samplerate
         ", samplerate: "<< samplerate << 
         ", fftSize: " << fftSize << 
         ", coefficientCount: " << coefficientCount);
+
+  setLowFrequency( lowFrequency, false );
+  setHighFrequency( highFrequency, false );
+  setBandCount( bandCount, false );
+  setSamplerate( samplerate, false );
+  setFftSize( fftSize, false );
+  setCoefficientCount( coefficientCount, false );
+  setPower( power, false );
   
   setup();
 }

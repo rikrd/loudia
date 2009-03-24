@@ -47,17 +47,17 @@ struct byPositionComp{
   bool operator() (peak i, peak j) { return ( i.pos < j.pos ); }
 } byPositionComplex;
 
-PeakDetectComplex::PeakDetectComplex(int peakCount, SortMethod sortMethod, int minimumPeakWidth, int candidateCount, Real minimumPeakContrast) :
-  _peakCount( peakCount ),
-  _minimumPeakWidth( minimumPeakWidth ),
-  _candidateCount( candidateCount ),
-  _minimumPeakContrast( minimumPeakContrast ),
-  _sortMethod( sortMethod )
-
+PeakDetectComplex::PeakDetectComplex(int peakCount, SortMethod sortMethod, int minimumPeakWidth, int candidateCount, Real minimumPeakContrast)
 {
-  DEBUG("PEAKDETECTCOMPLEX: Constructor peakCount: " << _peakCount 
-        << ", minimumPeakWidth: " << _minimumPeakWidth
-        << ", candidateCount: " << _candidateCount);
+  DEBUG("PEAKDETECT: Constructor peakCount: " << peakCount 
+        << ", minimumPeakWidth: " << minimumPeakWidth
+        << ", candidateCount: " << candidateCount);
+  
+  setPeakCount( peakCount, false );
+  setMinimumPeakWidth( minimumPeakWidth, false );
+  setCandidateCount( candidateCount, false );
+  setMinimumPeakContrast( minimumPeakContrast, false );
+  setSortMethod( sortMethod, false );
   
   setup();
 
@@ -65,9 +65,6 @@ PeakDetectComplex::PeakDetectComplex(int peakCount, SortMethod sortMethod, int m
 }
 
 PeakDetectComplex::~PeakDetectComplex() {
-  // TODO: Here we should free the buffers
-  // but I don't know how to do that with MatrixXR and MatrixXR
-  // I'm sure Nico will...
 }
 
 

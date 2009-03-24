@@ -46,18 +46,18 @@ struct byPositionComp{
   bool operator() (peak i, peak j) { return ( i.pos < j.pos ); }
 } byPosition;
 
-PeakDetect::PeakDetect(int peakCount, SortMethod sortMethod, int minimumPeakWidth, int candidateCount, Real minimumPeakContrast) :
-  _peakCount( peakCount ),
-  _minimumPeakWidth( minimumPeakWidth ),
-  _candidateCount( candidateCount ),
-  _minimumPeakContrast( minimumPeakContrast ),
-  _sortMethod( sortMethod )
-
+PeakDetect::PeakDetect(int peakCount, SortMethod sortMethod, int minimumPeakWidth, int candidateCount, Real minimumPeakContrast)
 {
-  DEBUG("PEAKDETECT: Constructor peakCount: " << _peakCount 
-        << ", minimumPeakWidth: " << _minimumPeakWidth
-        << ", candidateCount: " << _candidateCount);
+  DEBUG("PEAKDETECT: Constructor peakCount: " << peakCount 
+        << ", minimumPeakWidth: " << minimumPeakWidth
+        << ", candidateCount: " << candidateCount);
   
+  setPeakCount( peakCount, false );
+  setMinimumPeakWidth( minimumPeakWidth, false );
+  setCandidateCount( candidateCount, false );
+  setMinimumPeakContrast( minimumPeakContrast, false );
+  setSortMethod( sortMethod, false );
+
   setup();
 
   DEBUG("PEAKDETECT: Constructed");
