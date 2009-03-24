@@ -24,13 +24,14 @@
 using namespace std;
 using namespace Eigen;
 
-Window::Window(int inputSize, Window::WindowType windowType) :
-  _inputSize( inputSize ),
-  _windowType( windowType ),
-  _window( MatrixXR::Ones(1, _inputSize) )
+Window::Window(int inputSize, Window::WindowType windowType)
 {
   DEBUG("WINDOW: Constructor inputSize: " << inputSize << 
         ", windowType: " << windowType);
+
+  setInputSize( inputSize, false );
+  setWindow( MatrixXR::Ones(1, inputSize), false );
+  setWindowType( windowType, false );
 
   setup();
 

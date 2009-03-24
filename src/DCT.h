@@ -82,13 +82,12 @@ protected:
 public:
   /**
      Constructs a DCT object with the given @a inputSize, @a dctSize,
-     @a scale, @a dctType parameters
-     given.
+     @a scale, @a dctType parameters.
   */
   DCT(int inputSize = 1024, int dctSize = 1024, bool scale = false, DCTType dctType = OCTAVE);
   
   /**
-     Destroys the DCT algorithm and frees its resources.
+     Destroys the algorithm and frees its resources.
   */
   ~DCT();
 
@@ -100,7 +99,7 @@ public:
      puts the resulting DCT in the rows of @a dct.
      
      @param frames matrix of Real values.  The number of columns of @a frames must
-     be equal to the inputSize property.
+     be equal to the inputSize.
      
      @param dct pointer to a matrix of Real values for the output.  The matrix should
      have the same number of rows as @a frames and dctSize columns. 

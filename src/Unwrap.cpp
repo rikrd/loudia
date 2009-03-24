@@ -25,11 +25,12 @@
 using namespace std;
 using namespace Eigen;
 
-Unwrap::Unwrap(int inputLength) :
-  _inputLength( inputLength )
+Unwrap::Unwrap(int inputSize)
 {
-  DEBUG("UNWRAP: Construction inputLength: " << inputLength);
+  DEBUG("UNWRAP: Construction inputSize: " << inputSize);
 
+  setInputSize( inputSize, false );
+  
   setup();
 }
 
@@ -74,4 +75,13 @@ void Unwrap::process(const MatrixXR& input, MatrixXR* unwrapped){
 
 void Unwrap::reset(){
   // Initial values
+}
+
+int Unwrap::inputSize() const{
+  return _inputSize;
+}
+
+void Unwrap::setInputSize( int size, bool callSetup ) {
+  _inputSize = size;
+  if ( callSetup ) setup();
 }
