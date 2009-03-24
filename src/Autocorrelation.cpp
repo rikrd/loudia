@@ -88,8 +88,8 @@ void Autocorrelation::setup(){
   // Prepare the buffers
   DEBUG("AUTOCORRELATION: Setting up...");
 
-  _calcMinLag = min(_inputSize, max(-_inputSize + 1, _minLag));  
-  _calcMaxLag = min(_inputSize, max(-_inputSize + 1, _maxLag));
+  _calcMinLag = min(_inputSize + 1, max(-_inputSize + 1, _minLag));  
+  _calcMaxLag = min(_inputSize + 1, max(-_inputSize + 1, _maxLag));
 
   if ( _useFft ) {
     _fft.setFftSize( nextPowerOf2(((_calcMaxLag - _calcMinLag)-1)*2), false );
@@ -128,8 +128,6 @@ void Autocorrelation::process(const MatrixXR& frames, MatrixXR* autocorrelation)
     (*autocorrelation).block(0, _calcMinLag - _minLag, rows, _calcMaxLag - _calcMinLag) = _temp;
     
   }
-
-  cout << (*autocorrelation) << endl;
 }
 
 void Autocorrelation::reset(){
