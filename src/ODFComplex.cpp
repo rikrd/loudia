@@ -20,8 +20,6 @@
 #include "Debug.h"
 
 #include "ODFComplex.h"
-#include "Unwrap.h"
-
 #include "Utils.h"
 
 using namespace std;
@@ -31,8 +29,7 @@ ODFComplex::ODFComplex(int fftSize, bool rectified) :
   ODFBase(),
   _fftSize( fftSize ),
   _halfSize( _fftSize / 2 + 1 ),
-  _rectified( rectified ),
-  _unwrap( _halfSize )
+  _rectified( rectified )
 {
   
   DEBUG("ODFCOMPLEX: Constructor fftSize: " << _fftSize);

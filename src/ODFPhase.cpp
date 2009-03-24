@@ -20,8 +20,6 @@
 #include "Debug.h"
 
 #include "ODFPhase.h"
-#include "Unwrap.h"
-
 #include "Utils.h"
 
 using namespace std;
@@ -32,8 +30,7 @@ ODFPhase::ODFPhase(int fftSize, bool weighted, bool normalize) :
   _fftSize( fftSize ),
   _halfSize( _fftSize / 2 + 1 ),
   _weighted( weighted ),
-  _normalize( normalize ),
-  _unwrap( _halfSize )
+  _normalize( normalize )
 {
   
   DEBUG("ODFPHASE: Constructor fftSize: " << _fftSize);

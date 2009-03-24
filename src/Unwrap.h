@@ -33,8 +33,6 @@
   *
   * Unwrapping consists in removing phase jumps larger than Pi or smaller to -Pi.
   *
-  * The size of the input vectors can be specified using setInputSize().
-  *
   * @author Ricard Marxer
   *
   * @sa FFT
@@ -46,13 +44,11 @@ protected:
   MatrixXR _downsteps;
   MatrixXR _shift;
 
-  int _inputSize;
-
 public:
   /**
      Constructs an unwrap object with the given @a inputSize.
   */
-  Unwrap(int inputSize = 1024);
+  Unwrap();
 
   /**
      Destroys the algorithm and frees its resources.
@@ -66,28 +62,15 @@ public:
      Performs the unwrapping on each of the rows of @a phases and
      puts the resulting unwrapped phases in the rows of @a unwrapped.
      
-     @param phases matrix of Real values.  The number of columns of @a phases must
-     be equal to the inputSize.
+     @param phases matrix of Real values.
      
      @param unwrapped pointer to a matrix of Real values for the output.  The matrix should
-     have the same number of rows as @a phases and inputSize columns. 
+     have the same number of rows and columns as @a phases. 
 
      Note that if the output matrix is not of the required size it will be resized, 
      reallocating a new memory space if necessary.
   */
   void process(const MatrixXR& phases, MatrixXR* unwrapped);
-
-  /**
-     Returns the input size of the algorithm.
-     
-     By default it is 1024.
-  */
-  int inputSize() const;
-  
-  /**
-     Specifies the input size of the algorithm.
-  */
-  void setInputSize( int size, bool callSetup = true );
 
 };
 
