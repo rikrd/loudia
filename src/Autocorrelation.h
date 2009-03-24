@@ -66,8 +66,12 @@ protected:
   bool _useFft;
 
   // Internal variables
+  int _calcMinLag;
+  int _calcMaxLag;
   FFT _fft;
   IFFT _ifft;
+  MatrixXC _tempFft;
+  MatrixXR _temp;
 
 public:
   /**
@@ -83,7 +87,9 @@ public:
      @param useFft determines whether or not to use the FFT method
   */
   Autocorrelation(int inputSize, int maxLag, int minLag, bool useFft);
-  Autocorrelation(int inputSize = 1024, int maxLag = std::numeric_limits<int>::max(), int minLag = 0);
+  Autocorrelation(int inputSize, int maxLag, int minLag);
+  Autocorrelation(int inputSize, int maxLag);
+  Autocorrelation(int inputSize = 1024);
 
   /**
      Destroys the Autocorrelation algorithm and frees its resources.

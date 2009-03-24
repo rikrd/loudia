@@ -2,6 +2,7 @@
 
 import ricaudio
 import scipy
+
 rtol = 1e-5
 atol = 1e-7
 
