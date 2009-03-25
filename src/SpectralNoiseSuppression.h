@@ -31,8 +31,8 @@ protected:
   int _fftSize;
   Real _samplerate;
 
-  Real _f0;
-  Real _f1;
+  Real _lowFrequency;
+  Real _highFrequency;
   
   int _k0;
   int _k1;
@@ -42,15 +42,77 @@ protected:
   Bands _bands;
 
 public:
-  SpectralNoiseSuppression(int fftSize, Real f0, Real f1, Real samplerate = 1.0);
+  SpectralNoiseSuppression( int fftSize = 1024, Real lowFrequency = 50.0, Real highFrequency = 6000.0, Real samplerate = 44100.0 );
 
   ~SpectralNoiseSuppression();
 
   void setup();
   void reset();
 
-  void process(const MatrixXR& spectrum, MatrixXR* noise, MatrixXR* result);
+  void process( const MatrixXR& spectrum, MatrixXR* noise, MatrixXR* result );
 
+  /**
+     Return the low frequency of the spectral whitening.
+     The default is 50.0.
+
+     @sa lowFrequency, highFrequency, setLowFrequency, setHighFrequency
+  */  
+  Real lowFrequency() const;  
+
+  /**
+     Specifies the low @a frequency of the spectral whitening.
+     The given @a frequency must be in the range of 0 to the samplerate / 2.
+     
+     @sa lowFrequency, highFrequency, setHighFrequency
+  */
+  void setLowFrequency( Real frequency, bool callSetup = true );
+
+  /**
+     Return the high frequency of the spectral whitening.
+     The default is 6000.0.
+
+     @sa lowFrequency, setLowFrequency, setHighFrequency
+  */  
+  Real highFrequency() const;  
+
+  /**
+     Specifies the high @a frequency of the spectral whitening.
+     The given @a frequency must be in the range of 0 to the samplerate / 2.
+
+     @sa lowFrequency, highFrequency, setLowFrequency
+  */
+  void setHighFrequency( Real frequency, bool callSetup = true );
+
+  /**
+     Return the samplerate frequency of the input signal.
+     The default is 44100.0.
+
+     @sa setSamplerate
+  */  
+  Real samplerate() const;  
+
+  /**
+     Specifies the samplerate @a frequency of the input signal.
+     
+     @sa samplerate
+  */
+  void setSamplerate( Real frequency, bool callSetup = true );
+
+  /**
+     Returns the size of the FFT that has been performed for the input.
+     The default is 1024.
+     
+     @sa setFftSize()
+  */
+  int fftSize() const;
+
+  /**
+     Specifies the @a size of the FFT that has been performed for the input.
+     The given @a size must be higher than 0.
+     
+     @sa fftSize()
+  */
+  void setFftSize( int size, bool callSetup = true );
 };
 
 #endif  /* SPECTRALNOISESUPPRESSION_H */

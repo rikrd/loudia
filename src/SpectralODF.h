@@ -152,7 +152,7 @@ public:
      
      @param method the method used for calculating the spectral onset detection function.
      
-     @param callSetup a flag specifying whether the setup() method must be call after setting the parameter.
+     @param callSetup a flag specifying whether the setup() method must be called after setting the parameter.
   */
   void setOdfMethod( ODFMethod method, bool callSetup = true );
 

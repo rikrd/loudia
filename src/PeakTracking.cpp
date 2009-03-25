@@ -25,13 +25,14 @@
 using namespace std;
 using namespace Eigen;
 
-PeakTracking::PeakTracking(int trajectoryCount, Real maximumFrequencyChange, int silentFrameCount) :
-  _trajectoryCount( trajectoryCount ),
-  _maximumFrequencyChange( maximumFrequencyChange ),
-  _silentFrameCount( silentFrameCount )
+PeakTracking::PeakTracking(int trajectoryCount, Real maximumFrequencyChange, int silentFrameCount)
 {
   DEBUG("PEAKTRACKING: Constructor");
   
+  setTrajectoryCount( trajectoryCount, false );
+  setMaximumFrequencyChange( maximumFrequencyChange, false );
+  setSilentFrameCount( silentFrameCount, false );
+
   setup();
   
   DEBUG("PEAKTRACKING: Constructed");
