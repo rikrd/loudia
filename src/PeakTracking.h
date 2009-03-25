@@ -118,6 +118,8 @@ public:
      If <= 0, then all possible trajectories are detected.
 
      @param count the maximum number of trajectories to be tracked
+
+     @param callSetup a flag specifying whether the setup() method must be call after setting the parameter.
   */
   void setTrajectoryCount( int count, bool callSetup = true );
   
@@ -135,7 +137,9 @@ public:
      
      The change is specified in fractional index units.
 
-     @param count the maximum changed allowed between a peak and an existing trajectory
+     @param change the maximum changed allowed between a peak and an existing trajectory
+
+     @param callSetup a flag specifying whether the setup() method must be call after setting the parameter.
   */
   void setMaximumFrequencyChange( Real change, bool callSetup = true );
 
@@ -152,6 +156,8 @@ public:
      to disappear and leave the slot for another possible trajectory.
      
      @param count the number of silent frames
+
+     @param callSetup a flag specifying whether the setup() method must be call after setting the parameter.
   */
   void setSilentFrameCount( int count, bool callSetup = true );
 
