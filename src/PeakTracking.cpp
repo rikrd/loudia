@@ -25,10 +25,10 @@
 using namespace std;
 using namespace Eigen;
 
-PeakTracking::PeakTracking(int numTrajectories, Real maxFreqBinChange, int silentFrames) :
-  _numTrajectories( numTrajectories ),
-  _maxFreqBinChange( maxFreqBinChange ),
-  _silentFrames( silentFrames )
+PeakTracking::PeakTracking(int trajectoryCount, Real maximumFrequencyChange, int silentFrameCount) :
+  _trajectoryCount( trajectoryCount ),
+  _maximumFrequencyChange( maximumFrequencyChange ),
+  _silentFrameCount( silentFrameCount )
 {
   DEBUG("PEAKTRACKING: Constructor");
   
@@ -57,11 +57,11 @@ void PeakTracking::process(const MatrixXC& fft,
   
   DEBUG("PEAKTRACKING: Processing");  
   
-  (*trajPositions).resize(fft.rows(), _numTrajectories);
-  (*trajMagnitudes).resize(fft.rows(), _numTrajectories);
+  (*trajPositions).resize(fft.rows(), _trajectoryCount);
+  (*trajMagnitudes).resize(fft.rows(), _trajectoryCount);
   
-  (*trajPositions) = MatrixXR::Constant(fft.rows(), _numTrajectories, -1.0);
-  (*trajMagnitudes) = MatrixXR::Constant(fft.rows(), _numTrajectories, -120.0);
+  (*trajPositions) = MatrixXR::Constant(fft.rows(), _trajectoryCount, -1.0);
+  (*trajMagnitudes) = MatrixXR::Constant(fft.rows(), _trajectoryCount, -120.0);
 
   MatrixXR currPeakPositions = peakPositions;
   MatrixXR currPeakMagnitudes = peakMagnitudes;
@@ -76,7 +76,7 @@ void PeakTracking::process(const MatrixXC& fft,
         int posRow, posCol;
         Real minFreqBinChange = (currPeakPositions.row(row).cwise() - _pastTrajPositions(row, i)).cwise().abs().minCoeff(&posRow, &posCol);
         
-        if (minFreqBinChange <= _maxFreqBinChange) {
+        if ( minFreqBinChange <= _maximumFrequencyChange ) {
           // A matching peak has been found
           DEBUG("PEAKTRACKING: Processing 'Matching peak: " << posCol << "' minFreqBinChange: " << minFreqBinChange);
           
@@ -93,7 +93,7 @@ void PeakTracking::process(const MatrixXC& fft,
           // No matching peak has been found
           DEBUG("PEAKTRACKING: Processing 'No matching peaks' minFreqBinChange: " << minFreqBinChange);
           
-          if ( _pastTrajMagnitudes(0, i) <= (-120.0 - _silentFrames) ) {
+          if ( _pastTrajMagnitudes(0, i) <= (-120.0 - _silentFrameCount) ) {
 
             // The trajectory has been silent too long (resetting it)
 
@@ -175,7 +175,33 @@ void PeakTracking::reset(){
   }
 
   Real inf = numeric_limits<Real>::infinity();
-  _pastTrajPositions = MatrixXR::Constant(1, _numTrajectories, inf);
-  _pastTrajMagnitudes = MatrixXR::Constant(1, _numTrajectories, inf);
+  _pastTrajPositions = MatrixXR::Constant(1, _trajectoryCount, inf);
+  _pastTrajMagnitudes = MatrixXR::Constant(1, _trajectoryCount, inf);
 }
 
+int PeakTracking::trajectoryCount() const {
+  return _trajectoryCount;
+}
+
+void PeakTracking::setTrajectoryCount( int count, bool callSetup ) {
+  _trajectoryCount = count;
+  if ( callSetup ) setup();  
+}
+
+Real PeakTracking::maximumFrequencyChange() const {
+  return _maximumFrequencyChange;
+}
+
+void PeakTracking::setMaximumFrequencyChange( Real change, bool callSetup ) {
+  _maximumFrequencyChange = change;
+  if ( callSetup ) setup();
+}
+
+int PeakTracking::silentFrameCount() const {
+  return _silentFrameCount;
+}
+
+void PeakTracking::setSilentFrameCount( int count, bool callSetup ) {
+  _silentFrameCount = count;
+  if ( callSetup ) setup();  
+}

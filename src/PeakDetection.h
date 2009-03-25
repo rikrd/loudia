@@ -166,7 +166,7 @@ public:
      
      By default it is 0.0.
   */
-  int minimumPeakContrast() const;
+  Real minimumPeakContrast() const;
 
   /**
      Specifies the minimum contrast of a peak for it to be detected.

@@ -204,7 +204,7 @@ void PeakDetection::setMinimumPeakWidth( int width, bool callSetup ) {
   if ( callSetup ) setup();
 }
 
-int PeakDetection::minimumPeakContrast() const {
+Real PeakDetection::minimumPeakContrast() const {
   return _minimumPeakContrast;
 }
 
