@@ -50,7 +50,7 @@
   * The Phase deviation, Weighted phase deviation, Normalized weighted phase deviation, Complex domain and 
   * Rectified complex domain methods require the 2 past FFT frames.
   * Therefore if any of these methods are specified, the process() method would require an input matrix of at least 3 rows 
-  * and will output ODF values for all but the first 2 rows.
+  * and will output ODF values for all the rows but the first two.
   *
   * The Spectral flux method requires the past FFT frame.
   * Therefore if this method is used, the process() method would require an input matrix of at least 2 rows 
@@ -138,6 +138,21 @@ public:
 
   /**
      Specifies the @a method for calculating the spectral onset detection function.
+     
+     Note that PHASE_DEVIATION, WEIGHTED_PHASE_DEVIATION, NORM_WEIGHTED_PHASE_DEVIATION, 
+     COMPLEX_DOMAIN and RECTIFIED_COMPLEX_DOMAIN methods require at least 3 FFT frames, and therefore
+     the input matrix to the process() method must have at least 3 rows.  In these cases
+     the output matrix will be 2 rows smaller than the input, since it only calculates ODF values
+     for all the rows but the first two.
+
+     Note that SPECTRAL_FLUX method requires at least 2 FFT frames, and therefore
+     the input matrix to the process() method must have at least 2 rows.  In this case
+     the output matrix will be 1 row smaller than the input, since it only calculates ODF values
+     for all the rows but the first.
+     
+     @param method the method used for calculating the spectral onset detection function.
+     
+     @param callSetup a flag specifying whether the setup() method must be call after setting the parameter.
   */
   void setOdfMethod( ODFMethod method, bool callSetup = true );
 
