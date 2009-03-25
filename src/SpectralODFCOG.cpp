@@ -31,7 +31,7 @@ SpectralODFCOG::SpectralODFCOG(int fftSize, int peakCount, int bandwidth) :
   _fftSize( fftSize ),
   _peakCount( peakCount ),
   _bandwidth( bandwidth ),
-  _peaker( peakCount, PeakDetect::BYMAGNITUDE, bandwidth ),
+  _peaker( peakCount, PeakDetection::BYMAGNITUDE, bandwidth ),
   _peakCoger( fftSize, bandwidth )
 {
   

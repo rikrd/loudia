@@ -22,8 +22,8 @@
 #include "Typedefs.h"
 #include "Debug.h"
 
-#include "PeakDetect.h"
-#include "PeakInterpolate.h"
+#include "PeakDetection.h"
+#include "PeakInterpolation.h"
 #include "Autocorrelation.h"
 
 class PitchACF {
@@ -33,8 +33,8 @@ protected:
 
   Real _samplerate;
 
-  PeakDetect _peak;
-  PeakInterpolate _peakInterp;
+  PeakDetection _peak;
+  PeakInterpolation _peakInterp;
   Autocorrelation _acorr;
 
   MatrixXR _acorred;

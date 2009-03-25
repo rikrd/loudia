@@ -16,8 +16,8 @@
 ** Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */                                                                          
 
-#ifndef PEAKINTERPOLATECOMPLEX_H
-#define PEAKINTERPOLATECOMPLEX_H
+#ifndef PEAKINTERPOLATIONCOMPLEX_H
+#define PEAKINTERPOLATIONCOMPLEX_H
 
 #include "Typedefs.h"
 #include "Debug.h"
@@ -25,7 +25,7 @@
 #include "Utils.h"
 
 /**
- * @class PeakInterpolateComplex
+ * @class PeakInterpolationComplex
  *
  * @brief Algorithm to interpolate peaks in a vector of Complex values.
  *
@@ -42,9 +42,9 @@
  *
  * @author Ricard Marxer
  *
- * @sa PeakDetect, PeakDetectComplex, PeakInterpolate, PeakInterpolateComplex, PeakContinue, PeakContinueComplex
+ * @sa PeakDetection, PeakDetectionComplex, PeakInterpolation, PeakInterpolationComplex, PeakTracking, PeakTrackingComplex
  */
-class PeakInterpolateComplex {
+class PeakInterpolationComplex {
 protected:
   // Internal parameters
     
@@ -56,12 +56,12 @@ public:
   /**
      Constructs a peak interpolation object.
   */
-  PeakInterpolateComplex();
+  PeakInterpolationComplex();
 
   /**
      Destroys the algorithm and frees its resources.
   */
-  ~PeakInterpolateComplex();
+  ~PeakInterpolationComplex();
 
   void setup();
   void reset();
@@ -112,4 +112,4 @@ public:
 
 };
 
-#endif  /* PEAKINTERPOLATECOMPLEX_H */
+#endif  /* PEAKINTERPOLATIONCOMPLEX_H */

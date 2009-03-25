@@ -60,9 +60,9 @@ if 'peaki_mags' in all_processes:
     maxFreqBinChange = 1 * fftSize / frameSize
     windowType = ricaudio.Window.HAMMING
     
-    peaker = ricaudio.PeakDetectComplex( maxPeakCount, ricaudio.PeakDetectComplex.BYMAGNITUDE, minPeakWidth )
-    peakInterp = ricaudio.PeakInterpolateComplex( )
-    tracker = ricaudio.PeakContinue( maxTrajCount, maxFreqBinChange, silentFrames )
+    peaker = ricaudio.PeakDetectionComplex( maxPeakCount, ricaudio.PeakDetectionComplex.BYMAGNITUDE, minPeakWidth )
+    peakInterp = ricaudio.PeakInterpolationComplex( )
+    tracker = ricaudio.PeakTracking( maxTrajCount, maxFreqBinChange, silentFrames )
 
 trajsLocs = []
 trajsMags = []

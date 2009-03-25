@@ -22,7 +22,7 @@
 #include <algorithm>
 #include <vector>
 
-#include "PeakDetectComplex.h"
+#include "PeakDetectionComplex.h"
 
 using namespace std;
 using namespace Eigen;
@@ -47,9 +47,9 @@ struct byPositionComp{
   bool operator() (peak i, peak j) { return ( i.pos < j.pos ); }
 } byPositionComplex;
 
-PeakDetectComplex::PeakDetectComplex(int peakCount, SortMethod sortMethod, int minimumPeakWidth, int candidateCount, Real minimumPeakContrast)
+PeakDetectionComplex::PeakDetectionComplex(int peakCount, SortMethod sortMethod, int minimumPeakWidth, int candidateCount, Real minimumPeakContrast)
 {
-  DEBUG("PEAKDETECT: Constructor peakCount: " << peakCount 
+  DEBUG("PEAKDETECTION: Constructor peakCount: " << peakCount 
         << ", minimumPeakWidth: " << minimumPeakWidth
         << ", candidateCount: " << candidateCount);
   
@@ -61,30 +61,30 @@ PeakDetectComplex::PeakDetectComplex(int peakCount, SortMethod sortMethod, int m
   
   setup();
 
-  DEBUG("PEAKDETECTCOMPLEX: Constructed");
+  DEBUG("PEAKDETECTIONCOMPLEX: Constructed");
 }
 
-PeakDetectComplex::~PeakDetectComplex() {
+PeakDetectionComplex::~PeakDetectionComplex() {
 }
 
 
-void PeakDetectComplex::setup(){
+void PeakDetectionComplex::setup(){
   // Prepare the buffers
-  DEBUG("PEAKDETECTCOMPLEX: Setting up...");
+  DEBUG("PEAKDETECTIONCOMPLEX: Setting up...");
 
   reset();
 
-  DEBUG("PEAKDETECTCOMPLEX: Finished set up...");
+  DEBUG("PEAKDETECTIONCOMPLEX: Finished set up...");
 }
 
 
-void PeakDetectComplex::process(const MatrixXC& frames, 
+void PeakDetectionComplex::process(const MatrixXC& frames, 
                                 MatrixXR* peakPositions, MatrixXR* peakMagnitudes, MatrixXR* peakPhases){
-  DEBUG("PEAKDETECTCOMPLEX: Processing");
+  DEBUG("PEAKDETECTIONCOMPLEX: Processing");
   
   const int rows = frames.rows();
   
-  DEBUG("PEAKDETECTCOMPLEX: Processing, frames.shape: (" << rows << ", " << frames.cols() << ")");
+  DEBUG("PEAKDETECTIONCOMPLEX: Processing, frames.shape: (" << rows << ", " << frames.cols() << ")");
 
   (*peakPositions).resize(rows, _peakCount);
   (*peakPositions).setConstant(-1);
@@ -98,7 +98,7 @@ void PeakDetectComplex::process(const MatrixXC& frames,
   _magnitudes = frames.cwise().abs();
   _phases = frames.cwise().angle();
 
-  DEBUG("PEAKDETECTCOMPLEX: Processing, _magnitudes.shape: (" << rows << ", " << _magnitudes.cols() << ")");
+  DEBUG("PEAKDETECTIONCOMPLEX: Processing, _magnitudes.shape: (" << rows << ", " << _magnitudes.cols() << ")");
   
   int maxRow;
   int maxCol;
@@ -173,54 +173,54 @@ void PeakDetectComplex::process(const MatrixXC& frames,
     } 
   }
 
-  DEBUG("PEAKDETECTCOMPLEX: Finished Processing");
+  DEBUG("PEAKDETECTIONCOMPLEX: Finished Processing");
 }
 
-void PeakDetectComplex::reset(){
+void PeakDetectionComplex::reset(){
   // Initial values
 }
 
-int PeakDetectComplex::peakCount() const {
+int PeakDetectionComplex::peakCount() const {
   return _peakCount;
 }
 
-void PeakDetectComplex::setPeakCount( int count, bool callSetup ) {
+void PeakDetectionComplex::setPeakCount( int count, bool callSetup ) {
   _peakCount = count;
   if ( callSetup ) setup();  
 }
 
-int PeakDetectComplex::candidateCount() const {
+int PeakDetectionComplex::candidateCount() const {
   return _candidateCount;
 }
 
-void PeakDetectComplex::setCandidateCount( int count, bool callSetup ) {
+void PeakDetectionComplex::setCandidateCount( int count, bool callSetup ) {
   _candidateCount = count;
   if ( callSetup ) setup();  
 }
 
-int PeakDetectComplex::minimumPeakWidth() const {
+int PeakDetectionComplex::minimumPeakWidth() const {
   return _minimumPeakWidth;
 }
 
-void PeakDetectComplex::setMinimumPeakWidth( int width, bool callSetup ) {
+void PeakDetectionComplex::setMinimumPeakWidth( int width, bool callSetup ) {
   _minimumPeakWidth = width;
   if ( callSetup ) setup();
 }
 
-int PeakDetectComplex::minimumPeakContrast() const {
+int PeakDetectionComplex::minimumPeakContrast() const {
   return _minimumPeakContrast;
 }
 
-void PeakDetectComplex::setMinimumPeakContrast( Real contrast, bool callSetup ) {
+void PeakDetectionComplex::setMinimumPeakContrast( Real contrast, bool callSetup ) {
   _minimumPeakContrast = contrast;
   if ( callSetup ) setup();
 }
 
-PeakDetectComplex::SortMethod PeakDetectComplex::sortMethod() const {
+PeakDetectionComplex::SortMethod PeakDetectionComplex::sortMethod() const {
   return _sortMethod;
 }
 
-void PeakDetectComplex::setSortMethod( SortMethod method, bool callSetup ) {
+void PeakDetectionComplex::setSortMethod( SortMethod method, bool callSetup ) {
   _sortMethod = method;
   if ( callSetup ) setup();  
 }

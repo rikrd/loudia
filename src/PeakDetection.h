@@ -16,8 +16,8 @@
 ** Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */                                                                          
 
-#ifndef PEAKDETECTCOMPLEX_H
-#define PEAKDETECTCOMPLEX_H
+#ifndef PEAKDETECTION_H
+#define PEAKDETECTION_H
 
 #include "Typedefs.h"
 #include "Debug.h"
@@ -25,11 +25,11 @@
 #include <limits>
 
 /**
-  * @class PeakDetectComplex
+  * @class PeakDetection
   *
-  * @brief Algorithm to find peaks in a vector of Complex values.
+  * @brief Algorithm to find peaks in a vector of Real values.
   *
-  * This class represents an object to find peaks in a vector of Complex values.
+  * This class represents an object to find peaks in a vector of Real values.
   * The algorithm finds a maximum number of peaks and returns 
   * the indices of the peaks and the values of the peaks in
   * separate matrices.
@@ -41,7 +41,7 @@
   *
   * When sorting by position it may be interesting to specify a number of candidates, in order
   * to perform a preselection of the highest valued peaks before sorting.  This can be specified
-  * using setCandidateCount
+  * using setCandidateCount().
   *
   * The implementation consists in running a sliding windows along the vector in search of 
   * indices which whose value is the maximum of the window.  The size of the window
@@ -50,9 +50,9 @@
   *
   * @author Ricard Marxer
   *
-  * @sa PeakDetect, PeakDetectComplex, PeakInterpolate, PeakInterpolateComplex, PeakContinue, PeakContinueComplex
+  * @sa PeakDetection, PeakDetectionComplex, PeakInterpolation, PeakInterpolationComplex, PeakTracking, PeakTrackingComplex
   */
-class PeakDetectComplex {
+class PeakDetection {
 public:
   /**
     @enum SortMethod
@@ -77,18 +77,17 @@ protected:
 
   // Internal variables
   MatrixXR _magnitudes;
-  MatrixXR _phases;
 
 public:
   /**
      Constructs a peak detection object with the given @a peakCount, @a sort method, @a minimumPeakWidth, @a candidateCount and @a minimumPeakContrast parameters given.
   */
-  PeakDetectComplex(int peakCount = 1024 / 3, SortMethod sort = BYMAGNITUDE, int minimumPeakWidth = 3, int candidateCount = -1, Real minimumPeakContrast = 0);
+  PeakDetection(int peakCount = 1024 / 3, SortMethod sort = BYMAGNITUDE, int minimumPeakWidth = 3, int candidateCount = -1, Real minimumPeakContrast = 0);
 
   /**
      Destroys the algorithm and frees its resources.
   */
-  ~PeakDetectComplex();
+  ~PeakDetection();
 
   void reset();
   void setup();
@@ -98,15 +97,12 @@ public:
      puts the resulting peak indices and magnitudes in the rows of @a peakPositions and 
      @a peakMagnitudes respectively.
      
-     @param frames matrix of Complex values.
+     @param frames matrix of Real values.
      
      @param peakPositions pointer to a matrix of Real values (but always Integers) for the peak indices.
      The matrix should have the same number of rows as @a frames and peakCount columns. 
 
      @param peakMagnitudes pointer to a matrix of Real values for the peak magnitudes.
-     The matrix should have the same number of rows as @a frames and peakCount columns. 
-
-     @param peakPhases pointer to a matrix of Real values for the peak phases.
      The matrix should have the same number of rows as @a frames and peakCount columns. 
 
      Note that if the count of peaks detect is lower than peakCount some values
@@ -116,8 +112,8 @@ public:
      Note that if the output matrices are not of the required size they will be resized, 
      reallocating a new memory space if necessary.
   */
-  void process(const MatrixXC& frames,
-               MatrixXR* peakPositions, MatrixXR* peakMagnitudes, MatrixXR* peakPhases);
+  void process(const MatrixXR& frames,
+               MatrixXR* peakPositions, MatrixXR* peakMagnitudes);
 
   /**
      Returns the maximum number of peaks to be detected by the algorithm.
@@ -193,4 +189,4 @@ public:
   void setSortMethod( SortMethod method, bool callSetup = true );
 };
 
-#endif  /* PEAKDETECT_H */
+#endif  /* PEAKDETECTION_H */

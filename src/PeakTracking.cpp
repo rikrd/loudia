@@ -19,46 +19,43 @@
 #include "Typedefs.h"
 #include "Debug.h"
 
-#include "PeakContinue.h"
+#include "PeakTracking.h"
 #include <limits>
 
 using namespace std;
 using namespace Eigen;
 
-PeakContinue::PeakContinue(int numTrajectories, Real maxFreqBinChange, int silentFrames) :
+PeakTracking::PeakTracking(int numTrajectories, Real maxFreqBinChange, int silentFrames) :
   _numTrajectories( numTrajectories ),
   _maxFreqBinChange( maxFreqBinChange ),
   _silentFrames( silentFrames )
 {
-  DEBUG("PEAKCONTINUE: Constructor");
+  DEBUG("PEAKTRACKING: Constructor");
   
   setup();
   
-  DEBUG("PEAKCONTINUE: Constructed");
+  DEBUG("PEAKTRACKING: Constructed");
 }
 
-PeakContinue::~PeakContinue() {
-  // TODO: Here we should free the buffers
-  // but I don't know how to do that with MatrixXR and MatrixXR
-  // I'm sure Nico will...
+PeakTracking::~PeakTracking() {
 }
 
 
-void PeakContinue::setup(){
+void PeakTracking::setup(){
   // Prepare the buffers
-  DEBUG("PEAKCONTINUE: Setting up...");
+  DEBUG("PEAKTRACKING: Setting up...");
   
   reset();
   
-  DEBUG("PEAKCONTINUE: Finished set up...");
+  DEBUG("PEAKTRACKING: Finished set up...");
 }
 
 
-void PeakContinue::process(const MatrixXC& fft,
+void PeakTracking::process(const MatrixXC& fft,
                            const MatrixXR& peakPositions, const MatrixXR& peakMagnitudes,
                            MatrixXR* trajPositions, MatrixXR* trajMagnitudes){
   
-  DEBUG("PEAKCONTINUE: Processing");  
+  DEBUG("PEAKTRACKING: Processing");  
   
   (*trajPositions).resize(fft.rows(), _numTrajectories);
   (*trajMagnitudes).resize(fft.rows(), _numTrajectories);
@@ -81,7 +78,7 @@ void PeakContinue::process(const MatrixXC& fft,
         
         if (minFreqBinChange <= _maxFreqBinChange) {
           // A matching peak has been found
-          DEBUG("PEAKCONTINUE: Processing 'Matching peak: " << posCol << "' minFreqBinChange: " << minFreqBinChange);
+          DEBUG("PEAKTRACKING: Processing 'Matching peak: " << posCol << "' minFreqBinChange: " << minFreqBinChange);
           
           (*trajPositions)(row, i) = currPeakPositions(row, posCol);
           (*trajMagnitudes)(row, i) = currPeakMagnitudes(row, posCol);
@@ -94,7 +91,7 @@ void PeakContinue::process(const MatrixXC& fft,
           
         } else {
           // No matching peak has been found
-          DEBUG("PEAKCONTINUE: Processing 'No matching peaks' minFreqBinChange: " << minFreqBinChange);
+          DEBUG("PEAKTRACKING: Processing 'No matching peaks' minFreqBinChange: " << minFreqBinChange);
           
           if ( _pastTrajMagnitudes(0, i) <= (-120.0 - _silentFrames) ) {
 
@@ -136,16 +133,16 @@ void PeakContinue::process(const MatrixXC& fft,
                                         row);
         
         if (! created ){
-          DEBUG("PEAKCONTINUE: Processing the trajectory could not be created");
+          DEBUG("PEAKTRACKING: Processing the trajectory could not be created");
         }
       }  
     }
   }
   
-  DEBUG("PEAKCONTINUE: Finished Processing");
+  DEBUG("PEAKTRACKING: Finished Processing");
 }
 
-bool PeakContinue::createTrajectory(Real peakPos, Real peakMag,
+bool PeakTracking::createTrajectory(Real peakPos, Real peakMag,
                                     MatrixXR* pastTrajPositions, MatrixXR* pastTrajMagnitudes,
                                     MatrixXR* trajPositions, MatrixXR* trajMagnitudes,
                                     int row) {
@@ -171,7 +168,7 @@ bool PeakContinue::createTrajectory(Real peakPos, Real peakMag,
   return false;
 }
 
-void PeakContinue::reset(){
+void PeakTracking::reset(){
   // Initial values
   if ( !numeric_limits<Real>::has_infinity ) {
     // Throw PlatformError infinity not supported

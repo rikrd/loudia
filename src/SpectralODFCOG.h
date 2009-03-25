@@ -23,7 +23,7 @@
 #include "Debug.h"
 
 #include "SpectralODFBase.h"
-#include "PeakDetect.h"
+#include "PeakDetection.h"
 #include "PeakCOG.h"
 
 class SpectralODFCOG : public SpectralODFBase {
@@ -43,7 +43,7 @@ protected:
 
   MatrixXR _cog;
 
-  PeakDetect _peaker;
+  PeakDetection _peaker;
   PeakCOG _peakCoger;
   
 public:

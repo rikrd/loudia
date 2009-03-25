@@ -28,7 +28,7 @@ bandwidth = 8 * fftSize / frameSize
 peakCount = 4
 window = ricaudio.Window(frameSize, ricaudio.Window.BLACKMANHARRIS)
 fft = ricaudio.FFT(fftSize)
-peaks = ricaudio.PeakDetectComplex(peakCount, bandwidth)
+peaks = ricaudio.PeakDetectionComplex(peakCount, bandwidth)
 cogs = ricaudio.PeakCOG(fftSize, bandwidth)
 
 peakCogs = []

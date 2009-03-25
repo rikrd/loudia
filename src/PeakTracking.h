@@ -16,13 +16,13 @@
 ** Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */                                                                          
 
-#ifndef PEAKCONTINUE_H
-#define PEAKCONTINUE_H
+#ifndef PEAKTRACKING_H
+#define PEAKTRACKING_H
 
 #include "Typedefs.h"
 #include "Debug.h"
 
-class PeakContinue {
+class PeakTracking {
 protected:
   // Internal parameters
   int _numTrajectories;
@@ -40,9 +40,9 @@ protected:
     
 
 public:
-  PeakContinue(int numTrajectories, Real maxFreqBinChange, int silentFrames);
+  PeakTracking(int numTrajectories, Real maxFreqBinChange, int silentFrames);
 
-  ~PeakContinue();
+  ~PeakTracking();
 
   void setup();
 
@@ -54,4 +54,4 @@ public:
 
 };
 
-#endif  /* PEAKCONTINUE_H */
+#endif  /* PEAKTRACKING_H */

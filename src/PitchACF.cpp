@@ -29,7 +29,7 @@ PitchACF::PitchACF(int fftSize, Real samplerate, int minPeakWidth, int peakCandi
   _fftSize( fftSize ),
   _halfSize( ( _fftSize / 2 ) + 1 ),
   _samplerate( samplerate ),
-  _peak(1, PeakDetect::BYMAGNITUDE, minPeakWidth, peakCandidateCount),
+  _peak(1, PeakDetection::BYMAGNITUDE, minPeakWidth, peakCandidateCount),
   _peakInterp(),
   _acorr(_halfSize, _halfSize)
 {

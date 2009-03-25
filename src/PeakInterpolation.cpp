@@ -19,51 +19,49 @@
 #include "Typedefs.h"
 #include "Debug.h"
 
-#include "PeakInterpolateComplex.h"
+#include "PeakInterpolation.h"
 
 using namespace std;
 using namespace Eigen;
 
-PeakInterpolateComplex::PeakInterpolateComplex() {
-  DEBUG("PEAKINTERPOLATECOMPLEX: Constructor");
+PeakInterpolation::PeakInterpolation() {
+  DEBUG("PEAKINTERPOLATION: Constructor");
   
   setup();
 
-  DEBUG("PEAKINTERPOLATECOMPLEX: Constructed");
+  DEBUG("PEAKINTERPOLATION: Constructed");
 }
 
-PeakInterpolateComplex::~PeakInterpolateComplex() {
+PeakInterpolation::~PeakInterpolation() {
   // TODO: Here we should free the buffers
   // but I don't know how to do that with MatrixXR and MatrixXR
   // I'm sure Nico will...
 }
 
 
-void PeakInterpolateComplex::setup(){
+void PeakInterpolation::setup(){
   // Prepare the buffers
-  DEBUG("PEAKINTERPOLATECOMPLEX: Setting up...");
+  DEBUG("PEAKINTERPOLATION: Setting up...");
 
   reset();
 
-  DEBUG("PEAKINTERPOLATECOMPLEX: Finished set up...");
+  DEBUG("PEAKINTERPOLATION: Finished set up...");
 }
 
 
-void PeakInterpolateComplex::process(const MatrixXC& input,
-                              const MatrixXR& peakPositions, const MatrixXR& peakMagnitudes, const MatrixXR& peakPhases,
-                              MatrixXR* peakPositionsInterp, MatrixXR* peakMagnitudesInterp, MatrixXR* peakPhasesInterp) {
+void PeakInterpolation::process(const MatrixXR& input,
+                              const MatrixXR& peakPositions, const MatrixXR& peakMagnitudes,
+                              MatrixXR* peakPositionsInterp, MatrixXR* peakMagnitudesInterp) {
   
-  DEBUG("PEAKINTERPOLATECOMPLEX: Processing");  
-  Real leftMag, leftPhase;
-  Real rightMag, rightPhase;
+  DEBUG("PEAKINTERPOLATION: Processing");  
+  Real leftMag;
+  Real rightMag;
   Real mag, interpFactor;
   
   (*peakPositionsInterp).resize(input.rows(), peakPositions.cols());
   (*peakMagnitudesInterp).resize(input.rows(), peakPositions.cols());
-  (*peakPhasesInterp).resize(input.rows(), peakPositions.cols());
   
   _magnitudes = input.cwise().abs();
-  unwrap(input.cwise().angle(), &_phases);
   
   for ( int row = 0 ; row < _magnitudes.rows(); row++ ) {
   
@@ -72,8 +70,7 @@ void PeakInterpolateComplex::process(const MatrixXC& input,
       // If the position is -1 do nothing since it means it is nothing
       if( peakPositions(row, i) == -1 ){
 
-        (*peakMagnitudesInterp)(row, i) = peakMagnitudes(row, i);         
-        (*peakPhasesInterp)(row, i) = peakPhases(row, i); 
+        (*peakMagnitudesInterp)(row, i) = peakMagnitudes(row, i);
         (*peakPositionsInterp)(row, i) = peakPositions(row, i);
         
       } else {
@@ -110,25 +107,14 @@ void PeakInterpolateComplex::process(const MatrixXC& input,
 
         // Calculate the interpolated magnitude in dB
         (*peakMagnitudesInterp)(row, i) = mag - 0.25 * (leftMag - rightMag) * interpFactor;
-
-        // Calculate the interpolated phase
-        leftPhase = _phases(row, (int)floor((*peakPositionsInterp)(row, i)));
-        rightPhase = _phases(row, (int)floor((*peakPositionsInterp)(row, i)) + 1);
-        
-        interpFactor = (interpFactor >= 0) ? interpFactor : interpFactor + 1;
-        
-        (*peakPhasesInterp)(row, i) = (leftPhase + interpFactor * (rightPhase - leftPhase));
       }
     }
   }
-
-  // Calculate the princarg() of the phase: remap to (-pi pi]
-  (*peakPhasesInterp) = ((*peakPhasesInterp).cwise() != -1).select(((*peakPhasesInterp).cwise() + M_PI).cwise().modN(-2.0 * M_PI).cwise() + M_PI, (*peakPhasesInterp));
   
-  DEBUG("PEAKINTERPOLATECOMPLEX: Finished Processing");
+  DEBUG("PEAKINTERPOLATION: Finished Processing");
 }
 
-void PeakInterpolateComplex::reset(){
+void PeakInterpolation::reset(){
   // Initial values
 }
 

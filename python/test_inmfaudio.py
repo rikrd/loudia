@@ -38,8 +38,8 @@ onsets = get_onsets(filename, windowHop, sr)
 
 if estimatePitch:
    acorrw = ricaudio.Window(halfSize, ricaudio.Window.HAMMING)
-   peaker = ricaudio.PeakDetect(1, 5, 0, False)
-   peakeri = ricaudio.PeakInterpolate()
+   peaker = ricaudio.PeakDetection(1, 5, 0, False)
+   peakeri = ricaudio.PeakInterpolation()
    freqs = []
 
 components = []

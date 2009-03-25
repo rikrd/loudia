@@ -48,7 +48,7 @@
   *
   * @author Ricard Marxer
   *
-  * @sa MelBands, Bands, PeakDetect
+  * @sa MelBands, Bands, PeakDetection
   */
 class SpectralWhitening {
 protected:
