@@ -22,7 +22,7 @@
 #include "OnsetComplex.h"
 #include "Window.h"
 #include "FFT.h"
-#include "ODFComplex.h"
+#include "SpectralODFComplex.h"
 
 #include "Utils.h"
 

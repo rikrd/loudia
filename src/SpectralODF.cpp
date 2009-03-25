@@ -33,7 +33,7 @@ using namespace std;
 using namespace Eigen;
 
 SpectralODF::SpectralODF(int fftSize, SpectralODFType odfType) :
-  _fftSize(fftSize),
+  SpectralODFBase(),
   _odfType(odfType)
 {
   switch(_odfType) {

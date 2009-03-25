@@ -21,9 +21,9 @@ plotSize = fftSize / 8
 stream, samplerate, nframes, nchannels, loader = get_framer_audio(filename, frameSize, frameStep)
 
 
-# Take all the ODF availables
-odfNames = [(getattr(ricaudio.ODF, i), i) for i in dir(ricaudio.ODF)
-            if type(getattr(ricaudio.ODF, i)) == int]
+# Take all the SpectralODF availables
+odfNames = [(getattr(ricaudio.SpectralODF, i), i) for i in dir(ricaudio.SpectralODF)
+            if type(getattr(ricaudio.SpectralODF, i)) == int]
 
 odfNames.sort()
 
@@ -74,9 +74,9 @@ ax.set_yticklabels([])
 ax.set_xlim([0, frameCount - 1])
 
     
-# Create the ODF processors and process
+# Create the SpectralODF processors and process
 for i, (odfType, odfName) in enumerate(odfNames):
-    odf = ricaudio.ODF( fftSize, odfType )
+    odf = ricaudio.SpectralODF( fftSize, odfType )
 
     print 'Processing: %s...' % odfName
     odfValues = odf.process( ffts )
