@@ -32,11 +32,25 @@
 using namespace std;
 using namespace Eigen;
 
-SpectralODF::SpectralODF(int fftSize, SpectralODFType odfType) :
+SpectralODF::SpectralODF(int fftSize, ODFMethod odfMethod) :
   SpectralODFBase(),
-  _odfType(odfType)
+  _odf( NULL )
 {
-  switch(_odfType) {
+  setFftSize( fftSize, false );
+  setOdfMethod( odfMethod, false );
+
+  setup();
+}
+
+SpectralODF::~SpectralODF() {
+  if ( _odf ) delete _odf;  
+}
+
+void SpectralODF::setup() {
+
+  if ( _odf ) delete _odf;
+
+  switch( _odfMethod ) {
 
   case FLUX:
     _odf = new SpectralODFFlux(_fftSize);
@@ -75,14 +89,7 @@ SpectralODF::SpectralODF(int fftSize, SpectralODFType odfType) :
     break;
 
   }
-  
-}
 
-SpectralODF::~SpectralODF() {
-  delete _odf;  
-}
-
-void SpectralODF::setup() {
   _odf->setup();
 }
 
@@ -92,4 +99,13 @@ void SpectralODF::process(const MatrixXC& fft, MatrixXR* odfValue) {
 
 void SpectralODF::reset() {
   _odf->reset();
+}
+
+SpectralODF::ODFMethod SpectralODF::odfMethod() const{
+  return _odfMethod;
+}
+
+void SpectralODF::setOdfMethod( ODFMethod method, bool callSetup ) {
+  _odfMethod = method;
+  if ( callSetup ) setup();
 }
