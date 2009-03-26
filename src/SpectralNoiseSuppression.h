@@ -26,6 +26,30 @@
 
 #include "Bands.h"
 
+/**
+  * @class SpectralNoiseSuppression
+  *
+  * @brief Algorithm to remove the non-harmonic part of the spectrums magnitudes represented as vectors of Real values.
+  *
+  * This class represents an object to perform spectral noise suppresion on vectors 
+  * of Real values.  Which is a useful technique to keep only the peaks of a spectrum magnitude 
+  * in harmonic sounds.
+  *
+  * This implementation consists in estimating the spectral noise by performing a 
+  * moving average on the power warped spectrum magnitude using varying bandwidths.
+  * The spectral noise is then removed from the original spectrum, clipping the result to zero to avoid
+  * negative values. 
+  *
+  * The samplerate and FFT size of the input spectrum are specified using setSamplerate() and
+  * setFftSize().
+  *
+  * The frequency limits of the Mel scale mapping are specified using setLowFrequency() and
+  * setHighFrequency().
+  *
+  * @author Ricard Marxer
+  *
+  * @sa MelBands, Bands, PeakDetection
+  */
 class SpectralNoiseSuppression {
 protected:
   int _fftSize;
@@ -42,14 +66,49 @@ protected:
   Bands _bands;
 
 public:
+  /**
+     Constructs a spectral noise suppression object with the specified @a lowFrequency, @a highFrequency, 
+     @a samplerate and @a fftSize settings.
+     
+     @param lowFrequency low frequency used for the magnitude warping function,
+     must be greater than zero 0 and lower than half the samplerate.
+     
+     @param highFrequency high frequency used for the magnitude warping function,
+     must be greater than zero 0 and lower than half the samplerate.
+ 
+     @param samplerate samplerate frequency of the input signal.
+
+     @param fftSize size of the FFT.
+  
+  */
   SpectralNoiseSuppression( int fftSize = 1024, Real lowFrequency = 50.0, Real highFrequency = 6000.0, Real samplerate = 44100.0 );
 
+  /**
+     Destroys the algorithm and frees its resources.
+  */
   ~SpectralNoiseSuppression();
 
   void setup();
   void reset();
 
-  void process( const MatrixXR& spectrum, MatrixXR* noise, MatrixXR* result );
+  /**
+     Performs the estimation and suppression of the noise on each of the rows of @a spectrums.
+     Puts the resulting noise spectrums and noise-suppressed spectrums in the rows of @a whitened.
+     
+     @param spectrums matrix of Real values representing one spectrum magnitude per row.
+     The number of columns of @a spectrum must be equal to the fftSize / 2 + 1 where 
+     fftSize is specified using setFftSize().
+     
+     @param noises pointer to a matrix of Real values representing one noise spectrum per row.
+     The matrix should have the same number of rows and columns as @a spectrums.
+
+     @param suppressed pointer to a matrix of Real values representing one noise-suppressed spectrum per row.
+     The matrix should have the same number of rows and columns as @a spectrums.
+     
+     Note that if the output matrices are not of the required sizes they will be resized, 
+     reallocating a new memory space if necessary.
+  */
+  void process( const MatrixXR& spectrums, MatrixXR* noises, MatrixXR* suppressed );
 
   /**
      Return the low frequency of the spectral whitening.

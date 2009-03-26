@@ -110,7 +110,7 @@ public:
      fftSize is specified using setFftSize().
      
      @param whitened pointer to a matrix of Real values representing one whitened spectrum per row.
-     The matrix should have the same number of rows and columns as @a whitened.
+     The matrix should have the same number of rows and columns as @a spectrums.
      
      Note that if the output matrices are not of the required sizes they will be resized, 
      reallocating a new memory space if necessary.
