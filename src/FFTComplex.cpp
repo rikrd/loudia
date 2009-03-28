@@ -25,9 +25,9 @@ using namespace std;
 using namespace Eigen;
 
 FFTComplex::FFTComplex(int frameSize, int fftSize, bool zeroPhase) :
-  _frameSize( frameSize ),
-  _fftSize( fftSize ),
-  _zeroPhase( zeroPhase )
+  _in( NULL ),
+  _out( NULL ),
+  _fftplan( NULL )
 {
   DEBUG("FFTComplex: Constructor frameSize: " << frameSize 
         << ", fftSize: " << fftSize 
@@ -36,6 +36,10 @@ FFTComplex::FFTComplex(int frameSize, int fftSize, bool zeroPhase) :
   if(_fftSize < _frameSize){
     // Throw exception, the FFTComplex size must be greater or equal than the input size
   }
+
+  setFrameSize( frameSize, false );
+  setFftSize( fftSize, false );
+  setZeroPhase( zeroPhase, false );
   
   setup();
   
@@ -43,13 +47,43 @@ FFTComplex::FFTComplex(int frameSize, int fftSize, bool zeroPhase) :
 }
 
 FFTComplex::~FFTComplex(){
-  fftwf_destroy_plan( _fftplan );
-  fftwf_free( _in );
-  fftwf_free( _out );
+  DEBUG("FFT: Destroying...");
+  if ( _fftplan ) {
+    DEBUG("FFT: Destroying plan");
+    fftwf_destroy_plan( _fftplan );
+  }
+
+  if ( _in ) {
+    DEBUG("FFT: Destroying in");
+    fftwf_free( _in ); 
+  }
+
+  if ( _out ) {
+    DEBUG("FFT: Destroying out");
+    fftwf_free( _out );
+  }
+  DEBUG("FFT: Destroyed out");
 }
 
 void FFTComplex::setup(){
   DEBUG("FFTComplex: Setting up...");
+
+  // Free the ressources if needed 
+  // before setting them up
+  if ( _fftplan ) {
+    DEBUG("FFT: Destroying plan");
+    fftwf_destroy_plan( _fftplan );
+  }
+
+  if ( _in ) {
+    DEBUG("FFT: Destroying in");
+    fftwf_free( _in ); 
+  }
+
+  if ( _out ) {
+    DEBUG("FFT: Destroying out");
+    fftwf_free( _out );
+  }
   
   _in = (fftwf_complex*) fftwf_malloc(sizeof(fftwf_complex) * _fftSize);
   _out = (fftwf_complex*) fftwf_malloc(sizeof(fftwf_complex) * _fftSize);
@@ -105,10 +139,29 @@ void FFTComplex::process(const MatrixXC& frames, MatrixXC* ffts){
 void FFTComplex::reset(){
 }
 
+int FFTComplex::fftSize() const{
+  return _fftSize;
+}
+
+void FFTComplex::setFftSize( int size, bool callSetup ) {
+  _fftSize = size;
+  if ( callSetup ) setup();
+}
+
 int FFTComplex::frameSize() const{
   return _frameSize;
 }
 
-int FFTComplex::fftSize() const{
-  return _fftSize;
+void FFTComplex::setFrameSize( int size, bool callSetup ) {
+  _frameSize = size;
+  if ( callSetup ) setup();
+}
+
+bool FFTComplex::zeroPhase() const{
+  return _zeroPhase;
+}
+
+void FFTComplex::setZeroPhase( bool zeroPhase, bool callSetup ) {
+  _zeroPhase = zeroPhase;
+  if ( callSetup ) setup();
 }

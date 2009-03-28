@@ -27,29 +27,30 @@
 using namespace std;
 using namespace Eigen;
 
-MelBands::MelBands(Real lowFreq, Real highFreq, int numBands, Real samplerate, int fftLength, ScaleType scaleType) :
-  _lowFreq( lowFreq ),
-  _highFreq( highFreq ),
-  _numBands( numBands ),
-  _samplerate( samplerate ),
-  _fftLength( fftLength ),
-  _scaleType( scaleType )
+MelBands::MelBands(Real lowFrequency, Real highFrequency, int bandCount, Real samplerate, int fftSize, ScaleType scaleType) 
 {
   
-  DEBUG("MELBANDS: Constructor lowFreq: " << _lowFreq << 
-        ", highFreq: " << _highFreq << 
-        ", numBands: " << _numBands << 
+  DEBUG("MELBANDS: Constructor lowFrequency: " << _lowFrequency << 
+        ", highFrequency: " << _highFrequency << 
+        ", bandCount: " << _bandCount << 
         ", samplerate: " << _samplerate << 
-        ", fftLength: " << _fftLength << 
+        ", fftSize: " << _fftSize << 
         ", scaleType:" << _scaleType);
 
-  if ( _lowFreq >= _highFreq ) {
-    // Throw an exception, highFreq must be higher than lowFreq
+  if ( lowFrequency >= highFrequency ) {
+    // Throw an exception, highFrequency must be higher than lowFrequency
   }
 
-  if ( _numBands <= 0 ) {
-    // Throw an exception, numBands must be higher than 0
+  if ( bandCount <= 0 ) {
+    // Throw an exception, bandCount must be higher than 0
   }
+  
+  setLowFrequency( lowFrequency, false );
+  setHighFrequency( highFrequency, false );
+  setBandCount( bandCount, false );
+  setSamplerate( samplerate, false );
+  setFftSize( fftSize, false );
+  setScaleType( scaleType, false );
   
   setup();
   
@@ -91,16 +92,16 @@ void MelBands::setup(){
 
   }
   
-  Real highMel = _linearToMel(_highFreq);
-  Real lowMel = _linearToMel(_lowFreq);
+  Real highMel = _linearToMel( _highFrequency );
+  Real lowMel = _linearToMel( _lowFrequency );
   
   DEBUG("MELBANDS: lowMel: " << lowMel << ", highMel: " << highMel);
 
-  Real stepMel = (highMel - lowMel) / (_numBands + 1.0);
-  Real stepSpectrum = Real(_fftLength) / _samplerate;
+  Real stepMel = (highMel - lowMel) / (_bandCount + 1.0);
+  Real stepSpectrum = Real(_fftSize) / _samplerate;
   
   // start Mel frequencies of filters
-  MatrixXR starts(_numBands, 1);
+  MatrixXR starts(_bandCount, 1);
   for (int i=0; i<starts.rows(); i++) {
     starts(i, 0) = (Real(i) * stepMel + lowMel);
   }
@@ -110,7 +111,7 @@ void MelBands::setup(){
   startsLinear *= stepSpectrum;
 
   // stop Mel frequencies of filters
-  MatrixXR stops(_numBands, 1);
+  MatrixXR stops(_bandCount, 1);
   for (int i=0; i<stops.rows(); i++) {
     stops(i, 0) = (Real(i + 2) * stepMel + lowMel);
   }
@@ -121,7 +122,7 @@ void MelBands::setup(){
 
 
   // center Mel frequencies of filters
-  MatrixXR centers(_numBands, 1);
+  MatrixXR centers(_bandCount, 1);
   for (int i=0; i<centers.rows(); i++) {
     centers(i, 0) = (Real(i + 1) * stepMel + lowMel);
   }
@@ -218,4 +219,58 @@ void MelBands::bandWeights(int band, MatrixXR* bandWeights) const {
 
 int MelBands::bands() const {
   return _bands.bands();
+}
+
+Real MelBands::lowFrequency() const{
+  return _lowFrequency;
+}
+  
+void MelBands::setLowFrequency( Real frequency, bool callSetup ){
+  _lowFrequency = frequency;
+  if ( callSetup ) setup();
+}
+
+Real MelBands::highFrequency() const{
+  return _highFrequency;
+}
+  
+void MelBands::setHighFrequency( Real frequency, bool callSetup ){
+  _highFrequency = frequency;
+  if ( callSetup ) setup();
+}
+
+Real MelBands::samplerate() const{
+  return _samplerate;
+}
+  
+void MelBands::setSamplerate( Real frequency, bool callSetup ){
+  _samplerate = frequency;
+  if ( callSetup ) setup();
+}
+
+int MelBands::bandCount() const {
+  return _bandCount;
+}
+
+void MelBands::setBandCount( int count, bool callSetup ) {
+  _bandCount = count;
+  if ( callSetup ) setup();
+}
+
+int MelBands::fftSize() const{
+  return _fftSize;
+}
+
+void MelBands::setFftSize( int size, bool callSetup ) {
+  _fftSize = size;
+  if ( callSetup ) setup();
+}
+
+MelBands::ScaleType MelBands::scaleType() const{
+  return _scaleType;
+}
+
+void MelBands::setScaleType( MelBands::ScaleType type, bool callSetup ) {
+  _scaleType = type;
+  if ( callSetup ) setup();
 }

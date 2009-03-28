@@ -25,7 +25,7 @@ using namespace std;
 
 #if defined(RICAUDIO_DEBUG)
 
-bool debug = true;
+bool debug = false;
 
 #endif
 

@@ -1,0 +1,8 @@
+- Add a default parameter to all setters, such as 
+  setFoo(typeA a, typeB b, bool setup = true)
+  This would allow to do several sets with out penalizing 
+  performance due to multiple setups.
+
+- Switch from MatriXR and MatrixXC inputs, to MatrixBase< Derived >.
+  This would avoid unnecessary copies, and the possibility to call functions
+  on expressions such as Map, Block, etc.

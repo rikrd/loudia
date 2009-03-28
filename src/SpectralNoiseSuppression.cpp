@@ -27,21 +27,17 @@
 using namespace std;
 using namespace Eigen;
 
-SpectralNoiseSuppression::SpectralNoiseSuppression(int fftSize, Real f0, Real f1, Real samplerate) :
-  _fftSize( fftSize ),
-  _samplerate( samplerate ),
-  _f0( f0 ),
-  _f1( f1 ),
-  _k0( (int)(( _f0 / _samplerate ) * _fftSize) ),
-  _k1( (int)(( _f1 / _samplerate ) * _fftSize) )
+SpectralNoiseSuppression::SpectralNoiseSuppression(int fftSize, Real lowFrequency, Real highFrequency, Real samplerate)
 {
-  DEBUG("SPECTRALNOISESUPPRESSION: Construction fftSize: " << _fftSize
-        << " samplerate: " << _samplerate
-        << " f0: " << _f0
-        << " f1: " << _f1
-        << " k0: " << _k0
-        << " k1: " << _k1
-        );
+  DEBUG("SPECTRALNOISESUPPRESSION: Construction fftSize: " << fftSize
+        << " samplerate: " << samplerate
+        << " lowFrequency: " << lowFrequency
+        << " highFrequency: " << highFrequency );
+
+  setFftSize( fftSize, false );
+  setSamplerate( samplerate, false );
+  setLowFrequency( lowFrequency, false );
+  setHighFrequency( highFrequency, false );
 
   setup();
 }
@@ -50,6 +46,9 @@ SpectralNoiseSuppression::~SpectralNoiseSuppression(){}
 
 void SpectralNoiseSuppression::setup(){
   DEBUG("SPECTRALNOISESUPPRESSION: Setting up...");
+
+  _k0 = (int)(( _lowFrequency / _samplerate ) * _fftSize);
+  _k1 = (int)(( _highFrequency / _samplerate ) * _fftSize);
   
   // Prepare the bands for the moving average
   int _halfSize = (_fftSize / 2) + 1;
@@ -113,4 +112,40 @@ void SpectralNoiseSuppression::reset(){
   // Initial values
 
   _bands.reset();
+}
+
+Real SpectralNoiseSuppression::lowFrequency() const{
+  return _lowFrequency;
+}
+  
+void SpectralNoiseSuppression::setLowFrequency( Real frequency, bool callSetup ){
+  _lowFrequency = frequency;
+  if ( callSetup ) setup();
+}
+
+Real SpectralNoiseSuppression::highFrequency() const{
+  return _highFrequency;
+}
+  
+void SpectralNoiseSuppression::setHighFrequency( Real frequency, bool callSetup ){
+  _highFrequency = frequency;
+  if ( callSetup ) setup();
+}
+
+Real SpectralNoiseSuppression::samplerate() const{
+  return _samplerate;
+}
+  
+void SpectralNoiseSuppression::setSamplerate( Real frequency, bool callSetup ){
+  _samplerate = frequency;
+  if ( callSetup ) setup();
+}
+
+int SpectralNoiseSuppression::fftSize() const{
+  return _fftSize;
+}
+
+void SpectralNoiseSuppression::setFftSize( int size, bool callSetup ) {
+  _fftSize = size;
+  if ( callSetup ) setup();
 }

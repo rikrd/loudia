@@ -9,11 +9,10 @@ frameSize = 256
 fftSize = 512
 samplerate = 8000
 
-a_zeros = scipy.array(scipy.zeros((1, frameSize)), dtype='f4')
-a_ones = scipy.array(scipy.ones((1, frameSize)), dtype='f4')
-a_random = scipy.array(scipy.random.random((1, frameSize)), dtype='f4')
-a_sine = scipy.array(scipy.cos(2 * scipy.pi * 440 * scipy.arange(frameSize) / samplerate + scipy.pi/4.0), dtype='f4')
-a_sine = a_sine.reshape((1, a_sine.shape[0]))
+a_zeros = scipy.zeros(frameSize)
+a_ones = scipy.ones(frameSize)
+a_random = scipy.random.random(frameSize)
+a_sine = scipy.cos(2 * scipy.pi * 440 * scipy.arange(frameSize) / samplerate + scipy.pi/4.0)
 
 # Ricaudio's solution # --------------------------------- #
 w = ricaudio.Window(frameSize, ricaudio.Window.HAMMING)

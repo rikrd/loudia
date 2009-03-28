@@ -5,8 +5,8 @@ import scipy
 import scipy.signal
 
 size = 4096*1
-a1 = scipy.array(scipy.random.random((size, 1)), dtype='f4')
-a2 = scipy.array(scipy.random.random((size, 1)), dtype='f4')
+a1 = scipy.random.random((size, 1))
+a2 = scipy.random.random((size, 1))
 
 # Setup the Gammatone parameters and coefficients # --------------------- #
 numFilters = 30
@@ -81,12 +81,12 @@ freqs, B = freqs_b_by_freqs(numFilters, lowFreq, highFreq, c, d)
 # CRicaudio's solution # --------------------------------- #
 import ricaudio
 
-coeffsB1 = scipy.array(scipy.vstack((B0, B11, B2)) / gain, dtype = 'f4')
-coeffsB2 = scipy.array(scipy.vstack((B0, B12, B2)), dtype = 'f4')
-coeffsB3 = scipy.array(scipy.vstack((B0, B13, B2)), dtype = 'f4')
-coeffsB4 = scipy.array(scipy.vstack((B0, B14, B2)), dtype = 'f4')
+coeffsB1 = scipy.vstack((B0, B11, B2)) / gain
+coeffsB2 = scipy.vstack((B0, B12, B2))
+coeffsB3 = scipy.vstack((B0, B13, B2))
+coeffsB4 = scipy.vstack((B0, B14, B2))
 
-coeffsA = scipy.array(scipy.vstack((A0, A1, A2)), dtype = 'f4')
+coeffsA = scipy.vstack((A0, A1, A2))
 
 f1 = ricaudio.Filter(coeffsB1, coeffsA, numFilters)
 f2 = ricaudio.Filter(coeffsB2, coeffsA, numFilters)
@@ -112,7 +112,7 @@ def filterbank_compute(samples):
     def filt(x):
         coeffsB1 = scipy.array([B0[row[0]] / gain[row[0]],
                                 B11[row[0]]/ gain[row[0]],
-                                B2[row[0]] / gain[row[0]]], dtype = 'f4')
+                                B2[row[0]] / gain[row[0]]])
 
         a = scipy.array([A0[row[0]], A1[row[0]], A2[row[0]]])
 

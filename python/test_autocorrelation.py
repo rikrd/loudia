@@ -9,17 +9,17 @@ atol = 1e-1
 rtol = 1e-1
 
 size = 9
-a = scipy.reshape(scipy.array(scipy.arange( size ), dtype = 'f4'), (1, size))
+a = scipy.arange( size )
 
 d = ricaudio.Autocorrelation( size, size, 0, False )
 r = d.process(a)
-s = scipy.correlate(a[0,:], a[0,:], 'full')
+s = scipy.correlate(a, a, 'full')
 s = s[s.shape[0]/2:]
 print scipy.allclose(r[0,:], s, atol = atol, rtol = rtol)
 
 d = ricaudio.Autocorrelation( size, size, 0, True )
 r = d.process(a)
-s = scipy.correlate(a[0,:], a[0,:], 'full')
+s = scipy.correlate(a, a, 'full')
 s = s[s.shape[0]/2:]
 print scipy.allclose(r[0,:], s, atol = atol, rtol = rtol)
 

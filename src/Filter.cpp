@@ -24,25 +24,14 @@
 using namespace std;
 using namespace Eigen;
 
-Filter::Filter() : 
-  _channels( 1 )
+Filter::Filter(int channelCount)
 {
-  DEBUG("FILTER: Constructor");
+  DEBUG("FILTER: Constructor channelCount:" << channelCount);
 
-  setA(MatrixXR::Ones(1, _channels));
-  setB(MatrixXR::Ones(1, _channels));
+  setChannelCount( channelCount, false );
 
-  setup();
-}
-
-
-Filter::Filter(int channels) : 
-  _channels( channels )
-{
-  DEBUG("FILTER: Constructor channels:" << channels);
-
-  setA(MatrixXR::Ones(1, _channels));
-  setB(MatrixXR::Ones(1, _channels));
+  setA(MatrixXR::Ones(1, _channelCount));
+  setB(MatrixXR::Ones(1, _channelCount));
 
   setup();
 }
@@ -50,12 +39,13 @@ Filter::Filter(int channels) :
 
 Filter::Filter(const MatrixXR& b,
                const MatrixXR& a,
-               int channels) :
-  _channels( channels )
+               int channelCount)
 {
 
-  DEBUG("FILTER: Constructor channels:" << channels);
+  DEBUG("FILTER: Constructor channelCount:" << channelCount);
   DEBUG("FILTER: Constructor b:" << b.transpose() << ", a:" << a.transpose());
+
+  setChannelCount( channelCount, false );
 
   setA( a );
   setB( b );
@@ -63,20 +53,13 @@ Filter::Filter(const MatrixXR& b,
   setup();
 }
 
-Filter::~Filter() {
-  // TODO: Here we should free the buffers
-  // but I don't know how to do that with MatrixXR and MatrixXR
-  // I'm sure Nico will...
-}
-
-
 void Filter::setup(){
   // Prepare the buffers
   DEBUG("FILTER: Setting up...");
 
   setupState();
 
-  _samples.resize(1, _channels);
+  _samples.resize(1, _channelCount);
  
   reset();
 
@@ -86,7 +69,7 @@ void Filter::setup(){
 
 void Filter::setupState() { 
   if( _z.rows() != _length ){
-    _z.resize(_length, _channels);
+    _z.resize(_length, _channelCount);
 
     reset(); // if the state has changed, we reset it
   }
@@ -95,19 +78,19 @@ void Filter::setupState() {
 
 
 void Filter::process(const MatrixXR& samples, MatrixXR* output){
-  // Process will be called with a matrix where columns will be channels
+  // Process will be called with a matrix where columns will be channelCount
   // and rows will be the time axis
 
   //DEBUG("FILTER: Entering process...");
-  _samples.resize(samples.rows(), _channels);
-  (*output).resize(samples.rows(), _channels);
+  _samples.resize(samples.rows(), _channelCount);
+  (*output).resize(samples.rows(), _channelCount);
   //DEBUG("FILTER: After resize...");  
   
 
-  // Check that it has one column or as many as channels
-  if ((samples.cols() != 1) && (samples.cols() != _channels)) {
+  // Check that it has one column or as many as channelCount
+  if ((samples.cols() != 1) && (samples.cols() != _channelCount)) {
     // TODO: Throw an exception
-    DEBUG("FILTER: Error in shape of 'samples'. samples.cols():" << samples.cols() << ", _channels:" << _channels);
+    DEBUG("FILTER: Error in shape of 'samples'. samples.cols():" << samples.cols() << ", _channelCount:" << _channelCount);
     return;
   }
 
@@ -119,7 +102,7 @@ void Filter::process(const MatrixXR& samples, MatrixXR* output){
     }
   }else{
     // Else set it directly
-    _samples.block(0, 0, samples.rows(), _channels) = samples;
+    _samples.block(0, 0, samples.rows(), _channelCount) = samples;
   }
   //DEBUG("FILTER: _a: " << _a);
 
@@ -154,18 +137,22 @@ void Filter::process(const MatrixXR& samples, MatrixXR* output){
 }
 
 
-void Filter::setA(const MatrixXR& a){
+void Filter::setA( const MatrixXR& a, bool callSetup ){
   _ina = a;
 
-  setupCoeffs();
-  setupState();
+  if ( callSetup ) {
+    setupCoeffs();
+    setupState();
+  }
 }
 
-void Filter::setB(const MatrixXR& b){
+void Filter::setB( const MatrixXR& b, bool callSetup ){
   _inb = b;
 
-  setupCoeffs();
-  setupState();
+  if ( callSetup ) {
+    setupCoeffs();
+    setupState();
+  }
 }
 
 void Filter::setupCoeffs() {
@@ -175,12 +162,12 @@ void Filter::setupCoeffs() {
   // since a[0] must be 1.0
   // TODO: throw an exception when a[0] == 0
   DEBUG("FILTER: Initializing 'a' coeffs");
-  _a = MatrixXR::Zero(_length, _channels);
+  _a = MatrixXR::Zero(_length, _channelCount);
 
-  // Check that it has one column or as many as channels
-  if ((_ina.cols() != 1) && (_ina.cols() != _channels)) {
+  // Check that it has one column or as many as channelCount
+  if ((_ina.cols() != 1) && (_ina.cols() != _channelCount)) {
     // TODO: Throw an exception
-    DEBUG("FILTER: Error in shape of 'a' coeffs. _ina.cols():" << _ina.cols() << ", _channels:" << _channels);
+    DEBUG("FILTER: Error in shape of 'a' coeffs. _ina.cols():" << _ina.cols() << ", _channelCount:" << _channelCount);
     return;
   }
 
@@ -192,7 +179,7 @@ void Filter::setupCoeffs() {
     }
   }else{
     // Else set it directly
-    _a.block(0, 0, _ina.rows(), _channels) = _ina;
+    _a.block(0, 0, _ina.rows(), _channelCount) = _ina;
   }
 
   for(int i = 0; i < _a.rows(); i++){
@@ -202,12 +189,12 @@ void Filter::setupCoeffs() {
   DEBUG("FILTER: Setting the 'a' coefficients.");
   DEBUG("FILTER: 'a' coefficients: " << _a.transpose());
 
-  _b = MatrixXR::Zero(_length, _channels);
+  _b = MatrixXR::Zero(_length, _channelCount);
 
-  // Check that it has one column or as many as channels
-  if ((_inb.cols() != 1) && (_inb.cols() != _channels)) {
+  // Check that it has one column or as many as channelCount
+  if ((_inb.cols() != 1) && (_inb.cols() != _channelCount)) {
     // TODO: Throw an exception
-    DEBUG("FILTER: Error in shape of 'b' coeffs. b.cols():" << _inb.cols() << ", _channels:" << _channels);
+    DEBUG("FILTER: Error in shape of 'b' coeffs. b.cols():" << _inb.cols() << ", _channelCount:" << _channelCount);
     return;
   }
 
@@ -219,7 +206,7 @@ void Filter::setupCoeffs() {
     }
   }else{
     // Else set it directly
-    _b.block(0, 0, _inb.rows(), _channels) = _inb;
+    _b.block(0, 0, _inb.rows(), _channelCount) = _inb;
   }
 
   for(int i = 0; i < _b.rows(); i++){
@@ -231,22 +218,28 @@ void Filter::setupCoeffs() {
 
 }
 
-void Filter::a(MatrixXR* a){
+void Filter::a(MatrixXR* a) const {
   (*a) = _a;
 }
 
-void Filter::b(MatrixXR* b){
+void Filter::b(MatrixXR* b) const {
   (*b) = _b;
 }
 
 
 void Filter::reset(){
   // Initial values
-  _z = MatrixXR::Zero(_length, _channels);
+  _z = MatrixXR::Zero(_length, _channelCount);
 }
 
-int Filter::channels() const {
-  return _channels;
+int Filter::channelCount() const {
+  return _channelCount;
+}
+
+void Filter::setChannelCount( int count, bool callSetup ) {
+  _channelCount = count;
+  
+  if ( callSetup ) setup();  
 }
 
 int Filter::length() const {

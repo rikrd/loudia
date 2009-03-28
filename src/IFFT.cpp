@@ -25,12 +25,15 @@ using namespace std;
 using namespace Eigen;
 
 IFFT::IFFT(int fftSize, bool zeroPhase) :
-  _fftSize( fftSize ),
-  _zeroPhase( zeroPhase ),
-  _halfSize( fftSize / 2 + 1 )
+  _in( NULL ),
+  _out( NULL ),
+  _fftplan( NULL )
 {
   DEBUG("IFFT: Constructor fftSize: " << fftSize 
         << ", zeroPhase: " << zeroPhase);
+
+  setFftSize( fftSize, false );
+  setZeroPhase( zeroPhase, false );
   
   setup();
   
@@ -38,14 +41,45 @@ IFFT::IFFT(int fftSize, bool zeroPhase) :
 }
 
 IFFT::~IFFT(){
-  fftwf_destroy_plan( _fftplan );
-  fftwf_free( _in ); 
-  fftwf_free( _out );
+  if ( _fftplan ) {
+    DEBUG("FFT: Destroying plan");
+    fftwf_destroy_plan( _fftplan );
+  }
+
+  if ( _in ) {
+    DEBUG("FFT: Destroying in");
+    fftwf_free( _in ); 
+  }
+
+  if ( _out ) {
+    DEBUG("FFT: Destroying out");
+    fftwf_free( _out );
+  }
 }
 
 void IFFT::setup(){
   DEBUG("IFFT: Setting up...");
+
+  // Free the ressources if needed 
+  // before setting them up
+  if ( _fftplan ) {
+    DEBUG("FFT: Destroying plan");
+    fftwf_destroy_plan( _fftplan );
+  }
+
+  if ( _in ) {
+    DEBUG("FFT: Destroying in");
+    fftwf_free( _in ); 
+  }
+
+  if ( _out ) {
+    DEBUG("FFT: Destroying out");
+    fftwf_free( _out );
+  }
   
+  _halfSize = ( _fftSize / 2 ) + 1;
+
+  // Allocate the ressources needed  
   _in = (fftwf_complex*) fftwf_malloc(sizeof(fftwf_complex) * _halfSize );
   _out = (Real*) fftwf_malloc(sizeof(Real) * _fftSize);
   
@@ -93,4 +127,18 @@ void IFFT::reset(){
 
 int IFFT::fftSize() const{
   return _fftSize;
+}
+
+void IFFT::setFftSize( int size, bool callSetup ) {
+  _fftSize = size;
+  if ( callSetup ) setup();
+}
+
+bool IFFT::zeroPhase() const{
+  return _zeroPhase;
+}
+
+void IFFT::setZeroPhase( bool zeroPhase, bool callSetup ) {
+  _zeroPhase = zeroPhase;
+  if ( callSetup ) setup();
 }

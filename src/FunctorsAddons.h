@@ -2,7 +2,7 @@
 #define FUNCTORSADDONS_H
 
 
-/**
+/*
  *
  * angle() operator
  *
@@ -16,7 +16,7 @@ template<typename Scalar>
 struct ei_functor_traits<ei_scalar_angle_op<Scalar> >
 { enum { Cost = 5 * NumTraits<Scalar>::MulCost, PacketAccess = false }; };
 
-/**
+/*
  *
  * ceil() operator
  *
@@ -29,7 +29,7 @@ template<typename Scalar>
 struct ei_functor_traits<ei_scalar_ceil_op<Scalar> >
 { enum { Cost = 5 * NumTraits<Scalar>::MulCost, PacketAccess = false }; };
 
-/**
+/*
  *
  * floor() operator
  *
@@ -43,7 +43,7 @@ struct ei_functor_traits<ei_scalar_floor_op<Scalar> >
 { enum { Cost = 5 * NumTraits<Scalar>::MulCost, PacketAccess = false }; };
 
 
-/**
+/*
  *
  * isnan() operator
  *
@@ -57,7 +57,7 @@ struct ei_functor_traits<ei_scalar_isnan_op<Scalar> >
 { enum { Cost = 5 * NumTraits<Scalar>::MulCost, PacketAccess = false }; };
 
 
-/**
+/*
  *
  * modN(Scalar divisor) operator used for getting the remainder
  *
@@ -77,7 +77,7 @@ struct ei_functor_traits<ei_scalar_mod_n_op<Scalar> >
 { enum { Cost = 5 * NumTraits<Scalar>::MulCost, PacketAccess = false }; };
 
 
-/**
+/*
  *
  * expN(Scalar under) operator used for clipping
  *
@@ -96,7 +96,7 @@ struct ei_functor_traits<ei_scalar_exp_n_op<Scalar> >
 { enum { Cost = 5 * NumTraits<Scalar>::MulCost, PacketAccess = false }; };
 
 
-/**
+/*
  *
  * logN(Scalar under) operator used for clipping
  *
@@ -115,7 +115,7 @@ struct ei_functor_traits<ei_scalar_log_n_op<Scalar> >
 { enum { Cost = 5 * NumTraits<Scalar>::MulCost, PacketAccess = false }; };
 
 
-/**
+/*
  *
  * clipUnder(Scalar under) operator used for clipping
  *
@@ -134,7 +134,7 @@ struct ei_functor_traits<ei_scalar_clip_under_op<Scalar> >
 { enum { Cost = 5 * NumTraits<Scalar>::MulCost, PacketAccess = false }; };
 
 
-/**
+/*
  *
  * clipOver(Scalar over) operator used for clipping
  *
@@ -153,7 +153,7 @@ struct ei_functor_traits<ei_scalar_clip_over_op<Scalar> >
 { enum { Cost = 5 * NumTraits<Scalar>::MulCost, PacketAccess = false }; };
 
 
-/**
+/*
  *
  * clip(Scalar under, Scalar over) operator used for clipping
  *

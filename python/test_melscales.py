@@ -16,7 +16,7 @@ print 'Low Mel Good:', l, ' mels'
 
 print scipy.allclose(f_c, f_m)
 
-f_m = [lowFreq]
+f_m = scipy.array([lowFreq])
 l = ricaudio.linearToMelMatrixGreenwood1990( f_m )
 f_c = ricaudio.melToLinearMatrixGreenwood1990( l )
 
@@ -37,7 +37,7 @@ print 'High Mel Good:', l, 'mels'
 
 print scipy.allclose(f_c, f_m)
 
-f_m = [highFreq]
+f_m = scipy.array([highFreq])
 l = ricaudio.linearToMelMatrixGreenwood1990( f_m )
 f_c = ricaudio.melToLinearMatrixGreenwood1990( l )
 
@@ -55,7 +55,7 @@ linearToMels = [(f.replace('linearToMelMatrix', ''), getattr(ricaudio, f))
 melToLinears = [(f.replace('melToLinearMatrix', ''), getattr(ricaudio, f))
                 for f in dir(ricaudio) if f.startswith('melToLinearMatrix')]
 
-freqs = scipy.arange(lowFreq, highFreq, (highFreq - lowFreq) / numPoints, dtype = 'f4')
+freqs = scipy.arange(lowFreq, highFreq, (highFreq - lowFreq) / numPoints)
 
 import pylab
 pylab.figure()

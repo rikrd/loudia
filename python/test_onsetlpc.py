@@ -1,11 +1,10 @@
 #!/usr/bin/env python
 
 import ricaudio
-from sepel.inputs import pyricaudio
+from common import *
 import pylab
 import os, sys, wave
 import scipy
-from common import *
 
 interactivePlot = False
 
@@ -15,47 +14,19 @@ filename = sys.argv[1]
 # and the estimated onsets in milliseconds (ms)
 onsetError = 50.0
 
-# Samplerate of the file
-wavfile = wave.open(filename,'r')
-samplerate = float(wavfile.getframerate())
-wavfile.close()
-
 frameSize = 1024
 frameStep = 512
-
-frameSizeTime = frameSize / 44100.0
-frameStepTime = frameStep / 44100.0
 
 fftSize = 2048 * 2
 plotSize = fftSize / 4
 
-analysisLimit = scipy.inf
-
 numCoeffs = 18
 preEmphasis = 0.975
 
-# Creation of the pipeline        
-stream = pyricaudio.sndfilereader({'filename': filename,
-                                   'windowSizeInTime': frameSizeTime,
-                                   'windowStepInTime': frameStepTime,
-                                   'encodingKey': 'encoding',
-                                   'channelCountKey': 'channelCount',
-                                   'samplesOriginalKey': 'samples',
-                                   'samplesKey': 'samplesMono',
-                                   'samplerateKey': 'samplerate',
-                                   'timestampBeginKey': 'timestampBegin',
-                                   'timestampEndKey': 'timestampEnd',
-                                   'limit':analysisLimit})
+stream, samplerate, nframes, nchannels, loader = get_framer_audio(filename, frameSize, frameStep)
 
-stream = pyricaudio.window_ricaudio(stream, {'inputKey': 'samplesMono',
-                                             'outputKey': 'windowed',
-                                             'windowType': 'blackmanharris'})
-
-stream = pyricaudio.fft_ricaudio(stream, {'inputKey': 'windowed',
-                                          'outputKey': 'fft',
-                                          'zeroPhase': False,
-                                          'fftLength': fftSize})
-
+windower = ricaudio.Window( frameSize, ricaudio.Window.HAMMING )
+ffter = ricaudio.FFT( fftSize )
 lpc = ricaudio.LPC(frameSize, numCoeffs, preEmphasis)
 lpcr = ricaudio.LPCResidual(frameSize)
 
@@ -65,8 +36,8 @@ freqResps = []
 errors = []
 
 npoints = 1024
-w = scipy.arange(0, scipy.pi, scipy.pi/(fftSize/2. + 1), dtype = 'f4')
-b = scipy.array([[1]], dtype = 'f4')
+w = scipy.arange(0, scipy.pi, scipy.pi/(fftSize/2. + 1))
+b = scipy.array([[1]])
 
 if interactivePlot:
     pylab.ion()
@@ -76,36 +47,31 @@ if interactivePlot:
     pylab.gca().set_autoscale_on(False)
     
 for frame in stream:
-    samples = scipy.array(frame['windowed'], dtype = 'f4')
-    fft = scipy.array(frame['fft'], dtype = scipy.complex64)
-
-    lpcCoeffs, reflection, error = lpc.process( samples )
-
-    lpcResidual = lpcr.process( samples, lpcCoeffs )
-
-    spec =  20.0 / scipy.log( 10.0 ) * scipy.log( abs( fft ) + 1e-7)[:plotSize]
-
-    freqResp = ricaudio.freqz(b*scipy.sqrt(abs(error[0])), lpcCoeffs.T, w)
+    fft = ffter.process( windower.process( frame ) )[0, :]
+    spec =  ricaudio.magToDb( abs( fft ) )
     
-    freqResp = 20.0 / scipy.log( 10.0 ) * scipy.log( abs( freqResp ) + 1e-7)
+    lpcCoeffs, reflection, error = lpc.process( frame )
 
+    lpcResidual = lpcr.process( frame, lpcCoeffs )
+    
+    freqResp = ricaudio.magToDb( abs( ricaudio.freqz( b * scipy.sqrt( abs( error[0] ) ), lpcCoeffs.T, w ) ).T )
+    
     if interactivePlot:
-        pylab.subplot(211)
-        pylab.hold(False)
-        pylab.plot( samples )
-        #pylab.hold(True)
+        pylab.subplot( 211 )
+        pylab.hold( False )
+        pylab.plot( frame )
+        #pylab.hold( True )
         #pylab.plot( lpcResidual[0,:] )
         
-        pylab.subplot(212)
-        pylab.hold(False)
-        fftdb = ricaudio.magToDb(abs(fft))
-        pylab.plot(w, fftdb[0,:], label = 'FFT')
-        pylab.hold(True)
-        pylab.plot(w, freqResp[:,0], label = 'LPC')
+        pylab.subplot( 212 )
+        pylab.hold( False )
+        pylab.plot( w, spec[0, :], label = 'FFT' )
+        pylab.hold( True )
+        pylab.plot( w, freqResp[0, :], label = 'LPC' )
         
-    specs.append( spec )
+    specs.append( spec[0, :plotSize] )
     lpcs.append( lpcCoeffs[0] )
-    freqResps.append( freqResp[:,0] )
+    freqResps.append( freqResp[0, :plotSize] )
     errors.append( error[0] )
 
 if interactivePlot:

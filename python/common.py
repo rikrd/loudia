@@ -5,13 +5,13 @@ import scipy
 import pylab
 import os
 
-def plotFreqz(b, a, w = None, npoints = None, title = '', db = False):
+def plot_freqz(b, a, w = None, npoints = None, title = '', db = False, createFigure = True, label = ''):
     # Create the omega array if necessary
     if npoints is None:
         npoints = 1000
 
     if w is None:
-        w = scipy.arange(-scipy.pi, scipy.pi, 2*scipy.pi/(npoints), dtype = 'f4')
+        w = scipy.arange(-scipy.pi, scipy.pi, 2*scipy.pi/(npoints))
 
     # Calculate the frequency response
     d = ricaudio.freqz(b.T, a.T, w)
@@ -22,13 +22,15 @@ def plotFreqz(b, a, w = None, npoints = None, title = '', db = False):
         mag = abs(d[:,0])
 
     import pylab
-    pylab.figure()
+    if createFigure:
+        pylab.figure()
+        
     pylab.subplot(2,1,1)
-    pylab.plot(w, mag)
+    pylab.plot(w, mag, label = label)
     pylab.title('%s \n Magnitude of the Frequency Response' % title)
 
     pylab.subplot(2,1,2)
-    pylab.plot(w, scipy.angle(d[:,0]))
+    pylab.plot(w, scipy.angle(d[:,0]), label = label)
     pylab.title('Angle of the Frequency Response')
 
 def get_onsets(filename, hop, samplerate, onsetError = 50.0):
@@ -76,7 +78,7 @@ def framer_audio(loader, size, hop):
 
     nchannels = loader.get_channels()
     nframes = loader.get_nframes()
-    samples = scipy.zeros((size, nchannels), dtype = 'f4')
+    samples = scipy.zeros((size, nchannels))
     
     while cursor < nframes:
         nframes_read = min(size, nframes-cursor)
@@ -100,7 +102,7 @@ def framer_array(arr, size, hop):
     cursor = 0L
 
     nframes = arr.shape[0]
-    samples = scipy.zeros((size, arr.shape[1]), dtype = 'f4')
+    samples = scipy.zeros((size, arr.shape[1]))
     
     while cursor < nframes:
         nframes_read = min(size, nframes-cursor)

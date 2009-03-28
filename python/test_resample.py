@@ -10,7 +10,7 @@ dur = 1.0
 f = 4.0
 t = scipy.linspace(0, dur, npoints)
 x = scipy.cos(2.0 * f * scipy.pi * t)
-x = scipy.array(x, dtype = 'f4')
+
 ratio = 1./6.
 resampleType = ricaudio.Resample.SINC_BEST_QUALITY
 
@@ -33,7 +33,6 @@ dur = 1.0
 f = 4.0
 t = scipy.linspace(0, dur, npoints)
 x = scipy.cos(2.0 * f * scipy.pi * t)
-x = scipy.array(x, dtype = 'f4')
 ratio = 3.
 resampleType = ricaudio.Resample.SINC_BEST_QUALITY
  

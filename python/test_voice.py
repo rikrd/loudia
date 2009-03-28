@@ -1,26 +1,19 @@
 #!/usr/bin/env python
 
 import ricaudio
-from sepel.inputs import pyricaudio
+from common import *
 import pylab
 import sys
 import scipy
 
 
 interactivePlotting = False
-
 plotSpectrumTrajs = True
-
 plotDetSpecSynth = True
-
 plotDetSpecDiff = True
-
 plotTrajs = True
-
 plotMags = False
-
 plotLocs = False
-
 plotOdf = True
 
 filename = sys.argv[1]
@@ -28,37 +21,12 @@ filename = sys.argv[1]
 frameSize = 1024 
 frameStep = 256
 
-frameSizeTime = frameSize / 44100.0
-frameStepTime = frameStep / 44100.0
-
 fftSize = 2048
 
-analysisLimit = 1000.0
+stream, samplerate, nframes, nchannels, loader = get_framer_audio(filename, frameSize, frameStep)
 
-# Creation of the pipeline        
-stream = pyricaudio.sndfilereader({'filename': filename,
-                                   'windowSizeInTime': frameSizeTime,
-                                   'windowStepInTime': frameStepTime,
-                                   'encodingKey': 'encoding',
-                                   'channelCountKey': 'channelCount',
-                                   'samplesOriginalKey': 'samples',
-                                   'samplesKey': 'samplesMono',
-                                   'samplerateKey': 'samplerate',
-                                   'timestampBeginKey': 'timestampBegin',
-                                   'timestampEndKey': 'timestampEnd',
-                                   'limit':analysisLimit})
-
-
-stream = pyricaudio.window_ricaudio(stream, {'inputKey': 'samplesMono',
-                                             'outputKey': 'windowed',
-                                             'windowType': 'hamming'})
-
-stream = pyricaudio.fft_ricaudio(stream, {'inputKey': 'windowed',
-                                          'outputKey': 'fft',
-                                          'zeroPhase': True,
-                                          'fftLength': fftSize})
-
-
+windower = ricaudio.Window( frameSize, ricaudio.Window.HAMMING )
+ffter = ricaudio.FFT( fftSize )
 
 subplots = {1 : ['mag', 'peaki_mags', 'resid_mag', 'synth_mag', 'traj_mags'],
             2 : ['phase', 'peak_phases']}
@@ -83,9 +51,9 @@ if 'peaki_mags' in all_processes:
     maxFreqBinChange = 1 * fftSize / frameSize
     windowType = ricaudio.Window.HAMMING
     
-    peaker = ricaudio.PeakDetectComplex( maxPeakCount, ricaudio.PeakDetectComplex.BYMAGNITUDE, minPeakWidth )
-    peakInterp = ricaudio.PeakInterpolateComplex( )
-    tracker = ricaudio.PeakContinue( maxTrajCount, maxFreqBinChange, silentFrames )
+    peaker = ricaudio.PeakDetectionComplex( maxPeakCount, ricaudio.PeakDetectionComplex.BYMAGNITUDE, minPeakWidth )
+    peakInterp = ricaudio.PeakInterpolationComplex( )
+    tracker = ricaudio.PeakTracking( maxTrajCount, maxFreqBinChange, silentFrames )
     peakSynth = ricaudio.PeakSynthesize( frameSize/6, fftSize, windowType )
 
 trajsLocs = []
@@ -96,9 +64,9 @@ specsResid = []
 specsMagsResid = []
 
 for frame in stream:
-    fft = scipy.array(frame['fft'][:plotSize], dtype = scipy.complex64)
-    mag =  scipy.array(abs(fft), dtype = 'f4')
-    spec =  20.0 / scipy.log( 10.0 ) * scipy.log( abs( fft ) + 1e-7)
+    samples = frame
+    fft = ffter.process( windower.process( frame ) )[0, :plotSize]
+    spec =  ricaudio.magToDb( abs( fft ) )[0, :plotSize]
 
     if set(['phase', 'peak_phases']) | all_processes:
         phase =  scipy.angle( fft )
@@ -109,13 +77,13 @@ for frame in stream:
         peakLocs, peakMags, peakPhases =  peaker.process( fft )
 
         peakiLocs, peakiMags, peakiPhases = peakInterp.process( fft,
-                                                               scipy.array(peakLocs, dtype='f4'),
-                                                               scipy.array(peakMags, dtype='f4'),
-                                                               scipy.array(peakPhases, dtype='f4') )
+                                                               peakLocs,
+                                                               peakMags,
+                                                               peakPhases )
         
         trajLocs, trajMags = tracker.process( fft,
-                                              scipy.array(peakiLocs, dtype='f4'),
-                                              scipy.array(peakiMags, dtype='f4') )
+                                              peakiLocs,
+                                              peakiMags )
 
         specSynth = peakSynth.process( trajLocs,
                                        trajMags )
@@ -192,7 +160,7 @@ for frame in stream:
 
             if 'peak_phases' in processes:
                 if not (peakPos == -1).all():
-                    pylab.scatter(peakPos, phase[scipy.array(peakPos, dtype='i4')], c='r')
+                    pylab.scatter(peakPos, phase[peakPos], c='r')
     
             
             

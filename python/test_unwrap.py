@@ -3,12 +3,12 @@
 import ricaudio
 import scipy
 
-a = [[1  ,  2,  6,  4],
-     [1.2,  6,  2,  4],
-     [1  ,  2,  6,  4],
-     [30  , 20, 60, 40]]
+a = scipy.array([[1  ,  2,  6,  4],
+                 [1.2,  6,  2,  4],
+                 [1  ,  2,  6,  4],
+                 [30  , 20, 60, 40]])
 
-d = ricaudio.Unwrap(4)
+d = ricaudio.Unwrap()
 b1 = d.process(a)
 
 # Use a different unwarp since scipy's is 2x slower

@@ -191,7 +191,7 @@ void correlate(const InMatrixType& _a, const InMatrixType& _b, InMatrixType* c, 
   // (from colstart we copy 'colscopy' columns)
   const int colstart = max(_a.cols(), _b.cols()) - 1 + _minlag;
   const int colscopy = min(_maxlag - _minlag, temp.cols() - colstart);
-
+ 
   (*c) = InMatrixType::Zero(rows, _maxlag - _minlag);
   (*c).block(0, 0, rows, colscopy) = temp.block(0, colstart, rows, colscopy);
 }

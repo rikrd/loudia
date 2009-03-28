@@ -37,6 +37,9 @@ typedef int Integer;
 typedef float Real;
 typedef std::complex< Real > Complex;
 
+typedef std::complex< float > complex_float;
+typedef std::complex< double > complex_double;
+
 // Types for vector values
 typedef Eigen::Matrix< Integer, 1, Eigen::Dynamic > RowXI;
 typedef Eigen::Matrix< Real, 1, Eigen::Dynamic > RowXR;
@@ -55,5 +58,11 @@ typedef Eigen::Matrix< Complex, Eigen::Dynamic, Eigen::Dynamic > MatrixXC;
 typedef Eigen::Matrix< Integer, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor, Eigen::Dynamic, Eigen::Dynamic > MatrixXIscipy;
 typedef Eigen::Matrix< Real, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor, Eigen::Dynamic, Eigen::Dynamic > MatrixXRscipy;
 typedef Eigen::Matrix< Complex, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor, Eigen::Dynamic, Eigen::Dynamic > MatrixXCscipy;
+
+typedef Eigen::Matrix< float, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor, Eigen::Dynamic, Eigen::Dynamic > MatrixXfscipy;
+typedef Eigen::Matrix< double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor, Eigen::Dynamic, Eigen::Dynamic > MatrixXdscipy;
+
+typedef Eigen::Matrix< std::complex< float >, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor, Eigen::Dynamic, Eigen::Dynamic > MatrixXcfscipy;
+typedef Eigen::Matrix< std::complex< double >, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor, Eigen::Dynamic, Eigen::Dynamic > MatrixXcdscipy;
 
 #endif // TYPEDEFS_H

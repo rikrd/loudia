@@ -26,44 +26,36 @@
 using namespace std;
 using namespace Eigen;
 
-Correlation::Correlation(int inputLengthA, int inputLengthB, int maxLag, int minLag) :
-  _inputLengthA( inputLengthA ),
-  _inputLengthB( inputLengthB ),
-  _minLag( max(-max(_inputLengthA, _inputLengthB) + 1, minLag) ),
-  _maxLag( min( min(_inputLengthA, _inputLengthB), maxLag) ),
-  _useFFT( (_maxLag - _minLag) > 128 ),
-  _fftSize(nextPowerOf2(((_inputLengthA + _inputLengthB) - 1)*2)),
-  _fft( _fftSize, false ),
-  _ifft( _fftSize, false )
-
+Correlation::Correlation(int inputSizeA, int inputSizeB, int maxLag, int minLag)
 {
-  DEBUG("CORRELATION: Construction inputLengthA: " << _inputLengthA
-        << " inputLengthB: " << _inputLengthB
-        << " minLag: " << _minLag
-        << " maxLag: " << _maxLag
-        << " useFFT: " << _useFFT
-        << " fftLength: " << _fftSize);
+  DEBUG("CORRELATION: Construction inputSizeA: " << inputSizeA
+        << " inputSizeB: " << inputSizeB
+        << " minLag: " << minLag
+        << " maxLag: " << maxLag);
+
+  setInputSizeA( inputSizeA, false );
+  setInputSizeB( inputSizeB, false );
+  setMinLag( minLag, false );
+  setMaxLag( maxLag, false );
+  setUseFft( (_maxLag - _minLag) > 128, false );
 
   setup();
 }
 
 
-Correlation::Correlation(int inputLengthA, int inputLengthB, int maxLag, int minLag, bool useFFT) :
-  _inputLengthA( inputLengthA ),
-  _inputLengthB( inputLengthB ),
-  _minLag( max(-max(_inputLengthA, _inputLengthB) + 1, minLag) ),
-  _maxLag( min( min(_inputLengthA, _inputLengthB), maxLag) ),
-  _useFFT( useFFT ),
-  _fftSize( nextPowerOf2(((_inputLengthA + _inputLengthB) - 1)*2) ),
-  _fft( _fftSize, false ),
-  _ifft( _fftSize, false )
+Correlation::Correlation(int inputSizeA, int inputSizeB, int maxLag, int minLag, bool useFft)
 {
-  DEBUG("CORRELATION: Construction inputLengthA: " << _inputLengthA
-        << " inputLengthB: " << _inputLengthB
-        << " minLag: " << _minLag
-        << " maxLag: " << _maxLag
-        << " useFFT: " << _useFFT
-        << " fftLength: " << _fftSize);
+  DEBUG("CORRELATION: Construction inputSizeA: " << inputSizeA
+        << " inputSizeB: " << inputSizeB
+        << " minLag: " << minLag
+        << " maxLag: " << maxLag
+        << " useFft: " << useFft);
+  
+  setInputSizeA( inputSizeA, false );
+  setInputSizeB( inputSizeB, false );
+  setMinLag( minLag, false );
+  setMaxLag( maxLag, false );
+  setUseFft( useFft, false );
   
   setup();
 }
@@ -74,8 +66,15 @@ void Correlation::setup(){
   // Prepare the buffers
   DEBUG("CORRELATION: Setting up...");
 
-  if ( _useFFT ) {
+  if ( _useFft ) {
+    _fftSize = nextPowerOf2( ( (_inputSizeA + _inputSizeB) - 1) * 2 );
+    
+    _fft.setFftSize( _fftSize, false );
+    _fft.setZeroPhase( false, false );
     _fft.setup();
+
+    _ifft.setFftSize( _fftSize, false );
+    _ifft.setZeroPhase( false, false );
     _ifft.setup();
   }
   
@@ -86,14 +85,14 @@ void Correlation::setup(){
 
 void Correlation::process(const MatrixXR& inputA, const MatrixXR& inputB, MatrixXR* correlation){
   const int rows = inputA.rows();
-  
+
   if ( rows != inputB.rows() ) {
     // Thorw ValueError rows of A and B must be the same
   }
   
   (*correlation).resize(rows, _maxLag - _minLag);
   
-  if ( _useFFT ) {
+  if ( _useFft ) {
     
     _fft.process(inputA, &_fftA);
     _fft.process(inputB, &_fftB);
@@ -114,4 +113,59 @@ void Correlation::process(const MatrixXR& inputA, const MatrixXR& inputB, Matrix
 
 void Correlation::reset(){
   // Initial values
+}
+
+int Correlation::inputSizeA() const {
+  return _inputSizeA;
+}
+  
+void Correlation::setInputSizeA( int size, bool callSetup ) {
+  _inputSizeA = size;
+  if ( callSetup ) setup();
+}
+
+int Correlation::inputSizeB() const {
+  return _inputSizeB;
+}
+  
+void Correlation::setInputSizeB( int size, bool callSetup ) {
+  _inputSizeB = size;
+  if ( callSetup ) setup();
+}
+
+int Correlation::minLag() const {
+  return _minLag;
+}
+  
+void Correlation::setMinLag( int lag, bool callSetup ) {
+  if ( lag >= _maxLag ) {
+    // Thorw ValueError, "The minLag should be smaller than the maxLag."
+  }
+
+  _minLag = max(-max(_inputSizeA, _inputSizeB) + 1, lag);
+  _minLag = min( min(_inputSizeA, _inputSizeB), _minLag);  
+  if ( callSetup ) setup();
+}
+
+int Correlation::maxLag() const {
+  return _maxLag;
+}
+  
+void Correlation::setMaxLag( int lag, bool callSetup ) {
+  if ( lag <= _minLag ) {
+    // Thorw ValueError, "The maxLag should be larger than the minLag."
+  }
+ 
+  _maxLag = max(-max(_inputSizeA, _inputSizeB) + 1, lag);
+  _maxLag = min( min(_inputSizeA, _inputSizeB), _maxLag);  
+  if ( callSetup ) setup();
+}
+
+bool Correlation::useFft() const {
+  return _useFft;
+}  
+
+void Correlation::setUseFft( bool useFft, bool callSetup ) {
+  _useFft = useFft;
+  if ( callSetup ) setup();
 }

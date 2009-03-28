@@ -26,17 +26,18 @@
 using namespace std;
 using namespace Eigen;
 
-NMF::NMF(int vectorSize, int factor, int maxIterations, Real eps) :
-  _vectorSize(vectorSize),
-  _factor(factor),
-  _maxIterations(maxIterations),
-  _eps(eps)
+NMF::NMF(int inputSize, int componentCount, int iterationCount, Real epsilon)
 {
   
-  DEBUG("NMF: Constructor vectorSize: " << _vectorSize
-        << " factor: " << _factor
-        << " maxIterations: " << _maxIterations );
+  DEBUG("NMF: Constructor inputSize: " << inputSize
+        << " componentCount: " << componentCount
+        << " iterationCount: " << iterationCount );
   
+  setInputSize( inputSize, false );
+  setComponentCount( componentCount, false );
+  setIterationCount( iterationCount, false );
+  setEpsilon( epsilon, false );
+
   setup();
 }
 
@@ -62,10 +63,10 @@ void NMF::process(const MatrixXR& v, MatrixXR* w, MatrixXR* h) {
   // Some beleive it can be useful to normalize
   
   // The W matrix is (*w).transpose()
-  (*w).resize(_factor, cols);
+  (*w).resize(_componentCount, cols);
   
   // The H matrix is (*h).transpose()
-  (*h).resize(rows, _factor);
+  (*h).resize(rows, _componentCount);
   
   // Initializing W and H
   // TODO: initialize with a Normal distribution
@@ -75,8 +76,8 @@ void NMF::process(const MatrixXR& v, MatrixXR* w, MatrixXR* h) {
   (*h).setRandom();
   (*h) = (*h).cwise().abs();
   
-  for (int iter = 0; iter < _maxIterations; iter ++) {
-    _xOverWH = v.transpose().cwise() / (((*w).transpose() * (*h).transpose()).cwise() + _eps);
+  for (int iter = 0; iter < _iterationCount; iter ++) {
+    _xOverWH = v.transpose().cwise() / (((*w).transpose() * (*h).transpose()).cwise() + _epsilon );
     
     // Multiplicative update rules of W and H by (Lee and Seung 2001)
     (*w).transpose().cwise() *= (_xOverWH * (*h)).cwise() / (MatrixXR::Ones(cols, 1) * (*h).colwise().sum());
@@ -95,4 +96,40 @@ void NMF::process(const MatrixXR& v, MatrixXR* w, MatrixXR* h) {
 
 void NMF::reset() {
   // Initial values
+}
+
+int NMF::inputSize() const {
+  return _inputSize;
+}
+  
+void NMF::setInputSize( int size, bool callSetup ) {
+  _inputSize = size;
+  if ( callSetup ) setup();
+}
+
+int NMF::componentCount() const {
+  return _componentCount;
+}
+  
+void NMF::setComponentCount( int count, bool callSetup ) {
+  _componentCount = count;
+  if ( callSetup ) setup();
+}
+
+int NMF::iterationCount() const {
+  return _iterationCount;
+}
+  
+void NMF::setIterationCount( int count, bool callSetup ) {
+  _iterationCount = count;
+  if ( callSetup ) setup();
+}
+
+Real NMF::epsilon() const {
+  return _epsilon;
+}
+  
+void NMF::setEpsilon( Real epsilon, bool callSetup ) {
+  _epsilon = epsilon;
+  if ( callSetup ) setup();
 }

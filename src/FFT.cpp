@@ -25,12 +25,15 @@ using namespace std;
 using namespace Eigen;
 
 FFT::FFT(int fftSize, bool zeroPhase) :
-  _fftSize( fftSize ),
-  _zeroPhase( zeroPhase ),
-  _halfSize( fftSize / 2 + 1 )
+  _in( NULL ),
+  _out( NULL ),
+  _fftplan( NULL )
 {
   DEBUG("FFT: Constructor fftSize: " << fftSize 
         << ", zeroPhase: " << zeroPhase);
+
+  setFftSize( fftSize, false );
+  setZeroPhase( zeroPhase, false );
   
   setup();
   
@@ -39,19 +42,46 @@ FFT::FFT(int fftSize, bool zeroPhase) :
 
 FFT::~FFT(){
   DEBUG("FFT: Destroying...");
-  fftwf_destroy_plan( _fftplan );
-  DEBUG("FFT: Destroyed plan");
-  fftwf_free( _in ); 
-  DEBUG("FFT: Destroyed in");
+  if ( _fftplan ) {
+    DEBUG("FFT: Destroying plan");
+    fftwf_destroy_plan( _fftplan );
+  }
 
-  DEBUG("FFT: Destroying out");
-  fftwf_free( _out );
+  if ( _in ) {
+    DEBUG("FFT: Destroying in");
+    fftwf_free( _in ); 
+  }
+
+  if ( _out ) {
+    DEBUG("FFT: Destroying out");
+    fftwf_free( _out );
+  }
   DEBUG("FFT: Destroyed out");
 }
 
 void FFT::setup(){
   DEBUG("FFT: Setting up...");
   
+  // Free the ressources if needed 
+  // before setting them up
+  if ( _fftplan ) {
+    DEBUG("FFT: Destroying plan");
+    fftwf_destroy_plan( _fftplan );
+  }
+
+  if ( _in ) {
+    DEBUG("FFT: Destroying in");
+    fftwf_free( _in ); 
+  }
+
+  if ( _out ) {
+    DEBUG("FFT: Destroying out");
+    fftwf_free( _out );
+  }
+  
+  _halfSize = ( _fftSize / 2 ) + 1;
+  
+  // Allocate the ressources needed
   _in = (Real*) fftwf_malloc(sizeof(Real) * _fftSize);
   _out = (fftwf_complex*) fftwf_malloc(sizeof(fftwf_complex) * _halfSize);
   
@@ -89,10 +119,10 @@ void FFT::process(const MatrixXR& frames, MatrixXC* ffts){
 
 
     }else{
-
       // Put all of the frame at the beginning
       Eigen::Map<MatrixXR>(_in, 1, _fftSize).block(0, 0, 1, cols) = frames.row(i);
     }
+
     // Process the data
     fftwf_execute(_fftplan);
 
@@ -106,4 +136,18 @@ void FFT::reset(){
 
 int FFT::fftSize() const{
   return _fftSize;
+}
+
+void FFT::setFftSize( int size, bool callSetup ) {
+  _fftSize = size;
+  if ( callSetup ) setup();
+}
+
+bool FFT::zeroPhase() const{
+  return _zeroPhase;
+}
+
+void FFT::setZeroPhase( bool zeroPhase, bool callSetup ) {
+  _zeroPhase = zeroPhase;
+  if ( callSetup ) setup();
 }

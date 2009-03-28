@@ -25,17 +25,15 @@
 using namespace std;
 using namespace Eigen;
 
-PitchACF::PitchACF(int fftSize, Real samplerate, int minPeakWidth, int peakCandidateCount) :
-  _fftSize( fftSize ),
-  _halfSize( ( _fftSize / 2 ) + 1 ),
-  _samplerate( samplerate ),
-  _peak(1, PeakDetect::BYMAGNITUDE, minPeakWidth, peakCandidateCount),
-  _peakInterp(),
-  _acorr(_halfSize, _halfSize)
+PitchACF::PitchACF(int fftSize, Real samplerate, int minimumPeakWidth, int peakCandidateCount)
 {
   DEBUG("PITCHACF: Construction fftSize: " << _fftSize
         << " samplerate: " << _samplerate );
 
+  setFftSize( fftSize, false );
+  setSamplerate( samplerate, false );
+  setMinimumPeakWidth( minimumPeakWidth, false );
+  setPeakCandidateCount( peakCandidateCount, false );
   setup();
 }
 
@@ -43,6 +41,18 @@ PitchACF::~PitchACF(){}
 
 void PitchACF::setup(){
   DEBUG("PITCHACF: Setting up...");
+
+  _halfSize = ( _fftSize / 2 ) + 1;
+
+  _peak.setPeakCount( 1, false );
+  _peak.setSortMethod( PeakDetection::BYMAGNITUDE, false );
+  _peak.setMinimumPeakWidth( _minimumPeakWidth, false );
+  _peak.setCandidateCount( _peakCandidateCount, false );
+  _peak.setup();
+
+  _acorr.setInputSize( _halfSize, false );
+  _acorr.setMaxLag( _halfSize, false );
+  _acorr.setup();
 
   reset();
 
@@ -58,12 +68,48 @@ void PitchACF::process(const MatrixXR& spectrum, MatrixXR* pitches, MatrixXR* sa
   _peakInterp.process(_acorred, (*pitches), (*saliencies),
                       pitches, saliencies);
 
-  (*pitches) *= _samplerate / _fftSize;
-
+  (*pitches) *= 2.0 * _samplerate / _fftSize;
+  
   (*saliencies).cwise() /= _acorred.col(0);
 }
 
 void PitchACF::reset(){
   // Initial values
 
+}
+
+int PitchACF::fftSize() const{
+  return _fftSize;
+}
+
+void PitchACF::setFftSize( int size, bool callSetup ) {
+  _fftSize = size;
+  if ( callSetup ) setup();
+}
+
+int PitchACF::minimumPeakWidth() const{
+  return _minimumPeakWidth;
+}
+
+void PitchACF::setMinimumPeakWidth( int width, bool callSetup ) {
+  _minimumPeakWidth = width;
+  if ( callSetup ) setup();
+}
+
+int PitchACF::peakCandidateCount() const{
+  return _peakCandidateCount;
+}
+
+void PitchACF::setPeakCandidateCount( int count, bool callSetup ) {
+  _peakCandidateCount = count;
+  if ( callSetup ) setup();
+}
+
+Real PitchACF::samplerate() const{
+  return _samplerate;
+}
+  
+void PitchACF::setSamplerate( Real frequency, bool callSetup ){
+  _samplerate = frequency;
+  if ( callSetup ) setup();
 }

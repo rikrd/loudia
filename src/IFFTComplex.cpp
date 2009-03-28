@@ -25,9 +25,9 @@ using namespace std;
 using namespace Eigen;
 
 IFFTComplex::IFFTComplex(int frameSize, int fftSize, bool zeroPhase) :
-  _fftSize( fftSize ),
-  _frameSize( frameSize ),
-  _zeroPhase( zeroPhase )
+  _in( NULL ),
+  _out( NULL ),
+  _fftplan( NULL )
 {
   DEBUG("IFFTComplex: Constructor frameSize: " << frameSize 
         << ", fftSize: " << fftSize 
@@ -43,13 +43,41 @@ IFFTComplex::IFFTComplex(int frameSize, int fftSize, bool zeroPhase) :
 }
 
 IFFTComplex::~IFFTComplex(){
-  fftwf_destroy_plan( _fftplan );
-  fftwf_free( _in );
-  fftwf_free( _out );
+  if ( _fftplan ) {
+    DEBUG("FFT: Destroying plan");
+    fftwf_destroy_plan( _fftplan );
+  }
+
+  if ( _in ) {
+    DEBUG("FFT: Destroying in");
+    fftwf_free( _in ); 
+  }
+
+  if ( _out ) {
+    DEBUG("FFT: Destroying out");
+    fftwf_free( _out );
+  }
 }
 
 void IFFTComplex::setup(){
   DEBUG("IFFTComplex: Setting up...");
+  
+  // Free the ressources if needed 
+  // before setting them up
+  if ( _fftplan ) {
+    DEBUG("FFT: Destroying plan");
+    fftwf_destroy_plan( _fftplan );
+  }
+
+  if ( _in ) {
+    DEBUG("FFT: Destroying in");
+    fftwf_free( _in ); 
+  }
+
+  if ( _out ) {
+    DEBUG("FFT: Destroying out");
+    fftwf_free( _out );
+  }
   
   _in = (fftwf_complex*) fftwf_malloc(sizeof(fftwf_complex) * _fftSize);
   _out = (fftwf_complex*) fftwf_malloc(sizeof(fftwf_complex) * _fftSize);
@@ -105,10 +133,30 @@ void IFFTComplex::process(const MatrixXC& ffts, MatrixXC* frames){
 void IFFTComplex::reset(){
 }
 
+int IFFTComplex::fftSize() const{
+  return _fftSize;
+}
+
+void IFFTComplex::setFftSize( int size, bool callSetup ) {
+  _fftSize = size;
+  if ( callSetup ) setup();
+}
+
 int IFFTComplex::frameSize() const{
   return _frameSize;
 }
 
-int IFFTComplex::fftSize() const{
-  return _fftSize;
+void IFFTComplex::setFrameSize( int size, bool callSetup ) {
+  _frameSize = size;
+  if ( callSetup ) setup();
 }
+
+bool IFFTComplex::zeroPhase() const{
+  return _zeroPhase;
+}
+
+void IFFTComplex::setZeroPhase( bool zeroPhase, bool callSetup ) {
+  _zeroPhase = zeroPhase;
+  if ( callSetup ) setup();
+}
+

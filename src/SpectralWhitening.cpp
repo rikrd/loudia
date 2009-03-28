@@ -25,23 +25,22 @@
 using namespace std;
 using namespace Eigen;
 
-SpectralWhitening::SpectralWhitening(int fftSize, Real f0, Real f1, Real samplerate, Real compressionFactor, int numBands, MelBands::ScaleType scaleType) :
-  _fftSize( fftSize ),
-  _halfSize( ( _fftSize / 2 ) + 1 ),
-  _f0( f0 ),
-  _f1( f1 ),
-  _samplerate( samplerate ),
-  _compressionFactor( compressionFactor ),
-  _numBands( numBands ),
-  _scaleType( scaleType ),
-  _bands( _f0, _f1, _numBands, _samplerate, _fftSize, _scaleType)
+SpectralWhitening::SpectralWhitening(int fftSize, Real lowFrequency, Real highFrequency, Real samplerate, Real compressionFactor, int bandCount, MelBands::ScaleType scaleType)
 {
-  DEBUG("SPECTRALWHITENING: Construction fftSize: " << _fftSize
-        << " samplerate: " << _samplerate
-        << " compressionFactor: " << _compressionFactor
-        << " numBands: " << _numBands
-        << " f0: " << _f0
-        << " f1: " << _f1 );
+  DEBUG("SPECTRALWHITENING: Construction fftSize: " << fftSize
+        << " samplerate: " << samplerate
+        << " compressionFactor: " << compressionFactor
+        << " bandCount: " << bandCount
+        << " lowFrequency: " << lowFrequency
+        << " highFrequency: " << highFrequency );
+
+  setFftSize( fftSize, false );
+  setLowFrequency( lowFrequency, false );
+  setHighFrequency( highFrequency, false );
+  setBandCount( bandCount, false );
+  setSamplerate( samplerate, false );
+  setScaleType( scaleType, false );
+  setCompressionFactor( compressionFactor, false );
 
   setup();
 }
@@ -51,7 +50,15 @@ SpectralWhitening::~SpectralWhitening(){}
 void SpectralWhitening::setup(){
   DEBUG("SPECTRALWHITENING: Setting up...");
 
+  _halfSize = ( _fftSize / 2 ) + 1;
+  
   // Setup the bands
+  _bands.setLowFrequency( _lowFrequency, false );
+  _bands.setHighFrequency( _highFrequency, false );
+  _bands.setBandCount(_bandCount, false );
+  _bands.setSamplerate( _samplerate, false );
+  _bands.setFftSize(_fftSize, false );
+  _bands.setScaleType( _scaleType, false ); 
   _bands.setup();
 
   _bands.centers(&_centers);
@@ -83,7 +90,7 @@ void SpectralWhitening::process(const MatrixXR& spectrum, MatrixXR* result){
   }
 
   // Interpolate the region between the first and last frequency centers
-  for ( int band = 1; band < _numBands; band++ ) {
+  for ( int band = 1; band < _bandCount; band++ ) {
     for (; col < _centers(band, 0); col++ ) {
       _compressionWeights.col(col) = (((Real)col - _centers(band - 1, 0)) * (_bandEnergy.col(band) - _bandEnergy.col(band-1)) / (_centers(band, 0) - _centers(band - 1, 0))) + _bandEnergy.col(band - 1);
     }
@@ -91,7 +98,7 @@ void SpectralWhitening::process(const MatrixXR& spectrum, MatrixXR* result){
 
   // Interpolate the region after the last frequency center
   for (; col < _halfSize; col++ ) {
-      _compressionWeights.col(col) = (((Real)col - _centers(_numBands - 1, 0)) * ( -_bandEnergy.col(_numBands - 1)) / (_halfSize - _centers(_numBands - 1, 0))) + _bandEnergy.col(_numBands - 1);
+      _compressionWeights.col(col) = (((Real)col - _centers(_bandCount - 1, 0)) * ( -_bandEnergy.col(_bandCount - 1)) / (_halfSize - _centers(_bandCount - 1, 0))) + _bandEnergy.col(_bandCount - 1);
   }
 
   // Apply compression weihgts
@@ -102,4 +109,67 @@ void SpectralWhitening::reset(){
   // Initial values
 
   _bands.reset();
+}
+
+Real SpectralWhitening::lowFrequency() const{
+  return _lowFrequency;
+}
+  
+void SpectralWhitening::setLowFrequency( Real frequency, bool callSetup ){
+  _lowFrequency = frequency;
+  if ( callSetup ) setup();
+}
+
+Real SpectralWhitening::highFrequency() const{
+  return _highFrequency;
+}
+  
+void SpectralWhitening::setHighFrequency( Real frequency, bool callSetup ){
+  _highFrequency = frequency;
+  if ( callSetup ) setup();
+}
+
+Real SpectralWhitening::samplerate() const{
+  return _samplerate;
+}
+  
+void SpectralWhitening::setSamplerate( Real frequency, bool callSetup ){
+  _samplerate = frequency;
+  if ( callSetup ) setup();
+}
+
+int SpectralWhitening::bandCount() const {
+  return _bandCount;
+}
+
+void SpectralWhitening::setBandCount( int count, bool callSetup ) {
+  _bandCount = count;
+  if ( callSetup ) setup();
+}
+
+int SpectralWhitening::fftSize() const{
+  return _fftSize;
+}
+
+void SpectralWhitening::setFftSize( int size, bool callSetup ) {
+  _fftSize = size;
+  if ( callSetup ) setup();
+}
+
+MelBands::ScaleType SpectralWhitening::scaleType() const{
+  return _scaleType;
+}
+
+void SpectralWhitening::setScaleType( MelBands::ScaleType type, bool callSetup ) {
+  _scaleType = type;
+  if ( callSetup ) setup();
+}
+
+Real SpectralWhitening::compressionFactor() const{
+  return _compressionFactor;
+}
+  
+void SpectralWhitening::setCompressionFactor( Real factor, bool callSetup ){
+  _compressionFactor = factor;
+  if ( callSetup ) setup();
 }

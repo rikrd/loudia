@@ -4,8 +4,8 @@
 import scipy
 samplerate = 44100
 channels = 30
-a1 = scipy.array(scipy.random.random((4096, channels)), dtype='f4')
-a2 = scipy.array(scipy.random.random((4096, channels)), dtype='f4')
+a1 = scipy.random.random((4096, channels))
+a2 = scipy.random.random((4096, channels))
 substractSpont = True
 
 # CRicaudio's solution # --------------------------------- #

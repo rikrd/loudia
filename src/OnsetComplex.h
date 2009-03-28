@@ -24,7 +24,7 @@
 
 #include "Window.h"
 #include "FFT.h"
-#include "ODFComplex.h"
+#include "SpectralODFComplex.h"
 
 class OnsetComplex {
 protected:
@@ -37,7 +37,7 @@ protected:
   // Internal variables
   Window _window;
   FFT _fft;
-  ODFComplex _odf;
+  SpectralODFComplex _odf;
 
   MatrixXR _windowed;
   MatrixXC _ffted;

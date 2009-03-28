@@ -24,16 +24,20 @@
 using namespace std;
 using namespace Eigen;
 
-Resample::Resample(int inSize, int outSize, Real resampleRatio, ResampleType resampleType) :
-  _inSize( inSize ),
-  _outSize( outSize ),
-  _resampleRatio( resampleRatio ),
-  _resampleType( resampleType )
+Resample::Resample(int inputSize, int outputSize, Real resamplingRatio, ResamplingMethod resamplingMethod)
 {
-  DEBUG("RESAMPLE: Constructor inSize: " << inSize 
-        << ", outSize: " << outSize 
-        << ", resampleRatio: " << resampleRatio);
+  DEBUG("RESAMPLE: Constructor inputSize: " << inputSize 
+        << ", outputSize: " << outputSize 
+        << ", resamplingRatio: " << resamplingRatio);
+
+  _resampleData.data_in = NULL;
+  _resampleData.data_out = NULL;
   
+  setInputSize( inputSize, false );
+  setOutputSize( outputSize, false );
+  setResamplingRatio( resamplingRatio, false );
+  setResamplingMethod( resamplingMethod, false );
+
   setup();
   
   DEBUG("RESAMPLE: Constructed");
@@ -42,8 +46,8 @@ Resample::Resample(int inSize, int outSize, Real resampleRatio, ResampleType res
 Resample::~Resample(){
   DEBUG("RESAMPLE: Destroying...");
 
-  delete [] _resampleData.data_in;
-  delete [] _resampleData.data_out;
+  if ( _resampleData.data_in ) delete [] _resampleData.data_in;
+  if ( _resampleData.data_out ) delete [] _resampleData.data_out;
   
   DEBUG("RESAMPLE: Destroyed out");
 }
@@ -51,15 +55,15 @@ Resample::~Resample(){
 void Resample::setup(){
   DEBUG("RESAMPLE: Setting up...");
 
-  _resampleData.input_frames = _inSize;
-  _resampleData.output_frames = _outSize;
-  _resampleData.src_ratio = _resampleRatio;
+  _resampleData.input_frames = _inputSize;
+  _resampleData.output_frames = _outputSize;
+  _resampleData.src_ratio = _resamplingRatio;
 
-  if ( !_resampleData.data_in ) delete [] _resampleData.data_in;
-  if ( !_resampleData.data_out ) delete [] _resampleData.data_out;
+  if ( _resampleData.data_in ) delete [] _resampleData.data_in;
+  if ( _resampleData.data_out ) delete [] _resampleData.data_out;
 
-  _resampleData.data_in = new float[_inSize];
-  _resampleData.data_out = new float[_outSize];
+  _resampleData.data_in = new float[_inputSize];
+  _resampleData.data_out = new float[_outputSize];
 
   
   DEBUG("RESAMPLE: Finished set up...");
@@ -69,38 +73,62 @@ void Resample::process(const MatrixXR& in, MatrixXR* out){
   const int rows = in.rows();
   const int cols = in.cols();
 
-  if ( cols != _inSize ) {
+  if ( cols != _inputSize ) {
     // Throw ValueError, incorrect input size
   }
 
-  (*out).resize(rows, _outSize);
+  (*out).resize(rows, _outputSize);
 
   for (int i = 0; i < rows; i++){    
     // Fill the buffer
-    Eigen::Map<MatrixXR>(_resampleData.data_in, 1, _inSize) = in;
+    Eigen::Map<MatrixXR>(_resampleData.data_in, 1, _inputSize) = in;
     
     // Process the data
-    int error = src_simple(&_resampleData, _resampleType, 1);
+    int error = src_simple(&_resampleData, _resamplingMethod, 1);
     if ( error ) {
       // Throw ResampleError, src_strerror( error );
     }
     
     // Take the data from _out
-    (*out).row( i ) = Eigen::Map<MatrixXR>(_resampleData.data_out, 1, _outSize);
+    (*out).row( i ) = Eigen::Map<MatrixXR>(_resampleData.data_out, 1, _outputSize);
   }
 }
 
 void Resample::reset(){
 }
 
-int Resample::inSize() const{
-  return _inSize;
+int Resample::inputSize() const{
+  return _inputSize;
 }
 
-int Resample::outSize() const{
-  return _outSize;
+void Resample::setInputSize( int size, bool callSetup ) {
+  _inputSize = size;
+  if ( callSetup ) setup();
 }
 
-Real Resample::resampleRatio() const{
-  return _resampleRatio;
+int Resample::outputSize() const{
+  return _outputSize;
+}
+
+void Resample::setOutputSize( int size, bool callSetup ) {
+  _outputSize = size;
+  if ( callSetup ) setup();
+}
+
+Real Resample::resamplingRatio() const{
+  return _resamplingRatio;
+}
+
+void Resample::setResamplingRatio( Real ratio, bool callSetup ) {
+  _resamplingRatio = ratio;
+  if ( callSetup ) setup();
+}
+
+Resample::ResamplingMethod Resample::resamplingMethod() const{
+  return _resamplingMethod;
+}
+
+void Resample::setResamplingMethod( ResamplingMethod method, bool callSetup ) {
+  _resamplingMethod = method;
+  if ( callSetup ) setup();
 }

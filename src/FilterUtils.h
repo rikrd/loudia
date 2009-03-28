@@ -24,20 +24,25 @@
 
 #include "Utils.h"
 
-enum FilterType {
-  CHEBYSHEVI = 0,
-  CHEBYSHEVII = 1
-};
-
 /**
- * Create the Chebyshev Type I zeros and poles.
+ * Create the zeros, poles and gain of an analog prototype of a Chebyshev Type I filter.
  */
 void chebyshev1(int order, Real rippleDB, int channels, MatrixXC* zeros, MatrixXC* poles, Real* gain);
 
 /**
- * Create the Chebyshev Type II zeros and poles.
+ * Create the  zeros, poles and gain of an analog prototype of a Chebyshev Type II filter.
  */
 void chebyshev2(int order, Real rippleDB, int channels, MatrixXC* zeros, MatrixXC* poles, Real* gain);
+
+/**
+ * Create the zeros, poles and gain of an analog prototype of a Butterworth filter.
+ */
+void butterworth(int order, int channels, MatrixXC* zeros, MatrixXC* poles, Real* gain);
+
+/**
+ * Create the zeros, poles and gain of an analog prototype of a Bessel filter.
+ */
+void bessel(int order, int channels, MatrixXC* zeros, MatrixXC* poles, Real* gain);
 
 /**
  * Convert from the b and a coefficients of an IIR filter to the
@@ -62,6 +67,24 @@ void lowPassToLowPass(const MatrixXC& b, const MatrixXC& a, Real freq, MatrixXC*
  * to the coefficients with the critical frequency passed as argument
  */
 void lowPassToHighPass(const MatrixXC& b, const MatrixXC& a, Real freq, MatrixXC*  bout, MatrixXC*  aout);
+
+/**
+ * Convert from the b and a coefficients from low pass to band pass of an IIR filter with critical frequency 1.0
+ * to the coefficients with the critical frequency passed as argument
+ */
+void lowPassToBandPass(const MatrixXC& b, const MatrixXC& a, Real freq, Real freqStop, MatrixXC*  bout, MatrixXC*  aout);
+
+/**
+ * Convert from the b and a coefficients from low pass to band stop of an IIR filter with critical frequency 1.0
+ * to the coefficients with the critical frequency passed as argument
+ */
+void lowPassToBandStop(const MatrixXC& b, const MatrixXC& a, Real freq, Real freqStop, MatrixXC*  bout, MatrixXC*  aout);
+
+/**
+ * Normalize to a first coefficient
+ * 
+ */
+void normalize(MatrixXC& b, MatrixXC& a);
 
 /**
  * Apply the biliniear transformations to a set of coefficients

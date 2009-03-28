@@ -25,10 +25,9 @@
 using namespace std;
 using namespace Eigen;
 
-Unwrap::Unwrap(int inputLength) :
-  _inputLength( inputLength )
+Unwrap::Unwrap()
 {
-  DEBUG("Unwrap: Construction inputLength: " << inputLength);
+  DEBUG("UNWRAP: Construction");
 
   setup();
 }
@@ -37,11 +36,11 @@ Unwrap::~Unwrap(){}
 
 void Unwrap::setup(){
   // Prepare the buffers
-  DEBUG("Unwrap: Setting up...");
+  DEBUG("UNWRAP: Setting up...");
   
   reset();
 
-  DEBUG("Unwrap: Finished setup.");
+  DEBUG("UNWRAP: Finished setup.");
 }
 
 void Unwrap::process(const MatrixXR& input, MatrixXR* unwrapped){

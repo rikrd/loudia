@@ -5,12 +5,16 @@ import scipy
 
 # Create the omega array
 npoints = 1000
-w = scipy.arange(-scipy.pi, scipy.pi, 2*scipy.pi/(npoints), dtype = 'f4')
+w = scipy.arange(-scipy.pi, scipy.pi, 2.0*scipy.pi/npoints)
 
 # Create the coefficients of the filter
 nbcoeffs = 10
-b = scipy.ones((nbcoeffs, 1), dtype = 'f4') / nbcoeffs
-a = scipy.ones((1, 1), dtype = 'f4')
+b = scipy.ones((nbcoeffs, 1)) / nbcoeffs
+a = scipy.ones((1, 1))
+
+print b
+print a
+print w
 
 # Calculate the frequency response
 d = ricaudio.freqz(b, a, w)

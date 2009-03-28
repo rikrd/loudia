@@ -24,20 +24,21 @@
 using namespace std;
 using namespace Eigen;
 
-DCT::DCT(int inputLength, int dctLength, bool scale, DCTType dctType) :
-  _inputLength( inputLength ),
-  _dctLength( dctLength ),
-  _scale( scale ),
-  _dctType( dctType )
+DCT::DCT(int inputSize, int dctSize, bool scale, DCTType dctType) :
+  _scale( scale )
 {
-  DEBUG("DCT: Construction inputLength: " << inputLength 
-        << ", dctLength: " << dctLength 
+  DEBUG("DCT: Construction inputSize: " << inputSize 
+        << ", dctSize: " << dctSize 
         << ", dctType: " << dctType);
   
-  if (inputLength < dctLength) {
-    // TODO: Throw an exception since dctLength is the number of coefficients to output and it cannot output more
+  if (inputSize < dctSize) {
+    // TODO: Throw an exception since dctSize is the number of coefficients to output and it cannot output more
     return;
   }
+
+  setInputSize( inputSize, false );
+  setDctSize( dctSize, false );
+  setDctType( dctType, false );
 
   setup();
 }
@@ -47,7 +48,7 @@ DCT::~DCT(){}
 void DCT::setup(){
   // Prepare the buffers
   DEBUG("DCT: Setting up...");
-  _dctMatrix.resize(_inputLength, _inputLength);
+  _dctMatrix.resize(_inputSize, _inputSize);
 
 
   switch(_dctType) {
@@ -79,15 +80,15 @@ void DCT::setup(){
 }
 
 void DCT::type1Matrix(MatrixXR* dctMatrix) {
-  int length = (*dctMatrix).rows();
+  int size = (*dctMatrix).rows();
 
   Real norm = 1.0;
-  if ( _scale ) norm = sqrt(Real(2.0)/Real(length - 1));
+  if ( _scale ) norm = sqrt(Real(2.0)/Real(size - 1));
   
-  for(int i=0; i < length; i++){
-    (*dctMatrix)(i, length - 1) = norm * 0.5 * pow((Real)-1, (Real)i);
-    for(int j=1; j < length-1; j++){
-      (*dctMatrix)(i,j) = norm * cos(Real(j * i) * M_PI / Real(length - 1));
+  for(int i=0; i < size; i++){
+    (*dctMatrix)(i, size - 1) = norm * 0.5 * pow((Real)-1, (Real)i);
+    for(int j=1; j < size-1; j++){
+      (*dctMatrix)(i,j) = norm * cos(Real(j * i) * M_PI / Real(size - 1));
     }
   }
 
@@ -96,27 +97,27 @@ void DCT::type1Matrix(MatrixXR* dctMatrix) {
 }
 
 void DCT::type2Matrix(MatrixXR* dctMatrix) {
-  int length = (*dctMatrix).rows();
+  int size = (*dctMatrix).rows();
 
   Real norm = 1.0;
-  if ( _scale ) norm = sqrt(Real(2.0)/Real(length));
+  if ( _scale ) norm = sqrt(Real(2.0)/Real(size));
   
-  for(int i=0; i < length; i++){
-    for(int j=0; j < length; j++){
-      (*dctMatrix)(i,j) = norm * cos(Real(j) * M_PI / Real(length) * (Real(i) + 0.5));
+  for(int i=0; i < size; i++){
+    for(int j=0; j < size; j++){
+      (*dctMatrix)(i,j) = norm * cos(Real(j) * M_PI / Real(size) * (Real(i) + 0.5));
     }
   }
 }
 
 void DCT::typeOctaveMatrix(MatrixXR* dctMatrix) {
-  int length = (*dctMatrix).rows();
+  int size = (*dctMatrix).rows();
 
   Real norm = 1.0;
-  if ( _scale ) norm = sqrt(2.0/Real(length));
+  if ( _scale ) norm = sqrt(2.0/Real(size));
   
-  for(int i=0; i < length; i++){
-    for(int j=1; j < length; j++){
-      (*dctMatrix)(i,j) = norm * cos(Real(j) * M_PI / Real(2 * length) * (Real(2 * i - 1)));
+  for(int i=0; i < size; i++){
+    for(int j=1; j < size; j++){
+      (*dctMatrix)(i,j) = norm * cos(Real(j) * M_PI / Real(2 * size) * (Real(2 * i - 1)));
     }
   }
   
@@ -124,13 +125,40 @@ void DCT::typeOctaveMatrix(MatrixXR* dctMatrix) {
 }
 
 void DCT::process(const MatrixXR& input, MatrixXR* dctCoeffs){
-  (*dctCoeffs).resize(input.rows(), _dctLength);
+  (*dctCoeffs).resize(input.rows(), _dctSize);
   
   for ( int i = 0 ; i < input.rows(); i++) {
-    (*dctCoeffs).row(i) = (input.row(i) * _dctMatrix).block(0, 0, 1, _dctLength);
+    (*dctCoeffs).row(i) = (input.row(i) * _dctMatrix).block(0, 0, 1, _dctSize);
   }
 }
 
 void DCT::reset(){
   // Initial values
+}
+
+DCT::DCTType DCT::dctType() const{
+  return _dctType;
+}
+
+void DCT::setDctType( DCTType type, bool callSetup ) {
+  _dctType = type;
+  if ( callSetup ) setup();
+}
+
+int DCT::inputSize() const{
+  return _inputSize;
+}
+
+void DCT::setInputSize( int size, bool callSetup ) {
+  _inputSize = size;
+  if ( callSetup ) setup();
+}
+
+int DCT::dctSize() const{
+  return _dctSize;
+}
+
+void DCT::setDctSize( int size, bool callSetup ) {
+  _dctSize = size;
+  if ( callSetup ) setup();
 }
