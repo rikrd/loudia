@@ -595,7 +595,7 @@ void lowPassToBandPass(const MatrixXC& b, const MatrixXC& a, Real freq, Real ban
     for ( int i = 0; i < bsize; i++ ) {
       for ( int k = 0; k < (i + 1); k++ ) {
         if ( maxsize - i + 2 * k == j ) {
-          val += (Real)comb(i, k) * b.col(bsize - 1 - i) * pow(freqSq, (Real)(i-k)) / pow(bandwidth, (Real)i);
+          val += (Real)combination(i, k) * b.col(bsize - 1 - i) * pow(freqSq, (Real)(i-k)) / pow(bandwidth, (Real)i);
         }
       }
     }
@@ -609,7 +609,7 @@ void lowPassToBandPass(const MatrixXC& b, const MatrixXC& a, Real freq, Real ban
     for ( int i = 0; i < asize; i++ ) {
       for ( int k = 0; k < (i + 1); k++ ) {
         if ( maxsize - i + 2 * k == j ) {
-          val += (Real)comb(i, k) * a.col(asize - 1 - i) * pow(freqSq, (Real)(i-k)) / pow(bandwidth, (Real)i);
+          val += (Real)combination(i, k) * a.col(asize - 1 - i) * pow(freqSq, (Real)(i-k)) / pow(bandwidth, (Real)i);
         }
       }
     }
@@ -643,7 +643,7 @@ void lowPassToBandStop(const MatrixXC& b, const MatrixXC& a, Real freq, Real ban
     for ( int i = 0; i < bsize; i++ ) {
       for ( int k = 0; k < (maxsize - i + 1); k++ ) {
         if ( i + 2 * k == j ) {
-          val += (Real)comb(maxsize - i, k) * b.col(bsize - 1 - i) * pow(freqSq, (Real)(maxsize - i - k)) * pow(bandwidth, (Real)i);
+          val += (Real)combination(maxsize - i, k) * b.col(bsize - 1 - i) * pow(freqSq, (Real)(maxsize - i - k)) * pow(bandwidth, (Real)i);
         }
       }
     }
@@ -657,7 +657,7 @@ void lowPassToBandStop(const MatrixXC& b, const MatrixXC& a, Real freq, Real ban
     for ( int i = 0; i < asize; i++ ) {
       for ( int k = 0; k < (maxsize - i + 1); k++ ) {
         if ( i + 2 * k == j ) {
-          val += (Real)comb(maxsize - i, k) * a.col(asize - 1 - i) * pow(freqSq, (Real)(maxsize - i - k)) * pow(bandwidth, (Real)i);
+          val += (Real)combination(maxsize - i, k) * a.col(asize - 1 - i) * pow(freqSq, (Real)(maxsize - i - k)) * pow(bandwidth, (Real)i);
         }
       }
     }
