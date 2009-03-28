@@ -1,3 +1,6 @@
 *.pyc
 .*
 build
+papers
+doc/html
+doc/latex
