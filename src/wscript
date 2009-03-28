@@ -5,7 +5,6 @@
 LIBNAME = 'ricaudio'
 LIBVERSION = '0.1-dev'
 
-
 def set_options(opt):
 	opt.tool_options('compiler_cxx')
 
