@@ -33,10 +33,10 @@ protected:
   int _halfSize;
   Real _lowFrequency;
   Real _highFrequency;
-  int _numMaxPitches;
-  int _numHarmonics;
-  int _numFreqCandidates;
-  Real _peakBandwidth;
+  int _pitchCount;
+  int _harmonicCount;
+  int _frequencyCandidateCount;
+  Real _peakWidth;
 
   Real _samplerate;
 
@@ -53,30 +53,158 @@ protected:
   PeakDetection _peak;
   PeakInterpolation _peakInterp;
 
+  void harmonicWeight(MatrixXR f, Real fMin, Real fMax, int harmonicIndex, MatrixXR* result);
+  void harmonicSpread(MatrixXR f, Real fMin, Real fMax, int harmonicIndex, MatrixXR* result);
+  void harmonicPosition(MatrixXR f, Real fMin, Real fMax, int harmonicIndex, MatrixXR* result);
+  Real harmonicWeight(Real f, Real fMin, Real fMax, int harmonicIndex);
+  Real harmonicSpread(Real f, Real fMin, Real fMax, int harmonicIndex);
+  Real harmonicPosition(Real f, Real fMin, Real fMax, int harmonicIndex);
+
 public:
-  PitchInverseProblem(int fftSize, Real lowFrequency, Real highFrequency, Real samplerate = 1.0, int maxNumPitches = 5, int numHarmonics = 10, int numFreqCandidates = -1, Real peakBandwidth = 8);
+  PitchInverseProblem(int fftSize = 1024, Real lowFrequency = 50.0, Real highFrequency = 2100.0, Real samplerate = 44100.0, int pitchCount = 5, int harmonicCount = 10, int frequencyCandidateCount = -1, Real peakWidth = 4);
 
   ~PitchInverseProblem();
 
+  void reset();
   void setup();
 
-  void process(const MatrixXR& spectrum, MatrixXR* pitches, MatrixXR* saliencies, MatrixXR* freqs);
+  void process(const MatrixXR& spectrum, MatrixXR* pitches, MatrixXR* saliencies, MatrixXR* frequencies);
 
   void projectionMatrix(MatrixXR* matrix) const;
 
-  void harmonicWeight(MatrixXR f, Real fMin, Real fMax, int harmonicIndex, MatrixXR* result);
+  /**
+     Return the lowest frequency candidate.
+     The default is 50.0.
 
-  void harmonicSpread(MatrixXR f, Real fMin, Real fMax, int harmonicIndex, MatrixXR* result);
+     @sa lowFrequency, highFrequency, setLowFrequency, setHighFrequency
+  */  
+  Real lowFrequency() const;  
 
-  void harmonicPosition(MatrixXR f, Real fMin, Real fMax, int harmonicIndex, MatrixXR* result);
+  /**
+     Specifies the lowest @a frequency candidate.
+     The given @a frequency must be in the range of 0 to the samplerate / 2.
+     
+     @sa lowFrequency, highFrequency, setHighFrequency
+  */
+  void setLowFrequency( Real frequency, bool callSetup = true );
 
-  Real harmonicWeight(Real f, Real fMin, Real fMax, int harmonicIndex);
+  /**
+     Return the highest frequency candidate.
+     The default is 2100.0.
 
-  Real harmonicSpread(Real f, Real fMin, Real fMax, int harmonicIndex);
+     @sa lowFrequency, setLowFrequency, setHighFrequency
+  */  
+  Real highFrequency() const;  
 
-  Real harmonicPosition(Real f, Real fMin, Real fMax, int harmonicIndex);
+  /**
+     Specifies the highest @a frequency candidate.
+     The given @a frequency must be in the range of 0 to the samplerate / 2.
 
-  void reset();
+     @sa lowFrequency, highFrequency, setLowFrequency
+  */
+  void setHighFrequency( Real frequency, bool callSetup = true );
+
+  /**
+     Return the samplerate frequency of the input signal.
+     The default is 44100.0.
+
+     @sa setSamplerate
+  */  
+  Real samplerate() const;  
+
+  /**
+     Specifies the samplerate @a frequency of the input signal.
+     
+     @sa samplerate
+  */
+  void setSamplerate( Real frequency, bool callSetup = true );
+
+  /**
+     Returns the size of the FFT that has been performed for the input.
+     The default is 1024.
+     
+     @sa setFftSize()
+  */
+  int fftSize() const;
+
+  /**
+     Specifies the @a size of the FFT that has been performed for the input.
+     The given @a size must be higher than 0.
+     
+     @sa fftSize()
+  */
+  void setFftSize( int size, bool callSetup = true );
+
+  /**
+     Returns the count of candidate frequencies in with which to discretize
+     the frequency space.
+
+     Note that if the value is <= 0, then fftSize / 2 + 1 is used.
+
+     By default it is 6.
+
+     @sa setFrequencyCandidateCount()
+  */
+  int frequencyCandidateCount() const;
+
+  /**
+     Specifies the number of highest magnitude candidates to be considered 
+     during the frequency detection process of the autocorrelation function.
+
+     Note that if the value is <= 0, then no preselection is performed
+     and all detected frequencys are considered as candidates.
+
+     @sa frequencyCandidateCount()
+  */
+  void setFrequencyCandidateCount( int count, bool callSetup = true );
+
+  /**
+     Returns the width of the harmonic peaks.
+     The default is 8.
+     
+     @sa setPeakWidth()
+  */
+  int peakWidth() const;
+  
+  /**
+     Specifies the @a width of the harmonic peaks.
+     
+     @sa peakWidth()
+  */
+  void setPeakWidth( int width, bool callSetup = true );
+
+  /**
+     Returns the maximum count of pitches to be estimated.
+
+     By default it is 5.
+
+     @sa setPitchCount()
+  */
+  int pitchCount() const;
+
+  /**
+     Specifies the maximum @a count of pitches to be estimated.
+
+     @sa pitchCount()
+  */
+  void setPitchCount( int count, bool callSetup = true );
+
+  /**
+     Returns the maximum count of harmonics to be rendered in the projection matrix.
+
+     By default it is 10.
+
+     @sa setHarmonicCount()
+  */
+  int harmonicCount() const;
+
+  /**
+     Specifies the @a count of harmonics to be rendered in the projection matrix.
+
+     @sa harmonicCount()
+  */
+  void setHarmonicCount( int count, bool callSetup = true );
+
 };
 
 #endif  /* PITCHINVERSEPROBLEM_H */
