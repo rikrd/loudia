@@ -61,7 +61,7 @@ protected:
   Real harmonicPosition(Real f, Real fMin, Real fMax, int harmonicIndex);
 
 public:
-  PitchInverseProblem(int fftSize = 1024, Real lowFrequency = 50.0, Real highFrequency = 2100.0, Real samplerate = 44100.0, int pitchCount = 5, int harmonicCount = 10, int frequencyCandidateCount = -1, Real peakWidth = 4);
+  PitchInverseProblem(int fftSize = 1024, Real lowFrequency = 50.0, Real highFrequency = 2100.0, Real samplerate = 44100.0, int pitchCount = 5, int harmonicCount = 10, int frequencyCandidateCount = -1, Real peakWidth = 8);
 
   ~PitchInverseProblem();
 
