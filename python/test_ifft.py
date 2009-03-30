@@ -14,7 +14,7 @@ a_ones = scipy.ones(frameSize)
 a_random = scipy.random.random(frameSize)
 a_sine = scipy.cos(2 * scipy.pi * 440 * scipy.arange(frameSize) / samplerate + scipy.pi/4.0)
 
-# Ricaudio's solution # --------------------------------- #
+# Loudia's solution # --------------------------------- #
 w = loudia.Window(frameSize, loudia.Window.HAMMING)
 m = loudia.FFT(fftSize, False)
 n = loudia.IFFT(fftSize, False)
@@ -41,7 +41,7 @@ if plot:
     import pylab
     pylab.subplot(211)
     pylab.hold(True)
-    pylab.plot(r_sine.T, label = 'Ricaudio')
+    pylab.plot(r_sine.T, label = 'Loudia')
     pylab.plot(x_sine.T, label = 'Expected')
 
     pylab.legend()

@@ -36,7 +36,7 @@ for center in range(2000.0, 5000.0, 1000.0):
     freq = (center - bandwidth / 2.0) / samplerate
     freqStop = (center + bandwidth / 2.0) / samplerate
 
-    # For Ricaudio
+    # For Loudia
     loudiaFilter = btypes[btype]
 
     if btype.startswith('band'):

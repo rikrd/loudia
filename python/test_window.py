@@ -8,7 +8,7 @@ frameSize = 256
 
 a_ones = scipy.ones( frameSize )
 
-# Ricaudio's solution # --------------------------------- #
+# Loudia's solution # --------------------------------- #
 m_hanning = loudia.Window( frameSize, 1 )
 m_hamming = loudia.Window( frameSize, 3 )
 

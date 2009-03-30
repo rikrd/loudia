@@ -10,7 +10,7 @@ normVolume = 3.0
 a1 = scipy.zeros(512)
 a2 = scipy.ones(512)
 
-# CRicaudio's solution # --------------------------------- #
+# Loudia's solution # --------------------------------- #
 import loudia
 m = loudia.AOK(windowSize, hopSize, fftSize, normVolume)
 

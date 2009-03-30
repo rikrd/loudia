@@ -78,7 +78,7 @@ freqs, B = freqs_b_by_freqs(numFilters, lowFreq, highFreq, c, d)
 # -------------------------------------------------------- #
 
 
-# CRicaudio's solution # --------------------------------- #
+# Loudia's solution # --------------------------------- #
 import loudia
 
 coeffsB1 = scipy.vstack((B0, B11, B2)) / gain
@@ -96,10 +96,10 @@ f4 = loudia.Filter(coeffsB4, coeffsA, numFilters)
 b1 = f4.process(f3.process(f2.process(f1.process(a1))))
 b2 = f4.process(f3.process(f2.process(f1.process(a2))))
 
-print 'CRicaudio: Done'
+print 'Loudia: Done'
 # -------------------------------------------------------- #
 
-# Ricaudio's solution # ---------------------------------- #    
+# Loudia's solution # ---------------------------------- #    
 zi = scipy.zeros((0,0))
 
 def filterbank_compute(samples):
@@ -147,7 +147,7 @@ def filterbank_compute(samples):
 c1 = filterbank_compute(a1)
 c2 = filterbank_compute(a2)
 
-print 'Ricaudio: Done'
+print 'Loudia: Done'
 # -------------------------------------------------------- #
 
 print 'Difference:'

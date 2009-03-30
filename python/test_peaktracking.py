@@ -18,7 +18,7 @@ a_sine = scipy.cos(2 * scipy.pi * 440 * scipy.arange( frameSize ) / samplerate +
 
 a_sine += (a_random - 0.5) * 1.0
 
-# Ricaudio's solution # --------------------------------- #
+# Loudia's solution # --------------------------------- #
 window = loudia.Window(frameSize, loudia.Window.HAMMING)
 fft = loudia.FFT(fftSize)
 peaks = loudia.PeakDetectionComplex(5, 4)

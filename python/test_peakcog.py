@@ -23,7 +23,7 @@ for i in range(harmonics):
 
 sinenoise = sine + (scipy.random.random(signalSize) - 0.5)
 
-# Ricaudio's solution # --------------------------------- #
+# Loudia's solution # --------------------------------- #
 bandwidth = 8 * fftSize / frameSize
 peakCount = 4
 window = loudia.Window(frameSize, loudia.Window.BLACKMANHARRIS)

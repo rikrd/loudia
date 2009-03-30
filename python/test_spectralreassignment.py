@@ -18,7 +18,7 @@ a_sine = scipy.cos(2 * scipy.pi * 440 * scipy.arange( frameSize ) / samplerate +
 
 a_sine += (a_random - 0.5) * 1.0
 
-# Ricaudio's solution # --------------------------------- #
+# Loudia's solution # --------------------------------- #
 m = loudia.SpectralReassignment(frameSize, fftSize, samplerate, loudia.Window.BLACKMANHARRIS)
 
 r_zeros_fft, r_zeros_time, r_zeros_freq = m.process(a_zeros)
@@ -72,13 +72,13 @@ pylab.plot(a_sine.T)
 
 pylab.subplot(312)
 pylab.hold(True)
-pylab.plot(r_abs, label = 'Ricaudio')
+pylab.plot(r_abs, label = 'Loudia')
 pylab.plot(s_abs, label = 'Scipy')
 pylab.legend()
 
 pylab.subplot(313)
 pylab.hold(True)
-pylab.plot(r_abs*r_ang/r_max, label = 'Ricaudio')
+pylab.plot(r_abs*r_ang/r_max, label = 'Loudia')
 pylab.plot(s_abs*s_ang/s_max, label = 'Scipy')
 pylab.legend()
 

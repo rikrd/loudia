@@ -9,7 +9,7 @@ fftSize = 512
 samplerate = 8000
 
 
-# Ricaudio's solution # --------------------------------- #
+# Loudia's solution # --------------------------------- #
 w = loudia.Window(frameSize, 0)
 m = loudia.FFT(fftSize, True)
 

@@ -8,7 +8,7 @@ a1 = scipy.random.random((4096, channels))
 a2 = scipy.random.random((4096, channels))
 substractSpont = True
 
-# CRicaudio's solution # --------------------------------- #
+# Loudia's solution # --------------------------------- #
 import loudia
 m = loudia.Meddis(samplerate, channels)
 
@@ -16,7 +16,7 @@ b1 = m.process(a1)
 b2 = m.process(a2)
 # -------------------------------------------------------- #
 
-# Ricaudio's solution # ---------------------------------- #
+# Loudia's solution # ---------------------------------- #
 M = 1.
 A = 5.
 B = 300.

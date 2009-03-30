@@ -18,7 +18,7 @@ power = 1
 a1 = scipy.zeros(512)
 a2 = scipy.ones(512)
 
-# CRicaudio's solution # --------------------------------- #
+# Loudia's solution # --------------------------------- #
 import loudia
 m = loudia.MFCC(lowFreq, highFreq, nBands, samplerate, spectralLength, nCoeffs, minSpectrum, power)
 
