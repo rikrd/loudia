@@ -1,5 +1,7 @@
-/** \mainpage
-    
+/** @mainpage
+
+@author Ricard Marxer
+
 Loudia is a C++ library with Python bindings.  It is used to create audio applications.
 
 Loudia is specially targeted for researchers.

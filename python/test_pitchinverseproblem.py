@@ -1,55 +1,25 @@
 #!/usr/bin/env python
 
 import loudia
-from sepel.inputs import pyloudia
+from common import *
 import pylab
 import os, sys, wave
 import scipy
-from common import *
+
 
 interactivePlot = False
 plot = True
 
 filename = sys.argv[1]
 
-# Samplerate of the file
-wavfile = wave.open(filename,'r')
-samplerate = float(wavfile.getframerate())
-wavfile.close()
-
-frameSize = 4096
+frameSize = 4096 
 frameStep = 1024
 
-frameSizeTime = frameSize / 44100.0
-frameStepTime = frameStep / 44100.0
-
 fftSize = 4096
+
 plotSize = fftSize / 4
 
-bandwidth = 4 * fftSize/frameSize
-analysisLimit = scipy.inf
-
-# Creation of the pipeline        
-stream = pyloudia.sndfilereader({'filename': filename,
-                                   'windowSizeInTime': frameSizeTime,
-                                   'windowStepInTime': frameStepTime,
-                                   'encodingKey': 'encoding',
-                                   'channelCountKey': 'channelCount',
-                                   'samplesOriginalKey': 'samples',
-                                   'samplesKey': 'samplesMono',
-                                   'samplerateKey': 'samplerate',
-                                   'timestampBeginKey': 'timestampBegin',
-                                   'timestampEndKey': 'timestampEnd',
-                                   'limit':analysisLimit})
-
-stream = pyloudia.window_loudia(stream, {'inputKey': 'samplesMono',
-                                             'outputKey': 'windowed',
-                                             'windowType': 'hamming'})
-
-stream = pyloudia.fft_loudia(stream, {'inputKey': 'windowed',
-                                          'outputKey': 'fft',
-                                          'zeroPhase': True,
-                                          'fftLength': fftSize})
+stream, samplerate, nframes, nchannels, loader = get_framer_audio(filename, frameSize, frameStep)
 
 
 peakBandwidth = 4
@@ -58,6 +28,8 @@ numMaxPitches = 2
 numHarmonics = 10
 numCandidates = 700
 
+windower = loudia.Window( frameSize, loudia.Window.HAMMING )
+ffter = loudia.FFT( fftSize )
 whitening = loudia.SpectralWhitening(fftSize, 50.0, 2100.0, samplerate)
 pitchInverseProblem = loudia.PitchInverseProblem(fftSize, 50, 2100, samplerate, numMaxPitches, numHarmonics, numCandidates, peakBandwidth)
 
@@ -75,7 +47,9 @@ if interactivePlot:
     pylab.gca().set_autoscale_on(False)
 
 for frame in stream:
-    spec = scipy.array(abs(frame['fft']), dtype = scipy.float32)
+    samples = frame
+    fft = ffter.process( windower.process( frame ) )[0, :plotSize]
+    spec =  loudia.magToDb( abs( fft ) )[0, :plotSize]
     
     wspec = whitening.process( spec )
     pitch, saliency, freqs = pitchInverseProblem.process( wspec )
