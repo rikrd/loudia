@@ -23,13 +23,18 @@ def configure(conf):
         conf.sub_config('src')
 
         import Options
-        if Options.options.doc:
+        conf.env['option_doc'] = Options.options.doc
+        conf.env['option_debug'] = Options.options.debug
+        conf.env['option_no_python_bindings'] = Options.options.no_python_bindings
+        conf.env['option_cpptests'] = Options.options.cpptests
+
+        if conf.env['option_doc']:
                 conf.sub_config('doc')
+
         
 def build(bld):
         bld.add_subdirs('src')
 
-        import Options
-        if Options.options.doc:
+        if bld.env['option_doc']:
                 bld.add_subdirs('doc')
         

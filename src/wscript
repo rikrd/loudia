@@ -17,18 +17,17 @@ def set_options(opt):
 def configure(conf):
 	conf.check_tool('compiler_cxx')
 
-        import Options
-        if Options.options.debug:
+        if conf.env['option_debug']:
                 conf.env.append_value('CXXFLAGS', '-Wall  -O3 -fPIC -msse2 -DRICAUDIO_DEBUG')
         else:
                 conf.env.append_value('CXXFLAGS', '-O3 -fPIC -msse2 -DNDEBUG')
                 
         conf.env.append_value('LINKFLAGS', '-lfftw3f -lsamplerate')
         
-        if not Options.options.no_python_bindings:
+        if not conf.env['option_no_python_bindings']:
                 conf.sub_config('swig')
 
-        if Options.options.cpptests:
+        if conf.env['option_cpptests']:
                 conf.sub_config('tests')
 
 def build(bld):
@@ -44,15 +43,10 @@ def build(bld):
         
 	obj.find_sources_in_dirs('.', exts=['.cpp'])
 
-        import Options
-        if not Options.options.no_python_bindings:
+        if not bld.env['option_no_python_bindings']:
                 bld.add_subdirs('swig')
         
-        if Options.options.cpptests:
+        if bld.env['option_cpptests']:
                 bld.add_subdirs('tests')
                 
         bld.install_files('${PREFIX}/include/loudia', '*.h')
-
-def shutdown(self):
-        import Options
-        print Options.options.python_bindings

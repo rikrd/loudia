@@ -108,19 +108,19 @@ Several options allow different building modes.
 To build without Python bindings run:
 <pre>
 ./waf configure --no-python-bindings
-./waf build --no-python-bindings
+./waf build
 </pre>
 
 To build the documentation run:
 <pre>
 ./waf configure --doc
-./waf build --doc
+./waf build
 </pre>
 
 To build in debug mode run:
 <pre>
 ./waf configure --debug
-./waf build --debug
+./waf build
 </pre>
 
 All the above options can be combined.

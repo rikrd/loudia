@@ -15,7 +15,7 @@ DOXY_EXTS = '''
 *.h *.hh *.hxx *.hpp *.h++ *.H
 *.py *.java *.cs
 *.ii *.ixx *.ipp *.i++ *.inl
-*.idl *.odl *.php *.php3 *.inc *.m *.mm *.dox
+*.idl *.odl *.php *.php3 *.inc *.m *.mm
 '''.split()
 
 re_join = re.compile(r'\\(\r)*\n', re.M)
@@ -103,14 +103,15 @@ class doxygen_task(Task.Task):
 		return Task.Task.runnable_status(self)
 
 	def scan(self):
+
 		recurse = self.pars.get('RECURSIVE') == 'YES'
 		excludes = self.pars.get('EXCLUDE_PATTERNS', '').split()
 		includes = self.pars.get('FILE_PATTERNS', '').split()
 		if not includes:
 			includes = DOXY_EXTS
 
-                root_node = self.inputs[0].parent
-                ret = nodes_files_of(root_node, recurse, includes, excludes)
+		root_node = self.inputs[0].parent
+		ret = nodes_files_of(root_node, recurse, includes, excludes)
 		return (ret, [])
 
 	def run(self):
@@ -122,7 +123,7 @@ class doxygen_task(Task.Task):
 		proc = pproc.Popen(cmd, shell=True, stdin=pproc.PIPE)
 		proc.communicate(code)
 		return proc.returncode
-
+        """
 	def post_run(self):
 		# look for the files that appeared in the build directory
 		input_parent = self.inputs[0].parent
@@ -132,10 +133,10 @@ class doxygen_task(Task.Task):
 			if self.pars.get(key) == 'YES':
 				if k in lst:
 					self.outputs += populate(input_parent, k, self.env)
-
+                
 		self.outputs = [x for x in self.outputs if x.id & 3 != Node.DIR]
-		return Task.Task.post_run(self)
-
+                return Task.Task.post_run(self)
+        """
 # quick tar creation
 cls = Task.simple_task_type('tar', '${TAR} ${TAROPTS} ${TGT} ${SRC}', color='RED')
 def runnable_status(self):
@@ -182,7 +183,6 @@ def process_doxy(self):
 		else:
 			tsk.env['TAROPTS'] = ' cf '
 
-        
 def detect(conf):
 	conf.find_program('doxygen', var='DOXYGEN', mandatory=True)
 	conf.find_program('tar', var='TAR', mandatory=True)
