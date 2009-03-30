@@ -166,7 +166,7 @@ fft.setZeroPhase( True, False )
 fft.setup()
 
 result = fft.process( data_frame )
-pylab.plot( result[0,:] ) # Note that the results of the FFT algorithm are stacked in rows (we only plot the first)
+pylab.plot( abs( result[0,:] ) ) # Note that the results of the FFT algorithm are stacked in rows (we only plot the first)
 
 pylab.show()
 </pre>
