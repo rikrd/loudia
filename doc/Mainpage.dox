@@ -31,7 +31,7 @@ The following algorithms are implemented:
  - Correlation / Autocorrelation
    - Direct calculation
    - FFT based calculation
- - Resampling (wrapper around libsamplerate [http://www.mega-nerd.com/SRC/])
+ - Resample (wrapper around libsamplerate [http://www.mega-nerd.com/SRC/])
  - Onset Detection Functions:
    - High Frequency Content (HFC)
    - Flux
@@ -90,28 +90,38 @@ In the Python bindings use Numpy arrays as inputs and outputs.
 <h2>Build and installation</h2>
 
 To build and install Loudia run:
+<pre>
 ./waf configure --prefix=/some/install/dir
 ./waf build
 sudo ./waf install
+</pre>
 
 To uninstall it run:
+<pre>
 sudo ./waf uninstall
+</pre>
 
 Several options allow different building modes.
 
 To build without Python bindings run:
+<pre>
 ./waf configure --no-python-bindings
 ./waf build --no-python-bindings
+</pre>
 
 To build the documentation run:
+<pre>
 ./waf configure --doc
 ./waf build --doc
+</pre>
 
 To build in debug mode run:
+<pre>
 ./waf configure --debug
 ./waf build --debug
+</pre>
 
-These options can be combined.
+All the above options can be combined.
 
 
 <h2>Overview</h2>
