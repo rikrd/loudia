@@ -8,6 +8,8 @@ import Task, Utils, Logs
 from TaskGen import extension
 from Configure import conf
 import preproc
+import os
+import shutil
 
 SWIG_EXTS = ['.swig', '.i']
 
@@ -168,3 +170,21 @@ def check_swig_version(conf, minver=None):
 def detect(conf):
 	swig = conf.find_program('swig', var='SWIG', mandatory=True)
 
+"""
+def _install(self):
+        #python_dir = os.path.join('${DESTDIR}', self.install_files('${PYTHONDIR}', node.abspath(env)))
+
+        dst_module = os.path.join('${DESTDIR}', '/local/lib/python2.5/site-packages/loudia.py')
+
+        #dst_module = os.path.join('${DESTDIR}',
+        #                          self.outputs[-1].install_files('${PYTHONDIR}',
+        #                                                         self.outputs[-1].abspath(env)))
+
+        print dir(self.outputs[-1])
+        
+        src_module = self.outputs[-1].abspath(self.env)
+        
+        shutil.copy(src_module, dst_module)
+
+setattr(cls, 'install', _install)
+"""
