@@ -1,0 +1,172 @@
+WHAT YOU WILL FIND HERE                         
+-----------------------                         
+
+A C++ library with Python bindings "Loudia"
+It is used to build audio applications.
+
+Loudia is specially targeted for researchers.
+The algorithms are not necessarily tuned for performance
+but rather for:
+
+ * Ease of use 
+ 
+ * Flexibility and clarity of the algorithms
+ 
+ * Variety of algorithms 
+
+
+
+The following algorithms are implemented:
+
+ * Windowing
+
+ * Unwrapping
+    
+ * Fast Fourier Transform (FFT/IFFT) (wrapper around libfftw [http://www.fftw.org/])
+
+ * Discrete Cosine Transform (DCT)
+
+ * Filters (based on Scipy implementation):
+   - LowPass
+   - HighPass
+   - BandPass
+   - BandStop 
+
+   in the following types:
+   - Chebyshev I
+   - Chebyshev II
+   - Bessel
+   - Butterworth 
+
+ * Correlation / Autocorrelation
+   - Direct calculation
+   - FFT based calculation
+
+ * Resampling (wrapper around libsamplerate [http://www.mega-nerd.com/SRC/])
+
+ * Onset Detection Functions:
+   - High Frequency Content (HFC)
+   - Flux
+   - Phase Deviation
+   - Complex Domain
+   - Modified Kullback-Liebler
+   - Peak Center of Gravity
+
+ * Pitch Estimation:
+   - Autocorrelation Function based (ACF)
+   - Inverse Problem based
+   
+ * Spectral Bands
+   - Mel bands
+
+ * MFCC
+
+ * LPC
+
+ * Sinusoidal Modelling:
+   - Peak Detection
+   - Peak Interpolation
+   - Peak Tracking
+ 
+ * Spectral Whitening
+
+ * Spectral Noise Suppression
+
+ * Non-negative Matrix Factorization (NMF)
+
+ * Other experimental and/or unfinished algorithm implementations 
+   - Spectral Reassignment
+   - Adaptative Optimized Kernel (AOK) (modification of AOK 4.1 [http://www.macunix.net/aok.html])
+   - Peak Synthesis
+
+Numerous examples which can also be used for testing in some cases can be found in python/
+
+
+DEPENDENCIES
+------------
+
+The C++ library Libaudio requires:
+  running:
+  - libsamplerate-dev >=0.1.3
+  - libfftw3-dev >=3.1.2
+
+  compiling:
+  - gcc
+  - python >=2.5
+
+The Python bindings Libaudio require:  
+  running:
+  - numpy
+  
+  compiling:
+  - swig
+  - numpy-dev
+  - python-dev
+
+Libaudio uses a template library called Eigen (http://eigen.tuxfamily.org).
+
+In C++ all algorithms use Eigen::Matrix types as inputs and outputs.
+
+In the Python bindings use Numpy arrays as inputs and outputs.
+
+BUILD/INSTALL LOUDIA
+--------------------
+
+To build Loudia run:
+
+./waf configure --prefix=/some/install/dir
+./waf build
+
+to install it:
+sudo ./waf install
+
+to uninstall it:
+sudo ./waf uninstall
+
+
+QUICK HOWTO
+-----------
+
+From Python you may create algorithm, change its parameters and call the process method:
+
+import numpy
+import pylab
+import loudia
+
+data_frame = numpy.arange( 128 )
+
+fft = loudia.FFT()
+fft.setFftSize( 128 )
+
+result = fft.process( data_frame )
+pylab.plot( result[0,:] ) # Note that the results of the FFT algorithm are stacked in rows (we only plot the first)
+
+
+
+# When setting several parameters we might not want the algorithm to reconfigure itself
+# method after each parameter setting, and we will call the setup() manually 
+fft.setFftSize( 256, False )
+fft.setZeroPhase( True, False )
+fft.setup()
+
+result = fft.process( data_frame )
+pylab.plot( result[0,:] ) # Note that the results of the FFT algorithm are stacked in rows (we only plot the first)
+
+pylab.show()
+
+
+LIMITATIONS
+-----------
+
+A few assumptions are used when using the library:
+  * Loudia has no algorithm for loading audio frames
+
+  * All algorithms take Eigen::Matrix types as inputs and outputs in the process() methods
+
+  * Loudia does NOT have a streaming mode.  All algorithms mantain a state which can be reset using reset().
+    And the process() methods may act on preallocated matrices. Therefore with the use of Eigen::Map, 
+    Loudia can be used inside streaming libraries that expose the buffers.
+    
+
+---------------------------
+Loudia (C) 2008, 2009 Ricard Marxer
