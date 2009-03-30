@@ -2,6 +2,7 @@
 # encoding: utf-8
 # Ricard Marxer 2008
 
+import os
 
 def set_options(opt):
 	opt.tool_options('compiler_cxx')
@@ -33,3 +34,6 @@ def build(bld):
                 vnum         = '0.1',
                 uselib_local = 'loudia'
         )
+
+        bld.env['PYTHONDIR'] = os.path.join(bld.env['PYTHONDIR'], 'loudia')
+        bld.install_as('${PYTHONDIR}/__init__.py', 'loudia.py')
