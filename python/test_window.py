@@ -2,15 +2,15 @@
 
 # Create input
 import scipy.signal
-import ricaudio
+import loudia
 
 frameSize = 256
 
 a_ones = scipy.ones( frameSize )
 
 # Ricaudio's solution # --------------------------------- #
-m_hanning = ricaudio.Window( frameSize, 1 )
-m_hamming = ricaudio.Window( frameSize, 3 )
+m_hanning = loudia.Window( frameSize, 1 )
+m_hamming = loudia.Window( frameSize, 3 )
 
 r_hanning = m_hanning.process( a_ones )
 r_hamming = m_hamming.process( a_ones )

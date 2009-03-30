@@ -15,7 +15,7 @@ if len(sys.argv) >= 2:
 
 windowSize = 1024
 windowHop = 512
-windowType = ricaudio.Window.BLACKMANHARRIS
+windowType = loudia.Window.BLACKMANHARRIS
 fftSize = 1024
 halfSize = (fftSize / 2) + 1
 plotSize = halfSize/2
@@ -26,9 +26,9 @@ pastFrames = 500
 pastCoeff = 0.2
 iterations = 10
 
-w = ricaudio.Window(windowSize, windowType)
-f = ricaudio.FFT(fftSize, zeroPhase)
-d = ricaudio.INMF(halfSize, components, pastFrames, pastCoeff, iterations, 1e-17)
+w = loudia.Window(windowSize, windowType)
+f = loudia.FFT(fftSize, zeroPhase)
+d = loudia.INMF(halfSize, components, pastFrames, pastCoeff, iterations, 1e-17)
 
 framer, sr, nframes, nchannels, loader = get_framer_audio(filename, windowSize, windowHop)
 
@@ -37,9 +37,9 @@ nwindows = (nframes - windowSize) / windowHop + 1
 onsets = get_onsets(filename, windowHop, sr)
 
 if estimatePitch:
-   acorrw = ricaudio.Window(halfSize, ricaudio.Window.HAMMING)
-   peaker = ricaudio.PeakDetection(1, 5, 0, False)
-   peakeri = ricaudio.PeakInterpolation()
+   acorrw = loudia.Window(halfSize, loudia.Window.HAMMING)
+   peaker = loudia.PeakDetection(1, 5, 0, False)
+   peakeri = loudia.PeakInterpolation()
    freqs = []
 
 components = []
@@ -57,7 +57,7 @@ for ind, frame in enumerate(framer):
 
     if estimatePitch:
         acorrc = acorrw.process( c )
-        acorr = ricaudio.autocorrelate( acorrc )
+        acorr = loudia.autocorrelate( acorrc )
         peakPos, peakMag, peakPhase = peaker.process( acorr )
         peakPosi, peakMagi, peakPhasei = peakeri.process( acorr, peakPos, peakMag, peakPhase )
         

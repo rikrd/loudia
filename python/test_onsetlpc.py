@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-import ricaudio
+import loudia
 from common import *
 import pylab
 import os, sys, wave
@@ -25,10 +25,10 @@ preEmphasis = 0.975
 
 stream, samplerate, nframes, nchannels, loader = get_framer_audio(filename, frameSize, frameStep)
 
-windower = ricaudio.Window( frameSize, ricaudio.Window.HAMMING )
-ffter = ricaudio.FFT( fftSize )
-lpc = ricaudio.LPC(frameSize, numCoeffs, preEmphasis)
-lpcr = ricaudio.LPCResidual(frameSize)
+windower = loudia.Window( frameSize, loudia.Window.HAMMING )
+ffter = loudia.FFT( fftSize )
+lpc = loudia.LPC(frameSize, numCoeffs, preEmphasis)
+lpcr = loudia.LPCResidual(frameSize)
 
 specs = []
 lpcs = []
@@ -48,13 +48,13 @@ if interactivePlot:
     
 for frame in stream:
     fft = ffter.process( windower.process( frame ) )[0, :]
-    spec =  ricaudio.magToDb( abs( fft ) )
+    spec =  loudia.magToDb( abs( fft ) )
     
     lpcCoeffs, reflection, error = lpc.process( frame )
 
     lpcResidual = lpcr.process( frame, lpcCoeffs )
     
-    freqResp = ricaudio.magToDb( abs( ricaudio.freqz( b * scipy.sqrt( abs( error[0] ) ), lpcCoeffs.T, w ) ).T )
+    freqResp = loudia.magToDb( abs( loudia.freqz( b * scipy.sqrt( abs( error[0] ) ), lpcCoeffs.T, w ) ).T )
     
     if interactivePlot:
         pylab.subplot( 211 )

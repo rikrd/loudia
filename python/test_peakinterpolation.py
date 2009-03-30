@@ -2,7 +2,7 @@
 
 # Create input
 import scipy
-import ricaudio
+import loudia
 
 fundamental = 440.0
 harmonics = 5
@@ -19,10 +19,10 @@ a_sine = scipy.cos(2 * scipy.pi * 440 * scipy.arange( frameSize ) / samplerate +
 a_sine += (a_random - 0.5) * 1.0
 
 # Ricaudio's solution # --------------------------------- #
-window = ricaudio.Window(frameSize, ricaudio.Window.HAMMING)
-fft = ricaudio.FFT(fftSize)
-peaks = ricaudio.PeakDetectionComplex(fftSize / 3)
-peaksi = ricaudio.PeakInterpolationComplex()
+window = loudia.Window(frameSize, loudia.Window.HAMMING)
+fft = loudia.FFT(fftSize)
+peaks = loudia.PeakDetectionComplex(fftSize / 3)
+peaksi = loudia.PeakInterpolationComplex()
 
 r_sine_windowed = window.process(a_sine)
 r_sine_fft = fft.process(r_sine_windowed)

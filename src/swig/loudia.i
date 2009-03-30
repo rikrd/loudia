@@ -96,4 +96,4 @@ import_array();
 %include "Utils.h"
 %include "FilterUtils.h"
 
-%module ricaudio
+%module loudia

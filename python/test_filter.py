@@ -79,7 +79,7 @@ freqs, B = freqs_b_by_freqs(numFilters, lowFreq, highFreq, c, d)
 
 
 # CRicaudio's solution # --------------------------------- #
-import ricaudio
+import loudia
 
 coeffsB1 = scipy.vstack((B0, B11, B2)) / gain
 coeffsB2 = scipy.vstack((B0, B12, B2))
@@ -88,10 +88,10 @@ coeffsB4 = scipy.vstack((B0, B14, B2))
 
 coeffsA = scipy.vstack((A0, A1, A2))
 
-f1 = ricaudio.Filter(coeffsB1, coeffsA, numFilters)
-f2 = ricaudio.Filter(coeffsB2, coeffsA, numFilters)
-f3 = ricaudio.Filter(coeffsB3, coeffsA, numFilters)
-f4 = ricaudio.Filter(coeffsB4, coeffsA, numFilters)
+f1 = loudia.Filter(coeffsB1, coeffsA, numFilters)
+f2 = loudia.Filter(coeffsB2, coeffsA, numFilters)
+f3 = loudia.Filter(coeffsB3, coeffsA, numFilters)
+f4 = loudia.Filter(coeffsB4, coeffsA, numFilters)
 
 b1 = f4.process(f3.process(f2.process(f1.process(a1))))
 b2 = f4.process(f3.process(f2.process(f1.process(a2))))

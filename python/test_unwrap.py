@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-import ricaudio
+import loudia
 import scipy
 
 a = scipy.array([[1  ,  2,  6,  4],
@@ -8,7 +8,7 @@ a = scipy.array([[1  ,  2,  6,  4],
                  [1  ,  2,  6,  4],
                  [30  , 20, 60, 40]])
 
-d = ricaudio.Unwrap()
+d = loudia.Unwrap()
 b1 = d.process(a)
 
 # Use a different unwarp since scipy's is 2x slower

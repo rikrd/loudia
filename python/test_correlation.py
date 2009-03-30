@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-import ricaudio
+import loudia
 import scipy
 
 plot = False
@@ -14,12 +14,12 @@ a = scipy.arange( sizeA )
 sizeB = 10
 b = scipy.arange( sizeB )
 
-d = ricaudio.Correlation( sizeA, sizeB )
+d = loudia.Correlation( sizeA, sizeB )
 r = d.process(a, b)
 s = scipy.correlate(a, b, 'full')
 print scipy.allclose(r[0,:], s, atol = atol, rtol = rtol)
 
-d = ricaudio.Correlation( sizeA, sizeB, sizeA + sizeB, -(sizeA + sizeB), True )
+d = loudia.Correlation( sizeA, sizeB, sizeA + sizeB, -(sizeA + sizeB), True )
 r = d.process(b, a)
 s = scipy.correlate(a, b, 'full')
 print scipy.allclose(r[0,:], s, atol = atol, rtol = rtol)
@@ -27,7 +27,7 @@ print scipy.allclose(r[0,:], s, atol = atol, rtol = rtol)
 if plot:
     import pylab
     pylab.figure()
-    pylab.plot(r[0,:], label = 'ricaudio')
+    pylab.plot(r[0,:], label = 'loudia')
     pylab.plot(s, label = 'scipy')
     pylab.legend()
     pylab.show()

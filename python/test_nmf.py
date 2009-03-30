@@ -1,12 +1,12 @@
 #!/usr/bin/env python
 
-import ricaudio
+import loudia
 import scipy
 import pylab
 
 plot = False
 
-d = ricaudio.NMF(8, 2, 100, 1e-7)
+d = loudia.NMF(8, 2, 100, 1e-7)
 
 a = scipy.zeros((14, 8))
 a[:4, 2] = 1

@@ -9,8 +9,8 @@ nBands = 34
 samplerate = 44100.0
 spectrumSize = 2**14
 
-import ricaudio
-m = ricaudio.MelBands(lowFreq, highFreq, nBands, samplerate, spectrumSize)
+import loudia
+m = loudia.MelBands(lowFreq, highFreq, nBands, samplerate, spectrumSize)
 starts = m.starts()[:,0]
 
 

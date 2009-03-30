@@ -11,8 +11,8 @@ a1 = scipy.zeros(512)
 a2 = scipy.ones(512)
 
 # CRicaudio's solution # --------------------------------- #
-import ricaudio
-m = ricaudio.AOK(windowSize, hopSize, fftSize, normVolume)
+import loudia
+m = loudia.AOK(windowSize, hopSize, fftSize, normVolume)
 
 b1 = m.process(a1)
 b2 = m.process(a2)

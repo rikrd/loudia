@@ -50,7 +50,7 @@ int main() {
 
   int frameSize = aok.frameSize();
   MatrixXC in = MatrixXC::Zero(numFrames, frameSize);
-  loadFile("/home/rmarxer/dev/ricaudio/src/tests/test.frames", &in, numFrames, frameSize);
+  loadFile("/home/rmarxer/dev/loudia/src/tests/test.frames", &in, numFrames, frameSize);
 
   MatrixXR result(numFrames, fftLength);
   

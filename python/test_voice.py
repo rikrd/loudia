@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-import ricaudio
+import loudia
 from common import *
 import pylab
 import sys
@@ -25,8 +25,8 @@ fftSize = 2048
 
 stream, samplerate, nframes, nchannels, loader = get_framer_audio(filename, frameSize, frameStep)
 
-windower = ricaudio.Window( frameSize, ricaudio.Window.HAMMING )
-ffter = ricaudio.FFT( fftSize )
+windower = loudia.Window( frameSize, loudia.Window.HAMMING )
+ffter = loudia.FFT( fftSize )
 
 subplots = {1 : ['mag', 'peaki_mags', 'resid_mag', 'synth_mag', 'traj_mags'],
             2 : ['phase', 'peak_phases']}
@@ -49,12 +49,12 @@ if 'peaki_mags' in all_processes:
     minPeakWidth = 4 * int(fftSize / frameSize) # bins for Hamming
     minPeakContrast = 0.0
     maxFreqBinChange = 1 * fftSize / frameSize
-    windowType = ricaudio.Window.HAMMING
+    windowType = loudia.Window.HAMMING
     
-    peaker = ricaudio.PeakDetectionComplex( maxPeakCount, ricaudio.PeakDetectionComplex.BYMAGNITUDE, minPeakWidth )
-    peakInterp = ricaudio.PeakInterpolationComplex( )
-    tracker = ricaudio.PeakTracking( maxTrajCount, maxFreqBinChange, silentFrames )
-    peakSynth = ricaudio.PeakSynthesize( frameSize/6, fftSize, windowType )
+    peaker = loudia.PeakDetectionComplex( maxPeakCount, loudia.PeakDetectionComplex.BYMAGNITUDE, minPeakWidth )
+    peakInterp = loudia.PeakInterpolationComplex( )
+    tracker = loudia.PeakTracking( maxTrajCount, maxFreqBinChange, silentFrames )
+    peakSynth = loudia.PeakSynthesize( frameSize/6, fftSize, windowType )
 
 trajsLocs = []
 trajsMags = []
@@ -66,7 +66,7 @@ specsMagsResid = []
 for frame in stream:
     samples = frame
     fft = ffter.process( windower.process( frame ) )[0, :plotSize]
-    spec =  ricaudio.magToDb( abs( fft ) )[0, :plotSize]
+    spec =  loudia.magToDb( abs( fft ) )[0, :plotSize]
 
     if set(['phase', 'peak_phases']) | all_processes:
         phase =  scipy.angle( fft )
@@ -92,11 +92,11 @@ for frame in stream:
 
         specMag = scipy.resize(spec, (1, spec.shape[0]))
 
-        specMagResid = ricaudio.dbToMag( specMag ) - specSynth
+        specMagResid = loudia.dbToMag( specMag ) - specSynth
         
-        specResid = ricaudio.magToDb(ricaudio.dbToMag( specMag ) - specSynth)[0,:]
+        specResid = loudia.magToDb(loudia.dbToMag( specMag ) - specSynth)[0,:]
         
-        specSynth = ricaudio.magToDb( specSynth )[0,:]
+        specSynth = loudia.magToDb( specSynth )[0,:]
         
         trajsLocs.append( trajLocs[0,:] )
         trajsMags.append( trajMags[0,:] )
@@ -256,7 +256,7 @@ if plotSpectrumTrajs:
         pylab.plot( trajInds, trajPos, c='black' )
 
 if plotOdf:
-    odf = ricaudio.ODFComplex( fftSize )
+    odf = loudia.ODFComplex( fftSize )
     odfValue = []
     for i in range(specsMagsResid.shape[0] - 10):
         val = odf.process(specsMagsResid[i:i+3,:])[0,0]

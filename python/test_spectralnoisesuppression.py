@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-import ricaudio
+import loudia
 from common import *
 import pylab
 import os, sys, wave
@@ -21,9 +21,9 @@ analysisLimit = scipy.inf
 
 stream, samplerate, nframes, nchannels, loader = get_framer_audio(filename, frameSize, frameStep)
 
-windower = ricaudio.Window( frameSize, ricaudio.Window.HAMMING )
-ffter = ricaudio.FFT( fftSize )
-supprnoise = ricaudio.SpectralNoiseSuppression(fftSize, 50.0, 6000.0, samplerate)
+windower = loudia.Window( frameSize, loudia.Window.HAMMING )
+ffter = loudia.FFT( fftSize )
+supprnoise = loudia.SpectralNoiseSuppression(fftSize, 50.0, 6000.0, samplerate)
 
 specs = []
 results = []
@@ -36,7 +36,7 @@ if interactivePlot:
 
 for frame in stream:
     fft = ffter.process( windower.process( frame ) )
-    spec =  ricaudio.magToDb( abs( fft ) )
+    spec =  loudia.magToDb( abs( fft ) )
 
     noise, result = supprnoise.process( abs( fft ) )
 
@@ -44,14 +44,14 @@ for frame in stream:
         pylab.subplot( 211 )
         pylab.hold( False )
         
-        specdb = ricaudio.magToDb( spec )
-        noisedb = ricaudio.magToDb( noise )
+        specdb = loudia.magToDb( spec )
+        noisedb = loudia.magToDb( noise )
 
         pylab.plot( specdb[0,:], label = 'Spectrum' )
         pylab.hold( True )
         pylab.plot( noisedb[0,:], label = 'Noise' )
 
-        resultdb = ricaudio.magToDb( result )
+        resultdb = loudia.magToDb( result )
 
         pylab.subplot( 212 )
         pylab.hold( False )

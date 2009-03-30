@@ -3,7 +3,7 @@
 # Create input
 import pylab
 import scipy
-import ricaudio
+import loudia
 
 frameSize = 1024
 frameStep = 64
@@ -26,10 +26,10 @@ sinenoise = sine + (scipy.random.random(signalSize) - 0.5)
 # Ricaudio's solution # --------------------------------- #
 bandwidth = 8 * fftSize / frameSize
 peakCount = 4
-window = ricaudio.Window(frameSize, ricaudio.Window.BLACKMANHARRIS)
-fft = ricaudio.FFT(fftSize)
-peaks = ricaudio.PeakDetectionComplex(peakCount, bandwidth)
-cogs = ricaudio.PeakCOG(fftSize, bandwidth)
+window = loudia.Window(frameSize, loudia.Window.BLACKMANHARRIS)
+fft = loudia.FFT(fftSize)
+peaks = loudia.PeakDetectionComplex(peakCount, bandwidth)
+cogs = loudia.PeakCOG(fftSize, bandwidth)
 
 peakCogs = []
 peakPos = []

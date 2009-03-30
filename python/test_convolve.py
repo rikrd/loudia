@@ -2,12 +2,12 @@
 
 # Create input
 import scipy
-import ricaudio
+import loudia
 
 a = [1, 2, 3, 4, 5]
 b = [2, 4, 5]
 
-rr = ricaudio.convolve( a, b )
+rr = loudia.convolve( a, b )
 rs = scipy.convolve( a, b )
 
 print rr[0]

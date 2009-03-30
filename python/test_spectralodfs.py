@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-import ricaudio
+import loudia
 from common import *
 import pylab
 import os, sys, wave
@@ -22,8 +22,8 @@ stream, samplerate, nframes, nchannels, loader = get_framer_audio(filename, fram
 
 
 # Take all the SpectralODF availables
-odfNames = [(getattr(ricaudio.SpectralODF, i), i) for i in dir(ricaudio.SpectralODF)
-            if type(getattr(ricaudio.SpectralODF, i)) == int]
+odfNames = [(getattr(loudia.SpectralODF, i), i) for i in dir(loudia.SpectralODF)
+            if type(getattr(loudia.SpectralODF, i)) == int]
 
 odfNames.sort()
 
@@ -31,12 +31,12 @@ specs = []
 ffts = []
 odfs = {}
 
-ffter = ricaudio.FFT( fftSize )
-windower = ricaudio.Window( frameSize, ricaudio.Window.HAMMING )
+ffter = loudia.FFT( fftSize )
+windower = loudia.Window( frameSize, loudia.Window.HAMMING )
 
 for frame in stream:
     fft = ffter.process( windower.process( frame ) )[0, :]
-    spec =  ricaudio.magToDb( abs( fft ) )[0, :plotSize]
+    spec =  loudia.magToDb( abs( fft ) )[0, :plotSize]
 
     ffts.append( fft )
     specs.append( spec )
@@ -76,7 +76,7 @@ ax.set_xlim([0, frameCount - 1])
     
 # Create the SpectralODF processors and process
 for i, (odfType, odfName) in enumerate(odfNames):
-    odf = ricaudio.SpectralODF( fftSize, odfType )
+    odf = loudia.SpectralODF( fftSize, odfType )
 
     print 'Processing: %s...' % odfName
     odfValues = odf.process( ffts )

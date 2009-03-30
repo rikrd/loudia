@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-import ricaudio
+import loudia
 import scipy
 
 # Create the omega array
@@ -17,7 +17,7 @@ print a
 print w
 
 # Calculate the frequency response
-d = ricaudio.freqz(b, a, w)
+d = loudia.freqz(b, a, w)
 
 # Plot the frequency response
 import pylab

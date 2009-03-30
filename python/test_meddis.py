@@ -9,8 +9,8 @@ a2 = scipy.random.random((4096, channels))
 substractSpont = True
 
 # CRicaudio's solution # --------------------------------- #
-import ricaudio
-m = ricaudio.Meddis(samplerate, channels)
+import loudia
+m = loudia.Meddis(samplerate, channels)
 
 b1 = m.process(a1)
 b2 = m.process(a2)

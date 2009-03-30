@@ -2,7 +2,7 @@
 
 # Create input
 import scipy
-import ricaudio
+import loudia
 
 plot = False
 frameSize = 256
@@ -15,9 +15,9 @@ a_random = scipy.random.random(frameSize)
 a_sine = scipy.cos(2 * scipy.pi * 440 * scipy.arange(frameSize) / samplerate + scipy.pi/4.0)
 
 # Ricaudio's solution # --------------------------------- #
-w = ricaudio.Window(frameSize, ricaudio.Window.HAMMING)
-m = ricaudio.FFT(fftSize, False)
-n = ricaudio.IFFT(fftSize, False)
+w = loudia.Window(frameSize, loudia.Window.HAMMING)
+m = loudia.FFT(fftSize, False)
+n = loudia.IFFT(fftSize, False)
 
 r_zeros = n.process(m.process(w.process(a_zeros)))[:,:frameSize]
 r_ones = n.process(m.process(w.process(a_ones)))[:,:frameSize]

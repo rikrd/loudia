@@ -15,7 +15,7 @@ def build(bld):
                 source = 'test_addon.cpp',
                 target = 'test_addon',
                 includes = '.. /home/rmarxer/dev/eigen2',
-                uselib_local = 'ricaudio'
+                uselib_local = 'loudia'
         )
         
         

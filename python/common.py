@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-import ricaudio
+import loudia
 import scipy
 import pylab
 import os
@@ -14,7 +14,7 @@ def plot_freqz(b, a, w = None, npoints = None, title = '', db = False, createFig
         w = scipy.arange(-scipy.pi, scipy.pi, 2*scipy.pi/(npoints))
 
     # Calculate the frequency response
-    d = ricaudio.freqz(b.T, a.T, w)
+    d = loudia.freqz(b.T, a.T, w)
 
     if db:
         mag = 20.0 * scipy.log10(abs(d[:,0]))

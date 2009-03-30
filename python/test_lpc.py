@@ -1,12 +1,12 @@
 #!/usr/bin/env python
 
-import ricaudio
+import loudia
 import scipy
 
 rtol = 1e-5
 atol = 1e-7
 
-d = ricaudio.LPC(9, 9, 0.99)
+d = loudia.LPC(9, 9, 0.99)
 a1 = scipy.arange(1, 10)
 a2 = scipy.zeros(9)
 
@@ -14,7 +14,7 @@ coeffs1, reflection1, error1 = d.process(a1)
 coeffs2, reflection2, error2 = d.process(a2)
 
 
-d = ricaudio.LPC(9, 9)
+d = loudia.LPC(9, 9)
 a1 = scipy.arange(1,10)
 a2 = scipy.zeros(9)
 

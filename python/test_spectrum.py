@@ -3,7 +3,7 @@
 import scipy
 from common import *
 import pylab
-import ricaudio
+import loudia
 import sys
 
 filename = sys.argv[1]
@@ -19,14 +19,14 @@ plotSize = fftSize / 4
 
 stream, samplerate, nframes, nchannels, loader = get_framer_audio(filename, frameSize, frameStep)
 
-windower = ricaudio.Window( frameSize, ricaudio.Window.HAMMING )
-ffter = ricaudio.FFT( fftSize )
+windower = loudia.Window( frameSize, loudia.Window.HAMMING )
+ffter = loudia.FFT( fftSize )
 
 pylab.figure()
 for ind, frame in enumerate(stream):
     if ind == 34:
         fft = ffter.process( windower.process( frame ) )
-        spec =  ricaudio.magToDb( abs( fft ) )
+        spec =  loudia.magToDb( abs( fft ) )
 
         pylab.plot( spec[0, :plotSize] )
         pylab.show()

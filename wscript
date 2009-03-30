@@ -3,7 +3,7 @@
 # Ricard Marxer 2008
 
 # the following two variables are used by the target "waf dist"
-APPNAME = 'ricaudio'
+APPNAME = 'loudia'
 VERSION = '0.1-dev'
 
 # these variables are mandatory,

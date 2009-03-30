@@ -19,8 +19,8 @@ a1 = scipy.zeros(512)
 a2 = scipy.ones(512)
 
 # CRicaudio's solution # --------------------------------- #
-import ricaudio
-m = ricaudio.MFCC(lowFreq, highFreq, nBands, samplerate, spectralLength, nCoeffs, minSpectrum, power)
+import loudia
+m = loudia.MFCC(lowFreq, highFreq, nBands, samplerate, spectralLength, nCoeffs, minSpectrum, power)
 
 b1 = m.process(a1).T
 b2 = m.process(a2).T

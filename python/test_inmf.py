@@ -7,7 +7,7 @@ plot = True
 windowSize = 4
 windowHop = 4
 
-d = ricaudio.INMF(8, 2, 10, 0.5, 15, 1e-17)
+d = loudia.INMF(8, 2, 10, 0.5, 15, 1e-17)
 
 a = scipy.zeros((14, 8))
 a[:4, 2] = 1

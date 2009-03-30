@@ -1,10 +1,10 @@
 #!/usr/bin/env python
 
-import ricaudio
+import loudia
 import scipy
 
-d1 = ricaudio.LPC(9, 9)
-d2 = ricaudio.LPCResidual(9)
+d1 = loudia.LPC(9, 9)
+d2 = loudia.LPCResidual(9)
 a = scipy.arange(1,10)
 coeffs, reflection, error = d1.process(a)
 residual = d2.process(a, coeffs)

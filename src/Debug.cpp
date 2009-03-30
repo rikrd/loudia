@@ -34,6 +34,6 @@ bool debug = false;
 #if defined(RICAUDIO_LOG)
 
 bool debug = true;
-ofstream out("ricaudio.log");
+ofstream out("loudia.log");
 
 #endif

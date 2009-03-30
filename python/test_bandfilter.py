@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-import ricaudio
+import loudia
 import scipy
 import scipy.signal
 from common import *
@@ -16,7 +16,7 @@ rp = 0.05
 rs = 40
 
 def test_filter( order, freq, freqStop, btype, ftype, rp, rs, title = ''):
-    rc = ricaudio.BandFilter( order, freq, freqStop, btype[0], ftype[0], rp, rs )
+    rc = loudia.BandFilter( order, freq, freqStop, btype[0], ftype[0], rp, rs )
     sc_b, sc_a = scipy.signal.iirfilter(order, [freq, freqStop], btype=btype[1], analog=0, output='ba', ftype=ftype[1], rp=rp, rs=rs)
     
     rc_b = rc.b().T
@@ -28,15 +28,15 @@ def test_filter( order, freq, freqStop, btype, ftype, rp, rs, title = ''):
         plot_freqz(rc_b, rc_a, title = title)
     
 
-ftypes = [ ( ricaudio.BandFilter.CHEBYSHEVI, 'cheby1' ),
-           ( ricaudio.BandFilter.CHEBYSHEVII, 'cheby2' ),
-           ( ricaudio.BandFilter.BESSEL, 'bessel' ),
-           ( ricaudio.BandFilter.BUTTERWORTH, 'butter' )]
+ftypes = [ ( loudia.BandFilter.CHEBYSHEVI, 'cheby1' ),
+           ( loudia.BandFilter.CHEBYSHEVII, 'cheby2' ),
+           ( loudia.BandFilter.BESSEL, 'bessel' ),
+           ( loudia.BandFilter.BUTTERWORTH, 'butter' )]
 
-btypes = [ ( ricaudio.BandFilter.LOWPASS, 'lowpass' ),
-           ( ricaudio.BandFilter.HIGHPASS, 'highpass' ),
-           ( ricaudio.BandFilter.BANDPASS, 'bandpass' ),
-           ( ricaudio.BandFilter.BANDSTOP, 'bandstop' ) ]
+btypes = [ ( loudia.BandFilter.LOWPASS, 'lowpass' ),
+           ( loudia.BandFilter.HIGHPASS, 'highpass' ),
+           ( loudia.BandFilter.BANDPASS, 'bandpass' ),
+           ( loudia.BandFilter.BANDSTOP, 'bandstop' ) ]
 
 orders = [4, 5]
 

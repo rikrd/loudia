@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
-import ricaudio
-from sepel.inputs import pyricaudio
+import loudia
+from sepel.inputs import pyloudia
 import pylab
 import os, sys, wave
 import scipy
@@ -30,7 +30,7 @@ bandwidth = 4 * fftSize/frameSize
 analysisLimit = scipy.inf
 
 # Creation of the pipeline        
-stream = pyricaudio.sndfilereader({'filename': filename,
+stream = pyloudia.sndfilereader({'filename': filename,
                                    'windowSizeInTime': frameSizeTime,
                                    'windowStepInTime': frameStepTime,
                                    'encodingKey': 'encoding',
@@ -42,11 +42,11 @@ stream = pyricaudio.sndfilereader({'filename': filename,
                                    'timestampEndKey': 'timestampEnd',
                                    'limit':analysisLimit})
 
-stream = pyricaudio.window_ricaudio(stream, {'inputKey': 'samplesMono',
+stream = pyloudia.window_loudia(stream, {'inputKey': 'samplesMono',
                                              'outputKey': 'windowed',
                                              'windowType': 'hamming'})
 
-stream = pyricaudio.fft_ricaudio(stream, {'inputKey': 'windowed',
+stream = pyloudia.fft_loudia(stream, {'inputKey': 'windowed',
                                           'outputKey': 'fft',
                                           'zeroPhase': True,
                                           'fftLength': fftSize})
@@ -58,8 +58,8 @@ numMaxPitches = 2
 numHarmonics = 10
 numCandidates = 700
 
-whitening = ricaudio.SpectralWhitening(fftSize, 50.0, 2100.0, samplerate)
-pitchInverseProblem = ricaudio.PitchInverseProblem(fftSize, 50, 2100, samplerate, numMaxPitches, numHarmonics, numCandidates, peakBandwidth)
+whitening = loudia.SpectralWhitening(fftSize, 50.0, 2100.0, samplerate)
+pitchInverseProblem = loudia.PitchInverseProblem(fftSize, 50, 2100, samplerate, numMaxPitches, numHarmonics, numCandidates, peakBandwidth)
 
 specs = []
 wspecs = []

@@ -1,11 +1,11 @@
 #!/usr/bin/env python
 
-import ricaudio
+import loudia
 import pylab
 
 plotFreqs = 100
 
-pitchInverseProblem = ricaudio.PitchInverseProblem(4096, 100, 5100, 44100, 5, 10, 512, 4)
+pitchInverseProblem = loudia.PitchInverseProblem(4096, 100, 5100, 44100, 5, 10, 512, 4)
 a = pitchInverseProblem.projectionMatrix()
 
 pylab.figure()
@@ -23,7 +23,7 @@ w = pylab.linspace(-100., 100., npoints)
 
 y = pylab.zeros((1, npoints))
 for i, x in enumerate(w):
-    y[0, i] = ricaudio.gaussian(x, 0.0, 8.0)
+    y[0, i] = loudia.gaussian(x, 0.0, 8.0)
 
 
 w = pylab.array(w, dtype = 'f4')

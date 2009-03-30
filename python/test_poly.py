@@ -2,11 +2,11 @@
 
 # Create input
 import scipy
-import ricaudio
+import loudia
 
 a = [1, 2, 3, 4, 5]
 
-rr = ricaudio.poly( a )
+rr = loudia.poly( a )
 rs = scipy.poly( a )
 
 print rr[0]

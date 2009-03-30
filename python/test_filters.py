@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-import ricaudio
+import loudia
 from common import *
 import pylab
 import scipy.signal
@@ -17,15 +17,15 @@ npoints = 1000
 btype = 'bandstop'
 ftype = 'butter'
 
-btypes = {'lowpass': ricaudio.LowPass,
-          'highpass': ricaudio.HighPass,
-          'bandpass': ricaudio.BandPass,
-          'bandstop': ricaudio.BandStop}
+btypes = {'lowpass': loudia.LowPass,
+          'highpass': loudia.HighPass,
+          'bandpass': loudia.BandPass,
+          'bandstop': loudia.BandStop}
 
-ftypes = {'cheby1': ricaudio.CHEBYSHEVI,
-          'cheby2': ricaudio.CHEBYSHEVII,
-          'butter': ricaudio.BUTTERWORTH,
-          'bessel': ricaudio.BESSEL}
+ftypes = {'cheby1': loudia.CHEBYSHEVI,
+          'cheby2': loudia.CHEBYSHEVII,
+          'butter': loudia.BUTTERWORTH,
+          'bessel': loudia.BESSEL}
 
 results = {}
 diffs = {}
@@ -37,13 +37,13 @@ for center in range(2000.0, 5000.0, 1000.0):
     freqStop = (center + bandwidth / 2.0) / samplerate
 
     # For Ricaudio
-    ricaudioFilter = btypes[btype]
+    loudiaFilter = btypes[btype]
 
     if btype.startswith('band'):
-        f = ricaudioFilter(order, freq, freqStop, ftypes[ftype],
+        f = loudiaFilter(order, freq, freqStop, ftypes[ftype],
                            ripplePass, rippleStop)
     else:
-        f = ricaudioFilter(order, freq, ftypes[ftype],
+        f = loudiaFilter(order, freq, ftypes[ftype],
                            ripplePass, rippleStop)
     
     rb = f.b().T#[:,:1]
@@ -52,7 +52,7 @@ for center in range(2000.0, 5000.0, 1000.0):
     plot_freqz(rb, ra,
                npoints = npoints,
                createFigure = False,
-               label = 'ricaudio / %.1f Hz' % bandwidth,
+               label = 'loudia / %.1f Hz' % bandwidth,
                db = True)
 
     # For Scipy

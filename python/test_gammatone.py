@@ -78,7 +78,7 @@ freqs, B = freqs_b_by_freqs(numFilters, lowFreq, highFreq, c, d)
 # -------------------------------------------------------- #
 
 
-import ricaudio
+import loudia
 
 coeffsB1 = scipy.vstack((B0, B11, B2)) / gain
 coeffsB2 = scipy.vstack((B0, B12, B2))
@@ -90,10 +90,10 @@ coeffsA = scipy.vstack((A0, A1, A2))
 npoints = 10000
 w = scipy.arange(-scipy.pi, scipy.pi, 2*scipy.pi/npoints)
 
-d1 = ricaudio.freqz(coeffsB1, coeffsA, w)
-d2 = ricaudio.freqz(coeffsB2, coeffsA, w)
-d3 = ricaudio.freqz(coeffsB3, coeffsA, w)
-d4 = ricaudio.freqz(coeffsB4, coeffsA, w)
+d1 = loudia.freqz(coeffsB1, coeffsA, w)
+d2 = loudia.freqz(coeffsB2, coeffsA, w)
+d3 = loudia.freqz(coeffsB3, coeffsA, w)
+d4 = loudia.freqz(coeffsB4, coeffsA, w)
 
 d = d1 * d2 * d3 * d4
 

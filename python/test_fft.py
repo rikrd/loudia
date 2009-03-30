@@ -2,7 +2,7 @@
 
 # Create input
 import scipy
-import ricaudio
+import loudia
 import pylab
 
 plot = False
@@ -16,8 +16,8 @@ a_random = scipy.random.random( frameSize )
 a_sine = scipy.cos(2 * scipy.pi * 440 * scipy.arange( frameSize ) / samplerate + scipy.pi/4.0)
 
 # Ricaudio's solution # --------------------------------- #
-w = ricaudio.Window(frameSize, ricaudio.Window.RECTANGULAR)
-m = ricaudio.FFT(fftSize, False)
+w = loudia.Window(frameSize, loudia.Window.RECTANGULAR)
+m = loudia.FFT(fftSize, False)
 
 r_zeros = m.process(w.process(a_zeros))
 r_ones = m.process(w.process(a_ones))
@@ -64,7 +64,7 @@ if plot:
 
 fftSize = 1024
 
-m = ricaudio.FFT(fftSize, False)
+m = loudia.FFT(fftSize, False)
 r_zeros = m.process(w.process(a_zeros))
 r_ones = m.process(w.process(a_ones))
 r_random = m.process(w.process(a_random))

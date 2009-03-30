@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-import ricaudio
+import loudia
 import scipy
 
 a = [[10,  20,  6,  4],
@@ -9,14 +9,14 @@ a = [[10,  20,  6,  4],
      [200,  10,  13,  10],
      [100,  210,  313,  510]]
 
-d1 = ricaudio.ODF(8, ricaudio.ODF.COMPLEX_DOMAIN)
-d2 = ricaudio.ODF(8, ricaudio.ODF.RECTIFIED_COMPLEX_DOMAIN)
-d3 = ricaudio.ODF(8, ricaudio.ODF.PHASE_DEVIATION)
-d4 = ricaudio.ODF(8, ricaudio.ODF.WEIGHTED_PHASE_DEVIATION)
-d5 = ricaudio.ODF(8, ricaudio.ODF.NORM_WEIGHTED_PHASE_DEVIATION)
-d6 = ricaudio.ODF(8, ricaudio.ODF.SPECTRAL_FLUX)
-d7 = ricaudio.ODF(8, ricaudio.ODF.MODIFIED_KULLBACK_LIEBLER)
-d8 = ricaudio.ODF(8, ricaudio.ODF.HIGH_FREQUENCY_CONTENT)
+d1 = loudia.ODF(8, loudia.ODF.COMPLEX_DOMAIN)
+d2 = loudia.ODF(8, loudia.ODF.RECTIFIED_COMPLEX_DOMAIN)
+d3 = loudia.ODF(8, loudia.ODF.PHASE_DEVIATION)
+d4 = loudia.ODF(8, loudia.ODF.WEIGHTED_PHASE_DEVIATION)
+d5 = loudia.ODF(8, loudia.ODF.NORM_WEIGHTED_PHASE_DEVIATION)
+d6 = loudia.ODF(8, loudia.ODF.SPECTRAL_FLUX)
+d7 = loudia.ODF(8, loudia.ODF.MODIFIED_KULLBACK_LIEBLER)
+d8 = loudia.ODF(8, loudia.ODF.HIGH_FREQUENCY_CONTENT)
 
 b1 = d1.process(a)
 b2 = d2.process(a)

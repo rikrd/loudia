@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-import ricaudio
+import loudia
 import scipy
 
 plot = True
@@ -12,9 +12,9 @@ t = scipy.linspace(0, dur, npoints)
 x = scipy.cos(2.0 * f * scipy.pi * t)
 
 ratio = 1./6.
-resampleType = ricaudio.Resample.SINC_BEST_QUALITY
+resampleType = loudia.Resample.SINC_BEST_QUALITY
 
-d = ricaudio.Resample(npoints, int(npoints*ratio), ratio, resampleType)
+d = loudia.Resample(npoints, int(npoints*ratio), ratio, resampleType)
 b = d.process(x)
 
 if plot:
@@ -34,9 +34,9 @@ f = 4.0
 t = scipy.linspace(0, dur, npoints)
 x = scipy.cos(2.0 * f * scipy.pi * t)
 ratio = 3.
-resampleType = ricaudio.Resample.SINC_BEST_QUALITY
+resampleType = loudia.Resample.SINC_BEST_QUALITY
  
-d = ricaudio.Resample(npoints, int(npoints*ratio), ratio, resampleType)
+d = loudia.Resample(npoints, int(npoints*ratio), ratio, resampleType)
 b = d.process(x)
 
 if plot:

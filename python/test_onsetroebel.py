@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-import ricaudio
+import loudia
 from common import *
 import pylab
 import os, sys, wave
@@ -24,9 +24,9 @@ analysisLimit = scipy.inf
 
 stream, samplerate, nframes, nchannels, loader = get_framer_audio(filename, frameSize, frameStep)
 
-windower = ricaudio.Window( frameSize, ricaudio.Window.HAMMING )
-ffter = ricaudio.FFT( fftSize )
-odfcog = ricaudio.ODFCOG(fftSize, 10, bandwidth)
+windower = loudia.Window( frameSize, loudia.Window.HAMMING )
+ffter = loudia.FFT( fftSize )
+odfcog = loudia.ODFCOG(fftSize, 10, bandwidth)
 
 specs = []
 cogs = []
@@ -34,7 +34,7 @@ cogs = []
 for frame in stream:
     fft = ffter.process( windower.process( frame ) )
 
-    spec =  ricaudio.magToDb( abs( fft ) )
+    spec =  loudia.magToDb( abs( fft ) )
 
     cog = odfcog.process( fft )
     

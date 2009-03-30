@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-import ricaudio
+import loudia
 from common import *
 import pylab
 import os, sys, wave
@@ -25,11 +25,11 @@ peakCandidateCount = 4
 
 stream, samplerate, nframes, nchannels, loader = get_framer_audio(filename, frameSize, frameStep)
 
-ffter = ricaudio.FFT( fftSize )
-windower = ricaudio.Window( frameSize, ricaudio.Window.BLACKMANHARRIS )
-whitening = ricaudio.SpectralWhitening(fftSize, 50.0, 6000.0, samplerate)
-pitchACF = ricaudio.PitchACF(fftSize, samplerate, minPeakWidth, peakCandidateCount)
-acorr = ricaudio.Autocorrelation(fftSize/2+1, fftSize/2+1)
+ffter = loudia.FFT( fftSize )
+windower = loudia.Window( frameSize, loudia.Window.BLACKMANHARRIS )
+whitening = loudia.SpectralWhitening(fftSize, 50.0, 6000.0, samplerate)
+pitchACF = loudia.PitchACF(fftSize, samplerate, minPeakWidth, peakCandidateCount)
+acorr = loudia.Autocorrelation(fftSize/2+1, fftSize/2+1)
 
 specs = []
 wspecs = []
@@ -45,7 +45,7 @@ if interactivePlot:
 
 for frame in stream:
     fft = ffter.process( windower.process( frame ) )
-    spec =  ricaudio.magToDb( abs( fft ) )
+    spec =  loudia.magToDb( abs( fft ) )
     
     wspec = whitening.process( spec )
     pitch, saliency = pitchACF.process( wspec )

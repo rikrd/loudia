@@ -2,9 +2,9 @@
 
 import scipy
 import pylab
-import ricaudio
+import loudia
 
-peakSynth = ricaudio.PeakSynthesize(1024, 4*1024, ricaudio.Window.HAMMING)
+peakSynth = loudia.PeakSynthesize(1024, 4*1024, loudia.Window.HAMMING)
 
 pylab.ion()
 for i in range(10):

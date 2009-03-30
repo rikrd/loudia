@@ -1,15 +1,15 @@
 #!/usr/bin/env python
 
-import ricaudio
+import loudia
 import scipy
 
 a = [[1,  2,  6,  4],
      [1,  2,  6,  4],
      [10,  20,  60,  40]]
 
-d = ricaudio.OnsetComplex(4, 16, ricaudio.Window.RECTANGULAR, False)
+d = loudia.OnsetComplex(4, 16, loudia.Window.RECTANGULAR, False)
 
-print 'start ricaudio'
+print 'start loudia'
 #for i in range(10000):
 b1 = d.process(a)
 print 'end'
