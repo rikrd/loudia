@@ -3,7 +3,7 @@
 # Ricard Marxer 2008
 
 def set_options(opt):
-	pass
+        pass
 
 def configure(conf):
 	conf.check_tool('g++')

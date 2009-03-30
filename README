@@ -78,9 +78,11 @@ The following algorithms are implemented:
    - Spectral Reassignment
    - Adaptative Optimized Kernel (AOK) (modification of AOK 4.1 [http://www.macunix.net/aok.html])
    - Peak Synthesis
+   - Incremental Non-negative Matrix Factorization (INMF)
+   - LPC residual
 
 Numerous examples which can also be used for testing in some cases can be found in python/
-
+Some of the examples require an audio WAVE filename as input argument.
 
 DEPENDENCIES
 ------------
@@ -112,16 +114,30 @@ In the Python bindings use Numpy arrays as inputs and outputs.
 BUILD/INSTALL LOUDIA
 --------------------
 
-To build Loudia run:
-
+To build and install Loudia run:
 ./waf configure --prefix=/some/install/dir
 ./waf build
-
-to install it:
 sudo ./waf install
 
-to uninstall it:
+To uninstall it run:
 sudo ./waf uninstall
+
+Several options allow different building modes.
+
+To build without Python bindings run:
+./waf configure --no-python-bindings
+./waf build --no-python-bindings
+
+To build the documentation run:
+./waf configure --doc
+./waf build --doc
+
+To build in debug mode run:
+./waf configure --debug
+./waf build --debug
+
+
+These options can be combined.
 
 
 QUICK HOWTO
