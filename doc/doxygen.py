@@ -15,7 +15,7 @@ DOXY_EXTS = '''
 *.h *.hh *.hxx *.hpp *.h++ *.H
 *.py *.java *.cs
 *.ii *.ixx *.ipp *.i++ *.inl
-*.idl *.odl *.php *.php3 *.inc *.m *.mm
+*.idl *.odl *.php *.php3 *.inc *.m *.mm *.dox
 '''.split()
 
 re_join = re.compile(r'\\(\r)*\n', re.M)
@@ -108,9 +108,9 @@ class doxygen_task(Task.Task):
 		includes = self.pars.get('FILE_PATTERNS', '').split()
 		if not includes:
 			includes = DOXY_EXTS
-         
-		root_node = self.inputs[0].parent
-		ret = nodes_files_of(root_node, recurse, includes, excludes)
+
+                root_node = self.inputs[0].parent
+                ret = nodes_files_of(root_node, recurse, includes, excludes)
 		return (ret, [])
 
 	def run(self):

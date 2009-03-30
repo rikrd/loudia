@@ -11,6 +11,6 @@ def configure(conf):
 
 
 def build(bld):
-	bld.new_task_gen(features = 'doxygen',
-                         doxyfile = 'Doxyfile',
-                         doxy_tar = 'docs.tar.bz2')
+	obj = bld.new_task_gen(features = 'doxygen',
+                               doxyfile = 'Doxyfile',
+                               doxy_tar = 'docs.tar.bz2')
