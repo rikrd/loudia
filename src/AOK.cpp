@@ -1,20 +1,59 @@
-/*                                                         
-** Copyright (C) 2008, 2009 Ricard Marxer <email@ricardmarxer.com>
-**                                                                  
-** This program is free software; you can redistribute it and/or modify
-** it under the terms of the GNU General Public License as published by
-** the Free Software Foundation; either version 2 of the License, or   
-** (at your option) any later version.                                 
-**                                                                     
-** This program is distributed in the hope that it will be useful,     
-** but WITHOUT ANY WARRANTY; without even the implied warranty of      
-** MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the       
-** GNU General Public License for more details.                        
-**                                                                     
-** You should have received a copy of the GNU General Public License   
-** along with this program; if not, write to the Free Software         
-** Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
-*/                                                                          
+/****************************************************************/
+/*                                                              */
+/*              aok4.c           (Version 4.0)                  */
+/*                                                              */
+/*              Adaptive Optimal-Kernel (AOK)                   */
+/*              Time-Frequency Representation                   */
+/*                                                              */
+/*              Douglas L. Jones (author)                       */
+/*                University of Illinois                        */
+/*                E-mail: jones@uicsl.csl.uiuc.edu              */
+/*                                                              */
+/*              Richard G. Baraniuk (facilitator)               */
+/*                Rice University                               */
+/*                E-mail: richb@rice.edu                        */
+/*                                                              */
+/*      Written:        December 26, 1991  (version 1.0)        */
+/*      Modified:       June 10, 1992      (version 2.0)        */
+/*                      November 20, 1992  (version 3.0)        */
+/*                      February 8, 1992   (version 4.0)        */
+/*                      January 28, 1996   (renamed aok)        */
+/*                                                              */
+/****************************************************************/
+/*                                                              */
+/*      This version interpolates the polar STAF from           */
+/*      the rectangular STAF.  It implicitly applies a          */
+/*      rectangular window to the data to create the            */
+/*      short-time ambiguity function, and includes             */
+/*      all non-zero time lags in the STAF.                     */
+/*                                                                
+*-----------------------------------------------------------------
+* Copyright (C) 1992, 1993, 1994, 1995, 1996 the Board of Trustees of
+* the University of Illinois.  All Rights Reserved.  Permission is   
+* hereby given to use, copy, modify, and distribute this software    
+* provided that (1) the headers, copyright and proprietary notices are
+* retained in each copy and (2) any files that are modified are       
+* identified as such (see below).  The University of Illinois makes no
+* representations or warranties of any kind concerning this software or
+* its use.                                                             
+*                                                                      
+* Any modifications made to this file must be commented and dated      
+* in the following style:                                              
+*                                                                      
+*  Source file:         aok4.c                                         
+*  Modifications:       Richard Baraniuk, November 25, 1992            
+*                         Inserted this sample edit history            
+*                       Douglas Jones, February 8, 1993                
+*                         Implemented gradient-project algorithm       
+*                         in terms of sigma rather than sigma^2        
+*                       Richard Baraniuk, January 29, 1996             
+*                         Renamed runrgk --> aok                       
+*                       Ricard Marxer, March 30, 2009
+*                         Adapt to work in Loudia
+*                         
+*       Please log any further modifications made to this file:        
+*                                                                      
+*---------------------------------------------------------------*/
 
 #include "Typedefs.h"
 #include "Debug.h"
