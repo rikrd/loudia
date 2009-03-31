@@ -5,7 +5,7 @@ import scipy
 import scipy.signal
 
 # Test the magToDb <-> dbToMag
-i = scipy.arange(1, 7)
+i = scipy.arange(1, 7, dtype = 'f4')
 a = loudia.magToDb(i)
 o = loudia.dbToMag(a)
 
@@ -16,14 +16,14 @@ transf = loudia.hammingTransform(24, 10, 1024, 4096)
 
 
 # Test the poly function
-a = [1, 2, 3, 4, 5]
+a = scipy.array([1, 2, 3, 4, 5])
 
 rr = loudia.poly( a )
 rs = scipy.poly( a )
 
 print 'poly:', scipy.allclose(rr, rs)
 
-a = [2, 0]
+a = scipy.array([2, 0])
 
 rr = loudia.poly( a )
 rs = scipy.poly( a[:-1] )
@@ -32,8 +32,8 @@ print 'poly, plus zero:', scipy.allclose(rr[0,:-1], rs)
 
 
 # Test the zpk <--> coeffs functions
-z = [1, -0.96, 0.80]
-p = [1, 0.5, 0.5]
+z = scipy.array([1, -0.96, 0.80])
+p = scipy.array([1, 0.5, 0.5])
 k = 1.2
 
 ra, rb = loudia.zpkToCoeffs(z, p, k)
@@ -43,8 +43,8 @@ print 'zpkToCoeffs: ', scipy.allclose(rb, sb) and scipy.allclose(ra, sa)
 
 
 # Test the lpTolp functions
-a = [1, -0.96, 0.80]
-b = [1, 0.5, 0.5]
+a = scipy.array([1, -0.96, 0.80])
+b = scipy.array([1, 0.5, 0.5])
 
 freq = 0.23
 
@@ -54,13 +54,13 @@ sb, sa = scipy.signal.lp2lp(b, a, freq)
 print 'lpTolp: ', scipy.allclose(rb, sb) and scipy.allclose(ra, sa)
 
 # Test the comb function
-rc = loudia.comb(5, 3)
+rc = loudia.combination(5, 3)
 sc = scipy.comb(5, 3)
-print 'comb: ', round(sc) == round(rc)
+print 'combination: ', round(sc) == round(rc)
 
 # Test the bilinear function
-a = [10, -0.96, 0.80]
-b = [156, 0.5, 0.5]
+a = scipy.array([10, -0.96, 0.80])
+b = scipy.array([156, 0.5, 0.5])
 
 rb, ra = loudia.bilinear(b, a, 1.0)
 sb, sa = scipy.signal.bilinear(b, a)

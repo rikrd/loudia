@@ -4,7 +4,7 @@
 import scipy
 import loudia
 
-a = [1, 2, 3, 4, 5]
+a = scipy.array([1, 2, 3, 4, 5])
 
 rr = loudia.poly( a )
 rs = scipy.poly( a )

@@ -26,7 +26,7 @@ peakBandwidth = 4
 peakCandidateCount = 4
 numMaxPitches = 2
 numHarmonics = 10
-numCandidates = 700
+numCandidates = 300
 
 windower = loudia.Window( frameSize, loudia.Window.HAMMING )
 ffter = loudia.FFT( fftSize )
