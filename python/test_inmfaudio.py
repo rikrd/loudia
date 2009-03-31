@@ -54,7 +54,7 @@ for ind, frame in enumerate(framer):
     dBc = 20.0 * scipy.log10(c[:,:plotSize].T + 0.1)
 
     if estimatePitch:
-        freq, sal = pitch.process( c*g.T )
+        freq, sal = pitch.process( c )
 
         if plotInteractive and not (ind % 10):
             pylab.ion()
