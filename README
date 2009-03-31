@@ -149,7 +149,9 @@ import numpy
 import pylab
 import loudia
 
-data_frame = numpy.arange( 128 )
+# We create a 1 second sine of 140 Hz at a samplerate of 8000 Hz
+data_frame = numpy.array(numpy.sin(2*numpy.pi*140.0*numpy.arange( 0.0, 1.0, 1/8000.0)))
+
 
 fft = loudia.FFT()
 fft.setFftSize( 128 )
