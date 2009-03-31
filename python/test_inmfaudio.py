@@ -8,10 +8,7 @@ plotInteractive = False
 
 estimatePitch = True
 
-filename = '/home/rmarxer/dev/data/onsets/pitchedphrases/Strings/Picked-Plucked-Ham/Piano/piano1.wav'
-
-if len(sys.argv) >= 2:
-    filename = sys.argv[1]
+filename = sys.argv[1]
 
 windowSize = 1024
 windowHop = 512

@@ -26,7 +26,7 @@ stream, samplerate, nframes, nchannels, loader = get_framer_audio(filename, fram
 
 windower = loudia.Window( frameSize, loudia.Window.HAMMING )
 ffter = loudia.FFT( fftSize )
-odfcog = loudia.ODFCOG(fftSize, 10, bandwidth)
+odfcog = loudia.SpectralODF(fftSize, loudia.SpectralODF.CENTER_OF_GRAVITY)
 
 specs = []
 cogs = []
