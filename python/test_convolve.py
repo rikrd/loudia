@@ -4,8 +4,8 @@
 import scipy
 import loudia
 
-a = [1, 2, 3, 4, 5]
-b = [2, 4, 5]
+a = scipy.array([1, 2, 3, 4, 5])
+b = scipy.array([2, 4, 5])
 
 rr = loudia.convolve( a, b )
 rs = scipy.convolve( a, b )
