@@ -8,19 +8,12 @@ import scipy
 
 
 interactivePlotting = False
-
 plotSpectrumTrajs = True
-
 plotDetSpecSynth = True
-
 plotDetSpecDiff = True
-
 plotTrajs = True
-
 plotMags = False
-
 plotLocs = False
-
 plotOdf = True
 
 order = 10
@@ -48,7 +41,6 @@ plotSize = fftSize / 4
 
 subplotCount = max(subplots)
 
-print subplots
 pylab.ion()
 
 if 'peaki_mags' in all_processes:
@@ -63,6 +55,7 @@ if 'peaki_mags' in all_processes:
     peaker = loudia.PeakDetectionComplex( maxPeakCount, loudia.PeakDetectionComplex.BYMAGNITUDE, minPeakWidth )
     peakInterp = loudia.PeakInterpolationComplex( )
     tracker = loudia.PeakTracking( maxTrajCount, maxFreqBinChange, silentFrames )
+    filt = loudia.BandFilter( )
 
 trajsLocs = []
 trajsMags = []
@@ -78,7 +71,6 @@ for frame in stream:
         phase =  scipy.angle( fft )
 
     if set(['peak_mags', 'peak_phases']) | all_processes:
-        print fft.shape
         
         peakLocs, peakMags, peakPhases =  peaker.process( fft )
 
@@ -103,8 +95,13 @@ for frame in stream:
             freqStop = trajLoc / fftSize + 0.01
 
             # Create the filter for the given trajectory
-            filt = loudia.BandStop( order, freq, freqStop, loudia.BESSEL )
-
+            filt.setOrder( order, False )
+            filt.setLowFrequency( freq, False )
+            filt.setHighFrequency( freqStop, False )
+            filt.setFilterType( loudia.BandFilter.BESSEL, False )
+            filt.setBandType( loudia.BandFilter.BANDSTOP, False )
+            filt.setup()
+            
             # Filter the samples of that trajectory
             filtered = filt.process( filtered )
             
@@ -168,8 +165,6 @@ trajsLocs = scipy.array( trajsLocs )
 trajsMags = scipy.array( trajsMags )
 
 filtereds = scipy.array( filtereds )
-
-print filtereds.shape
 
 def extractTrajs(trajsLocs, trajsMags):
     trajs = []

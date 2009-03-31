@@ -256,7 +256,9 @@ if plotSpectrumTrajs:
         pylab.plot( trajInds, trajPos, c='black' )
 
 if plotOdf:
-    odf = loudia.ODFComplex( fftSize )
+    odf = loudia.SpectralODF( fftSize )
+    odf.setOdfMethod( loudia.SpectralODF.COMPLEX_DOMAIN )
+    
     odfValue = []
     for i in range(specsMagsResid.shape[0] - 10):
         val = odf.process(specsMagsResid[i:i+3,:])[0,0]
