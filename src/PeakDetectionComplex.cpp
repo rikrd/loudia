@@ -159,18 +159,11 @@ void PeakDetectionComplex::process(const MatrixXC& frames,
     int candidateCount = detectedCount;
     if( _candidateCount > 0 ) {
       candidateCount = min( candidateCount, _candidateCount );
-      sort( peakVector.begin(), peakVector.begin() + candidateCount , byMagnitudeComplex );
+      partial_sort( peakVector.begin(), peakVector.begin() + candidateCount, peakVector.end() , byMagnitudeComplex );
     }
 
     // Sort and take the first peakCount peakVector
     int peakCount = min( _peakCount, candidateCount );
-
-    cout << "detectedCount: " << detectedCount << endl;
-    cout << "peakCount: " << peakCount << endl;
-    cout << "_peakCount: " << _peakCount << endl;
-    cout << "candidateCount: " << candidateCount << endl;
-    cout << "_candidateCount: " << _candidateCount << endl;
-    cout << "-----------------" << endl;
 
     // Sort the candidates using position or magnitude
     switch ( _sortMethod ) {
