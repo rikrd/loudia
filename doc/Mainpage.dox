@@ -149,19 +149,21 @@ import numpy
 import pylab
 import loudia
 
-data_frame = numpy.arange( 128 )
+# We create a 120 samples frame of a sine of 440 Hz at a samplerate of 8000 Hz
+data_frame = numpy.array(numpy.sin(2*numpy.pi*440.0*numpy.arange( 0.0, 120/8000.0, 1/8000.0)))
+
 
 fft = loudia.FFT()
-fft.setFftSize( 128 )
+fft.setFftSize( 1024 )
 
 result = fft.process( data_frame )
-pylab.plot( result[0,:] ) # Note that the results of the FFT algorithm are stacked in rows (we only plot the first)
+pylab.plot( abs( result[0,:] ) ) # Note that the results of the FFT algorithm are stacked in rows (we only plot the first)
 
 
 
 # When setting several parameters we might not want the algorithm to reconfigure itself
 # method after each parameter setting, and we will call the setup() manually 
-fft.setFftSize( 256, False )
+fft.setFftSize( 1024, False )
 fft.setZeroPhase( True, False )
 fft.setup()
 
