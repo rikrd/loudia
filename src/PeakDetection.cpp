@@ -85,8 +85,9 @@ void PeakDetection::process(const MatrixXR& frames,
   DEBUG("PEAKDETECTION: Processing");
   
   const int rows = frames.rows();
+  const int cols = frames.cols();
   
-  DEBUG("PEAKDETECTION: Processing, frames.shape: (" << rows << ", " << frames.cols() << ")");
+  DEBUG("PEAKDETECTION: Processing, frames.shape: (" << rows << ", " << cols << ")");
 
   (*peakPositions).resize(rows, _peakCount);
   (*peakPositions).setConstant(-1);
@@ -96,7 +97,7 @@ void PeakDetection::process(const MatrixXR& frames,
 
   _magnitudes = frames.cwise().abs();
 
-  DEBUG("PEAKDETECTION: Processing, _magnitudes.shape: (" << rows << ", " << _magnitudes.cols() << ")");
+  DEBUG("PEAKDETECTION: Processing, _magnitudes.shape: (" << rows << ", " << cols << ")");
   
   int maxRow;
   int maxCol;
@@ -105,24 +106,26 @@ void PeakDetection::process(const MatrixXR& frames,
   Real minVal;
   
   vector<peak> peaks;
-  peaks.reserve(frames.cols());
+  peaks.reserve( cols );
   
+  const int halfPeakWidth = _minimumPeakWidth / 2;
+
   for ( int i = 0 ; i < rows; i++){
 
     peaks.clear();
     
-    for ( int j = (_minimumPeakWidth / 2); j < _magnitudes.row(i).cols() - (_minimumPeakWidth / 2); j++) {
+    for ( int j = halfPeakWidth; j < cols - halfPeakWidth; j++) {
       // If we don't need sorting then only the first peakCount peaks are needed
       if( ( _sortMethod == NONE ) && ( (int)peaks.size() > _peakCount ) ) break;
 
-      int inf = j - (_minimumPeakWidth / 2);
+      int inf = j - halfPeakWidth;
       
       // Get the maximum value and position of a region (corresponding to the min bandwidth of the peak)
       // of the spectrum
       maxVal = _magnitudes.row(i).segment(inf, _minimumPeakWidth).maxCoeff( &maxRow, &maxCol );
       
       // If the position of the maximum value is the center, then consider it as a peak candidate
-      if ( maxCol == floor(_minimumPeakWidth / 2) ) {
+      if ( maxCol == halfPeakWidth ) {
 
         // Get the mininum value of the region
         minVal = _magnitudes.row(i).segment(inf, _minimumPeakWidth).minCoeff();
@@ -139,9 +142,9 @@ void PeakDetection::process(const MatrixXR& frames,
       
     // Get the largest candidates
     int candidateCount = (int)peaks.size();
-    if(_candidateCount > 0) {
+    if( _candidateCount > 0 ) {
       candidateCount = min(candidateCount, _candidateCount);
-      std::sort(peaks.begin(), peaks.end(), byMagnitude);
+      std::sort(peaks.begin(), peaks.begin() + candidateCount, byMagnitude);
     }
     
     // Sort the candidates using position or magnitude

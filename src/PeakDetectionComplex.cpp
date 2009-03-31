@@ -79,12 +79,13 @@ void PeakDetectionComplex::setup(){
 
 
 void PeakDetectionComplex::process(const MatrixXC& frames, 
-                                MatrixXR* peakPositions, MatrixXR* peakMagnitudes, MatrixXR* peakPhases){
+                                   MatrixXR* peakPositions, MatrixXR* peakMagnitudes, MatrixXR* peakPhases){
   DEBUG("PEAKDETECTIONCOMPLEX: Processing");
   
   const int rows = frames.rows();
+  const int cols = frames.cols();
   
-  DEBUG("PEAKDETECTIONCOMPLEX: Processing, frames.shape: (" << rows << ", " << frames.cols() << ")");
+  DEBUG("PEAKDETECTIONCOMPLEX: Processing, frames.shape: (" << rows << ", " << cols << ")");
 
   (*peakPositions).resize(rows, _peakCount);
   (*peakPositions).setConstant(-1);
@@ -98,33 +99,33 @@ void PeakDetectionComplex::process(const MatrixXC& frames,
   _magnitudes = frames.cwise().abs();
   _phases = frames.cwise().angle();
 
-  DEBUG("PEAKDETECTIONCOMPLEX: Processing, _magnitudes.shape: (" << rows << ", " << _magnitudes.cols() << ")");
-  
   int maxRow;
   int maxCol;
   
   Real maxVal;
   Real minVal;
+
+  const int _halfPeakWidth = _minimumPeakWidth / 2;
   
   vector<peak> peaks;
-  peaks.reserve(frames.cols());
+  peaks.reserve( cols );
   
   for ( int i = 0 ; i < rows; i++){
 
     peaks.clear();
     
-    for ( int j = (_minimumPeakWidth / 2); j < _magnitudes.row(i).cols() - (_minimumPeakWidth / 2); j++) {
+    for ( int j = _halfPeakWidth; j < cols - _halfPeakWidth; j++) {
       // If we don't need sorting then only the first peakCount peaks are needed
       if( ( _sortMethod == NONE ) && ( (int)peaks.size() > _peakCount ) ) break;
 
-      int inf = j - (_minimumPeakWidth / 2);
+      int inf = j - _halfPeakWidth;
       
       // Get the maximum value and position of a region (corresponding to the min bandwidth of the peak)
       // of the spectrum
       maxVal = _magnitudes.row(i).segment(inf, _minimumPeakWidth).maxCoeff( &maxRow, &maxCol );
       
       // If the position of the maximum value is the center, then consider it as a peak candidate
-      if ( maxCol == floor(_minimumPeakWidth / 2) ) {
+      if ( maxCol == _halfPeakWidth ) {
 
         // Get the mininum value of the region
         minVal = _magnitudes.row(i).segment(inf, _minimumPeakWidth).minCoeff();
@@ -132,7 +133,7 @@ void PeakDetectionComplex::process(const MatrixXC& frames,
         // If the contrast is bigger than what minimumPeakContrast says, then select as peak
         if ( maxVal - minVal >= _minimumPeakContrast ) {
 
-          peak p = {j, _magnitudes(i, j), _phases(i, j)};
+          peak p = {(Real)j, _magnitudes(i, j), _phases(i, j)};
           peaks.push_back(p);
 
         }
@@ -141,21 +142,21 @@ void PeakDetectionComplex::process(const MatrixXC& frames,
       
     // Get the largest candidates
     int candidateCount = (int)peaks.size();
-    if(_candidateCount > 0) {
-      candidateCount = min(candidateCount, _candidateCount);
+    if( _candidateCount > 0 ) {
+      candidateCount = min( candidateCount, _candidateCount );
       std::sort(peaks.begin(), peaks.end(), byMagnitudeComplex);
     }
     
     // Sort the candidates using position or magnitude
     switch ( _sortMethod ) {
     case BYPOSITION:      
-      std::sort(peaks.begin(), peaks.begin() + candidateCount, byPositionComplex);
+      std::partial_sort(peaks.begin(), peaks.begin() + candidateCount, peaks.end(), byPositionComplex);
       break;
       
     case BYMAGNITUDE:
       // We have not done a candidate preselection, we must do the sorting
       if (_candidateCount <= 0)
-        std::sort(peaks.begin(), peaks.begin() + candidateCount, byMagnitudeComplex);
+        std::partial_sort(peaks.begin(), peaks.begin() + candidateCount, peaks.end(), byMagnitudeComplex);
       break;
       
     case NONE:
