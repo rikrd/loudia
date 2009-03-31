@@ -1,0 +1,100 @@
+a
+{
+    color:#666;
+    //background-color:#666;
+    text-decoration:none;
+    font-weight:bold;
+}
+
+a:visited
+{
+    //color:#FFF;
+    //background-color:#666;
+}
+
+a:hover
+{
+    color:#AAA;
+    //background-color:#333;
+}
+
+body
+{
+  font-family: Sabon, Georigia, serif;
+  font-size: 0.8em;
+  background-color: #FFF;
+  color: #333;
+  padding: 0px;
+  margin: 0px;
+}
+
+img
+{
+	border: solid 1px #DDD;
+  	margin-top: 1em;
+  	margin-left: 0em;
+  	margin-bottom: 1em;
+  	margin-right: 0em;
+}
+
+h1
+{
+  font-weight: bold;
+  font-family: Helvetica, Verdana, sans-serif;
+  margin: 0px;
+  padding: 0px;
+  font-size: 1.8em;
+  text-transform: uppercase;
+  color: #222;
+}
+
+h2
+{
+  font-weight: bold;
+  font-family: Sabon, Georigia, serif;
+  margin: 0px;
+  padding: 0px;
+  font-size: 1.6em;
+  color: #222;
+}
+
+h3
+{
+  font-style: italic;
+  font-weight: bold;
+  font-family: Sabon, Georigia, serif;
+  font-size: 1.0em;
+  color: #222;
+}
+
+
+#title
+{
+  padding: 0.5em;
+  margin: 0px;
+  color: #FFF;
+  background-color: #000;
+  font-size: 3.2em;
+  font-family: Helvetica, Verdana, sans-serif;
+}
+
+
+#wrap
+{
+  padding: 2em;
+  margin: 0px;
+}
+
+#main
+{
+  float:left;
+  width:40%;
+  padding-right:5em;
+}
+
+#advanced
+{
+  float:left;
+  width:40%;
+  padding-left:5em;
+}

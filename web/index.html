@@ -1,0 +1,147 @@
+<html>
+<head>
+	<title>Loudia</title>
+ 	<link rel="stylesheet" href="style.css">
+
+</head>
+<body>
+
+<div id="title">
+Loudia
+</div>
+
+<div id="wrap">
+
+<div id="main">
+<div id="intro">
+<h1>Introduction</h1>
+<div id="intro_content">
+<h2>Features</h2>
+<p>
+The following algorithms are implemented:<p>
+<ul>
+<li><a class="el" href="doc/classWindow.html" title="Algorithm to create and apply several type of windows on vectors of Real or Complex...">Window</a></li><li><a class="el" href="doc/classUnwrap.html" title="Algorithm to unwrap phases vectors represented as vectors of Real values.">Unwrap</a></li><li>Fast Fourier Transform (<a class="el" href="doc/classFFT.html" title="Algorithm to perform a Fast Fourier Transform of a vector of Real values.">FFT</a> / <a class="el" href="doc/classIFFT.html" title="Algorithm to perform an Inverse Fast Fourier Transform of a vector of Complex values...">IFFT</a>) (wrapper around libfftw [<a href="http://www.fftw.org/">http://www.fftw.org/</a>])</li><li>Discrete Cosine Transform (<a class="el" href="doc/classDCT.html" title="Algorithm to perform a Discrete Cosine Transform of a vector of Real values.">DCT</a>)</li><li><a class="el" href="doc/classFilter.html" title="Algorithm to apply one or several IIR filters given the Real value coefficients.">Filter</a> and <a class="el" href="doc/classBandFilter.html" title="Algorithm to create and apply several types of low pass, high pass, band pass and...">BandFilter</a> (based on Scipy [<a href="http://www.scipy.org/">http://www.scipy.org/</a>] implementation):<ul>
+
+<li>Band type<ul>
+<li>LowPass</li><li>HighPass</li><li>BandPass</li><li>BandStop</li></ul>
+</li><li><a class="el" href="doc/classFilter.html" title="Algorithm to apply one or several IIR filters given the Real value coefficients.">Filter</a> type<ul>
+<li>Chebyshev I</li><li>Chebyshev II</li><li>Bessel</li><li>Butterworth</li></ul>
+</li></ul>
+
+</li><li><a class="el" href="doc/classCorrelation.html" title="Algorithm to perform the correlation between two vectors of Real values.">Correlation</a> / <a class="el" href="doc/classAutocorrelation.html" title="Algorithm to perform an autocorrelation of vectors of Real values.">Autocorrelation</a><ul>
+<li>Direct calculation</li><li><a class="el" href="doc/classFFT.html" title="Algorithm to perform a Fast Fourier Transform of a vector of Real values.">FFT</a> based calculation</li></ul>
+</li><li><a class="el" href="doc/classResample.html" title="Algorithm to resample vectors represented as vectors of Real values.">Resample</a> (wrapper around libsamplerate [<a href="http://www.mega-nerd.com/SRC/">http://www.mega-nerd.com/SRC/</a>])</li><li>Onset Detection Functions:<ul>
+
+<li>High Frequency Content (HFC)</li><li>Flux</li><li>Phase Deviation</li><li>Complex Domain</li><li>Modified Kullback-Liebler</li><li>Peak Center of Gravity</li></ul>
+</li><li>Pitch Estimation:<ul>
+<li><a class="el" href="doc/classAutocorrelation.html" title="Algorithm to perform an autocorrelation of vectors of Real values.">Autocorrelation</a> Function based (ACF)</li><li>Inverse Problem based</li></ul>
+</li><li>Spectral <a class="el" href="doc/classBands.html" title="Algorithm to calculate the sum of values in a given set of weighted bands.">Bands</a><ul>
+
+<li>Mel bands</li></ul>
+</li><li><a class="el" href="doc/classMFCC.html" title="Algorithm to calculate the Mel-frequency Cepstrum Coefficients of vectors of Real...">MFCC</a></li><li><a class="el" href="doc/classLPC.html" title="Algorithm to calculate the Linear Predictive Coding of vectors of Real values.">LPC</a></li><li>Sinusoidal Modelling:<ul>
+<li>Peak Detection</li><li>Peak Interpolation</li><li>Peak Tracking</li></ul>
+</li><li>Spectral Whitening</li><li>Spectral Noise Suppression</li><li>Non-negative Matrix Factorization (<a class="el" href="doc/classNMF.html" title="Algorithm to calculate the Non-negative Matrix Factorization of a matrix of Real...">NMF</a>)</li><li>Other experimental and/or unfinished algorithm implementations<ul>
+
+<li>Spectral Reassignment</li><li>Adaptative Optimized Kernel (AOK) (modification of AOK 4.1 [<a href="http://www.macunix.net/aok.html">http://www.macunix.net/aok.html</a>])</li><li>Peak Synthesis</li><li>Incremental Non-negative Matrix Factorization (INMF)</li><li><a class="el" href="doc/classLPC.html" title="Algorithm to calculate the Linear Predictive Coding of vectors of Real values.">LPC</a> residual</li></ul>
+</li></ul>
+<p>
+Numerous examples which can also be used for testing in some cases can be found in python/ Some of the examples require an audio WAVE filename as input argument.<p>
+</div>
+</div>
+</div>
+
+<div id="advanced">
+<div id="download">
+<h1>Download</h1>
+<div id="download_content">
+<p><A href="loudia-0.1-dev.tgz">Loudia (version 0.1)</A> (March 31 2009) [Only tested on GNU/Linux]</p>
+</div>
+</div>
+
+<div id="credits">
+<h1>Credits</h1>
+<div id="credits_content">
+<dl>
+<dt></dt><dd><A href="http://www.ricardmarxer.com">Ricard Marxer</A></dd>
+</dl>
+</div>
+</div>
+
+
+<div id="overview">
+<h1>Overview</h1>
+<div id="overview_content">
+<p>
+The library is composed by algorithms. Algorithms are classes that represent a processing unit.<p>
+All algorithms share two methods:<ul>
+<li>setup()</li><li>reset()</li></ul>
+<p>
+Additionally a method called process() is also always present. Depending on the algorithm the method will take different number and types of arguments.<p>
+The algorithms return the results in a C-style way. The process() method also takes as input arguments pointers to matrices where the results will be written.<p>
+All inputs and outputs to the process() methods are of type Eigen::Matrix.<p>
+</div>
+</div>
+
+<div id="tutorials">
+<h1>Quick HOWTO</h1>
+<div id="tutorials_content">
+<p>
+From Python you may create algorithm, change its parameters and call the process method:<p>
+<pre>
+import numpy
+import pylab
+import loudia</pre><p>
+<pre>data_frame = numpy.arange( 128 )</pre><p>
+<pre>fft = loudia.FFT()
+fft.setFftSize( 128 )</pre><p>
+<pre>result = fft.process( data_frame )
+pylab.plot( result[0,:] ) # Note that the results of the <a class="el" href="classFFT.html" title="Algorithm to perform a Fast Fourier Transform of a vector of Real values.">FFT</a> algorithm are stacked in rows (we only plot the first)</pre><p>
+<pre># When setting several parameters we might not want the algorithm to reconfigure itself
+# method after each parameter setting, and we will call the setup() manually 
+fft.setFftSize( 256, False )
+fft.setZeroPhase( True, False )
+fft.setup()</pre><p>
+<pre>result = fft.process( data_frame )
+pylab.plot( abs( result[0,:] ) ) # Note that the results of the <a class="el" href="classFFT.html" title="Algorithm to perform a Fast Fourier Transform of a vector of Real values.">FFT</a> algorithm are stacked in rows (we only plot the first)</pre><p>
+<pre>pylab.show()
+</pre><p>
+</div>
+</div>
+
+<div id="documentation">
+<h1>Documentation</h1>
+<div id="documentation_content">
+<p>The documentation is available <a href="./doc/index.html">here</a>.</p>
+</div>
+</div>
+
+<div id="limitations">
+<h1>Limitations</h1>
+<div id="limitations_content">
+<p>
+A few assumptions are used when using the library:<ul>
+<li>Loudia has no algorithm for loading audio frames</li></ul>
+<p>
+<ul>
+<li>All algorithms take Eigen::Matrix types as inputs and outputs in the process() methods</li></ul>
+<p>
+<ul>
+<li>Loudia does NOT have a streaming mode. All algorithms mantain a state which can be reset using reset(). And the process() methods may act on preallocated matrices. Therefore with the use of Eigen::Map, Loudia can be used inside streaming libraries that expose the buffers. </li></ul>
+</div>
+</div>
+
+
+</div>
+
+</body>
+
+<script type="text/javascript">
+var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+</script>
+<script type="text/javascript">
+var pageTracker = _gat._getTracker("UA-312817-2");
+pageTracker._initData();
+pageTracker._trackPageview();
+</script>
+</html>

@@ -19,7 +19,7 @@ The following algorithms are implemented:
  - Unwrap
  - Fast Fourier Transform (FFT / IFFT) (wrapper around libfftw [http://www.fftw.org/])
  - Discrete Cosine Transform (DCT)
- - Filter and BandFilter (based on Scipy implementation):
+ - Filter and BandFilter (based on Scipy [http://www.scipy.org/] implementation):
    - Band type
       - LowPass
       - HighPass
