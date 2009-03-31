@@ -20,13 +20,13 @@ def set_options(opt):
 	opt.add_option('--doc', action='store_true', default=False, help='Generate the documentation')
 
 def configure(conf):
-        conf.sub_config('src')
-
         import Options
         conf.env['option_doc'] = Options.options.doc
         conf.env['option_debug'] = Options.options.debug
         conf.env['option_no_python_bindings'] = Options.options.no_python_bindings
         conf.env['option_cpptests'] = Options.options.cpptests
+
+        conf.sub_config('src')
 
         if conf.env['option_doc']:
                 conf.sub_config('doc')

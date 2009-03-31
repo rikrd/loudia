@@ -92,10 +92,10 @@ void Autocorrelation::setup(){
   _calcMaxLag = min(_inputSize + 1, max(-_inputSize + 1, _maxLag));
 
   if ( _useFft ) {
-    _fft.setFftSize( nextPowerOf2(((_calcMaxLag - _calcMinLag)-1)*2), false );
+    _fft.setFftSize( nextPowerOf2( _inputSize * 2, false ) );
     _fft.setZeroPhase( false, false );
     
-    _ifft.setFftSize( nextPowerOf2(((_calcMaxLag - _calcMinLag)-1)*2), false );
+    _ifft.setFftSize( nextPowerOf2( _inputSize * 2, false ) );
     _ifft.setZeroPhase( false, false );
 
     _fft.setup();
@@ -120,11 +120,12 @@ void Autocorrelation::process(const MatrixXR& frames, MatrixXR* autocorrelation)
     _tempFft.cwise() *= _tempFft.conjugate();
     
     _ifft.process(_tempFft, &_temp);
-    
+
     (*autocorrelation).block(0, _calcMinLag - _minLag, rows, _calcMaxLag - _calcMinLag) = _temp.block(0, 0, rows, _calcMaxLag - _calcMinLag);
 
   } else {
     correlate(frames, frames, &_temp, _calcMinLag, _calcMaxLag);
+    
     (*autocorrelation).block(0, _calcMinLag - _minLag, rows, _calcMaxLag - _calcMinLag) = _temp;
     
   }

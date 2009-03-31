@@ -14,7 +14,7 @@ def build(bld):
                 uselib = 'fftw3',
                 source = 'test_addon.cpp',
                 target = 'test_addon',
-                includes = '.. /home/rmarxer/dev/eigen2',
+                includes = '.. ../../externals',
                 uselib_local = 'loudia'
         )
         

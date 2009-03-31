@@ -19,14 +19,14 @@
 #ifndef DEBUG_H
 #define DEBUG_H
 
-#if defined(RICAUDIO_DEBUG)
+#if defined(LOUDIA_DEBUG)
 
 #include <iostream>
 
 extern bool debug;
 #define DEBUG(msg) if(debug) std::cerr << msg << std::endl;
 
-#elif defined(RICAUDIO_LOG)
+#elif defined(LOUDIA_LOG)
 
 #include <iostream>
 

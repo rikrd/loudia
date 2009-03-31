@@ -57,6 +57,7 @@ void LPC::setup(){
   
   _acorrelation.setInputSize( _inputSize, false );
   _acorrelation.setMaxLag( _coefficientCount + 1, false );
+  _acorrelation.setUseFft( true, false );
   _acorrelation.setup();
   
   reset();
@@ -86,9 +87,8 @@ void LPC::process(const MatrixXR& frame, MatrixXR* lpcCoeffs, MatrixXR* reflecti
   }
   
   DEBUG("LPC: Processing autocorrelation");
-
+  
   _acorrelation.process(_pre, &_acorr);
-  //autocorrelate(_pre, &_acorr, 0, _coefficientCount + 1);
   
   DEBUG("LPC: Processing Levinson-Durbin recursion");
 

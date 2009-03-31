@@ -23,7 +23,7 @@
 using namespace std;
 
 
-#if defined(RICAUDIO_DEBUG)
+#if defined(LOUDIA_DEBUG)
 
 bool debug = true;
 
@@ -31,7 +31,7 @@ bool debug = true;
 
 
 
-#if defined(RICAUDIO_LOG)
+#if defined(LOUDIA_LOG)
 
 bool debug = true;
 ofstream out("loudia.log");

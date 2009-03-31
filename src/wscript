@@ -18,7 +18,7 @@ def configure(conf):
 	conf.check_tool('compiler_cxx')
 
         if conf.env['option_debug']:
-                conf.env.append_value('CXXFLAGS', '-Wall  -O3 -fPIC -msse2 -DRICAUDIO_DEBUG')
+                conf.env.append_value('CXXFLAGS', '-Wall  -O3 -fPIC -msse2 -DLOUDIA_DEBUG')
         else:
                 conf.env.append_value('CXXFLAGS', '-O3 -fPIC -msse2 -DNDEBUG')
                 
@@ -35,7 +35,7 @@ def build(bld):
                 features = 'cxx cshlib',
                 uselib = 'fftw3',
                 target = LIBNAME,
-                includes = '. /home/rmarxer/dev/eigen2',
+                includes = '. ../externals',
                 export_inc_dirs = '.',
                 name         = LIBNAME,
                 vnum         = LIBVERSION
