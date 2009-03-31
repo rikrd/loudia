@@ -78,8 +78,8 @@ for frame in stream:
         phase =  scipy.angle( fft )
 
     if set(['peak_mags', 'peak_phases']) | all_processes:
-        fft = scipy.reshape(fft, (1, plotSize))
-
+        print fft.shape
+        
         peakLocs, peakMags, peakPhases =  peaker.process( fft )
 
         peakiLocs, peakiMags, peakiPhases = peakInterp.process( fft,
