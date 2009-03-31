@@ -25,14 +25,11 @@ peaks = loudia.PeakDetectionComplex(5, loudia.PeakDetectionComplex.BYMAGNITUDE, 
 
 r_sine_windowed = window.process(a_sine)
 r_sine_fft = fft.process(r_sine_windowed)
-r_sine_fft = r_sine_fft[:,:scipy.ceil(r_sine_fft.shape[1]/2)]
 r_sine_peakpos, r_sine_peakmag, r_sine_peakphase = peaks.process(r_sine_fft)
-# -------------------------------------------------------- #
 
-print r_sine_fft
-print r_sine_peakpos
-print r_sine_peakmag
-print r_sine_peakphase
+peaks.setCandidateCount( 10 )
+
+# -------------------------------------------------------- #
 
 import pylab
 pylab.subplot(211)
