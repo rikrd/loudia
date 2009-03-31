@@ -37,9 +37,7 @@ nwindows = (nframes - windowSize) / windowHop + 1
 onsets = get_onsets(filename, windowHop, sr)
 
 if estimatePitch:
-   acorrw = loudia.Window(halfSize, loudia.Window.HAMMING)
-   peaker = loudia.PeakDetection(1, 5, 0, False)
-   peakeri = loudia.PeakInterpolation()
+   pitch = loudia.PitchACF( fftSize )
    freqs = []
 
 components = []
@@ -56,12 +54,7 @@ for ind, frame in enumerate(framer):
     dBc = 20.0 * scipy.log10(c[:,:plotSize].T + 0.1)
 
     if estimatePitch:
-        acorrc = acorrw.process( c )
-        acorr = loudia.autocorrelate( acorrc )
-        peakPos, peakMag, peakPhase = peaker.process( acorr )
-        peakPosi, peakMagi, peakPhasei = peakeri.process( acorr, peakPos, peakMag, peakPhase )
-        
-        fs = peakPosi / fftSize * sr
+        freq, sal = pitch.process( c*g.T )
 
         if plotInteractive and not (ind % 10):
             pylab.ion()
@@ -73,7 +66,7 @@ for ind, frame in enumerate(framer):
             pylab.subplot( 212 )
             pylab.plot( acorr.T )
 
-        freqs.append( fs.T )
+        freqs.append( freq.T )
             
     if plotInteractive:
         pylab.ion()
