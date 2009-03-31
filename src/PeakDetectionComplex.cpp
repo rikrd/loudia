@@ -31,6 +31,19 @@ struct peak{
   Real pos;
   Real mag;
   Real phase;
+  peak(const peak& other) 
+    :pos(other.pos), mag(other.mag), phase(other.phase) { }
+
+  peak& operator=(const peak& other) {
+    pos = other.pos;
+    mag = other.mag;
+    phase = other.phase;
+
+    return *this;
+  }
+
+  peak(Real pos, Real mag, Real phase)
+    :pos(pos), mag(mag), phase(phase) { }
   
   // A peak is smaller (first in the list)
   // if it's magnitude is larger
@@ -40,11 +53,11 @@ struct peak{
 };
 
 struct byMagnitudeComp{
-  bool operator() (peak i, peak j) { return ( i.mag > j.mag ); }
+  bool operator() (const peak& i, const peak& j) const { return ( i.mag > j.mag ); }
 } byMagnitudeComplex;
 
 struct byPositionComp{
-  bool operator() (peak i, peak j) { return ( i.pos < j.pos ); }
+  bool operator() (const peak& i, const peak& j) const { return ( i.pos < j.pos ); }
 } byPositionComplex;
 
 PeakDetectionComplex::PeakDetectionComplex(int peakCount, SortMethod sortMethod, int minimumPeakWidth, int candidateCount, Real minimumPeakContrast)
@@ -107,16 +120,18 @@ void PeakDetectionComplex::process(const MatrixXC& frames,
 
   const int _halfPeakWidth = _minimumPeakWidth / 2;
   
-  vector<peak> peaks;
-  peaks.reserve( cols );
+  vector<peak> peakVector;
+  peakVector.reserve( cols );
+  int detectedCount;
   
   for ( int i = 0 ; i < rows; i++){
 
-    peaks.clear();
+    peakVector.clear();
+    detectedCount = 0;
     
     for ( int j = _halfPeakWidth; j < cols - _halfPeakWidth; j++) {
-      // If we don't need sorting then only the first peakCount peaks are needed
-      if( ( _sortMethod == NONE ) && ( (int)peaks.size() > _peakCount ) ) break;
+      // If we don't need sorting then only the first peakCount peakVector are needed
+      if ( ( _sortMethod == NONE ) && ( detectedCount >= _peakCount ) ) break;
 
       int inf = j - _halfPeakWidth;
       
@@ -131,32 +146,42 @@ void PeakDetectionComplex::process(const MatrixXC& frames,
         minVal = _magnitudes.row(i).segment(inf, _minimumPeakWidth).minCoeff();
 
         // If the contrast is bigger than what minimumPeakContrast says, then select as peak
-        if ( maxVal - minVal >= _minimumPeakContrast ) {
+        if ( (maxVal - minVal) >= _minimumPeakContrast ) {
 
-          peak p = {(Real)j, _magnitudes(i, j), _phases(i, j)};
-          peaks.push_back(p);
+          peakVector.push_back( peak(j, _magnitudes(i, j), _phases(i, j)) );
+          detectedCount ++;
 
         }
       }
     }
-      
+    
     // Get the largest candidates
-    int candidateCount = (int)peaks.size();
+    int candidateCount = detectedCount;
     if( _candidateCount > 0 ) {
       candidateCount = min( candidateCount, _candidateCount );
-      std::sort(peaks.begin(), peaks.end(), byMagnitudeComplex);
+      sort( peakVector.begin(), peakVector.begin() + candidateCount , byMagnitudeComplex );
     }
-    
+
+    // Sort and take the first peakCount peakVector
+    int peakCount = min( _peakCount, candidateCount );
+
+    cout << "detectedCount: " << detectedCount << endl;
+    cout << "peakCount: " << peakCount << endl;
+    cout << "_peakCount: " << _peakCount << endl;
+    cout << "candidateCount: " << candidateCount << endl;
+    cout << "_candidateCount: " << _candidateCount << endl;
+    cout << "-----------------" << endl;
+
     // Sort the candidates using position or magnitude
     switch ( _sortMethod ) {
     case BYPOSITION:      
-      std::partial_sort(peaks.begin(), peaks.begin() + candidateCount, peaks.end(), byPositionComplex);
+      partial_sort( peakVector.begin(), peakVector.begin() + peakCount, peakVector.begin() + candidateCount, byPositionComplex );
       break;
       
     case BYMAGNITUDE:
       // We have not done a candidate preselection, we must do the sorting
-      if (_candidateCount <= 0)
-        std::partial_sort(peaks.begin(), peaks.begin() + candidateCount, peaks.end(), byMagnitudeComplex);
+      if ( _candidateCount <= 0 )
+        partial_sort( peakVector.begin(), peakVector.begin() + peakCount, peakVector.begin() + candidateCount, byMagnitudeComplex );
       break;
       
     case NONE:
@@ -164,14 +189,12 @@ void PeakDetectionComplex::process(const MatrixXC& frames,
       break;
     }
     
-    // Take the first peakCount
-    int peakCount = min(_peakCount, candidateCount);      
     // Put the peaks in the matrices
     for( int j = 0; j < peakCount; j++ ){
-      (*peakMagnitudes)(i, j) = peaks[j].mag;
-      (*peakPositions)(i, j) = peaks[j].pos;
-      (*peakPhases)(i, j) = peaks[j].phase;
-    } 
+      (*peakMagnitudes)(i, j) = peakVector[j].mag;
+      (*peakPositions)(i, j) = peakVector[j].pos;
+      (*peakPhases)(i, j) = peakVector[j].phase;
+    }
   }
 
   DEBUG("PEAKDETECTIONCOMPLEX: Finished Processing");

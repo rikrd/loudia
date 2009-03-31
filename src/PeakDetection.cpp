@@ -30,6 +30,18 @@ using namespace Eigen;
 struct peak{
   Real pos;
   Real mag;
+  peak(const peak& other) 
+    :pos(other.pos), mag(other.mag) { }
+
+  peak& operator=(const peak& other) {
+    pos = other.pos;
+    mag = other.mag;
+
+    return *this;
+  }
+
+  peak(Real pos, Real mag)
+    :pos(pos), mag(mag) { }
   
   // A peak is smaller (first in the list)
   // if it's magnitude is larger
@@ -38,12 +50,12 @@ struct peak{
   }
 };
 
-struct byMagnitudeComp{
-  bool operator() (peak i, peak j) { return ( i.mag > j.mag ); }
+struct byMagnitude{
+  bool operator() (const peak& i, const peak& j) const { return ( i.mag > j.mag ); }
 } byMagnitude;
 
-struct byPositionComp{
-  bool operator() (peak i, peak j) { return ( i.pos < j.pos ); }
+struct byPosition{
+  bool operator() (const peak& i, const peak& j) const { return ( i.pos < j.pos ); }
 } byPosition;
 
 PeakDetection::PeakDetection(int peakCount, SortMethod sortMethod, int minimumPeakWidth, int candidateCount, Real minimumPeakContrast)
@@ -133,8 +145,7 @@ void PeakDetection::process(const MatrixXR& frames,
         // If the contrast is bigger than what minimumPeakContrast says, then select as peak
         if ( maxVal - minVal >= _minimumPeakContrast ) {
 
-          peak p = {j, _magnitudes(i, j)};
-          peaks.push_back(p);
+          peaks.push_back( peak(j, _magnitudes(i, j)) );
 
         }
       }
