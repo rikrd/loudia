@@ -18,15 +18,15 @@ but rather for:
 
 The following algorithms are implemented:
 
- * Windowing
+ * Window
 
- * Unwrapping
+ * Unwrap
     
  * Fast Fourier Transform (FFT/IFFT) (wrapper around libfftw [http://www.fftw.org/])
 
  * Discrete Cosine Transform (DCT)
 
- * Filters (based on Scipy implementation):
+ * Filters (based on Scipy [http://www.scipy.org] implementation):
    - LowPass
    - HighPass
    - BandPass
@@ -88,19 +88,12 @@ DEPENDENCIES
 ------------
 
 The C++ library Libaudio requires:
-  running:
   - libsamplerate-dev >=0.1.3
   - libfftw3-dev >=3.1.2
-
-  compiling:
   - gcc
   - python >=2.5
 
 The Python bindings Libaudio require:  
-  running:
-  - numpy
-  
-  compiling:
   - swig
   - numpy-dev
   - python-dev
