@@ -33,16 +33,16 @@ def plot_freqz(b, a, w = None, npoints = None, title = '', db = False, createFig
     pylab.plot(w, scipy.angle(d[:,0]), label = label)
     pylab.title('Angle of the Frequency Response')
 
-def get_onsets(filename, hop, samplerate, onsetError = 50.0):
+def get_onsets(filename, hop, sampleRate, onsetError = 50.0):
     # Get the onsets
     annotation = os.path.splitext(filename)[0] + '.onset_annotated'
     onsets = []
     
     if os.path.isfile(annotation):
         onsetsTimes = [float(o) for o in open(annotation, 'r').readlines()]
-        onsetsCenter = [int(o * samplerate / hop) for o in onsetsTimes]
-        onsetsLeft = [int((o - (onsetError / 1000.0)) * samplerate / hop) for o in onsetsTimes]
-        onsetsRight = [int((o + (onsetError / 1000.0)) * samplerate / hop) for o in onsetsTimes]
+        onsetsCenter = [int(o * sampleRate / hop) for o in onsetsTimes]
+        onsetsLeft = [int((o - (onsetError / 1000.0)) * sampleRate / hop) for o in onsetsTimes]
+        onsetsRight = [int((o + (onsetError / 1000.0)) * sampleRate / hop) for o in onsetsTimes]
         onsets = zip(onsetsLeft, onsetsCenter, onsetsRight)
 
         return onsets
@@ -64,7 +64,7 @@ def get_framer_audio(filename, size, hop):
     from scikits import audiolab
     
     loader = audiolab.sndfile(filename)
-    sr = loader.get_samplerate()
+    sr = loader.get_sampleRate()
     nframes = loader.get_nframes()
     nchannels = loader.get_channels()
 

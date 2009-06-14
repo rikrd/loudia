@@ -19,11 +19,11 @@ plotSize = fftSize / 4
 bandwidth = 4 * fftSize/frameSize
 analysisLimit = scipy.inf
 
-stream, samplerate, nframes, nchannels, loader = get_framer_audio(filename, frameSize, frameStep)
+stream, sampleRate, nframes, nchannels, loader = get_framer_audio(filename, frameSize, frameStep)
 
 windower = loudia.Window( frameSize, loudia.Window.HAMMING )
 ffter = loudia.FFT( fftSize )
-supprnoise = loudia.SpectralNoiseSuppression(fftSize, 50.0, 6000.0, samplerate)
+supprnoise = loudia.SpectralNoiseSuppression(fftSize, 50.0, 6000.0, sampleRate)
 
 specs = []
 results = []

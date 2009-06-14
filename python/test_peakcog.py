@@ -10,16 +10,16 @@ frameStep = 64
 beginSize = frameSize
 signalSize = 2*frameSize
 fftSize = frameSize * (2**2)
-samplerate = 44100
+sampleRate = 44100
 
-fundamental = 0.100 * samplerate
+fundamental = 0.100 * sampleRate
 harmonics = 20
 
 plotInteractive = False
 
 sine = scipy.zeros(signalSize)
 for i in range(harmonics):
-    sine[beginSize:] += scipy.cos(2 * scipy.pi * (i+1) * fundamental * scipy.arange(signalSize - beginSize) / samplerate)
+    sine[beginSize:] += scipy.cos(2 * scipy.pi * (i+1) * fundamental * scipy.arange(signalSize - beginSize) / sampleRate)
 
 sinenoise = sine + (scipy.random.random(signalSize) - 0.5)
 

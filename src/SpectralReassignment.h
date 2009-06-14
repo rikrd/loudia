@@ -29,7 +29,7 @@ class SpectralReassignment{
 protected:
   int _frameSize;
   int _fftSize;
-  Real _samplerate;
+  Real _sampleRate;
   Window::WindowType _windowType;
   
   Window _windowAlgo;
@@ -50,7 +50,7 @@ protected:
   MatrixXR _freq;
  
 public: 
-  SpectralReassignment(int frameSize, int fftSize, Real samplerate, Window::WindowType windowType = Window::RECTANGULAR);
+  SpectralReassignment(int frameSize, int fftSize, Real sampleRate, Window::WindowType windowType = Window::RECTANGULAR);
   ~SpectralReassignment();
   
   void process(const MatrixXR& frames,

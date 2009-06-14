@@ -18,7 +18,7 @@ frameStep = 512
 fftSize = 2048*2
 plotSize = fftSize / 8
 
-stream, samplerate, nframes, nchannels, loader = get_framer_audio(filename, frameSize, frameStep)
+stream, sampleRate, nframes, nchannels, loader = get_framer_audio(filename, frameSize, frameStep)
 
 
 # Take all the SpectralODF availables
@@ -51,7 +51,7 @@ subplots = len( odfNames ) + 1
 annotation = os.path.splitext(filename)[0] + '.onset_annotated'
 onsets = []
 if os.path.isfile(annotation):
-    onsets = get_onsets(annotation, frameStep, samplerate, onsetError = onsetError)
+    onsets = get_onsets(annotation, frameStep, sampleRate, onsetError = onsetError)
         
 pylab.figure()
 pylab.hold(True)
@@ -66,7 +66,7 @@ ax = pylab.gca()
 
 ax.set_xticks( ax.get_xticks()[1:] )
 ticks = ax.get_xticks()
-ax.set_xticklabels(['%.2f' % (float(tick) * frameStep / samplerate) for tick in ticks])
+ax.set_xticklabels(['%.2f' % (float(tick) * frameStep / sampleRate) for tick in ticks])
 
 ax.set_yticks([])
 ax.set_yticklabels([])

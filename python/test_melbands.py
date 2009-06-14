@@ -6,11 +6,11 @@ import scipy
 lowFreq = 133.0
 highFreq = 16000.0
 nBands = 34
-samplerate = 44100.0
+sampleRate = 44100.0
 spectrumSize = 2**14
 
 import loudia
-m = loudia.MelBands(lowFreq, highFreq, nBands, samplerate, spectrumSize)
+m = loudia.MelBands(lowFreq, highFreq, nBands, sampleRate, spectrumSize)
 starts = m.starts()[:,0]
 
 
@@ -22,8 +22,8 @@ for band in range(m.bands()):
     weight = m.bandWeights( band ).T
     start = starts[band]
     
-    x = scipy.arange(start, start + weight.shape[1])
-    y = weight[0,:]
+    x = scipy.arange(start-1, start + weight.shape[1]+1)
+    y = [0] + list(weight[0,:])  + [0]
 
     pylab.plot(x, y, color = 'black')
 
@@ -31,6 +31,7 @@ for band in range(m.bands()):
 
     # Show half of the spectrum
     ax.set_xlim([0, spectrumSize / 2])
+    ax.set_ylim([0.0, 1.1])
 
     # Set the ticks units to radians per second
     ticks = ax.get_xticks()

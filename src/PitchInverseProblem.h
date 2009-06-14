@@ -38,7 +38,7 @@ protected:
   int _frequencyCandidateCount;
   Real _peakWidth;
 
-  Real _samplerate;
+  Real _sampleRate;
 
   Real _tMin;
   Real _tMax;
@@ -61,7 +61,7 @@ protected:
   Real harmonicPosition(Real f, Real fMin, Real fMax, int harmonicIndex);
 
 public:
-  PitchInverseProblem(int fftSize = 1024, Real lowFrequency = 50.0, Real highFrequency = 2100.0, Real samplerate = 44100.0, int pitchCount = 5, int harmonicCount = 10, int frequencyCandidateCount = -1, Real peakWidth = 8);
+  PitchInverseProblem(int fftSize = 1024, Real lowFrequency = 50.0, Real highFrequency = 2100.0, Real sampleRate = 44100.0, int pitchCount = 5, int harmonicCount = 10, int frequencyCandidateCount = -1, Real peakWidth = 8);
 
   ~PitchInverseProblem();
 
@@ -82,7 +82,7 @@ public:
 
   /**
      Specifies the lowest @a frequency candidate.
-     The given @a frequency must be in the range of 0 to the samplerate / 2.
+     The given @a frequency must be in the range of 0 to the sampleRate / 2.
      
      @sa lowFrequency, highFrequency, setHighFrequency
   */
@@ -98,26 +98,26 @@ public:
 
   /**
      Specifies the highest @a frequency candidate.
-     The given @a frequency must be in the range of 0 to the samplerate / 2.
+     The given @a frequency must be in the range of 0 to the sampleRate / 2.
 
      @sa lowFrequency, highFrequency, setLowFrequency
   */
   void setHighFrequency( Real frequency, bool callSetup = true );
 
   /**
-     Return the samplerate frequency of the input signal.
+     Return the sampleRate frequency of the input signal.
      The default is 44100.0.
 
-     @sa setSamplerate
+     @sa setSampleRate
   */  
-  Real samplerate() const;  
+  Real sampleRate() const;  
 
   /**
-     Specifies the samplerate @a frequency of the input signal.
+     Specifies the sampleRate @a frequency of the input signal.
      
-     @sa samplerate
+     @sa sampleRate
   */
-  void setSamplerate( Real frequency, bool callSetup = true );
+  void setSampleRate( Real frequency, bool callSetup = true );
 
   /**
      Returns the size of the FFT that has been performed for the input.

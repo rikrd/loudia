@@ -25,13 +25,13 @@
 using namespace std;
 using namespace Eigen;
 
-PitchACF::PitchACF(int fftSize, Real samplerate, int minimumPeakWidth, int peakCandidateCount)
+PitchACF::PitchACF(int fftSize, Real sampleRate, int minimumPeakWidth, int peakCandidateCount)
 {
   DEBUG("PITCHACF: Construction fftSize: " << _fftSize
-        << " samplerate: " << _samplerate );
+        << " sampleRate: " << _sampleRate );
 
   setFftSize( fftSize, false );
-  setSamplerate( samplerate, false );
+  setSampleRate( sampleRate, false );
   setMinimumPeakWidth( minimumPeakWidth, false );
   setPeakCandidateCount( peakCandidateCount, false );
   setup();
@@ -68,7 +68,7 @@ void PitchACF::process(const MatrixXR& spectrum, MatrixXR* pitches, MatrixXR* sa
   _peakInterp.process(_acorred, (*pitches), (*saliencies),
                       pitches, saliencies);
 
-  (*pitches) *= 2.0 * _samplerate / _fftSize;
+  (*pitches) *= 2.0 * _sampleRate / _fftSize;
   
   (*saliencies).cwise() /= _acorred.col(0);
 }
@@ -105,11 +105,11 @@ void PitchACF::setPeakCandidateCount( int count, bool callSetup ) {
   if ( callSetup ) setup();
 }
 
-Real PitchACF::samplerate() const{
-  return _samplerate;
+Real PitchACF::sampleRate() const{
+  return _sampleRate;
 }
   
-void PitchACF::setSamplerate( Real frequency, bool callSetup ){
-  _samplerate = frequency;
+void PitchACF::setSampleRate( Real frequency, bool callSetup ){
+  _sampleRate = frequency;
   if ( callSetup ) setup();
 }

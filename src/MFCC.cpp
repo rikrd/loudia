@@ -26,20 +26,20 @@
 using namespace std;
 using namespace Eigen;
 
-MFCC::MFCC(Real lowFrequency, Real highFrequency, int bandCount, Real samplerate, int fftSize, int coefficientCount, Real minSpectrum, Real power) : 
+MFCC::MFCC(Real lowFrequency, Real highFrequency, int bandCount, Real sampleRate, int fftSize, int coefficientCount, Real minSpectrum, Real power) : 
   _minSpectrum( minSpectrum )
 {
   DEBUG("MFCC: Constructor lowFrequency: " << lowFrequency << 
         ", highFrequency: " << highFrequency << 
         ", bandCount: " << bandCount << 
-        ", samplerate: "<< samplerate << 
+        ", sampleRate: "<< sampleRate << 
         ", fftSize: " << fftSize << 
         ", coefficientCount: " << coefficientCount);
 
   setLowFrequency( lowFrequency, false );
   setHighFrequency( highFrequency, false );
   setBandCount( bandCount, false );
-  setSamplerate( samplerate, false );
+  setSampleRate( sampleRate, false );
   setFftSize( fftSize, false );
   setCoefficientCount( coefficientCount, false );
   setPower( power, false );
@@ -55,7 +55,7 @@ void MFCC::setup(){
   DEBUG("MFCC: Setting up...");
 
   _melbands.setFftSize( _fftSize, false );
-  _melbands.setSamplerate( _samplerate, false );
+  _melbands.setSampleRate( _sampleRate, false );
   _melbands.setLowFrequency( _lowFrequency, false );
   _melbands.setHighFrequency( _highFrequency, false );
   _melbands.setBandCount( _bandCount, false );
@@ -124,12 +124,12 @@ void MFCC::setHighFrequency( Real frequency, bool callSetup ){
   if ( callSetup ) setup();
 }
 
-Real MFCC::samplerate() const{
-  return _samplerate;
+Real MFCC::sampleRate() const{
+  return _sampleRate;
 }
   
-void MFCC::setSamplerate( Real frequency, bool callSetup ){
-  _samplerate = frequency;
+void MFCC::setSampleRate( Real frequency, bool callSetup ){
+  _sampleRate = frequency;
   if ( callSetup ) setup();
 }
 

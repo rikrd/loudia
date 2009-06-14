@@ -25,10 +25,10 @@
 using namespace std;
 using namespace Eigen;
 
-SpectralWhitening::SpectralWhitening(int fftSize, Real lowFrequency, Real highFrequency, Real samplerate, Real compressionFactor, int bandCount, MelBands::ScaleType scaleType)
+SpectralWhitening::SpectralWhitening(int fftSize, Real lowFrequency, Real highFrequency, Real sampleRate, Real compressionFactor, int bandCount, MelBands::ScaleType scaleType)
 {
   DEBUG("SPECTRALWHITENING: Construction fftSize: " << fftSize
-        << " samplerate: " << samplerate
+        << " sampleRate: " << sampleRate
         << " compressionFactor: " << compressionFactor
         << " bandCount: " << bandCount
         << " lowFrequency: " << lowFrequency
@@ -38,7 +38,7 @@ SpectralWhitening::SpectralWhitening(int fftSize, Real lowFrequency, Real highFr
   setLowFrequency( lowFrequency, false );
   setHighFrequency( highFrequency, false );
   setBandCount( bandCount, false );
-  setSamplerate( samplerate, false );
+  setSampleRate( sampleRate, false );
   setScaleType( scaleType, false );
   setCompressionFactor( compressionFactor, false );
 
@@ -56,7 +56,7 @@ void SpectralWhitening::setup(){
   _bands.setLowFrequency( _lowFrequency, false );
   _bands.setHighFrequency( _highFrequency, false );
   _bands.setBandCount(_bandCount, false );
-  _bands.setSamplerate( _samplerate, false );
+  _bands.setSampleRate( _sampleRate, false );
   _bands.setFftSize(_fftSize, false );
   _bands.setScaleType( _scaleType, false ); 
   _bands.setup();
@@ -129,12 +129,12 @@ void SpectralWhitening::setHighFrequency( Real frequency, bool callSetup ){
   if ( callSetup ) setup();
 }
 
-Real SpectralWhitening::samplerate() const{
-  return _samplerate;
+Real SpectralWhitening::sampleRate() const{
+  return _sampleRate;
 }
   
-void SpectralWhitening::setSamplerate( Real frequency, bool callSetup ){
-  _samplerate = frequency;
+void SpectralWhitening::setSampleRate( Real frequency, bool callSetup ){
+  _sampleRate = frequency;
   if ( callSetup ) setup();
 }
 

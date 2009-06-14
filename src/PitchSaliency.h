@@ -37,7 +37,7 @@ protected:
   Real _alpha;
   Real _beta;
 
-  Real _samplerate;
+  Real _sampleRate;
 
   Real harmonicWeight(Real period, Real tLow, Real tUp, int harmonicIndex);
 
@@ -45,7 +45,7 @@ protected:
 
 
 public:
-  PitchSaliency(int fftSize, Real f0, Real f1, Real samplerate = 1.0, Real fPrec = 0.01, int numHarmonics = 5);
+  PitchSaliency(int fftSize, Real f0, Real f1, Real sampleRate = 1.0, Real fPrec = 0.01, int numHarmonics = 5);
 
   ~PitchSaliency();
 

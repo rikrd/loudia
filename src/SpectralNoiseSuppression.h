@@ -40,7 +40,7 @@
   * The spectral noise is then removed from the original spectrum, clipping the result to zero to avoid
   * negative values. 
   *
-  * The samplerate and FFT size of the input spectrum are specified using setSamplerate() and
+  * The sampleRate and FFT size of the input spectrum are specified using setSampleRate() and
   * setFftSize().
   *
   * The frequency limits of the Mel scale mapping are specified using setLowFrequency() and
@@ -53,7 +53,7 @@
 class SpectralNoiseSuppression {
 protected:
   int _fftSize;
-  Real _samplerate;
+  Real _sampleRate;
 
   Real _lowFrequency;
   Real _highFrequency;
@@ -68,20 +68,20 @@ protected:
 public:
   /**
      Constructs a spectral noise suppression object with the specified @a lowFrequency, @a highFrequency, 
-     @a samplerate and @a fftSize settings.
+     @a sampleRate and @a fftSize settings.
      
      @param lowFrequency low frequency used for the magnitude warping function,
-     must be greater than zero 0 and lower than half the samplerate.
+     must be greater than zero 0 and lower than half the sampleRate.
      
      @param highFrequency high frequency used for the magnitude warping function,
-     must be greater than zero 0 and lower than half the samplerate.
+     must be greater than zero 0 and lower than half the sampleRate.
  
-     @param samplerate samplerate frequency of the input signal.
+     @param sampleRate sampleRate frequency of the input signal.
 
      @param fftSize size of the FFT.
   
   */
-  SpectralNoiseSuppression( int fftSize = 1024, Real lowFrequency = 50.0, Real highFrequency = 6000.0, Real samplerate = 44100.0 );
+  SpectralNoiseSuppression( int fftSize = 1024, Real lowFrequency = 50.0, Real highFrequency = 6000.0, Real sampleRate = 44100.0 );
 
   /**
      Destroys the algorithm and frees its resources.
@@ -120,7 +120,7 @@ public:
 
   /**
      Specifies the low @a frequency of the spectral whitening.
-     The given @a frequency must be in the range of 0 to the samplerate / 2.
+     The given @a frequency must be in the range of 0 to the sampleRate / 2.
      
      @sa lowFrequency, highFrequency, setHighFrequency
   */
@@ -136,26 +136,26 @@ public:
 
   /**
      Specifies the high @a frequency of the spectral whitening.
-     The given @a frequency must be in the range of 0 to the samplerate / 2.
+     The given @a frequency must be in the range of 0 to the sampleRate / 2.
 
      @sa lowFrequency, highFrequency, setLowFrequency
   */
   void setHighFrequency( Real frequency, bool callSetup = true );
 
   /**
-     Return the samplerate frequency of the input signal.
+     Return the sampleRate frequency of the input signal.
      The default is 44100.0.
 
-     @sa setSamplerate
+     @sa setSampleRate
   */  
-  Real samplerate() const;  
+  Real sampleRate() const;  
 
   /**
-     Specifies the samplerate @a frequency of the input signal.
+     Specifies the sampleRate @a frequency of the input signal.
      
-     @sa samplerate
+     @sa sampleRate
   */
-  void setSamplerate( Real frequency, bool callSetup = true );
+  void setSampleRate( Real frequency, bool callSetup = true );
 
   /**
      Returns the size of the FFT that has been performed for the input.

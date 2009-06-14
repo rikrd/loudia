@@ -25,17 +25,17 @@
 using namespace std;
 using namespace Eigen;
 
-PitchSaliency::PitchSaliency(int fftSize, Real f0, Real f1, Real samplerate, Real fPrec, int numHarmonics) :
+PitchSaliency::PitchSaliency(int fftSize, Real f0, Real f1, Real sampleRate, Real fPrec, int numHarmonics) :
   _fftSize( fftSize ),
   _halfSize( ( _fftSize / 2 ) + 1 ),
   _f0( f0 ),
   _f1( f1 ),
   _fPrec( fPrec ),
   _numHarmonics( numHarmonics ),
-  _samplerate( samplerate )
+  _sampleRate( sampleRate )
 {
   DEBUG("PITCHSALIENCY: Construction fftSize: " << _fftSize
-        << " samplerate: " << _samplerate
+        << " sampleRate: " << _sampleRate
         << " f0: " << _f0
         << " f1: " << _f1
         << " fPrec: " << _fPrec
@@ -51,8 +51,8 @@ void PitchSaliency::setup(){
   
   _halfSize = ( _fftSize / 2 ) + 1;
 
-  _tMax = _samplerate / _f0;
-  _tMin = _samplerate / _f1;
+  _tMax = _sampleRate / _f0;
+  _tMin = _sampleRate / _f1;
   
   _tPrec = _fPrec;
 
@@ -67,7 +67,7 @@ void PitchSaliency::setup(){
 }
 
 Real PitchSaliency::harmonicWeight(Real period, Real tLow, Real tUp, int harmonicIndex){
-  return ((_samplerate / tLow) + _alpha) / ((harmonicIndex * _samplerate / tUp) + _beta);
+  return ((_sampleRate / tLow) + _alpha) / ((harmonicIndex * _sampleRate / tUp) + _beta);
 }
 
 Real PitchSaliency::saliency(Real period, Real deltaPeriod, Real tLow, Real tUp, const MatrixXR& spectrum){
@@ -129,7 +129,7 @@ void PitchSaliency::process(const MatrixXR& spectrum, MatrixXR* pitches, MatrixX
     period = (tLowBest + tUpBest) / 2.0;
     deltaPeriod = tUpBest - tLowBest;
 
-    (*pitches)(row, 0) = _samplerate / period;
+    (*pitches)(row, 0) = _sampleRate / period;
     (*saliencies)(row, 0) = saliency(period, deltaPeriod, tLowBest, tUpBest, spectrum.row( row ));
   }
 }

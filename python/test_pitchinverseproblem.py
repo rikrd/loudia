@@ -19,7 +19,7 @@ fftSize = 4096
 
 plotSize = fftSize / 4
 
-stream, samplerate, nframes, nchannels, loader = get_framer_audio(filename, frameSize, frameStep)
+stream, sampleRate, nframes, nchannels, loader = get_framer_audio(filename, frameSize, frameStep)
 
 
 peakBandwidth = 4
@@ -30,8 +30,8 @@ numCandidates = 300
 
 windower = loudia.Window( frameSize, loudia.Window.HAMMING )
 ffter = loudia.FFT( fftSize )
-whitening = loudia.SpectralWhitening(fftSize, 50.0, 2100.0, samplerate)
-pitchInverseProblem = loudia.PitchInverseProblem(fftSize, 50, 2100, samplerate, numMaxPitches, numHarmonics, numCandidates, peakBandwidth)
+whitening = loudia.SpectralWhitening(fftSize, 50.0, 2100.0, sampleRate)
+pitchInverseProblem = loudia.PitchInverseProblem(fftSize, 50, 2100, sampleRate, numMaxPitches, numHarmonics, numCandidates, peakBandwidth)
 
 specs = []
 wspecs = []
@@ -63,7 +63,7 @@ for frame in stream:
         pylab.hold(False)
         pylab.plot(freqs[0,:plotSize], label = 'Noise Suppressed Spectrum')
         #pylab.hold(True)
-        #pylab.stem( pitch/samplerate*fftSize, saliency )
+        #pylab.stem( pitch/sampleRate*fftSize, saliency )
         
     specs.append( spec )
     wspecs.append( wspec )
@@ -88,7 +88,7 @@ if plot:
 
     # Get the onsets
     annotation = os.path.splitext(filename)[0] + '.onset_annotated'
-    onsets = get_onsets(annotation, frameStep, samplerate)
+    onsets = get_onsets(annotation, frameStep, sampleRate)
     
     pylab.figure()
     pylab.subplot(311)

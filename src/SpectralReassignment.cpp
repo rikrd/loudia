@@ -26,10 +26,10 @@
 using namespace std;
 using namespace Eigen;
 
-SpectralReassignment::SpectralReassignment(int frameSize, int fftSize, Real samplerate, Window::WindowType windowType) : 
+SpectralReassignment::SpectralReassignment(int frameSize, int fftSize, Real sampleRate, Window::WindowType windowType) : 
   _frameSize( frameSize ),
   _fftSize( fftSize ),
-  _samplerate( samplerate ),
+  _sampleRate( sampleRate ),
   _windowType( windowType ),
   _windowAlgo( frameSize, windowType ), 
   _windowIntegAlgo( frameSize, Window::CUSTOM ), 
@@ -39,7 +39,7 @@ SpectralReassignment::SpectralReassignment(int frameSize, int fftSize, Real samp
   
   DEBUG("SPECTRALREASSIGNMENT: Constructor frameSize: " << frameSize << \
         ", fftSize: " << fftSize << \
-        ", samplerate: " << samplerate << \
+        ", sampleRate: " << sampleRate << \
         ", windowType: " << windowType);
 
 
@@ -57,7 +57,7 @@ void SpectralReassignment::setup(){
   
   // Create the time vector
   DEBUG("SPECTRALREASSIGNMENT: Creating time vector...");
-  Real timestep = 1.0 / _samplerate;
+  Real timestep = 1.0 / _sampleRate;
 
   // The unit of the vectors is Time Sample fractions
   // So the difference between one coeff and the next is 1

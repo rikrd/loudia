@@ -36,7 +36,7 @@ protected:
   static const Real h;
 
   // Internal parameters
-  Real _samplerate;
+  Real _sampleRate;
   int _channels;
   bool _substractSpont;
   
@@ -56,7 +56,7 @@ protected:
   MatrixXR w;
 
 public:
-  Meddis(Real samplerate, int channels, bool substractSpont = true);
+  Meddis(Real sampleRate, int channels, bool substractSpont = true);
 
   ~Meddis();
 
@@ -66,7 +66,7 @@ public:
 
   int channels() const;
 
-  Real samplerate() const;
+  Real sampleRate() const;
 
   void reset();
 };

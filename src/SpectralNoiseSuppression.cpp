@@ -27,15 +27,15 @@
 using namespace std;
 using namespace Eigen;
 
-SpectralNoiseSuppression::SpectralNoiseSuppression(int fftSize, Real lowFrequency, Real highFrequency, Real samplerate)
+SpectralNoiseSuppression::SpectralNoiseSuppression(int fftSize, Real lowFrequency, Real highFrequency, Real sampleRate)
 {
   DEBUG("SPECTRALNOISESUPPRESSION: Construction fftSize: " << fftSize
-        << " samplerate: " << samplerate
+        << " sampleRate: " << sampleRate
         << " lowFrequency: " << lowFrequency
         << " highFrequency: " << highFrequency );
 
   setFftSize( fftSize, false );
-  setSamplerate( samplerate, false );
+  setSampleRate( sampleRate, false );
   setLowFrequency( lowFrequency, false );
   setHighFrequency( highFrequency, false );
 
@@ -47,13 +47,13 @@ SpectralNoiseSuppression::~SpectralNoiseSuppression(){}
 void SpectralNoiseSuppression::setup(){
   DEBUG("SPECTRALNOISESUPPRESSION: Setting up...");
 
-  _k0 = (int)(( _lowFrequency / _samplerate ) * _fftSize);
-  _k1 = (int)(( _highFrequency / _samplerate ) * _fftSize);
+  _k0 = (int)(( _lowFrequency / _sampleRate ) * _fftSize);
+  _k1 = (int)(( _highFrequency / _sampleRate ) * _fftSize);
   
   // Prepare the bands for the moving average
   int _halfSize = (_fftSize / 2) + 1;
 
-  int minHalfBand = (int)(100.0 / _samplerate * _fftSize / 2.0);
+  int minHalfBand = (int)(100.0 / _sampleRate * _fftSize / 2.0);
 
   MatrixXI starts(_halfSize, 1);
   vector<MatrixXR> weights;
@@ -132,12 +132,12 @@ void SpectralNoiseSuppression::setHighFrequency( Real frequency, bool callSetup 
   if ( callSetup ) setup();
 }
 
-Real SpectralNoiseSuppression::samplerate() const{
-  return _samplerate;
+Real SpectralNoiseSuppression::sampleRate() const{
+  return _sampleRate;
 }
   
-void SpectralNoiseSuppression::setSamplerate( Real frequency, bool callSetup ){
-  _samplerate = frequency;
+void SpectralNoiseSuppression::setSampleRate( Real frequency, bool callSetup ){
+  _sampleRate = frequency;
   if ( callSetup ) setup();
 }
 

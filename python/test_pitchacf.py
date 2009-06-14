@@ -23,12 +23,12 @@ minPeakWidth = 8
 
 peakCandidateCount = 4
 
-stream, samplerate, nframes, nchannels, loader = get_framer_audio(filename, frameSize, frameStep)
+stream, sampleRate, nframes, nchannels, loader = get_framer_audio(filename, frameSize, frameStep)
 
 ffter = loudia.FFT( fftSize )
 windower = loudia.Window( frameSize, loudia.Window.BLACKMANHARRIS )
-whitening = loudia.SpectralWhitening(fftSize, 50.0, 6000.0, samplerate)
-pitchACF = loudia.PitchACF(fftSize, samplerate, minPeakWidth, peakCandidateCount)
+whitening = loudia.SpectralWhitening(fftSize, 50.0, 6000.0, sampleRate)
+pitchACF = loudia.PitchACF(fftSize, sampleRate, minPeakWidth, peakCandidateCount)
 acorr = loudia.Autocorrelation(fftSize/2+1, fftSize/2+1)
 
 specs = []
@@ -61,7 +61,7 @@ for frame in stream:
         pylab.hold(False)
         pylab.plot(acorred[0,:plotSize], label = 'Noise Suppressed Spectrum')
         pylab.hold(True)
-        pylab.stem( pitch/samplerate*fftSize, saliency )
+        pylab.stem( pitch/sampleRate*fftSize, saliency )
         
     specs.append( spec[0, :] )
     wspecs.append( wspec[0, :] )
@@ -84,7 +84,7 @@ if plot:
     
     # Get the onsets
     annotation = os.path.splitext(filename)[0] + '.onset_annotated'
-    onsets = get_onsets(annotation, frameStep, samplerate)
+    onsets = get_onsets(annotation, frameStep, sampleRate)
     
     pylab.figure()
     pylab.subplot(211)

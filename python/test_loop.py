@@ -6,7 +6,7 @@ import loudia
 
 frameSize = 121
 fftSize = 512
-samplerate = 8000
+sampleRate = 8000
 
 
 # Loudia's solution # --------------------------------- #

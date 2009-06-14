@@ -27,13 +27,13 @@
 using namespace std;
 using namespace Eigen;
 
-MelBands::MelBands(Real lowFrequency, Real highFrequency, int bandCount, Real samplerate, int fftSize, ScaleType scaleType) 
+MelBands::MelBands(Real lowFrequency, Real highFrequency, int bandCount, Real sampleRate, int fftSize, ScaleType scaleType) 
 {
   
   DEBUG("MELBANDS: Constructor lowFrequency: " << _lowFrequency << 
         ", highFrequency: " << _highFrequency << 
         ", bandCount: " << _bandCount << 
-        ", samplerate: " << _samplerate << 
+        ", sampleRate: " << _sampleRate << 
         ", fftSize: " << _fftSize << 
         ", scaleType:" << _scaleType);
 
@@ -48,7 +48,7 @@ MelBands::MelBands(Real lowFrequency, Real highFrequency, int bandCount, Real sa
   setLowFrequency( lowFrequency, false );
   setHighFrequency( highFrequency, false );
   setBandCount( bandCount, false );
-  setSamplerate( samplerate, false );
+  setSampleRate( sampleRate, false );
   setFftSize( fftSize, false );
   setScaleType( scaleType, false );
   
@@ -98,7 +98,7 @@ void MelBands::setup(){
   DEBUG("MELBANDS: lowMel: " << lowMel << ", highMel: " << highMel);
 
   Real stepMel = (highMel - lowMel) / (_bandCount + 1.0);
-  Real stepSpectrum = Real(_fftSize) / _samplerate;
+  Real stepSpectrum = Real(_fftSize) / _sampleRate;
   
   // start Mel frequencies of filters
   MatrixXR starts(_bandCount, 1);
@@ -138,7 +138,7 @@ void MelBands::setup(){
   MatrixXI stopBins = stopsLinear.cwise().ceil().cast<Integer>();
 
   std::vector<MatrixXR> weights;
-
+  
   // fill in the weights
   for (int i=0; i < startBins.rows(); i++) {
     int startBin = startBins(i, 0);
@@ -239,12 +239,12 @@ void MelBands::setHighFrequency( Real frequency, bool callSetup ){
   if ( callSetup ) setup();
 }
 
-Real MelBands::samplerate() const{
-  return _samplerate;
+Real MelBands::sampleRate() const{
+  return _sampleRate;
 }
   
-void MelBands::setSamplerate( Real frequency, bool callSetup ){
-  _samplerate = frequency;
+void MelBands::setSampleRate( Real frequency, bool callSetup ){
+  _sampleRate = frequency;
   if ( callSetup ) setup();
 }
 

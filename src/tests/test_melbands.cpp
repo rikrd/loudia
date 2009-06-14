@@ -25,14 +25,14 @@ using namespace std;
 
 int main() {
   int nBands = 34;
-  Real samplerate = 8000.0;
+  Real sampleRate = 8000.0;
   Real lowFreq = 133.33;
   Real highFreq = 4000.0;
   int spectrumLength = 1024;
   
   MatrixXR in = MatrixXR::Constant(1, spectrumLength, 1.0);
   
-  MelBands bands(lowFreq, highFreq, nBands, samplerate, spectrumLength);
+  MelBands bands(lowFreq, highFreq, nBands, sampleRate, spectrumLength);
   bands.setup();
 
   MatrixXR result(1, nBands);

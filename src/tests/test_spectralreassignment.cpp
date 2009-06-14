@@ -27,20 +27,20 @@ using namespace std;
 int main() {
   int frameLength = 128;
   int fftLength = 256;
-  Real samplerate = 8000;
+  Real sampleRate = 8000;
   Window::WindowType windowType(Window::HAMMING);
 
   MatrixXR in = MatrixXR::Constant(1, frameLength, 2.0);
   MatrixXR in2(1, frameLength);
   for (int i=0; i< in2.cols(); i++){
-    in2(0, i) = cos(2.0 * M_PI * 440.0 * Real(i) / samplerate);
+    in2(0, i) = cos(2.0 * M_PI * 440.0 * Real(i) / sampleRate);
   }
   MatrixXR in3(1, frameLength);
   for (int i=0; i< in2.cols(); i++){
-    in3(0, i) = cos(2.0 * M_PI * 440.0 * Real(i) / samplerate) + cos(2.0 * M_PI * 220.0 * Real(i) / samplerate);
+    in3(0, i) = cos(2.0 * M_PI * 440.0 * Real(i) / sampleRate) + cos(2.0 * M_PI * 220.0 * Real(i) / sampleRate);
   }
   
-  SpectralReassignment specreassign(frameLength, fftLength, samplerate, windowType);
+  SpectralReassignment specreassign(frameLength, fftLength, sampleRate, windowType);
   specreassign.setup();
 
   MatrixXC result(1, fftLength);

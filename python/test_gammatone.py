@@ -10,11 +10,11 @@ plotColor = False
 
 # Setup the Gammatone parameters and coefficients # --------------------- #
 numFilters = 30
-samplerate = 44100
+sampleRate = 44100
 
 # Frequency parameters
 lowFreq = 100.0
-highFreq = samplerate / 2.0
+highFreq = sampleRate / 2.0
 
 # Resolution parameters
 c = 9.26449
@@ -32,8 +32,8 @@ def freqs_b_by_freqs(numFilters, lowFreq, highFreq, c, d, order = 1):
     
     return (freqs, B)
     
-def filter_coeffs_gammatone(freqs, B, samplerate):
-    T = 1 / float(samplerate)
+def filter_coeffs_gammatone(freqs, B, sampleRate):
+    T = 1 / float(sampleRate)
     A0 = T
     A2 = 0.0
     B0 = 1.0
@@ -74,7 +74,7 @@ def filter_coeffs_gammatone(freqs, B, samplerate):
     return fcoefs
         
 freqs, B = freqs_b_by_freqs(numFilters, lowFreq, highFreq, c, d)
-(B0, B11, B12, B13, B14, B2, A0, A1, A2, gain) = filter_coeffs_gammatone(freqs, B, samplerate)
+(B0, B11, B12, B13, B14, B2, A0, A1, A2, gain) = filter_coeffs_gammatone(freqs, B, sampleRate)
 # -------------------------------------------------------- #
 
 

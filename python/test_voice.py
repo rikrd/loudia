@@ -23,7 +23,7 @@ frameStep = 256
 
 fftSize = 2048
 
-stream, samplerate, nframes, nchannels, loader = get_framer_audio(filename, frameSize, frameStep)
+stream, sampleRate, nframes, nchannels, loader = get_framer_audio(filename, frameSize, frameStep)
 
 windower = loudia.Window( frameSize, loudia.Window.HAMMING )
 ffter = loudia.FFT( fftSize )

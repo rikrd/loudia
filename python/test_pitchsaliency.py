@@ -24,12 +24,12 @@ freqPrec = 0.001
 deltaPeriod = 2
 numHarmonics = 10
 
-stream, samplerate, nframes, nchannels, loader = get_framer_audio(filename, frameSize, frameStep)
+stream, sampleRate, nframes, nchannels, loader = get_framer_audio(filename, frameSize, frameStep)
 
 windower = loudia.Window( frameSize, loudia.Window.HAMMING )
 ffter = loudia.FFT( fftSize )
-whitening = loudia.SpectralWhitening(fftSize, 50.0, 6000.0, samplerate)
-pitchSaliency = loudia.PitchSaliency(fftSize, 50.0, 2100.0, samplerate, freqPrec, numHarmonics)
+whitening = loudia.SpectralWhitening(fftSize, 50.0, 6000.0, sampleRate)
+pitchSaliency = loudia.PitchSaliency(fftSize, 50.0, 2100.0, sampleRate, freqPrec, numHarmonics)
 
 specs = []
 wspecs = []

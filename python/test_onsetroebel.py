@@ -12,7 +12,7 @@ filename = sys.argv[1]
 # and the estimated onsets in milliseconds (ms)
 onsetError = 50.0
 
-# Samplerate of the file
+# SampleRate of the file
 frameSize = 1024 
 frameStep = 256
 
@@ -22,7 +22,7 @@ plotSize = fftSize / 4
 bandwidth = 4 * fftSize/frameSize
 analysisLimit = scipy.inf
 
-stream, samplerate, nframes, nchannels, loader = get_framer_audio(filename, frameSize, frameStep)
+stream, sampleRate, nframes, nchannels, loader = get_framer_audio(filename, frameSize, frameStep)
 
 windower = loudia.Window( frameSize, loudia.Window.HAMMING )
 ffter = loudia.FFT( fftSize )
@@ -53,7 +53,7 @@ odfRoebel = cogs
 annotation = os.path.splitext(filename)[0] + '.onset_annotated'
 onsets = []
 if os.path.isfile(annotation):
-    onsets = get_onsets(annotation, frameStep, samplerate, onsetError = onsetError)
+    onsets = get_onsets(annotation, frameStep, sampleRate, onsetError = onsetError)
 
 pylab.figure()
 pylab.hold(True)
@@ -68,7 +68,7 @@ ax = pylab.gca()
 
 ax.set_xticks( ax.get_xticks()[1:] )
 ticks = ax.get_xticks()
-ax.set_xticklabels(['%.2f' % (float(tick) * frameStep / samplerate) for tick in ticks])
+ax.set_xticklabels(['%.2f' % (float(tick) * frameStep / sampleRate) for tick in ticks])
 
 ax.set_yticks([])
 ax.set_yticklabels([])

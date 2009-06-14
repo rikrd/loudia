@@ -27,14 +27,14 @@ int main() {
   Real lowFreq = 133.33;
   Real highFreq = 4000.0;
   int nBands = 34;
-  Real samplerate = 8000.0;
+  Real sampleRate = 8000.0;
   int spectrumLength = 1024;
   
   int nCoeffs = 13;
   
   MatrixXR in = MatrixXR::Constant(1, spectrumLength, 1.0);
   
-  MFCC mfcc(lowFreq, highFreq, nBands, samplerate, spectrumLength, nCoeffs);
+  MFCC mfcc(lowFreq, highFreq, nBands, sampleRate, spectrumLength, nCoeffs);
   mfcc.setup();
 
   MatrixXR result(1, nCoeffs);

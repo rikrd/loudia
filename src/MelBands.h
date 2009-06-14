@@ -38,7 +38,7 @@
   * The method consists in a set triangular 50% overlapping windows spaced evenly on a
   * Mel-frequency scale.
   *
-  * The samplerate and FFT size of the input spectrum are specified using setSamplerate() and
+  * The sampleRate and FFT size of the input spectrum are specified using setSampleRate() and
   * setFftSize().
   *
   * The frequency limits of the Mel scale mapping are specified using setLowFrequency() and
@@ -86,7 +86,7 @@ protected:
   Real _lowFrequency;
   Real _highFrequency;
   int _bandCount;
-  Real _samplerate;
+  Real _sampleRate;
   int _fftSize;
   ScaleType _scaleType;
 
@@ -106,23 +106,23 @@ protected:
 public:
   /**
      Constructs a Mel bands object with the specified @a lowFrequency, @a highFrequency, 
-     @a bandCount, @a samplerate, @a fftSize and @a scaleType settings.
+     @a bandCount, @a sampleRate, @a fftSize and @a scaleType settings.
      
      @param lowFrequency frequency of the lowest Mel band,
-     must be greater than zero 0 and lower than half the samplerate.
+     must be greater than zero 0 and lower than half the sampleRate.
      
      @param highFrequency frequency of the highest Mel band,
-     must be greater than zero 0 and lower than half the samplerate.
+     must be greater than zero 0 and lower than half the sampleRate.
  
      @param bandCount number of Mel bands.
      
-     @param samplerate samplerate frequency of the input signal.
+     @param sampleRate sampleRate frequency of the input signal.
 
      @param fftSize size of the FFT.
           
      @param scaleType scale used for the frequency warping.
   */
-  MelBands(Real lowFrequency = 50.0, Real highFrequency = 6000.0, int bandCount = 40, Real samplerate = 44100.0, int fftSize = 1024, ScaleType scaleType = GREENWOOD);
+  MelBands(Real lowFrequency = 50.0, Real highFrequency = 6000.0, int bandCount = 40, Real sampleRate = 44100.0, int fftSize = 1024, ScaleType scaleType = GREENWOOD);
 
   void setup();
   void reset();
@@ -186,7 +186,7 @@ public:
   void setBandCount( int count, bool callSetup = true );
 
   /**
-     Return the low frequency of the spectral whitening.
+     Return the low frequency.
      The default is 50.0.
 
      @sa lowFrequency, highFrequency, setLowFrequency, setHighFrequency
@@ -194,15 +194,15 @@ public:
   Real lowFrequency() const;  
 
   /**
-     Specifies the low @a frequency of the spectral whitening.
-     The given @a frequency must be in the range of 0 to the samplerate / 2.
+     Specifies the low @a frequency.
+     The given @a frequency must be in the range of 0 to the sampleRate / 2.
      
      @sa lowFrequency, highFrequency, setHighFrequency
   */
   void setLowFrequency( Real frequency, bool callSetup = true );
 
   /**
-     Return the high frequency of the spectral whitening.
+     Return the high frequency.
      The default is 6000.0.
 
      @sa lowFrequency, setLowFrequency, setHighFrequency
@@ -210,27 +210,27 @@ public:
   Real highFrequency() const;  
 
   /**
-     Specifies the high @a frequency of the spectral whitening.
-     The given @a frequency must be in the range of 0 to the samplerate / 2.
+     Specifies the high @a frequency.
+     The given @a frequency must be in the range of 0 to the sampleRate / 2.
 
      @sa lowFrequency, highFrequency, setLowFrequency
   */
   void setHighFrequency( Real frequency, bool callSetup = true );
 
   /**
-     Return the samplerate frequency of the input signal.
+     Return the sampleRate frequency of the input signal.
      The default is 44100.0.
 
-     @sa setSamplerate
+     @sa setSampleRate
   */  
-  Real samplerate() const;  
+  Real sampleRate() const;  
 
   /**
-     Specifies the samplerate @a frequency of the input signal.
+     Specifies the sampleRate @a frequency of the input signal.
      
-     @sa samplerate
+     @sa sampleRate
   */
-  void setSamplerate( Real frequency, bool callSetup = true );
+  void setSampleRate( Real frequency, bool callSetup = true );
 
   /**
      Returns the size of the FFT that has been performed for the input.

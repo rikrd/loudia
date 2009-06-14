@@ -25,10 +25,10 @@
 using namespace std;
 using namespace Eigen;
 
-PitchInverseProblem::PitchInverseProblem(int fftSize, Real lowFrequency, Real highFrequency, Real samplerate, int pitchCount, int harmonicCount, int frequencyCandidateCount, Real peakWidth)
+PitchInverseProblem::PitchInverseProblem(int fftSize, Real lowFrequency, Real highFrequency, Real sampleRate, int pitchCount, int harmonicCount, int frequencyCandidateCount, Real peakWidth)
 {
   DEBUG("PITCHINVERSEPROBLEM: Construction fftSize: " << fftSize
-        << " samplerate: " << samplerate
+        << " sampleRate: " << sampleRate
         << " lowFrequency: " << lowFrequency
         << " highFrequency: " << highFrequency
         << " pitchCount: " << pitchCount
@@ -44,7 +44,7 @@ PitchInverseProblem::PitchInverseProblem(int fftSize, Real lowFrequency, Real hi
   setHarmonicCount( harmonicCount, false );
   setFrequencyCandidateCount( frequencyCandidateCount, false );
   setPeakWidth( peakWidth, false );
-  setSamplerate( samplerate, false );
+  setSampleRate( sampleRate, false );
   setup();
 }
 
@@ -141,7 +141,7 @@ void PitchInverseProblem::harmonicWeight(MatrixXR f, Real fMin, Real fMax, int h
 }
 
 void PitchInverseProblem::harmonicPosition(MatrixXR f, Real fMin, Real fMax, int harmonicIndex, MatrixXR* result){
-  (*result) = (harmonicIndex * f * sqrt(1.0 + (pow(harmonicIndex, 2.0) - 1.0) * _inharmonicity)) * (Real)_fftSize / (2.0 * (Real)_samplerate);
+  (*result) = (harmonicIndex * f * sqrt(1.0 + (pow(harmonicIndex, 2.0) - 1.0) * _inharmonicity)) * (Real)_fftSize / (2.0 * (Real)_sampleRate);
 }
 
 void PitchInverseProblem::harmonicSpread(MatrixXR f, Real fMin, Real fMax, int harmonicIndex, MatrixXR* result){
@@ -149,13 +149,13 @@ void PitchInverseProblem::harmonicSpread(MatrixXR f, Real fMin, Real fMax, int h
 }
 
 Real PitchInverseProblem::harmonicWeight(Real f, Real fMin, Real fMax, int harmonicIndex){
-  //return ((_samplerate / tLow) + _alpha) / ((harmonicIndex * _samplerate / tUp) + _beta);
+  //return ((_sampleRate / tLow) + _alpha) / ((harmonicIndex * _sampleRate / tUp) + _beta);
   return ((harmonicIndex * f) + _beta) / ((harmonicIndex * f) + _alpha);
   //return 1.0;
 }
 
 Real PitchInverseProblem::harmonicPosition(Real f, Real fMin, Real fMax, int harmonicIndex){
-  return (harmonicIndex * f * sqrt(1.0 + (pow(harmonicIndex, 2.0) - 1.0) * _inharmonicity)) * (Real)_fftSize / (2.0 * (Real)_samplerate);
+  return (harmonicIndex * f * sqrt(1.0 + (pow(harmonicIndex, 2.0) - 1.0) * _inharmonicity)) * (Real)_fftSize / (2.0 * (Real)_sampleRate);
 }
 
 Real PitchInverseProblem::harmonicSpread(Real f, Real fMin, Real fMax, int harmonicIndex){
@@ -228,12 +228,12 @@ void PitchInverseProblem::setHighFrequency( Real frequency, bool callSetup ){
   if ( callSetup ) setup();
 }
 
-Real PitchInverseProblem::samplerate() const{
-  return _samplerate;
+Real PitchInverseProblem::sampleRate() const{
+  return _sampleRate;
 }
   
-void PitchInverseProblem::setSamplerate( Real frequency, bool callSetup ){
-  _samplerate = frequency;
+void PitchInverseProblem::setSampleRate( Real frequency, bool callSetup ){
+  _sampleRate = frequency;
   if ( callSetup ) setup();
 }
 

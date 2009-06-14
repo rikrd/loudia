@@ -35,8 +35,8 @@ const Real Meddis::r = 6580.0;
 const Real Meddis::x = 66.31;
 const Real Meddis::h = 50000.0;
 
-Meddis::Meddis(Real samplerate, int channels, bool substractSpont) : 
-  _samplerate( samplerate ),
+Meddis::Meddis(Real sampleRate, int channels, bool substractSpont) : 
+  _sampleRate( sampleRate ),
   _channels( channels ),
   _substractSpont( substractSpont ),
   kt( 1, channels ), 
@@ -45,7 +45,7 @@ Meddis::Meddis(Real samplerate, int channels, bool substractSpont) :
   q( 1, channels ), 
   w( 1, channels ) 
 {
-  DEBUG("MEDDIS: Constructor samplerate:" << samplerate << 
+  DEBUG("MEDDIS: Constructor sampleRate:" << sampleRate << 
         ", channels:" << channels << 
         ", substractSpont:" << substractSpont);
   
@@ -58,7 +58,7 @@ void Meddis::setup(){
   DEBUG("MEDDIS: Setting up...");
 
   // Configure the internal constants
-  dt = 1./_samplerate;
+  dt = 1./_sampleRate;
   gdt = g*dt;
   ydt = y*dt;
   ldt = l*dt;
@@ -122,6 +122,6 @@ int Meddis::channels() const {
   return _channels;
 }
 
-Real Meddis::samplerate() const {
-  return _samplerate;
+Real Meddis::sampleRate() const {
+  return _sampleRate;
 }

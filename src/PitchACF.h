@@ -59,7 +59,7 @@ protected:
   int _minimumPeakWidth;
   int _peakCandidateCount;
 
-  Real _samplerate;
+  Real _sampleRate;
 
   PeakDetection _peak;
   PeakInterpolation _peakInterp;
@@ -70,12 +70,12 @@ protected:
 public:
   /**
      Constructs an autocorrelation based pitch estimation function 
-     object with the specified @a fftSize, @a samplerate, @a minPeakWidth
+     object with the specified @a fftSize, @a sampleRate, @a minPeakWidth
      and @a peakCandidateCount settings.
      
      @param fftSize size of the input FFT frames, must be > 0.
      
-     @param samplerate the samplerate of the input signal.  By default
+     @param sampleRate the sampleRate of the input signal.  By default
      it is 1.0, so the pitches will be returned in normalized frequencies.
 
      @param minimumPeakWidth the minimum width of a peak in the autocorrelation
@@ -85,7 +85,7 @@ public:
      to be considered during the peak detection process of the 
      autocorrelation function.
   */
-  PitchACF(int fftSize = 1024, Real samplerate = 1.0, int minimumPeakWidth = 6, int peakCandidateCount = 10);
+  PitchACF(int fftSize = 1024, Real sampleRate = 1.0, int minimumPeakWidth = 6, int peakCandidateCount = 10);
 
   /**
      Destroys the algorithm and frees its resources.
@@ -179,19 +179,19 @@ public:
   void setPeakCandidateCount( int count, bool callSetup = true );
 
   /**
-     Return the samplerate frequency of the input signal.
+     Return the sampleRate frequency of the input signal.
      The default is 44100.0.
 
-     @sa setSamplerate
+     @sa setSampleRate
   */  
-  Real samplerate() const;  
+  Real sampleRate() const;  
 
   /**
-     Specifies the samplerate @a frequency of the input signal.
+     Specifies the sampleRate @a frequency of the input signal.
      
-     @sa samplerate
+     @sa sampleRate
   */
-  void setSamplerate( Real frequency, bool callSetup = true );
+  void setSampleRate( Real frequency, bool callSetup = true );
 
 };
 

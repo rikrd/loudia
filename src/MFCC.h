@@ -42,7 +42,7 @@
   * are triangular overlapping windows applied on the power spectrum mapped onto the
   * Mel-frequency scale.
   *
-  * The samplerate and FFT size of the input spectrum are specified using setSamplerate() and
+  * The sampleRate and FFT size of the input spectrum are specified using setSampleRate() and
   * setFftSize().
   *
   * The frequency limits of the Mel scale mapping are specified using setLowFrequency() and
@@ -62,7 +62,7 @@ protected:
   Real _lowFrequency;
   Real _highFrequency;
   int _bandCount;
-  Real _samplerate;
+  Real _sampleRate;
   int _fftSize;
 
   int _coefficientCount;
@@ -80,18 +80,18 @@ protected:
 public:
   /**
      Constructs an MFCC object with the specified @a lowFrequency, @a highFrequency, 
-     @a bandCount, @a samplerate, @a fftSize, @a coefficientCount, @a minSpectrum and
+     @a bandCount, @a sampleRate, @a fftSize, @a coefficientCount, @a minSpectrum and
      @a power settings.
      
      @param lowFrequency frequency of the lowest Mel band,
-     must be greater than zero 0 and lower than half the samplerate.
+     must be greater than zero 0 and lower than half the sampleRate.
      
      @param highFrequency frequency of the highest Mel band,
-     must be greater than zero 0 and lower than half the samplerate.
+     must be greater than zero 0 and lower than half the sampleRate.
  
      @param bandCount number of Mel bands.
      
-     @param samplerate samplerate frequency of the input signal.
+     @param sampleRate sampleRate frequency of the input signal.
 
      @param fftSize size of the FFT.
      
@@ -101,7 +101,7 @@ public:
      
      @param power value to which to power the band values before performing the DCT.  
   */  
-  MFCC(Real lowFrequency = 300.0, Real highFrequency = 16000.0, int bandCount = 40.0, Real samplerate = 44100.0, int fftSize = 1024, int coefficientCount = 13, Real minSpectrum = 1e-10, Real power = 1.0);
+  MFCC(Real lowFrequency = 300.0, Real highFrequency = 16000.0, int bandCount = 40.0, Real sampleRate = 44100.0, int fftSize = 1024, int coefficientCount = 13, Real minSpectrum = 1e-10, Real power = 1.0);
   
   /**
      Destroys the algorithm and frees its resources.
@@ -168,7 +168,7 @@ public:
 
   /**
      Specifies the low @a frequency of the MFCC.
-     The given @a frequency must be in the range of 0 to the samplerate / 2.
+     The given @a frequency must be in the range of 0 to the sampleRate / 2.
      
      @sa lowFrequency, highFrequency, setHighFrequency
   */
@@ -184,26 +184,26 @@ public:
 
   /**
      Specifies the high @a frequency of the MFCC.
-     The given @a frequency must be in the range of 0 to the samplerate / 2.
+     The given @a frequency must be in the range of 0 to the sampleRate / 2.
 
      @sa lowFrequency, highFrequency, setLowFrequency
   */
   void setHighFrequency( Real frequency, bool callSetup = true );
 
   /**
-     Return the samplerate frequency of the input signal.
+     Return the sampleRate frequency of the input signal.
      The default is 44100.0.
 
-     @sa setSamplerate
+     @sa setSampleRate
   */  
-  Real samplerate() const;  
+  Real sampleRate() const;  
 
   /**
-     Specifies the samplerate @a frequency of the input signal.
+     Specifies the sampleRate @a frequency of the input signal.
      
-     @sa samplerate
+     @sa sampleRate
   */
-  void setSamplerate( Real frequency, bool callSetup = true );
+  void setSampleRate( Real frequency, bool callSetup = true );
 
   /**
      Returns the size of the FFT that has been performed for the input.

@@ -9,12 +9,12 @@ harmonics = 5
 
 frameSize = 128
 fftSize = 512
-samplerate = 8000
+sampleRate = 8000
 
 a_zeros = scipy.zeros( frameSize )
 a_ones = scipy.ones( frameSize )
 a_random = scipy.random.random( frameSize )
-a_sine = scipy.cos(2 * scipy.pi * 440 * scipy.arange( frameSize ) / samplerate + scipy.pi/4.0)
+a_sine = scipy.cos(2 * scipy.pi * 440 * scipy.arange( frameSize ) / sampleRate + scipy.pi/4.0)
 
 a_sine += (a_random - 0.5) * 1.0
 

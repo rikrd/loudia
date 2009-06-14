@@ -9,17 +9,17 @@ harmonics = 10
 
 frameSize = 128
 fftSize = 4096
-samplerate = 44100.0
+sampleRate = 44100.0
 
 a_zeros = scipy.zeros( frameSize )
 a_ones = scipy.ones( frameSize )
 a_random = scipy.random.random( frameSize )
-a_sine = scipy.cos(2 * scipy.pi * 440 * scipy.arange( frameSize ) / samplerate + scipy.pi/4.0)
+a_sine = scipy.cos(2 * scipy.pi * 440 * scipy.arange( frameSize ) / sampleRate + scipy.pi/4.0)
 
 a_sine += (a_random - 0.5) * 1.0
 
 # Loudia's solution # --------------------------------- #
-m = loudia.SpectralReassignment(frameSize, fftSize, samplerate, loudia.Window.BLACKMANHARRIS)
+m = loudia.SpectralReassignment(frameSize, fftSize, sampleRate, loudia.Window.BLACKMANHARRIS)
 
 r_zeros_fft, r_zeros_time, r_zeros_freq = m.process(a_zeros)
 r_ones_fft, r_ones_time, r_ones_freq = m.process(a_ones)

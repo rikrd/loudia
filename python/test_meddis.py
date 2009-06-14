@@ -2,7 +2,7 @@
 
 # Create input
 import scipy
-samplerate = 44100
+sampleRate = 44100
 channels = 30
 a1 = scipy.random.random((4096, channels))
 a2 = scipy.random.random((4096, channels))
@@ -10,7 +10,7 @@ substractSpont = True
 
 # Loudia's solution # --------------------------------- #
 import loudia
-m = loudia.Meddis(samplerate, channels)
+m = loudia.Meddis(sampleRate, channels)
 
 b1 = m.process(a1)
 b2 = m.process(a2)
@@ -28,7 +28,7 @@ x = 66.31
 h = 50000.
 
 # Internal constants
-dt = 1/float(samplerate)
+dt = 1/float(sampleRate)
 gdt = g*dt
 ydt = y*dt
 ldt = l*dt
