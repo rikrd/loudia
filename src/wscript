@@ -16,13 +16,35 @@ def set_options(opt):
 
 def configure(conf):
 	conf.check_tool('compiler_cxx')
+        conf.check_cfg(atleast_pkgconfig_version='0.0.0')
+        conf.check_cfg(package='fftw3', uselib_store='FFTW3', errmsg='FFTW not found. No FFT support.')
+
+        """
+	conf.check_cc(fragment='''extern "C" {
+        #ifndef __STDC_CONSTANT_MACROS
+        #define __STDC_CONSTANT_MACROS
+        #endif
+        #include <libavcodec/avcodec.h>
+        #include <libavformat/avformat.h>
+        }
+        
+        int main() { printf("1"); return 1; } ''',
+                      define_name='HAVE_FFMPEG_H',
+                      define_ret='1',
+                      execute='1',
+                      msg='Checking for ffmpeg',
+                      okmsg= 'ok',
+                      errmsg='FFMPEG not found. No audio loading support.')
+        """
+        
+        conf.check_cfg(package='samplerate', uselib_store='SAMPLERATE', mandatory=True)
 
         if conf.env['option_debug']:
                 conf.env.append_value('CXXFLAGS', '-Wall  -O3 -fPIC -msse2 -DLOUDIA_DEBUG')
         else:
                 conf.env.append_value('CXXFLAGS', '-O3 -fPIC -msse2 -DNDEBUG')
                 
-        conf.env.append_value('LINKFLAGS', '-lfftw3f -lsamplerate')
+        conf.env.append_value('LINKFLAGS', '-lfftw3f -lsamplerate -lavcodec -lavformat')
         
         if not conf.env['option_no_python_bindings']:
                 conf.sub_config('swig')
@@ -33,7 +55,7 @@ def configure(conf):
 def build(bld):
         obj = bld.new_task_gen(
                 features = 'cxx cshlib',
-                uselib = 'fftw3',
+                uselib = 'FFTW3 FFMPEG SAMPLERATE',
                 target = LIBNAME,
                 includes = '. ../externals',
                 export_inc_dirs = '.',

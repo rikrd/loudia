@@ -29,7 +29,7 @@ using namespace Eigen;
 BarkBands::BarkBands(int lowBand, int highBand, Real sampleRate, int fftSize) 
 {
   
-  DEBUG("BARKBANDS: Constructor lowBand: " << _lowBand << 
+  LOUDIA_DEBUG("BARKBANDS: Constructor lowBand: " << _lowBand << 
         ", highBand: " << _highBand << 
         ", sampleRate: " << _sampleRate << 
         ", fftSize: " << _fftSize);
@@ -45,12 +45,12 @@ BarkBands::BarkBands(int lowBand, int highBand, Real sampleRate, int fftSize)
   
   setup();
   
-  DEBUG("BARKBANDS: Constructed");
+  LOUDIA_DEBUG("BARKBANDS: Constructed");
   
 }
 
 void BarkBands::setup(){
-  DEBUG("BARKBANDS: Setting up...");
+  LOUDIA_DEBUG("BARKBANDS: Setting up...");
 
   // In some cases the first boundary is set to 0
   MatrixXR startFreqs(25, 1);
@@ -69,7 +69,7 @@ void BarkBands::setup(){
 
   _bands.setStartsWeights(startBins.block(0, 0, _highBand - _lowBand + 1, 1), weights);
 
-  DEBUG("BARKBANDS: Finished set up...");
+  LOUDIA_DEBUG("BARKBANDS: Finished set up...");
 }
 
 void BarkBands::process(const MatrixXR& spectrum, MatrixXR* bands) {  

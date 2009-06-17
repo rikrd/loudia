@@ -30,7 +30,7 @@ SpectralODFHFC::SpectralODFHFC(int fftSize) :
   SpectralODFBase()
 {
   
-  DEBUG("SPECTRALODFHFC: Constructor fftSize: " << _fftSize);
+  LOUDIA_DEBUG("SPECTRALODFHFC: Constructor fftSize: " << _fftSize);
   setFftSize( fftSize, false );
   setup();
 }
@@ -40,7 +40,7 @@ SpectralODFHFC::~SpectralODFHFC() {}
 
 void SpectralODFHFC::setup() {
   // Prepare the buffers
-  DEBUG("SPECTRALODFHFC: Setting up...");
+  LOUDIA_DEBUG("SPECTRALODFHFC: Setting up...");
 
   SpectralODFBase::setup();
 
@@ -49,12 +49,12 @@ void SpectralODFHFC::setup() {
   
   reset();
 
-  DEBUG("SPECTRALODFHFC: Finished set up...");
+  LOUDIA_DEBUG("SPECTRALODFHFC: Finished set up...");
 }
 
 
 void SpectralODFHFC::process(const MatrixXC& fft, MatrixXR* odfValue) {
-  DEBUG("SPECTRALODFHFC: Processing windowed");
+  LOUDIA_DEBUG("SPECTRALODFHFC: Processing windowed");
   const int rows = fft.rows();
   const int cols = fft.cols();
 
@@ -66,7 +66,7 @@ void SpectralODFHFC::process(const MatrixXC& fft, MatrixXR* odfValue) {
     (*odfValue).row(row) = _spectrumAbs.row(row) * _freqBin.block(0, 0, 1, cols).transpose() / cols;
   }
   
-  DEBUG("SPECTRALODFHFC: Finished Processing");
+  LOUDIA_DEBUG("SPECTRALODFHFC: Finished Processing");
 }
 
 void SpectralODFHFC::reset() {

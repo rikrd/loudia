@@ -26,7 +26,7 @@ using namespace Eigen;
 
 Resample::Resample(int inputSize, int outputSize, Real resamplingRatio, ResamplingMethod resamplingMethod)
 {
-  DEBUG("RESAMPLE: Constructor inputSize: " << inputSize 
+  LOUDIA_DEBUG("RESAMPLE: Constructor inputSize: " << inputSize 
         << ", outputSize: " << outputSize 
         << ", resamplingRatio: " << resamplingRatio);
 
@@ -40,20 +40,20 @@ Resample::Resample(int inputSize, int outputSize, Real resamplingRatio, Resampli
 
   setup();
   
-  DEBUG("RESAMPLE: Constructed");
+  LOUDIA_DEBUG("RESAMPLE: Constructed");
 }
 
 Resample::~Resample(){
-  DEBUG("RESAMPLE: Destroying...");
+  LOUDIA_DEBUG("RESAMPLE: Destroying...");
 
   if ( _resampleData.data_in ) delete [] _resampleData.data_in;
   if ( _resampleData.data_out ) delete [] _resampleData.data_out;
   
-  DEBUG("RESAMPLE: Destroyed out");
+  LOUDIA_DEBUG("RESAMPLE: Destroyed out");
 }
 
 void Resample::setup(){
-  DEBUG("RESAMPLE: Setting up...");
+  LOUDIA_DEBUG("RESAMPLE: Setting up...");
 
   _resampleData.input_frames = _inputSize;
   _resampleData.output_frames = _outputSize;
@@ -66,7 +66,7 @@ void Resample::setup(){
   _resampleData.data_out = new float[_outputSize];
 
   
-  DEBUG("RESAMPLE: Finished set up...");
+  LOUDIA_DEBUG("RESAMPLE: Finished set up...");
 }
 
 void Resample::process(const MatrixXR& in, MatrixXR* out){

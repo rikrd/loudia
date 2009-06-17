@@ -28,7 +28,7 @@ using namespace Eigen;
 
 Correlation::Correlation(int inputSizeA, int inputSizeB, int maxLag, int minLag)
 {
-  DEBUG("CORRELATION: Construction inputSizeA: " << inputSizeA
+  LOUDIA_DEBUG("CORRELATION: Construction inputSizeA: " << inputSizeA
         << " inputSizeB: " << inputSizeB
         << " minLag: " << minLag
         << " maxLag: " << maxLag);
@@ -45,7 +45,7 @@ Correlation::Correlation(int inputSizeA, int inputSizeB, int maxLag, int minLag)
 
 Correlation::Correlation(int inputSizeA, int inputSizeB, int maxLag, int minLag, bool useFft)
 {
-  DEBUG("CORRELATION: Construction inputSizeA: " << inputSizeA
+  LOUDIA_DEBUG("CORRELATION: Construction inputSizeA: " << inputSizeA
         << " inputSizeB: " << inputSizeB
         << " minLag: " << minLag
         << " maxLag: " << maxLag
@@ -64,7 +64,7 @@ Correlation::~Correlation(){}
 
 void Correlation::setup(){
   // Prepare the buffers
-  DEBUG("CORRELATION: Setting up...");
+  LOUDIA_DEBUG("CORRELATION: Setting up...");
 
   if ( _useFft ) {
     _fftSize = nextPowerOf2( ( (_inputSizeA + _inputSizeB) - 1) * 2 );
@@ -80,7 +80,7 @@ void Correlation::setup(){
   
   reset();
   
-  DEBUG("CORRELATION: Finished setup.");
+  LOUDIA_DEBUG("CORRELATION: Finished setup.");
 }
 
 void Correlation::process(const MatrixXR& inputA, const MatrixXR& inputB, MatrixXR* correlation){

@@ -81,7 +81,7 @@ AOK::~AOK() {
 
 void AOK::setup(){
   // Prepare the buffers
-  DEBUG("AOK: Setting up...");
+  LOUDIA_DEBUG("AOK: Setting up...");
 
   tstep = _hopSize;
   tlag = _windowSize;
@@ -119,14 +119,14 @@ void AOK::setup(){
   pi = 3.141592654;
   vol = (2.0*vol*nphi*nrad*nrad)/(pi*tlag);	/* normalize volume	*/
   
-  DEBUG("AOK: tlen: " << tlen);
-  DEBUG("AOK: nlag: " << nlag);
-  DEBUG("AOK: slen: " << slen);
-  DEBUG("AOK: xlen: " << xlen);
-  DEBUG("AOK: fftlen: " << fftlen);
-  DEBUG("AOK: nrad: " << nrad);
-  DEBUG("AOK: nraf: " << nraf);
-  DEBUG("AOK: nlag: " << nlag);
+  LOUDIA_DEBUG("AOK: tlen: " << tlen);
+  LOUDIA_DEBUG("AOK: nlag: " << nlag);
+  LOUDIA_DEBUG("AOK: slen: " << slen);
+  LOUDIA_DEBUG("AOK: xlen: " << xlen);
+  LOUDIA_DEBUG("AOK: fftlen: " << fftlen);
+  LOUDIA_DEBUG("AOK: nrad: " << nrad);
+  LOUDIA_DEBUG("AOK: nraf: " << nraf);
+  LOUDIA_DEBUG("AOK: nlag: " << nlag);
 
   kfill((nrad * nphi), 0.0, polafm2);
   kfill((nraf * nlag), 0.0, rectafr);
@@ -145,7 +145,7 @@ void AOK::setup(){
   
   reset();
 
-  DEBUG("AOK: Finished set up...");
+  LOUDIA_DEBUG("AOK: Finished set up...");
 }
 
 
@@ -210,9 +210,9 @@ void AOK::process(const MatrixXC& frames, MatrixXR* timeFreqRep){
         
         fft(fftlen, mfft, tfslicer, tfslicei);
         /*
-          DEBUG("AOK: Processing, tfslicer: ");
+          LOUDIA_DEBUG("AOK: Processing, tfslicer: ");
           for(int b=0; b<fftlen; b++ ){
-          DEBUG("AOK: Processing, tfslicer["<<b<<"]="<<tfslicer[b]);
+          LOUDIA_DEBUG("AOK: Processing, tfslicer["<<b<<"]="<<tfslicer[b]);
           }
         */
         itemp = fftlen/2 + fstep;

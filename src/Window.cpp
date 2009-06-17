@@ -26,7 +26,7 @@ using namespace Eigen;
 
 Window::Window(int inputSize, Window::WindowType windowType)
 {
-  DEBUG("WINDOW: Constructor inputSize: " << inputSize << 
+  LOUDIA_DEBUG("WINDOW: Constructor inputSize: " << inputSize << 
         ", windowType: " << windowType);
 
   setInputSize( inputSize, false );
@@ -35,13 +35,13 @@ Window::Window(int inputSize, Window::WindowType windowType)
 
   setup();
 
-  DEBUG("WINDOW: Constructed");
+  LOUDIA_DEBUG("WINDOW: Constructed");
 }
 
 Window::~Window(){}
 
 void Window::setup(){
-  DEBUG("WINDOW: Setting up...");
+  LOUDIA_DEBUG("WINDOW: Setting up...");
   
   switch(_windowType){
 
@@ -85,7 +85,7 @@ void Window::setup(){
     break;
   }
   
-  DEBUG("WINDOW: Finished set up...");
+  LOUDIA_DEBUG("WINDOW: Finished set up...");
 }
 
 MatrixXR Window::hann(int length){

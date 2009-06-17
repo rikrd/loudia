@@ -29,7 +29,7 @@ LPCResidual::LPCResidual(int frameSize) :
   _frameSize( frameSize ),
   _filter( 1 )
 {
-  DEBUG("LPCRESIDUAL: Constructor frameSize: " << frameSize);
+  LOUDIA_DEBUG("LPCRESIDUAL: Constructor frameSize: " << frameSize);
   
   setup();
 }
@@ -39,16 +39,16 @@ LPCResidual::~LPCResidual() {}
 
 void LPCResidual::setup(){
   // Prepare the buffers
-  DEBUG("LPCRESIDUAL: Setting up...");
+  LOUDIA_DEBUG("LPCRESIDUAL: Setting up...");
 
   reset();
   
-  DEBUG("LPCRESIDUAL: Finished set up...");
+  LOUDIA_DEBUG("LPCRESIDUAL: Finished set up...");
 }
 
 
 void LPCResidual::process(const MatrixXR& frame, const MatrixXR& lpcCoeffs, MatrixXR* residual){
-  DEBUG("LPCRESIDUAL: Processing...");
+  LOUDIA_DEBUG("LPCRESIDUAL: Processing...");
   const int rows = frame.rows();
   const int cols = frame.cols();
 
@@ -58,18 +58,18 @@ void LPCResidual::process(const MatrixXR& frame, const MatrixXR& lpcCoeffs, Matr
 
   (*residual).resize(rows, cols);
 
-  DEBUG("LPCRESIDUAL: Processing setting filter");
+  LOUDIA_DEBUG("LPCRESIDUAL: Processing setting filter");
   _filter.setA( lpcCoeffs.transpose() );
   
   for ( int row = 0; row < rows; row++ ) {
     
-    DEBUG("LPCRESIDUAL: Processing filter");
+    LOUDIA_DEBUG("LPCRESIDUAL: Processing filter");
     _filter.process(frame.row( row ).transpose(), &_result);
     
     (*residual).row( row ) = _result.transpose();
   }
 
-  DEBUG("LPCRESIDUAL: Finished Processing");
+  LOUDIA_DEBUG("LPCRESIDUAL: Finished Processing");
 }
 
 void LPCResidual::reset(){

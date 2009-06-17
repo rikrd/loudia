@@ -27,7 +27,7 @@ using namespace Eigen;
 
 SpectralWhitening::SpectralWhitening(int fftSize, Real lowFrequency, Real highFrequency, Real sampleRate, Real compressionFactor, int bandCount, MelBands::ScaleType scaleType)
 {
-  DEBUG("SPECTRALWHITENING: Construction fftSize: " << fftSize
+  LOUDIA_DEBUG("SPECTRALWHITENING: Construction fftSize: " << fftSize
         << " sampleRate: " << sampleRate
         << " compressionFactor: " << compressionFactor
         << " bandCount: " << bandCount
@@ -48,7 +48,7 @@ SpectralWhitening::SpectralWhitening(int fftSize, Real lowFrequency, Real highFr
 SpectralWhitening::~SpectralWhitening(){}
 
 void SpectralWhitening::setup(){
-  DEBUG("SPECTRALWHITENING: Setting up...");
+  LOUDIA_DEBUG("SPECTRALWHITENING: Setting up...");
 
   _halfSize = ( _fftSize / 2 ) + 1;
   
@@ -65,7 +65,7 @@ void SpectralWhitening::setup(){
   
   reset();
 
-  DEBUG("SPECTRALWHITENING: Finished setup.");
+  LOUDIA_DEBUG("SPECTRALWHITENING: Finished setup.");
 }
 
 void SpectralWhitening::process(const MatrixXR& spectrum, MatrixXR* result){

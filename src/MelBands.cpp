@@ -30,7 +30,7 @@ using namespace Eigen;
 MelBands::MelBands(Real lowFrequency, Real highFrequency, int bandCount, Real sampleRate, int fftSize, ScaleType scaleType) 
 {
   
-  DEBUG("MELBANDS: Constructor lowFrequency: " << _lowFrequency << 
+  LOUDIA_DEBUG("MELBANDS: Constructor lowFrequency: " << _lowFrequency << 
         ", highFrequency: " << _highFrequency << 
         ", bandCount: " << _bandCount << 
         ", sampleRate: " << _sampleRate << 
@@ -54,12 +54,12 @@ MelBands::MelBands(Real lowFrequency, Real highFrequency, int bandCount, Real sa
   
   setup();
   
-  DEBUG("MELBANDS: Constructed");
+  LOUDIA_DEBUG("MELBANDS: Constructed");
   
 }
 
 void MelBands::setup(){
-  DEBUG("MELBANDS: Setting up...");
+  LOUDIA_DEBUG("MELBANDS: Setting up...");
   
   // Set the linearToMel and melToLinear functions
   switch(_scaleType) {
@@ -95,7 +95,7 @@ void MelBands::setup(){
   Real highMel = _linearToMel( _highFrequency );
   Real lowMel = _linearToMel( _lowFrequency );
   
-  DEBUG("MELBANDS: lowMel: " << lowMel << ", highMel: " << highMel);
+  LOUDIA_DEBUG("MELBANDS: lowMel: " << lowMel << ", highMel: " << highMel);
 
   Real stepMel = (highMel - lowMel) / (_bandCount + 1.0);
   Real stepSpectrum = Real(_fftSize) / _sampleRate;
@@ -146,7 +146,7 @@ void MelBands::setup(){
     
     int filterLength = stopBin - startBin;
     
-    DEBUG("MELBANDS: filterLength: " << filterLength);
+    LOUDIA_DEBUG("MELBANDS: filterLength: " << filterLength);
     MatrixXR newFilter = MatrixXR::Constant(1, 1, 1.0);
     if (filterLength != 0){
       newFilter.resize(filterLength, 1);
@@ -163,7 +163,7 @@ void MelBands::setup(){
 
   _bands.setStartsWeights(startBins, weights);
 
-  DEBUG("MELBANDS: Finished set up...");
+  LOUDIA_DEBUG("MELBANDS: Finished set up...");
 }
 
 void MelBands::process(const MatrixXR& spectrum, MatrixXR* bands) {  
@@ -174,7 +174,7 @@ void MelBands::triangleWindow(MatrixXR* window, Real start, Real stop, Real cent
   int filterLength = (*window).rows();
 
   if (center == -1) {
-    DEBUG("MELBANDS: Triangle window setting the center by default");
+    LOUDIA_DEBUG("MELBANDS: Triangle window setting the center by default");
     center = start + (stop - start) / 2.0;
   }
 
@@ -182,8 +182,8 @@ void MelBands::triangleWindow(MatrixXR* window, Real start, Real stop, Real cent
     // Throw an exception invalid filter center
   }
 
-  DEBUG("MELBANDS: Creating triangle window");
-  DEBUG("MELBANDS: Triangle start: " << start << ", stop: " << stop << ", center: " << center << ", height: " << height);
+  LOUDIA_DEBUG("MELBANDS: Creating triangle window");
+  LOUDIA_DEBUG("MELBANDS: Triangle start: " << start << ", stop: " << stop << ", center: " << center << ", height: " << height);
   
   for (int i = 0; i < filterLength; i++) {
     if (i <= center) {
@@ -193,7 +193,7 @@ void MelBands::triangleWindow(MatrixXR* window, Real start, Real stop, Real cent
     }
   }
   
-  DEBUG("MELBANDS: Triangle window created: [" << (*window).transpose() << "]");
+  LOUDIA_DEBUG("MELBANDS: Triangle window created: [" << (*window).transpose() << "]");
 }
 
 void MelBands::reset(){

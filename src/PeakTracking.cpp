@@ -27,7 +27,7 @@ using namespace Eigen;
 
 PeakTracking::PeakTracking(int trajectoryCount, Real maximumFrequencyChange, int silentFrameCount)
 {
-  DEBUG("PEAKTRACKING: Constructor");
+  LOUDIA_DEBUG("PEAKTRACKING: Constructor");
   
   setTrajectoryCount( trajectoryCount, false );
   setMaximumFrequencyChange( maximumFrequencyChange, false );
@@ -35,7 +35,7 @@ PeakTracking::PeakTracking(int trajectoryCount, Real maximumFrequencyChange, int
 
   setup();
   
-  DEBUG("PEAKTRACKING: Constructed");
+  LOUDIA_DEBUG("PEAKTRACKING: Constructed");
 }
 
 PeakTracking::~PeakTracking() {
@@ -44,11 +44,11 @@ PeakTracking::~PeakTracking() {
 
 void PeakTracking::setup(){
   // Prepare the buffers
-  DEBUG("PEAKTRACKING: Setting up...");
+  LOUDIA_DEBUG("PEAKTRACKING: Setting up...");
   
   reset();
   
-  DEBUG("PEAKTRACKING: Finished set up...");
+  LOUDIA_DEBUG("PEAKTRACKING: Finished set up...");
 }
 
 
@@ -56,7 +56,7 @@ void PeakTracking::process(const MatrixXC& fft,
                            const MatrixXR& peakPositions, const MatrixXR& peakMagnitudes,
                            MatrixXR* trajPositions, MatrixXR* trajMagnitudes){
   
-  DEBUG("PEAKTRACKING: Processing");  
+  LOUDIA_DEBUG("PEAKTRACKING: Processing");  
   
   (*trajPositions).resize(fft.rows(), _trajectoryCount);
   (*trajMagnitudes).resize(fft.rows(), _trajectoryCount);
@@ -79,7 +79,7 @@ void PeakTracking::process(const MatrixXC& fft,
         
         if ( minFreqBinChange <= _maximumFrequencyChange ) {
           // A matching peak has been found
-          DEBUG("PEAKTRACKING: Processing 'Matching peak: " << posCol << "' minFreqBinChange: " << minFreqBinChange);
+          LOUDIA_DEBUG("PEAKTRACKING: Processing 'Matching peak: " << posCol << "' minFreqBinChange: " << minFreqBinChange);
           
           (*trajPositions)(row, i) = currPeakPositions(row, posCol);
           (*trajMagnitudes)(row, i) = currPeakMagnitudes(row, posCol);
@@ -92,7 +92,7 @@ void PeakTracking::process(const MatrixXC& fft,
           
         } else {
           // No matching peak has been found
-          DEBUG("PEAKTRACKING: Processing 'No matching peaks' minFreqBinChange: " << minFreqBinChange);
+          LOUDIA_DEBUG("PEAKTRACKING: Processing 'No matching peaks' minFreqBinChange: " << minFreqBinChange);
           
           if ( _pastTrajMagnitudes(0, i) <= (-120.0 - _silentFrameCount) ) {
 
@@ -134,13 +134,13 @@ void PeakTracking::process(const MatrixXC& fft,
                                         row);
         
         if (! created ){
-          DEBUG("PEAKTRACKING: Processing the trajectory could not be created");
+          LOUDIA_DEBUG("PEAKTRACKING: Processing the trajectory could not be created");
         }
       }  
     }
   }
   
-  DEBUG("PEAKTRACKING: Finished Processing");
+  LOUDIA_DEBUG("PEAKTRACKING: Finished Processing");
 }
 
 bool PeakTracking::createTrajectory(Real peakPos, Real peakMag,

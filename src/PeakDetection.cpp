@@ -60,7 +60,7 @@ struct byPosition{
 
 PeakDetection::PeakDetection(int peakCount, SortMethod sortMethod, int minimumPeakWidth, int candidateCount, Real minimumPeakContrast)
 {
-  DEBUG("PEAKDETECTION: Constructor peakCount: " << peakCount 
+  LOUDIA_DEBUG("PEAKDETECTION: Constructor peakCount: " << peakCount 
         << ", minimumPeakWidth: " << minimumPeakWidth
         << ", candidateCount: " << candidateCount);
   
@@ -72,7 +72,7 @@ PeakDetection::PeakDetection(int peakCount, SortMethod sortMethod, int minimumPe
 
   setup();
 
-  DEBUG("PEAKDETECTION: Constructed");
+  LOUDIA_DEBUG("PEAKDETECTION: Constructed");
 }
 
 PeakDetection::~PeakDetection() {
@@ -84,22 +84,22 @@ PeakDetection::~PeakDetection() {
 
 void PeakDetection::setup(){
   // Prepare the buffers
-  DEBUG("PEAKDETECTION: Setting up...");
+  LOUDIA_DEBUG("PEAKDETECTION: Setting up...");
 
   reset();
 
-  DEBUG("PEAKDETECTION: Finished set up...");
+  LOUDIA_DEBUG("PEAKDETECTION: Finished set up...");
 }
 
 
 void PeakDetection::process(const MatrixXR& frames, 
                          MatrixXR* peakPositions, MatrixXR* peakMagnitudes){
-  DEBUG("PEAKDETECTION: Processing");
+  LOUDIA_DEBUG("PEAKDETECTION: Processing");
   
   const int rows = frames.rows();
   const int cols = frames.cols();
   
-  DEBUG("PEAKDETECTION: Processing, frames.shape: (" << rows << ", " << cols << ")");
+  LOUDIA_DEBUG("PEAKDETECTION: Processing, frames.shape: (" << rows << ", " << cols << ")");
 
   (*peakPositions).resize(rows, _peakCount);
   (*peakPositions).setConstant(-1);
@@ -109,7 +109,7 @@ void PeakDetection::process(const MatrixXR& frames,
 
   _magnitudes = frames.cwise().abs();
 
-  DEBUG("PEAKDETECTION: Processing, _magnitudes.shape: (" << rows << ", " << cols << ")");
+  LOUDIA_DEBUG("PEAKDETECTION: Processing, _magnitudes.shape: (" << rows << ", " << cols << ")");
   
   int maxRow;
   int maxCol;
@@ -184,7 +184,7 @@ void PeakDetection::process(const MatrixXR& frames,
     } 
   }
 
-  DEBUG("PEAKDETECTION: Finished Processing");
+  LOUDIA_DEBUG("PEAKDETECTION: Finished Processing");
 }
 
 void PeakDetection::reset(){

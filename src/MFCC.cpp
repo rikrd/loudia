@@ -29,7 +29,7 @@ using namespace Eigen;
 MFCC::MFCC(Real lowFrequency, Real highFrequency, int bandCount, Real sampleRate, int fftSize, int coefficientCount, Real minSpectrum, Real power) : 
   _minSpectrum( minSpectrum )
 {
-  DEBUG("MFCC: Constructor lowFrequency: " << lowFrequency << 
+  LOUDIA_DEBUG("MFCC: Constructor lowFrequency: " << lowFrequency << 
         ", highFrequency: " << highFrequency << 
         ", bandCount: " << bandCount << 
         ", sampleRate: "<< sampleRate << 
@@ -52,7 +52,7 @@ MFCC::~MFCC() {}
 
 void MFCC::setup(){
   // Prepare the buffers
-  DEBUG("MFCC: Setting up...");
+  LOUDIA_DEBUG("MFCC: Setting up...");
 
   _melbands.setFftSize( _fftSize, false );
   _melbands.setSampleRate( _sampleRate, false );
@@ -66,7 +66,7 @@ void MFCC::setup(){
   _dct.setup();
   
   reset();
-  DEBUG("MFCC: Finished set up...");
+  LOUDIA_DEBUG("MFCC: Finished set up...");
 }
 
 
@@ -74,11 +74,11 @@ void MFCC::process(const MatrixXR& spectrum, MatrixXR* mfccCoeffs){
   (*mfccCoeffs).resize(spectrum.rows(), _coefficientCount);
   
   for ( int i = 0; i < spectrum.rows(); i++) {  
-    DEBUG("MFCC: Processing Melbands");
+    LOUDIA_DEBUG("MFCC: Processing Melbands");
     // Process the mel bands on the power of the spectrum
     _melbands.process(spectrum.row(i).cwise().square(), &_bands);
     
-    DEBUG("MFCC: Processing Log of bands");
+    LOUDIA_DEBUG("MFCC: Processing Log of bands");
     // Apply a power to the log mel amplitudes as in: http://en.wikipedia.org/wiki/Mel_frequency_cepstral_coefficient
     // V. Tyagi and C. Wellekens
     // On desensitizing the Mel-Cepstrum to spurious spectral components for Robust Speech Recognition
@@ -87,14 +87,14 @@ void MFCC::process(const MatrixXR& spectrum, MatrixXR* mfccCoeffs){
     _bands = (_bands.cwise() + _minSpectrum).cwise().log() / log(10.0);
     _bands = _bands.cwise().pow(_power);
     
-    DEBUG("MFCC: Processing DCT");
+    LOUDIA_DEBUG("MFCC: Processing DCT");
     // Process the DCT
     _dct.process(_bands, &_coeffs);
 
     (*mfccCoeffs).row(i) = _coeffs;
   }
 
-  DEBUG("MFCC: Finished Processing");
+  LOUDIA_DEBUG("MFCC: Finished Processing");
 }
 
 void MFCC::reset(){

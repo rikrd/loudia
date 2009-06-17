@@ -27,7 +27,7 @@ using namespace Eigen;
 
 Unwrap::Unwrap()
 {
-  DEBUG("UNWRAP: Construction");
+  LOUDIA_DEBUG("UNWRAP: Construction");
 
   setup();
 }
@@ -36,11 +36,11 @@ Unwrap::~Unwrap(){}
 
 void Unwrap::setup(){
   // Prepare the buffers
-  DEBUG("UNWRAP: Setting up...");
+  LOUDIA_DEBUG("UNWRAP: Setting up...");
   
   reset();
 
-  DEBUG("UNWRAP: Finished setup.");
+  LOUDIA_DEBUG("UNWRAP: Finished setup.");
 }
 
 void Unwrap::process(const MatrixXR& input, MatrixXR* unwrapped){

@@ -27,7 +27,7 @@ using namespace Eigen;
 
 LPC::LPC(int inputSize, int coefficientCount, Real preEmphasis) 
 {
-  DEBUG("LPC: Constructor inputSize: " << inputSize 
+  LOUDIA_DEBUG("LPC: Constructor inputSize: " << inputSize 
         << ", coefficientCount: " << coefficientCount
         << ", preEmphasis: " << preEmphasis);
 
@@ -47,7 +47,7 @@ LPC::~LPC() {}
 
 void LPC::setup(){
   // Prepare the buffers
-  DEBUG("LPC: Setting up...");
+  LOUDIA_DEBUG("LPC: Setting up...");
   
   if ( _preEmphasis != 0.0 ) {
     MatrixXR preCoeffs(2, 1);
@@ -62,12 +62,12 @@ void LPC::setup(){
   
   reset();
   
-  DEBUG("LPC: Finished set up...");
+  LOUDIA_DEBUG("LPC: Finished set up...");
 }
 
 
 void LPC::process(const MatrixXR& frame, MatrixXR* lpcCoeffs, MatrixXR* reflectionCoeffs, MatrixXR* error){
-  DEBUG("LPC: Processing...");
+  LOUDIA_DEBUG("LPC: Processing...");
   const int rows = frame.rows();
   const int cols = frame.cols();
 
@@ -86,11 +86,11 @@ void LPC::process(const MatrixXR& frame, MatrixXR* lpcCoeffs, MatrixXR* reflecti
     _pre = frame;
   }
   
-  DEBUG("LPC: Processing autocorrelation");
+  LOUDIA_DEBUG("LPC: Processing autocorrelation");
   
   _acorrelation.process(_pre, &_acorr);
   
-  DEBUG("LPC: Processing Levinson-Durbin recursion");
+  LOUDIA_DEBUG("LPC: Processing Levinson-Durbin recursion");
 
   (*lpcCoeffs).resize(rows, _coefficientCount);
   (*reflectionCoeffs).resize(rows, _coefficientCount - 1);
@@ -142,7 +142,7 @@ void LPC::process(const MatrixXR& frame, MatrixXR* lpcCoeffs, MatrixXR* reflecti
     }
   }
   
-  DEBUG("LPC: Finished Processing");
+  LOUDIA_DEBUG("LPC: Finished Processing");
 }
 
 void LPC::reset(){

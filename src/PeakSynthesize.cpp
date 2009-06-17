@@ -31,11 +31,11 @@ PeakSynthesize::PeakSynthesize(int windowSize, int fftSize, Window::WindowType w
   _fftSize( fftSize )
 
 {
-  DEBUG("PEAKSYNTHESIZE: Constructor");
+  LOUDIA_DEBUG("PEAKSYNTHESIZE: Constructor");
   
   setup();
   
-  DEBUG("PEAKSYNTHESIZE: Constructed");
+  LOUDIA_DEBUG("PEAKSYNTHESIZE: Constructed");
 }
 
 PeakSynthesize::~PeakSynthesize() {}
@@ -43,18 +43,18 @@ PeakSynthesize::~PeakSynthesize() {}
 
 void PeakSynthesize::setup(){
   // Prepare the buffers
-  DEBUG("PEAKSYNTHESIZE: Setting up...");
+  LOUDIA_DEBUG("PEAKSYNTHESIZE: Setting up...");
 
   reset();
 
-  DEBUG("PEAKSYNTHESIZE: Finished set up...");
+  LOUDIA_DEBUG("PEAKSYNTHESIZE: Finished set up...");
 }
 
 
 void PeakSynthesize::process(const MatrixXR& trajPositions, const MatrixXR& trajMagnitudes,
                              MatrixXR* spectrum){
   
-  DEBUG("PEAKSYNTHESIZE: Processing");
+  LOUDIA_DEBUG("PEAKSYNTHESIZE: Processing");
   
   spectrum->resize(trajPositions.rows(), (int)ceil(_fftSize/2.0));
   spectrum->setZero();
@@ -90,7 +90,7 @@ void PeakSynthesize::process(const MatrixXR& trajPositions, const MatrixXR& traj
           break;
 
         default:
-          DEBUG("ERROR: Unknown type of window");
+          LOUDIA_DEBUG("ERROR: Unknown type of window");
           // Throw ValueError unknown window type
           break;
 
@@ -101,7 +101,7 @@ void PeakSynthesize::process(const MatrixXR& trajPositions, const MatrixXR& traj
     }
   }
   
-  DEBUG("PEAKSYNTHESIZE: Finished Processing");
+  LOUDIA_DEBUG("PEAKSYNTHESIZE: Finished Processing");
 }
 
 void PeakSynthesize::reset(){

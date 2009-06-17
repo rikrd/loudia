@@ -27,13 +27,13 @@ Real melToLinearGreenwood1990(Real melFreq) {
 }
 
 void linearToMelMatrixGreenwood1990(const MatrixXR& linearFreq, MatrixXR* melFreq) {
-  DEBUG("MELBANDS: Scaling (Greenwood 1990) linearFreq: " << linearFreq);
+  LOUDIA_DEBUG("MELBANDS: Scaling (Greenwood 1990) linearFreq: " << linearFreq);
 
   (*melFreq) = ((linearFreq / 165.4).cwise() + 1.0).cwise().logN(10) / 2.1;
 }
 
 void melToLinearMatrixGreenwood1990(const MatrixXR& melFreq, MatrixXR* linearFreq) {
-  DEBUG("MELBANDS: Scaling (Greenwood 1990) melFreq: " << melFreq);
+  LOUDIA_DEBUG("MELBANDS: Scaling (Greenwood 1990) melFreq: " << melFreq);
 
   (*linearFreq) = 165.4 * ((melFreq * 2.1).cwise().expN(10.0).cwise() - 1.0);
 }

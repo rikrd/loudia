@@ -25,11 +25,11 @@ using namespace std;
 using namespace Eigen;
 
 PeakInterpolationComplex::PeakInterpolationComplex() {
-  DEBUG("PEAKINTERPOLATIONCOMPLEX: Constructor");
+  LOUDIA_DEBUG("PEAKINTERPOLATIONCOMPLEX: Constructor");
   
   setup();
 
-  DEBUG("PEAKINTERPOLATIONCOMPLEX: Constructed");
+  LOUDIA_DEBUG("PEAKINTERPOLATIONCOMPLEX: Constructed");
 }
 
 PeakInterpolationComplex::~PeakInterpolationComplex() {
@@ -41,11 +41,11 @@ PeakInterpolationComplex::~PeakInterpolationComplex() {
 
 void PeakInterpolationComplex::setup(){
   // Prepare the buffers
-  DEBUG("PEAKINTERPOLATIONCOMPLEX: Setting up...");
+  LOUDIA_DEBUG("PEAKINTERPOLATIONCOMPLEX: Setting up...");
 
   reset();
 
-  DEBUG("PEAKINTERPOLATIONCOMPLEX: Finished set up...");
+  LOUDIA_DEBUG("PEAKINTERPOLATIONCOMPLEX: Finished set up...");
 }
 
 
@@ -53,7 +53,7 @@ void PeakInterpolationComplex::process(const MatrixXC& input,
                               const MatrixXR& peakPositions, const MatrixXR& peakMagnitudes, const MatrixXR& peakPhases,
                               MatrixXR* peakPositionsInterp, MatrixXR* peakMagnitudesInterp, MatrixXR* peakPhasesInterp) {
   
-  DEBUG("PEAKINTERPOLATIONCOMPLEX: Processing");  
+  LOUDIA_DEBUG("PEAKINTERPOLATIONCOMPLEX: Processing");  
   Real leftMag, leftPhase;
   Real rightMag, rightPhase;
   Real mag, interpFactor;
@@ -125,7 +125,7 @@ void PeakInterpolationComplex::process(const MatrixXC& input,
   // Calculate the princarg() of the phase: remap to (-pi pi]
   (*peakPhasesInterp) = ((*peakPhasesInterp).cwise() != -1).select(((*peakPhasesInterp).cwise() + M_PI).cwise().modN(-2.0 * M_PI).cwise() + M_PI, (*peakPhasesInterp));
   
-  DEBUG("PEAKINTERPOLATIONCOMPLEX: Finished Processing");
+  LOUDIA_DEBUG("PEAKINTERPOLATIONCOMPLEX: Finished Processing");
 }
 
 void PeakInterpolationComplex::reset(){

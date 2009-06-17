@@ -39,7 +39,7 @@ OnsetComplex::OnsetComplex(int frameLength, int fftLength, Window::WindowType wi
   _odf( fftLength )
 {
   
-  DEBUG("OnsetComplex: Constructor frameLength: " << frameLength << 
+  LOUDIA_DEBUG("OnsetComplex: Constructor frameLength: " << frameLength << 
         ", fftLength: " << fftLength);
    
   setup();
@@ -54,7 +54,7 @@ OnsetComplex::~OnsetComplex() {
 
 void OnsetComplex::setup() {
   // Prepare the buffers
-  DEBUG("OnsetComplex: Setting up...");
+  LOUDIA_DEBUG("OnsetComplex: Setting up...");
 
   _window.setup();
   _fft.setup();
@@ -62,12 +62,12 @@ void OnsetComplex::setup() {
 
   reset();
 
-  DEBUG("OnsetComplex: Finished set up...");
+  LOUDIA_DEBUG("OnsetComplex: Finished set up...");
 }
 
 
 void OnsetComplex::process(const MatrixXR& samples, MatrixXR* odfValue) {
-  DEBUG("OnsetComplex: Processing windowed");
+  LOUDIA_DEBUG("OnsetComplex: Processing windowed");
  
   _window.process(samples, &_windowed);
 
@@ -75,7 +75,7 @@ void OnsetComplex::process(const MatrixXR& samples, MatrixXR* odfValue) {
   
   _odf.process(_ffted, odfValue);
     
-  DEBUG("OnsetComplex: Finished Processing");
+  LOUDIA_DEBUG("OnsetComplex: Finished Processing");
 }
 
 void OnsetComplex::reset() {

@@ -29,7 +29,7 @@ IFFTComplex::IFFTComplex(int frameSize, int fftSize, bool zeroPhase) :
   _out( NULL ),
   _fftplan( NULL )
 {
-  DEBUG("IFFTComplex: Constructor frameSize: " << frameSize 
+  LOUDIA_DEBUG("IFFTComplex: Constructor frameSize: " << frameSize 
         << ", fftSize: " << fftSize 
         << ", zeroPhase: " << zeroPhase);
 
@@ -39,43 +39,43 @@ IFFTComplex::IFFTComplex(int frameSize, int fftSize, bool zeroPhase) :
   
   setup();
   
-  DEBUG("IFFTComplex: Constructed");
+  LOUDIA_DEBUG("IFFTComplex: Constructed");
 }
 
 IFFTComplex::~IFFTComplex(){
   if ( _fftplan ) {
-    DEBUG("FFT: Destroying plan");
+    LOUDIA_DEBUG("FFT: Destroying plan");
     fftwf_destroy_plan( _fftplan );
   }
 
   if ( _in ) {
-    DEBUG("FFT: Destroying in");
+    LOUDIA_DEBUG("FFT: Destroying in");
     fftwf_free( _in ); 
   }
 
   if ( _out ) {
-    DEBUG("FFT: Destroying out");
+    LOUDIA_DEBUG("FFT: Destroying out");
     fftwf_free( _out );
   }
 }
 
 void IFFTComplex::setup(){
-  DEBUG("IFFTComplex: Setting up...");
+  LOUDIA_DEBUG("IFFTComplex: Setting up...");
   
   // Free the ressources if needed 
   // before setting them up
   if ( _fftplan ) {
-    DEBUG("FFT: Destroying plan");
+    LOUDIA_DEBUG("FFT: Destroying plan");
     fftwf_destroy_plan( _fftplan );
   }
 
   if ( _in ) {
-    DEBUG("FFT: Destroying in");
+    LOUDIA_DEBUG("FFT: Destroying in");
     fftwf_free( _in ); 
   }
 
   if ( _out ) {
-    DEBUG("FFT: Destroying out");
+    LOUDIA_DEBUG("FFT: Destroying out");
     fftwf_free( _out );
   }
   
@@ -85,7 +85,7 @@ void IFFTComplex::setup(){
   _fftplan = fftwf_plan_dft_1d( _fftSize, _in, _out,
                                 FFTW_BACKWARD, FFTW_ESTIMATE );
   
-  DEBUG("IFFTComplex: Finished set up...");
+  LOUDIA_DEBUG("IFFTComplex: Finished set up...");
 }
 
 template<typename FrameMatrixType>

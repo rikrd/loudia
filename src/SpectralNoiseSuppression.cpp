@@ -29,7 +29,7 @@ using namespace Eigen;
 
 SpectralNoiseSuppression::SpectralNoiseSuppression(int fftSize, Real lowFrequency, Real highFrequency, Real sampleRate)
 {
-  DEBUG("SPECTRALNOISESUPPRESSION: Construction fftSize: " << fftSize
+  LOUDIA_DEBUG("SPECTRALNOISESUPPRESSION: Construction fftSize: " << fftSize
         << " sampleRate: " << sampleRate
         << " lowFrequency: " << lowFrequency
         << " highFrequency: " << highFrequency );
@@ -45,7 +45,7 @@ SpectralNoiseSuppression::SpectralNoiseSuppression(int fftSize, Real lowFrequenc
 SpectralNoiseSuppression::~SpectralNoiseSuppression(){}
 
 void SpectralNoiseSuppression::setup(){
-  DEBUG("SPECTRALNOISESUPPRESSION: Setting up...");
+  LOUDIA_DEBUG("SPECTRALNOISESUPPRESSION: Setting up...");
 
   _k0 = (int)(( _lowFrequency / _sampleRate ) * _fftSize);
   _k1 = (int)(( _highFrequency / _sampleRate ) * _fftSize);
@@ -76,7 +76,7 @@ void SpectralNoiseSuppression::setup(){
 
   reset();
 
-  DEBUG("SPECTRALNOISESUPPRESSION: Finished setup.");
+  LOUDIA_DEBUG("SPECTRALNOISESUPPRESSION: Finished setup.");
 }
 
 void SpectralNoiseSuppression::process(const MatrixXR& spectrum, MatrixXR* noise, MatrixXR* result){

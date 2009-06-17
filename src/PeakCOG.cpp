@@ -31,7 +31,7 @@ PeakCOG::PeakCOG(int fftLength, int bandwidth) :
   _bandwidth(bandwidth)
 {
   
-  DEBUG("PEAKCOG: Constructor fftLength: " << _fftLength);
+  LOUDIA_DEBUG("PEAKCOG: Constructor fftLength: " << _fftLength);
   
   setup();
 }
@@ -41,24 +41,24 @@ PeakCOG::~PeakCOG() {}
 
 void PeakCOG::setup() {
   // Prepare the buffers
-  DEBUG("PEAKCOG: Setting up...");
+  LOUDIA_DEBUG("PEAKCOG: Setting up...");
  
   reset();
 
-  DEBUG("PEAKCOG: Finished set up...");
+  LOUDIA_DEBUG("PEAKCOG: Finished set up...");
 }
 
 
 void PeakCOG::process(const MatrixXC& fft, const MatrixXR& peakPos, MatrixXR* peakCog) {
-  DEBUG("PEAKCOG: Processing windowed");
+  LOUDIA_DEBUG("PEAKCOG: Processing windowed");
   const int rows = fft.rows();
   const int cols = fft.cols();
   const int halfCols = min((int)ceil(_fftLength / 2.0), cols);
   const int peakCount = peakPos.cols();
   
-  DEBUG("PEAKCOG: fft.shape " << fft.rows() << "," << fft.cols());
+  LOUDIA_DEBUG("PEAKCOG: fft.shape " << fft.rows() << "," << fft.cols());
   _spectrumAbs2 = fft.block(0, 0, rows, halfCols).cwise().abs2();
-  DEBUG("PEAKCOG: Spectrum resized rows: " << rows << " halfCols: " << halfCols);
+  LOUDIA_DEBUG("PEAKCOG: Spectrum resized rows: " << rows << " halfCols: " << halfCols);
     
   unwrap(fft.block(0, 0, rows, halfCols).cwise().angle(), &_spectrumArg);
   derivate(_spectrumArg, &_spectrumArgDeriv);
@@ -80,7 +80,7 @@ void PeakCOG::process(const MatrixXC& fft, const MatrixXR& peakPos, MatrixXR* pe
     }
   }
   
-  DEBUG("PEAKCOG: Finished Processing");
+  LOUDIA_DEBUG("PEAKCOG: Finished Processing");
 }
 
 void PeakCOG::reset() {

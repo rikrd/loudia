@@ -34,7 +34,7 @@ PitchSaliency::PitchSaliency(int fftSize, Real f0, Real f1, Real sampleRate, Rea
   _numHarmonics( numHarmonics ),
   _sampleRate( sampleRate )
 {
-  DEBUG("PITCHSALIENCY: Construction fftSize: " << _fftSize
+  LOUDIA_DEBUG("PITCHSALIENCY: Construction fftSize: " << _fftSize
         << " sampleRate: " << _sampleRate
         << " f0: " << _f0
         << " f1: " << _f1
@@ -47,7 +47,7 @@ PitchSaliency::PitchSaliency(int fftSize, Real f0, Real f1, Real sampleRate, Rea
 PitchSaliency::~PitchSaliency(){}
 
 void PitchSaliency::setup(){
-  DEBUG("PITCHSALIENCY: Setting up...");
+  LOUDIA_DEBUG("PITCHSALIENCY: Setting up...");
   
   _halfSize = ( _fftSize / 2 ) + 1;
 
@@ -63,7 +63,7 @@ void PitchSaliency::setup(){
   
   reset();
 
-  DEBUG("PITCHSALIENCY: Finished setup.");
+  LOUDIA_DEBUG("PITCHSALIENCY: Finished setup.");
 }
 
 Real PitchSaliency::harmonicWeight(Real period, Real tLow, Real tUp, int harmonicIndex){

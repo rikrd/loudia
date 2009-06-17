@@ -37,26 +37,26 @@ SpectralReassignment::SpectralReassignment(int frameSize, int fftSize, Real samp
   _fftAlgo( frameSize, fftSize, true )
 {
   
-  DEBUG("SPECTRALREASSIGNMENT: Constructor frameSize: " << frameSize << \
+  LOUDIA_DEBUG("SPECTRALREASSIGNMENT: Constructor frameSize: " << frameSize << \
         ", fftSize: " << fftSize << \
         ", sampleRate: " << sampleRate << \
         ", windowType: " << windowType);
 
 
   setup();
-  DEBUG("SPECTRALREASSIGNMENT: Constructed");
+  LOUDIA_DEBUG("SPECTRALREASSIGNMENT: Constructed");
 }
 
 SpectralReassignment::~SpectralReassignment(){}
 
 void SpectralReassignment::setup(){
-  DEBUG("SPECTRALREASSIGNMENT: Setting up...");
+  LOUDIA_DEBUG("SPECTRALREASSIGNMENT: Setting up...");
   
   // Setup the window so it gets calculated and can be reused
   _windowAlgo.setup();
   
   // Create the time vector
-  DEBUG("SPECTRALREASSIGNMENT: Creating time vector...");
+  LOUDIA_DEBUG("SPECTRALREASSIGNMENT: Creating time vector...");
   Real timestep = 1.0 / _sampleRate;
 
   // The unit of the vectors is Time Sample fractions
@@ -70,7 +70,7 @@ void SpectralReassignment::setup(){
   }
   
   // Create the freq vector
-  DEBUG("SPECTRALREASSIGNMENT: Creating freq vector...");
+  LOUDIA_DEBUG("SPECTRALREASSIGNMENT: Creating freq vector...");
   
   // The unit of the vectors is Frequency Bin fractions
   // TODO: Must rethink how the frequency vector is initialized
@@ -79,13 +79,13 @@ void SpectralReassignment::setup(){
   range(0, _fftSize, _fftSize, &_freq);
   
   // Calculate and set the time weighted window
-  DEBUG("SPECTRALREASSIGNMENT: Calculate time weighted window...");
+  LOUDIA_DEBUG("SPECTRALREASSIGNMENT: Calculate time weighted window...");
   MatrixXR windowInteg = _windowAlgo.window();
   windowInteg = windowInteg.cwise() * _time.transpose();
   _windowIntegAlgo.setWindow(windowInteg);
 
   // Calculate and set the time derivated window
-  DEBUG("SPECTRALREASSIGNMENT: Calculate time derivative window...");
+  LOUDIA_DEBUG("SPECTRALREASSIGNMENT: Calculate time derivative window...");
   MatrixXR windowDeriv = _windowAlgo.window();
   for(int i = windowDeriv.cols() - 1; i > 0; i--){
     windowDeriv(0, i) = (windowDeriv(0, i) - windowDeriv(0, i - 1)) / timestep;
@@ -111,7 +111,7 @@ void SpectralReassignment::setup(){
   _windowDerivAlgo.setup();
   _fftAlgo.setup();
 
-  DEBUG("SPECTRALREASSIGNMENT: Finished set up...");
+  LOUDIA_DEBUG("SPECTRALREASSIGNMENT: Finished set up...");
 }
 
 
@@ -135,11 +135,11 @@ void SpectralReassignment::process(const MatrixXR& frames,
   // TODO: check if the current timestamp is enough for a good reassignment
   // we might need for it to depend on past frames (if the reassignment of time
   // goes further than one)
-  DEBUG("SPECTRALREASSIGNMENT: Processing: creating the time reassignment operation...");    
+  LOUDIA_DEBUG("SPECTRALREASSIGNMENT: Processing: creating the time reassignment operation...");    
   (*reassignTime) = -((_fftInteg.cwise() * (*fft).conjugate()).cwise() / _fftAbs2.cast<Complex>()).real();
     
   // TODO: Check the unity of the freq reassignment, it may need to be normalized by something
-  DEBUG("SPECTRALREASSIGNMENT: Processing: creating the freq reassignment operation...");
+  LOUDIA_DEBUG("SPECTRALREASSIGNMENT: Processing: creating the freq reassignment operation...");
   (*reassignFreq) = _freq + ((_fftDeriv.cwise() * (*fft).conjugate()).cwise() / _fftAbs2.cast<Complex>()).imag();
   
   (*reassignTime) = ((*reassignTime).cwise().isnan()).select(0, (*reassignTime));
@@ -155,8 +155,8 @@ void SpectralReassignment::process(const MatrixXR& frames,
   //        (the magnitude and phase must then be put back 
   //         in the form of a complex in the reassigned frame)
   /*
-  DEBUG("SPECTRALREASSIGNMENT: Processing: reassigning...");
-  DEBUG("SPECTRALREASSIGNMENT: Processing: reassigning _reassignFreq: " << _reassignFreq.rows() << ", " << _reassignFreq.cols());
+  LOUDIA_DEBUG("SPECTRALREASSIGNMENT: Processing: reassigning...");
+  LOUDIA_DEBUG("SPECTRALREASSIGNMENT: Processing: reassigning _reassignFreq: " << _reassignFreq.rows() << ", " << _reassignFreq.cols());
   
   for(int j = 0; j < _reassignFreq.cols(); j++){
     

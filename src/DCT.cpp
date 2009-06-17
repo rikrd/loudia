@@ -27,7 +27,7 @@ using namespace Eigen;
 DCT::DCT(int inputSize, int dctSize, bool scale, DCTType dctType) :
   _scale( scale )
 {
-  DEBUG("DCT: Construction inputSize: " << inputSize 
+  LOUDIA_DEBUG("DCT: Construction inputSize: " << inputSize 
         << ", dctSize: " << dctSize 
         << ", dctType: " << dctType);
   
@@ -47,7 +47,7 @@ DCT::~DCT(){}
 
 void DCT::setup(){
   // Prepare the buffers
-  DEBUG("DCT: Setting up...");
+  LOUDIA_DEBUG("DCT: Setting up...");
   _dctMatrix.resize(_inputSize, _inputSize);
 
 
@@ -76,7 +76,7 @@ void DCT::setup(){
 
   
   reset();
-  DEBUG("DCT: Finished setup.");
+  LOUDIA_DEBUG("DCT: Finished setup.");
 }
 
 void DCT::type1Matrix(MatrixXR* dctMatrix) {

@@ -27,7 +27,7 @@ using namespace Eigen;
 
 PitchACF::PitchACF(int fftSize, Real sampleRate, int minimumPeakWidth, int peakCandidateCount)
 {
-  DEBUG("PITCHACF: Construction fftSize: " << _fftSize
+  LOUDIA_DEBUG("PITCHACF: Construction fftSize: " << _fftSize
         << " sampleRate: " << _sampleRate );
 
   setFftSize( fftSize, false );
@@ -40,7 +40,7 @@ PitchACF::PitchACF(int fftSize, Real sampleRate, int minimumPeakWidth, int peakC
 PitchACF::~PitchACF(){}
 
 void PitchACF::setup(){
-  DEBUG("PITCHACF: Setting up...");
+  LOUDIA_DEBUG("PITCHACF: Setting up...");
 
   _halfSize = ( _fftSize / 2 ) + 1;
 
@@ -56,7 +56,7 @@ void PitchACF::setup(){
 
   reset();
 
-  DEBUG("PITCHACF: Finished setup.");
+  LOUDIA_DEBUG("PITCHACF: Finished setup.");
 }
 
 void PitchACF::process(const MatrixXR& spectrum, MatrixXR* pitches, MatrixXR* saliencies){

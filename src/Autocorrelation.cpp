@@ -28,7 +28,7 @@ using namespace Eigen;
 
 Autocorrelation::Autocorrelation(int inputSize)
 {
-  DEBUG("AUTOCORRELATION: Construction inputSize: " << inputSize);
+  LOUDIA_DEBUG("AUTOCORRELATION: Construction inputSize: " << inputSize);
 
   setInputSize( inputSize, false );
   setMinLag( 0, false );
@@ -40,7 +40,7 @@ Autocorrelation::Autocorrelation(int inputSize)
 
 Autocorrelation::Autocorrelation(int inputSize, int maxLag)
 {
-  DEBUG("AUTOCORRELATION: Construction inputSize: " << inputSize
+  LOUDIA_DEBUG("AUTOCORRELATION: Construction inputSize: " << inputSize
         << " maxLag: " << maxLag);
 
   setInputSize( inputSize, false );
@@ -54,7 +54,7 @@ Autocorrelation::Autocorrelation(int inputSize, int maxLag)
 
 Autocorrelation::Autocorrelation(int inputSize, int maxLag, int minLag)
 {
-  DEBUG("AUTOCORRELATION: Construction inputSize: " << inputSize
+  LOUDIA_DEBUG("AUTOCORRELATION: Construction inputSize: " << inputSize
         << " minLag: " << minLag
         << " maxLag: " << maxLag);
 
@@ -69,7 +69,7 @@ Autocorrelation::Autocorrelation(int inputSize, int maxLag, int minLag)
 
 Autocorrelation::Autocorrelation(int inputSize, int maxLag, int minLag, bool useFft)
 {
-  DEBUG("AUTOCORRELATION: Construction inputSize: " << inputSize
+  LOUDIA_DEBUG("AUTOCORRELATION: Construction inputSize: " << inputSize
         << " minLag: " << minLag
         << " maxLag: " << maxLag
         << " useFft: " << useFft);
@@ -86,7 +86,7 @@ Autocorrelation::~Autocorrelation(){}
 
 void Autocorrelation::setup(){
   // Prepare the buffers
-  DEBUG("AUTOCORRELATION: Setting up...");
+  LOUDIA_DEBUG("AUTOCORRELATION: Setting up...");
 
   _calcMinLag = min(_inputSize + 1, max(-_inputSize + 1, _minLag));  
   _calcMaxLag = min(_inputSize + 1, max(-_inputSize + 1, _maxLag));
@@ -104,7 +104,7 @@ void Autocorrelation::setup(){
   
   reset();
   
-  DEBUG("AUTOCORRELATION: Finished setup.");
+  LOUDIA_DEBUG("AUTOCORRELATION: Finished setup.");
 }
 
 void Autocorrelation::process(const MatrixXR& frames, MatrixXR* autocorrelation){

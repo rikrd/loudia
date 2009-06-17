@@ -19,24 +19,55 @@
 #ifndef DEBUG_H
 #define DEBUG_H
 
-#if defined(LOUDIA_DEBUG)
+#include <sstream>
+#include <cassert>
+#include <exception>
+#include <string.h>
+
+/**
+ * Exception class for Loudia. It has a whole slew of different constructors
+ * to make it as easy as possible to throw an exception with a descriptive
+ * message.
+ */
+class LoudiaException : public std::exception {
+
+ public:
+  LoudiaException(const char* msg) : exception(), _msg(msg) {}
+  LoudiaException(const std::string& msg) : exception(), _msg(msg) {}
+  LoudiaException(const std::ostringstream& msg) : exception(), _msg(msg.str()) {}
+
+  template <typename T, typename U>
+  LoudiaException(const T& a, const U& b) : exception() {
+    std::ostringstream oss; oss << a << b; _msg = oss.str();
+  }
+
+  template <typename T, typename U, typename V>
+  LoudiaException(const T& a, const U& b, const V& c) : exception() {
+    std::ostringstream oss; oss << a << b << c; _msg = oss.str();
+  }
+
+  virtual ~LoudiaException() throw() {}
+  virtual const char* what() const throw() { return _msg.c_str(); }
+
+ protected:
+  std::string _msg;
+
+};
+
+#define LOUDIA_ERROR(msg) ostringstream loudiaErrorMessage__;  loudiaErrorMessage__ << msg; throw LoudiaException(loudiaErrorMessage__);
+#define LOUDIA_WARNING(msg) std::cerr << msg << std::endl;
+
+
+// If none of the NO_DEBUG are defined we enable debugging
+#if (!defined(LOUDIA_NO_DEBUG) && !defined(NDEBUG))
 
 #include <iostream>
+#define LOUDIA_DEBUG(msg) std::cerr << msg << std::endl;
 
-extern bool debug;
-#define DEBUG(msg) if(debug) std::cerr << msg << std::endl;
-
-#elif defined(LOUDIA_LOG)
-
-#include <iostream>
-
-extern ostream out;
-extern bool debug;
-#define DEBUG(msg) if(debug) out << msg << std::endl;
-
+// else we do nothing
 #else
 
-#define DEBUG(msg)
+#define LOUDIA_DEBUG(msg)
 
 #endif
 

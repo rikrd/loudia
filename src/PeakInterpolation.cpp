@@ -25,11 +25,11 @@ using namespace std;
 using namespace Eigen;
 
 PeakInterpolation::PeakInterpolation() {
-  DEBUG("PEAKINTERPOLATION: Constructor");
+  LOUDIA_DEBUG("PEAKINTERPOLATION: Constructor");
   
   setup();
 
-  DEBUG("PEAKINTERPOLATION: Constructed");
+  LOUDIA_DEBUG("PEAKINTERPOLATION: Constructed");
 }
 
 PeakInterpolation::~PeakInterpolation() {
@@ -41,11 +41,11 @@ PeakInterpolation::~PeakInterpolation() {
 
 void PeakInterpolation::setup(){
   // Prepare the buffers
-  DEBUG("PEAKINTERPOLATION: Setting up...");
+  LOUDIA_DEBUG("PEAKINTERPOLATION: Setting up...");
 
   reset();
 
-  DEBUG("PEAKINTERPOLATION: Finished set up...");
+  LOUDIA_DEBUG("PEAKINTERPOLATION: Finished set up...");
 }
 
 
@@ -53,7 +53,7 @@ void PeakInterpolation::process(const MatrixXR& input,
                               const MatrixXR& peakPositions, const MatrixXR& peakMagnitudes,
                               MatrixXR* peakPositionsInterp, MatrixXR* peakMagnitudesInterp) {
   
-  DEBUG("PEAKINTERPOLATION: Processing");  
+  LOUDIA_DEBUG("PEAKINTERPOLATION: Processing");  
   Real leftMag;
   Real rightMag;
   Real mag, interpFactor;
@@ -111,7 +111,7 @@ void PeakInterpolation::process(const MatrixXR& input,
     }
   }
   
-  DEBUG("PEAKINTERPOLATION: Finished Processing");
+  LOUDIA_DEBUG("PEAKINTERPOLATION: Finished Processing");
 }
 
 void PeakInterpolation::reset(){

@@ -31,7 +31,7 @@ BandFilter::BandFilter( int order, Real lowFrequency, Real highFrequency, BandTy
   _channelCount( 1 ),
   _filter( _channelCount )
 {
-  DEBUG("BANDFILTER: Constructor order: " << order 
+  LOUDIA_DEBUG("BANDFILTER: Constructor order: " << order 
         << ", lowFrequency: " << lowFrequency
         << ", highFrequency: " << highFrequency
         << ", passRipple: " << passRipple
@@ -51,15 +51,15 @@ BandFilter::BandFilter( int order, Real lowFrequency, Real highFrequency, BandTy
   
   setup();
   
-  DEBUG("BANDFILTER: Constructed");
+  LOUDIA_DEBUG("BANDFILTER: Constructed");
 }
 
 void BandFilter::setup(){
-  DEBUG("BANDFILTER: Setting up...");
+  LOUDIA_DEBUG("BANDFILTER: Setting up...");
 
   _filter.setChannelCount( _channelCount, false );
 
-  DEBUG("BANDFILTER: Getting zpk");  
+  LOUDIA_DEBUG("BANDFILTER: Getting zpk");  
   // Get the lowpass z, p, k
   MatrixXC zeros, poles;
   Real gain;
@@ -82,16 +82,16 @@ void BandFilter::setup(){
     break;
   }
   
-  DEBUG("BANDFILTER: zeros:" << zeros );
-  DEBUG("BANDFILTER: poles:" << poles );
-  DEBUG("BANDFILTER: gain:" << gain );
+  LOUDIA_DEBUG("BANDFILTER: zeros:" << zeros );
+  LOUDIA_DEBUG("BANDFILTER: poles:" << poles );
+  LOUDIA_DEBUG("BANDFILTER: gain:" << gain );
   
   // Convert zpk to ab coeffs
   MatrixXC a;
   MatrixXC b;
   zpkToCoeffs(zeros, poles, gain, &b, &a);
 
-  DEBUG("BANDFILTER: Calculated the coeffs");
+  LOUDIA_DEBUG("BANDFILTER: Calculated the coeffs");
 
   // Since we cannot create matrices of Nx0
   // we have created at least one Zero in 0
@@ -113,7 +113,7 @@ void BandFilter::setup(){
   MatrixXC wa;
   MatrixXC wb;
 
-  DEBUG("BANDFILTER: Create the band type filter from the analog prototype");
+  LOUDIA_DEBUG("BANDFILTER: Create the band type filter from the analog prototype");
 
   switch( _bandType ){
   case LOWPASS:
@@ -133,14 +133,14 @@ void BandFilter::setup(){
     break;
   }
 
-  DEBUG("BANDFILTER: Calculated the low pass to band pass");
+  LOUDIA_DEBUG("BANDFILTER: Calculated the low pass to band pass");
   
   // Digital coeffs
   MatrixXR da;
   MatrixXR db;
   bilinear(wb, wa, fs, &db, &da);
   
-  DEBUG("BANDFILTER: setup the coeffs");
+  LOUDIA_DEBUG("BANDFILTER: setup the coeffs");
 
   // Set the coefficients to the filter
   _filter.setA( da.transpose() );
@@ -148,7 +148,7 @@ void BandFilter::setup(){
   
   _filter.setup();
   
-  DEBUG("BANDFILTER: Finished set up...");
+  LOUDIA_DEBUG("BANDFILTER: Finished set up...");
 }
 
 void BandFilter::a(MatrixXR* a) const{

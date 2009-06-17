@@ -26,7 +26,7 @@ using namespace Eigen;
 
 Filter::Filter(int channelCount)
 {
-  DEBUG("FILTER: Constructor channelCount:" << channelCount);
+  LOUDIA_DEBUG("FILTER: Constructor channelCount:" << channelCount);
 
   setChannelCount( channelCount, false );
 
@@ -42,8 +42,8 @@ Filter::Filter(const MatrixXR& b,
                int channelCount)
 {
 
-  DEBUG("FILTER: Constructor channelCount:" << channelCount);
-  DEBUG("FILTER: Constructor b:" << b.transpose() << ", a:" << a.transpose());
+  LOUDIA_DEBUG("FILTER: Constructor channelCount:" << channelCount);
+  LOUDIA_DEBUG("FILTER: Constructor b:" << b.transpose() << ", a:" << a.transpose());
 
   setChannelCount( channelCount, false );
 
@@ -55,7 +55,7 @@ Filter::Filter(const MatrixXR& b,
 
 void Filter::setup(){
   // Prepare the buffers
-  DEBUG("FILTER: Setting up...");
+  LOUDIA_DEBUG("FILTER: Setting up...");
 
   setupState();
 
@@ -63,7 +63,7 @@ void Filter::setup(){
  
   reset();
 
-  DEBUG("FILTER: Finished set up...");
+  LOUDIA_DEBUG("FILTER: Finished set up...");
 }
 
 
@@ -90,7 +90,7 @@ void Filter::process(const MatrixXR& samples, MatrixXR* output){
   // Check that it has one column or as many as channelCount
   if ((samples.cols() != 1) && (samples.cols() != _channelCount)) {
     // TODO: Throw an exception
-    DEBUG("FILTER: Error in shape of 'samples'. samples.cols():" << samples.cols() << ", _channelCount:" << _channelCount);
+    LOUDIA_DEBUG("FILTER: Error in shape of 'samples'. samples.cols():" << samples.cols() << ", _channelCount:" << _channelCount);
     return;
   }
 
@@ -161,13 +161,13 @@ void Filter::setupCoeffs() {
   // Normalize by the first value value the denominator coefficients
   // since a[0] must be 1.0
   // TODO: throw an exception when a[0] == 0
-  DEBUG("FILTER: Initializing 'a' coeffs");
+  LOUDIA_DEBUG("FILTER: Initializing 'a' coeffs");
   _a = MatrixXR::Zero(_length, _channelCount);
 
   // Check that it has one column or as many as channelCount
   if ((_ina.cols() != 1) && (_ina.cols() != _channelCount)) {
     // TODO: Throw an exception
-    DEBUG("FILTER: Error in shape of 'a' coeffs. _ina.cols():" << _ina.cols() << ", _channelCount:" << _channelCount);
+    LOUDIA_DEBUG("FILTER: Error in shape of 'a' coeffs. _ina.cols():" << _ina.cols() << ", _channelCount:" << _channelCount);
     return;
   }
 
@@ -186,15 +186,15 @@ void Filter::setupCoeffs() {
     _a.row(i) = _a.row(i).cwise() / _ina.row(0);
   }
 
-  DEBUG("FILTER: Setting the 'a' coefficients.");
-  DEBUG("FILTER: 'a' coefficients: " << _a.transpose());
+  LOUDIA_DEBUG("FILTER: Setting the 'a' coefficients.");
+  LOUDIA_DEBUG("FILTER: 'a' coefficients: " << _a.transpose());
 
   _b = MatrixXR::Zero(_length, _channelCount);
 
   // Check that it has one column or as many as channelCount
   if ((_inb.cols() != 1) && (_inb.cols() != _channelCount)) {
     // TODO: Throw an exception
-    DEBUG("FILTER: Error in shape of 'b' coeffs. b.cols():" << _inb.cols() << ", _channelCount:" << _channelCount);
+    LOUDIA_DEBUG("FILTER: Error in shape of 'b' coeffs. b.cols():" << _inb.cols() << ", _channelCount:" << _channelCount);
     return;
   }
 
@@ -213,8 +213,8 @@ void Filter::setupCoeffs() {
     _b.row(i) = _b.row(i).cwise() / _ina.row(0);
   }  
   
-  DEBUG("FILTER: Setting the 'b' coefficients.");
-  DEBUG("FILTER: 'b' coefficients: " << _b.transpose());  
+  LOUDIA_DEBUG("FILTER: Setting the 'b' coefficients.");
+  LOUDIA_DEBUG("FILTER: 'b' coefficients: " << _b.transpose());  
 
 }
 

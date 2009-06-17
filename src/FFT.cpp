@@ -29,7 +29,7 @@ FFT::FFT(int fftSize, bool zeroPhase) :
   _out( NULL ),
   _fftplan( NULL )
 {
-  DEBUG("FFT: Constructor fftSize: " << fftSize 
+  LOUDIA_DEBUG("FFT: Constructor fftSize: " << fftSize 
         << ", zeroPhase: " << zeroPhase);
 
   setFftSize( fftSize, false );
@@ -37,45 +37,45 @@ FFT::FFT(int fftSize, bool zeroPhase) :
   
   setup();
   
-  DEBUG("FFT: Constructed");
+  LOUDIA_DEBUG("FFT: Constructed");
 }
 
 FFT::~FFT(){
-  DEBUG("FFT: Destroying...");
+  LOUDIA_DEBUG("FFT: Destroying...");
   if ( _fftplan ) {
-    DEBUG("FFT: Destroying plan");
+    LOUDIA_DEBUG("FFT: Destroying plan");
     fftwf_destroy_plan( _fftplan );
   }
 
   if ( _in ) {
-    DEBUG("FFT: Destroying in");
+    LOUDIA_DEBUG("FFT: Destroying in");
     fftwf_free( _in ); 
   }
 
   if ( _out ) {
-    DEBUG("FFT: Destroying out");
+    LOUDIA_DEBUG("FFT: Destroying out");
     fftwf_free( _out );
   }
-  DEBUG("FFT: Destroyed out");
+  LOUDIA_DEBUG("FFT: Destroyed out");
 }
 
 void FFT::setup(){
-  DEBUG("FFT: Setting up...");
+  LOUDIA_DEBUG("FFT: Setting up...");
   
   // Free the ressources if needed 
   // before setting them up
   if ( _fftplan ) {
-    DEBUG("FFT: Destroying plan");
+    LOUDIA_DEBUG("FFT: Destroying plan");
     fftwf_destroy_plan( _fftplan );
   }
 
   if ( _in ) {
-    DEBUG("FFT: Destroying in");
+    LOUDIA_DEBUG("FFT: Destroying in");
     fftwf_free( _in ); 
   }
 
   if ( _out ) {
-    DEBUG("FFT: Destroying out");
+    LOUDIA_DEBUG("FFT: Destroying out");
     fftwf_free( _out );
   }
   
@@ -88,7 +88,7 @@ void FFT::setup(){
   _fftplan = fftwf_plan_dft_r2c_1d( _fftSize, _in, _out,
                                     FFTW_ESTIMATE | FFTW_PRESERVE_INPUT );
       
-  DEBUG("FFT: Finished set up...");
+  LOUDIA_DEBUG("FFT: Finished set up...");
 }
 
 void FFT::process(const MatrixXR& frames, MatrixXC* ffts){

@@ -45,7 +45,7 @@ Meddis::Meddis(Real sampleRate, int channels, bool substractSpont) :
   q( 1, channels ), 
   w( 1, channels ) 
 {
-  DEBUG("MEDDIS: Constructor sampleRate:" << sampleRate << 
+  LOUDIA_DEBUG("MEDDIS: Constructor sampleRate:" << sampleRate << 
         ", channels:" << channels << 
         ", substractSpont:" << substractSpont);
   
@@ -55,7 +55,7 @@ Meddis::Meddis(Real sampleRate, int channels, bool substractSpont) :
 Meddis::~Meddis() {}
 
 void Meddis::setup(){
-  DEBUG("MEDDIS: Setting up...");
+  LOUDIA_DEBUG("MEDDIS: Setting up...");
 
   // Configure the internal constants
   dt = 1./_sampleRate;
@@ -67,7 +67,7 @@ void Meddis::setup(){
 
   // Prepare the buffers
   reset();
-  DEBUG("MEDDIS: Set up finished.");
+  LOUDIA_DEBUG("MEDDIS: Set up finished.");
 }
 
 void Meddis::process(const MatrixXR& samples, MatrixXR* output){
@@ -106,7 +106,7 @@ void Meddis::process(const MatrixXR& samples, MatrixXR* output){
 
 void Meddis::reset(){
   // Initial values
-  DEBUG("MEDDIS: Resetting...");
+  LOUDIA_DEBUG("MEDDIS: Resetting...");
 
   kt = MatrixXR::Constant(1, _channels, g * A / (A + B));
   spont = kt * (M * y);

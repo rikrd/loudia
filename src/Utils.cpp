@@ -90,7 +90,7 @@ void convolve(const InMatrixType& a, const InMatrixType& b, InMatrixType* c) {
 
   if ( b.rows() != rows ) {
     // Throw an error the two inputs must have the same number of rows
-    DEBUG("ERROR: the two inputs must have the same number of rows");
+    LOUDIA_DEBUG("ERROR: the two inputs must have the same number of rows");
     return;
   }
 
@@ -161,7 +161,7 @@ void correlate(const InMatrixType& _a, const InMatrixType& _b, InMatrixType* c, 
 
   if ( b.rows() != rows ) {
     // Throw an error the two inputs must have the same number of rows
-    DEBUG("ERROR: the two inputs must have the same number of rows");
+    LOUDIA_DEBUG("ERROR: the two inputs must have the same number of rows");
     return;
   }
 
@@ -352,7 +352,7 @@ void raisedCosTransform(Real position, Real magnitude,
   (*end) = (int)min(ceil(position + bandwidth / 2.0 + 1), fftSize/2.0);
   
   if ( (*end) <= (*begin) ) {
-    DEBUG("ERROR: end (" << (*end) << ") must be higher than begin (" << (*begin) << ")");
+    LOUDIA_DEBUG("ERROR: end (" << (*end) << ") must be higher than begin (" << (*begin) << ")");
     // Throw a ValueError end must be higher than begin
   }
   
@@ -475,8 +475,8 @@ void freqz(const MatrixXR& b, const MatrixXR& a, const MatrixXR& w, MatrixXC* re
 
   resp->resize(nPoints, coeffCols);
 
-  DEBUG("FREQZ: resp.shape: (" << resp->rows() << "," << resp->cols() << ")");
-  DEBUG("FREQZ: complexW.shape: (" << complexW.rows() << "," << complexW.cols() << ")");
+  LOUDIA_DEBUG("FREQZ: resp.shape: (" << resp->rows() << "," << resp->cols() << ")");
+  LOUDIA_DEBUG("FREQZ: complexW.shape: (" << complexW.rows() << "," << complexW.cols() << ")");
 
   complexW = (w.cast<Complex>().transpose() * Complex(0,-1)  * k).cwise().exp();
   

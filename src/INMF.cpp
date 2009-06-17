@@ -35,7 +35,7 @@ INMF::INMF(int fftSize, int numComponents, int numPast, Real pastCoeff, int maxI
   _newCoeff( 1 - pastCoeff )
 {
   
-  DEBUG("INMF: Constructor fftSize: " << _fftSize
+  LOUDIA_DEBUG("INMF: Constructor fftSize: " << _fftSize
         << " numComponents: " << _numComponents
         << " numPast: " << _numPast
         << " pastCoeff: " << _pastCoeff
@@ -49,7 +49,7 @@ INMF::~INMF() {}
 
 void INMF::setup() {
   // Prepare the buffers
-  DEBUG("INMF: Setting up...");
+  LOUDIA_DEBUG("INMF: Setting up...");
   
   _V.resize(_numPast, _fftSize);
   _H.resize(_numPast, _numComponents);
@@ -57,12 +57,12 @@ void INMF::setup() {
   
   reset();
 
-  DEBUG("INMF: Finished set up...");
+  LOUDIA_DEBUG("INMF: Finished set up...");
 }
 
 
 void INMF::process(const MatrixXR& v, MatrixXR* w, MatrixXR* h) {
-  DEBUG("INMF: Processing windowed");
+  LOUDIA_DEBUG("INMF: Processing windowed");
   const int rows = v.rows();
   const int cols = v.cols();
   
@@ -83,7 +83,7 @@ void INMF::process(const MatrixXR& v, MatrixXR* w, MatrixXR* h) {
   (*h).setRandom();
   (*h) = (*h).cwise().abs();
 
-  DEBUG("INMF: Begin rows");
+  LOUDIA_DEBUG("INMF: Begin rows");
   for (int row = 0; row < rows; row++ ) {
 
     // Calculate beta * VHt
@@ -92,7 +92,7 @@ void INMF::process(const MatrixXR& v, MatrixXR* w, MatrixXR* h) {
     // Calculate beta * HHt
     _HH = _pastCoeff * (_H.transpose() * _H);
 
-    DEBUG("INMF: Begin iterations");
+    LOUDIA_DEBUG("INMF: Begin iterations");
     for ( int iter = 0; iter < _maxIterations; iter++ ) {
       /*
       MatrixXR Wv = (*w) * v.row(row).transpose();
@@ -133,28 +133,28 @@ void INMF::process(const MatrixXR& v, MatrixXR* w, MatrixXR* h) {
       (*w).cwise() *= ((_VH + (_newCoeff * v.row( row ).transpose() * (*h).row( row ))).cwise() / (((*w).transpose() * (_HH + _newCoeff * (*h).row( row ).transpose() * (*h).row( row ))).cwise() + _eps)).transpose();
     }
 
-    DEBUG("INMF: Shift and update H");
+    LOUDIA_DEBUG("INMF: Shift and update H");
     // Update the past H
     // TODO: when Eigen will have rotate use this
     //_H.rowwise().rotate(-1);
     rowShift(&_H, -1);
     _H.row( _numPast - 1 ) = (*h).row( row );
 
-    DEBUG("INMF: Shift and update V");
+    LOUDIA_DEBUG("INMF: Shift and update V");
     // Update the past V
     // TODO: when Eigen will have rotate use this
     //_V.rowwise().rotate(-1);
     rowShift(&_V, -1);
     _V.row( _numPast - 1 ) = v.row( row );
     
-    DEBUG("INMF: Keep W");
+    LOUDIA_DEBUG("INMF: Keep W");
 
   }
 
   // Keep the past W
   _W = (*w);
   
-  DEBUG("INMF: Finished Processing");
+  LOUDIA_DEBUG("INMF: Finished Processing");
 }
 
 void INMF::reset() {

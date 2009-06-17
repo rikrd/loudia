@@ -32,7 +32,7 @@ SpectralODFMKL::SpectralODFMKL(int fftSize, Real minSpectrum) :
   _minSpectrum(minSpectrum)
 {
   
-  DEBUG("SPECTRALODFMKL: Constructor fftSize: " << _fftSize);
+  LOUDIA_DEBUG("SPECTRALODFMKL: Constructor fftSize: " << _fftSize);
   
   setup();
 }
@@ -42,16 +42,16 @@ SpectralODFMKL::~SpectralODFMKL() {}
 
 void SpectralODFMKL::setup() {
   // Prepare the buffers
-  DEBUG("SPECTRALODFMKL: Setting up...");
+  LOUDIA_DEBUG("SPECTRALODFMKL: Setting up...");
 
   reset();
 
-  DEBUG("SPECTRALODFMKL: Finished set up...");
+  LOUDIA_DEBUG("SPECTRALODFMKL: Finished set up...");
 }
 
 
 void SpectralODFMKL::process(const MatrixXC& fft, MatrixXR* odfValue) {
-  DEBUG("SPECTRALODFMKL: Processing windowed");
+  LOUDIA_DEBUG("SPECTRALODFMKL: Processing windowed");
   const int rows = fft.rows();
   const int cols = fft.cols();
   
@@ -61,7 +61,7 @@ void SpectralODFMKL::process(const MatrixXC& fft, MatrixXR* odfValue) {
 
   (*odfValue).resize(rows - 1, 1);
 
-  DEBUG("SPECTRALODFMKL: Spectrum resized rows: " << rows);
+  LOUDIA_DEBUG("SPECTRALODFMKL: Spectrum resized rows: " << rows);
   
   _spectrumAbs = fft.cwise().abs();
 
@@ -69,7 +69,7 @@ void SpectralODFMKL::process(const MatrixXC& fft, MatrixXR* odfValue) {
                  * (_spectrumAbs.block(1, 0, rows-1, cols).cwise() \
                     / (_spectrumAbs.block(0, 0, rows-1, cols).cwise().clipUnder(_minSpectrum))).cwise().clipUnder(_minSpectrum).cwise().logN(2.0)).rowwise().sum() / cols;
   
-  DEBUG("SPECTRALODFMKL: Finished Processing");
+  LOUDIA_DEBUG("SPECTRALODFMKL: Finished Processing");
 }
 
 void SpectralODFMKL::reset() {

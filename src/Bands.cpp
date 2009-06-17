@@ -34,7 +34,7 @@ Bands::Bands() :
 
 
 Bands::Bands(MatrixXI starts, std::vector<MatrixXR> weights) {
-  DEBUG("BANDS: Constructor starts: " << starts);
+  LOUDIA_DEBUG("BANDS: Constructor starts: " << starts);
 
   if ( starts.rows() != (int)weights.size() ) {
     // Throw an exception
@@ -61,10 +61,10 @@ Bands::~Bands() {}
 
 void Bands::setup(){
   // Prepare the buffers
-  DEBUG("BANDS: Setting up...");
+  LOUDIA_DEBUG("BANDS: Setting up...");
 
   reset();
-  DEBUG("BANDS: Finished set up...");
+  LOUDIA_DEBUG("BANDS: Finished set up...");
 }
 
 

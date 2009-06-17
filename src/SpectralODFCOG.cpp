@@ -35,7 +35,7 @@ SpectralODFCOG::SpectralODFCOG(int fftSize, int peakCount, int bandwidth) :
   _peakCoger( fftSize, bandwidth )
 {
   
-  DEBUG("SPECTRALODFCOG: Constructor fftSize: " << _fftSize);
+  LOUDIA_DEBUG("SPECTRALODFCOG: Constructor fftSize: " << _fftSize);
   
   setup();
 }
@@ -45,24 +45,24 @@ SpectralODFCOG::~SpectralODFCOG() {}
 
 void SpectralODFCOG::setup() {
   // Prepare the buffers
-  DEBUG("SPECTRALODFCOG: Setting up...");
+  LOUDIA_DEBUG("SPECTRALODFCOG: Setting up...");
 
   _peaker.setup();
   _peakCoger.setup();
   
   reset();
 
-  DEBUG("SPECTRALODFCOG: Finished set up...");
+  LOUDIA_DEBUG("SPECTRALODFCOG: Finished set up...");
 }
 
 
 void SpectralODFCOG::process(const MatrixXC& fft, MatrixXR* odfValue) {
-  DEBUG("SPECTRALODFCOG: Processing windowed");
+  LOUDIA_DEBUG("SPECTRALODFCOG: Processing windowed");
   const int rows = fft.rows();
   
   (*odfValue).resize(rows, 1);
 
-  DEBUG("SPECTRALODFCOG: Processing the peaks");
+  LOUDIA_DEBUG("SPECTRALODFCOG: Processing the peaks");
 
   _peaker.process(fft.cwise().abs(), &_peakPos, &_peakMag);
 
@@ -70,7 +70,7 @@ void SpectralODFCOG::process(const MatrixXC& fft, MatrixXR* odfValue) {
 
   (*odfValue) = _cog.cwise().clipUnder().rowwise().sum();
   
-  DEBUG("SPECTRALODFCOG: Finished Processing");
+  LOUDIA_DEBUG("SPECTRALODFCOG: Finished Processing");
 }
 
 void SpectralODFCOG::reset() {

@@ -29,7 +29,7 @@ using namespace Eigen;
 NMF::NMF(int inputSize, int componentCount, int iterationCount, Real epsilon)
 {
   
-  DEBUG("NMF: Constructor inputSize: " << inputSize
+  LOUDIA_DEBUG("NMF: Constructor inputSize: " << inputSize
         << " componentCount: " << componentCount
         << " iterationCount: " << iterationCount );
   
@@ -46,16 +46,16 @@ NMF::~NMF() {}
 
 void NMF::setup() {
   // Prepare the buffers
-  DEBUG("NMF: Setting up...");
+  LOUDIA_DEBUG("NMF: Setting up...");
   
   reset();
 
-  DEBUG("NMF: Finished set up...");
+  LOUDIA_DEBUG("NMF: Finished set up...");
 }
 
 
 void NMF::process(const MatrixXR& v, MatrixXR* w, MatrixXR* h) {
-  DEBUG("NMF: Processing ...");
+  LOUDIA_DEBUG("NMF: Processing ...");
   const int rows = v.rows();
   const int cols = v.cols();
   
@@ -91,7 +91,7 @@ void NMF::process(const MatrixXR& v, MatrixXR* w, MatrixXR* h) {
     (*h).transpose().cwise() /= _norms.transpose() * MatrixXR::Ones(1, rows);
   }
   
-  DEBUG("NMF: Finished Processing");
+  LOUDIA_DEBUG("NMF: Finished Processing");
 }
 
 void NMF::reset() {

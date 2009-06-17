@@ -62,7 +62,7 @@ struct byPositionComp{
 
 PeakDetectionComplex::PeakDetectionComplex(int peakCount, SortMethod sortMethod, int minimumPeakWidth, int candidateCount, Real minimumPeakContrast)
 {
-  DEBUG("PEAKDETECTION: Constructor peakCount: " << peakCount 
+  LOUDIA_DEBUG("PEAKDETECTION: Constructor peakCount: " << peakCount 
         << ", minimumPeakWidth: " << minimumPeakWidth
         << ", candidateCount: " << candidateCount);
   
@@ -74,7 +74,7 @@ PeakDetectionComplex::PeakDetectionComplex(int peakCount, SortMethod sortMethod,
   
   setup();
 
-  DEBUG("PEAKDETECTIONCOMPLEX: Constructed");
+  LOUDIA_DEBUG("PEAKDETECTIONCOMPLEX: Constructed");
 }
 
 PeakDetectionComplex::~PeakDetectionComplex() {
@@ -83,22 +83,22 @@ PeakDetectionComplex::~PeakDetectionComplex() {
 
 void PeakDetectionComplex::setup(){
   // Prepare the buffers
-  DEBUG("PEAKDETECTIONCOMPLEX: Setting up...");
+  LOUDIA_DEBUG("PEAKDETECTIONCOMPLEX: Setting up...");
 
   reset();
 
-  DEBUG("PEAKDETECTIONCOMPLEX: Finished set up...");
+  LOUDIA_DEBUG("PEAKDETECTIONCOMPLEX: Finished set up...");
 }
 
 
 void PeakDetectionComplex::process(const MatrixXC& frames, 
                                    MatrixXR* peakPositions, MatrixXR* peakMagnitudes, MatrixXR* peakPhases){
-  DEBUG("PEAKDETECTIONCOMPLEX: Processing");
+  LOUDIA_DEBUG("PEAKDETECTIONCOMPLEX: Processing");
   
   const int rows = frames.rows();
   const int cols = frames.cols();
   
-  DEBUG("PEAKDETECTIONCOMPLEX: Processing, frames.shape: (" << rows << ", " << cols << ")");
+  LOUDIA_DEBUG("PEAKDETECTIONCOMPLEX: Processing, frames.shape: (" << rows << ", " << cols << ")");
 
   (*peakPositions).resize(rows, _peakCount);
   (*peakPositions).setConstant(-1);
@@ -190,7 +190,7 @@ void PeakDetectionComplex::process(const MatrixXC& frames,
     }
   }
 
-  DEBUG("PEAKDETECTIONCOMPLEX: Finished Processing");
+  LOUDIA_DEBUG("PEAKDETECTIONCOMPLEX: Finished Processing");
 }
 
 void PeakDetectionComplex::reset(){

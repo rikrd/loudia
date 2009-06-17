@@ -33,7 +33,7 @@ SpectralODFPhase::SpectralODFPhase(int fftSize, bool weighted, bool normalize) :
   _normalize( normalize )
 {
   
-  DEBUG("SPECTRALODFPHASE: Constructor fftSize: " << _fftSize);
+  LOUDIA_DEBUG("SPECTRALODFPHASE: Constructor fftSize: " << _fftSize);
   
   setup();
 }
@@ -43,18 +43,18 @@ SpectralODFPhase::~SpectralODFPhase() {}
 
 void SpectralODFPhase::setup() {
   // Prepare the buffers
-  DEBUG("SPECTRALODFPHASE: Setting up...");
+  LOUDIA_DEBUG("SPECTRALODFPHASE: Setting up...");
 
   _unwrap.setup();
 
   reset();
 
-  DEBUG("SPECTRALODFPHASE: Finished set up...");
+  LOUDIA_DEBUG("SPECTRALODFPHASE: Finished set up...");
 }
 
 
 void SpectralODFPhase::process(const MatrixXC& fft, MatrixXR* odfValue) {
-  DEBUG("SPECTRALODFPHASE: Processing windowed");
+  LOUDIA_DEBUG("SPECTRALODFPHASE: Processing windowed");
   const int rows = fft.rows();
   
   if ( rows < 3 ) {
@@ -65,11 +65,11 @@ void SpectralODFPhase::process(const MatrixXC& fft, MatrixXR* odfValue) {
   
   _unwrap.process(fft.cwise().angle(), &_unwrappedAngle);
 
-  DEBUG("SPECTRALODFPHASE: Processing unwrapped");
+  LOUDIA_DEBUG("SPECTRALODFPHASE: Processing unwrapped");
   
   phaseDeviation(fft, _unwrappedAngle, odfValue);
   
-  DEBUG("SPECTRALODFPHASE: Finished Processing");
+  LOUDIA_DEBUG("SPECTRALODFPHASE: Finished Processing");
 }
 
 void SpectralODFPhase::phaseDeviation(const MatrixXC& spectrum, const MatrixXR& spectrumArg, MatrixXR* odfValue) {
