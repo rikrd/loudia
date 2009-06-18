@@ -25,6 +25,7 @@ def configure(conf):
         conf.env['option_debug'] = Options.options.debug
         conf.env['option_no_python_bindings'] = Options.options.no_python_bindings
         conf.env['option_cpptests'] = Options.options.cpptests
+        conf.env['CPPPATH'] += [ '/home/download/dev/eigen2' ]
 
         conf.sub_config('src')
 
