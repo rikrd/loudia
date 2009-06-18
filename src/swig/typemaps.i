@@ -230,7 +230,7 @@
          MatrixXR* {
 
   // prepare resulting array
-  int dims[] = {$1->rows(), $1->cols()};
+  npy_intp dims[] = {$1->rows(), $1->cols()};
   PyObject * out_array = PyArray_SimpleNew(2, dims, PyArray_FLOAT);
 
   if (out_array == NULL){
@@ -257,7 +257,7 @@
          MatrixXI* {
 
   // prepare resulting array
-  int dims[] = {$1->rows(), $1->cols()};
+  npy_intp dims[] = {$1->rows(), $1->cols()};
   PyObject * out_array = PyArray_SimpleNew(2, dims, PyArray_INT);
 
   if (out_array == NULL){
@@ -284,7 +284,7 @@
          MatrixXC* {
 
   // prepare resulting array
-  int dims[] = {$1->rows(), $1->cols()};
+  npy_intp dims[] = {$1->rows(), $1->cols()};
   PyObject * out_array = PyArray_SimpleNew(2, dims, PyArray_CFLOAT);
 
   if (out_array == NULL){
