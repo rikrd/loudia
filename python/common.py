@@ -63,10 +63,10 @@ def draw_onsets(onsets):
 def get_framer_audio(filename, size, hop):
     from scikits import audiolab
     
-    loader = audiolab.sndfile(filename)
-    sr = loader.get_sampleRate()
-    nframes = loader.get_nframes()
-    nchannels = loader.get_channels()
+    loader = audiolab.Sndfile(filename)
+    sr = loader.samplerate
+    nframes = loader.nframes
+    nchannels = loader.channels
 
     framer = framer_audio(loader, size, hop)
     
@@ -76,8 +76,8 @@ def framer_audio(loader, size, hop):
     result = []
     cursor = 0L
 
-    nchannels = loader.get_channels()
-    nframes = loader.get_nframes()
+    nchannels = loader.channels
+    nframes = loader.nframes
     samples = scipy.zeros((size, nchannels))
     
     while cursor < nframes:
