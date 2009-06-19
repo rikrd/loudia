@@ -24,10 +24,17 @@
 using namespace std;
 using namespace Eigen;
 
-VoiceActivityDetection::VoiceActivityDetection(Real sampleRate,
-                                               int lowBand, int highBand,
-                                               int memorySize)
-  : _sampleRate(sampleRate), _lowBand(lowBand), _highBand(highBand), _memorySize(memorySize) {
+VoiceActivityDetection::VoiceActivityDetection(int lowBand, int highBand,
+                                               Real sampleRate,
+                                               int fftSize,
+                                               int memorySize) : 
+  _lowBand(lowBand),
+  _highBand(highBand),
+  _sampleRate(sampleRate),
+  _fftSize(fftSize),
+  _memorySize(memorySize),
+  _barkBands(lowBand, highBand, sampleRate, fftSize)
+{
 
   LOUDIA_DEBUG("VoiceActivityDetection: Constructor");
 
@@ -47,6 +54,11 @@ void VoiceActivityDetection::setup(){
   _memory = MatrixXR::Zero(_memorySize, _highBand - _lowBand + 1);
   _currentMemoryPos = 0;
   
+  _barkBands.setSampleRate(_sampleRate, false);
+  _barkBands.setLowBand(_lowBand, false);
+  _barkBands.setHighBand(_highBand, false);
+  _barkBands.setup();
+  
   LOUDIA_DEBUG("VoiceActivityDetection: Finished set up...");
 }
 
@@ -54,31 +66,14 @@ void VoiceActivityDetection::process(const MatrixXR& frames, MatrixXR* vad){
   const int cols = frames.cols();
   const int rows = frames.rows();
   
-  //cout << "vad resize " << rows << endl;
-
   vad->resize(rows, 1);
 
-  RowXR startFreqs(26);
-  startFreqs << 0, 20, 100, 200, 300, 400, 510, 630, 770, 920, 1080, 1270, 1480, 1720, 2000, 2320, 2700, 3150, 3700, 4400, 5300, 6400, 7700, 9500, 12000, 15500;
-  
-  int nbands = _highBand - _lowBand + 1;
-  RowXI startBins = ((startFreqs.segment(_lowBand, nbands+1) / _sampleRate) * (cols-1)*2).cast<int>();
-
-  RowXR bbands(nbands);
-
-  //cout << "framesize " << rows << " - " << cols << endl;
-
   for (int i=0; i < rows; i++){
-    //cout << "loop" << i << endl;
     // compute barkbands
-    for (int b=0; b<nbands; b++) {
-      //cout << " - " << startBins[b] << " " << startBins[b+1] << flush;
-      bbands[b] = frames.block(i, startBins[b], 1, startBins[b+1]-startBins[b]).cwise().square().sum();
-    }
-    //cout << bbands << endl;
-    
+    _barkBands.process(frames, &_bands);
+
     // copy frame into memory
-    _memory.row(_currentMemoryPos) = bbands;
+    _memory.row(_currentMemoryPos) = _bands;
 
     _currentMemoryPos = (_currentMemoryPos + 1) % _memorySize;
 
@@ -91,4 +86,5 @@ void VoiceActivityDetection::process(const MatrixXR& frames, MatrixXR* vad){
 }
 
 void VoiceActivityDetection::reset(){
+  _barkBands.reset();
 }

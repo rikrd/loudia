@@ -22,6 +22,7 @@
 #include "Typedefs.h"
 #include "Debug.h"
 
+#include "BarkBands.h"
 
 /**
  * WARNING: the process() method is NOT re-entrant.
@@ -29,18 +30,23 @@
 class VoiceActivityDetection {
 
 protected:
-  Real _sampleRate;
   int _lowBand, _highBand;
+  Real _sampleRate;
+  int _fftSize;
   MatrixXR _memory;
   int _currentMemoryPos;
   int _memorySize;
+
+  BarkBands _barkBands;
+  MatrixXR _bands;
 
   int _halfSize;
     
 
 public:
-  VoiceActivityDetection(Real sampleRate = 44100,
-                         int lowBand = 4, int highBand = 16,
+  VoiceActivityDetection(int lowBand = 4, int highBand = 16,
+                         Real sampleRate = 44100,
+                         int fftSize = 1024,
                          int memorySize = 12);
   ~VoiceActivityDetection();
   
@@ -51,17 +57,33 @@ public:
 
 
   // Parameters
+  int lowBand() const { return _lowBand; }
+  void setLowBand(int lowBand, bool callSetup = true ) { _lowBand = lowBand; if ( callSetup ) setup(); }
+
+  int highBand() const { return _highBand; }
+  void setHighBand(int highBand, bool callSetup = true ) { _highBand = highBand; if ( callSetup ) setup(); }
+
   Real sampleRate() const { return _sampleRate; }
-  void setSampleRate(Real sampleRate) { _sampleRate = sampleRate; }
+  void setSampleRate(Real sampleRate, bool callSetup = true ) { _sampleRate = sampleRate; if ( callSetup ) setup(); }
 
-  Real lowBand() const { return _lowBand; }
-  void setLowBand(Real lowBand) { _lowBand = lowBand; }
+  int memorySize() const { return _memorySize; }
+  void setMemorySize(int memorySize, bool callSetup = true ) { _memorySize = memorySize; if ( callSetup ) setup(); }
 
-  Real highBand() const { return _highBand; }
-  void setHighBand(Real highBand) { _highBand = highBand; }
+  /**
+     Returns the size of the FFT to be performed.  The default is 1024.
+     
+     @sa setFftSize()
+  */
+  int fftSize() const { return _fftSize; };
 
-  Real memorySize() const { return _memorySize; }
-  void setMemorySize(Real memorySize) { _memorySize = memorySize; }
+  /**
+     Specifies the @a size of the FFT to be performed.
+     The given @a size must be higher than 0.
+     Note that if @a size is a power of 2 will perform faster.
+     
+     @sa fftSize()
+  */
+  void setFftSize( int size, bool callSetup = true ) { _fftSize = size; if ( callSetup ) setup(); }
 
 };
 
