@@ -68,6 +68,7 @@ import_array();
 #include "PitchSaliency.h"
 #include "PitchACF.h"
 #include "PitchInverseProblem.h"
+#include "VoiceActivityDetection.h"
 
 #include "MelScales.h"
 #include "Utils.h"
@@ -111,6 +112,7 @@ import_array();
 %include "PitchSaliency.h"
 %include "PitchACF.h"
 %include "PitchInverseProblem.h"
+%include "VoiceActivityDetection.h"
 
 %include "MelScales.h"
 %include "Utils.h"
