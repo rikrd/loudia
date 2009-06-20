@@ -39,6 +39,8 @@ def configure(conf):
         
         conf.check_cfg(package='samplerate', uselib_store='SAMPLERATE', mandatory=True)
 
+        conf.env.append_value('CPPPATH_EIGEN', '/home/rmarxer/dev/eigen2')
+        
         if conf.env['option_debug']:
                 conf.env.append_value('CXXFLAGS', '-Wall  -O3 -fPIC -msse2')
         else:
@@ -55,10 +57,10 @@ def configure(conf):
 def build(bld):
         obj = bld.new_task_gen(
                 features = 'cxx cshlib',
-                uselib = 'FFTW3 FFMPEG SAMPLERATE',
+                uselib = 'FFTW3 FFMPEG SAMPLERATE EIGEN',
                 target = LIBNAME,
-                includes = '. ../externals',
                 export_incdirs = '.',
+                includes = '.',
                 name         = LIBNAME,
                 vnum         = LIBVERSION
         )
