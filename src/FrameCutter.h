@@ -39,6 +39,7 @@ protected:
   int _frameSize;
   int _hopSize;
   Real _defaultValue;
+  int _firstSamplePosition;
 
   int _indexWriter;
   int _availableToWrite;
@@ -65,7 +66,7 @@ public:
 
      @param hopSize the hop size of the frame cutter
   */
-  FrameCutter(int maxInputSize = 1024, int frameSize = 1024, int hopSize = -1, Real defaultValue = 0.0);
+  FrameCutter(int maxInputSize = 1024, int frameSize = 1024, int hopSize = -1, const int firstSamplePosition = 0, Real defaultValue = 0.0);
 
   /**
      Destroys the algorithm and frees its resources.
@@ -130,6 +131,9 @@ public:
      Specifies the hop @a size of the algorithm.
   */
   void setHopSize( int size, bool callSetup = true ) { _hopSize = size; if (callSetup) setup(); };
+
+  void setFirstSamplePosition( int position, const bool callSetup = true ) { _firstSamplePosition = position; if ( callSetup ) setup(); };
+  int firstSamplePosition() const { return _firstSamplePosition; };  
 
 };
 

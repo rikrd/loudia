@@ -21,7 +21,7 @@
 #include <iostream>
 using namespace std;
 
-FrameCutter::FrameCutter( const int maxInputSize, const int frameSize, const int hopSize, const Real defaultValue ) :
+FrameCutter::FrameCutter( const int maxInputSize, const int frameSize, const int hopSize, const int firstSamplePosition, const Real defaultValue ) :
   _defaultValue(defaultValue)
 {
   LOUDIA_DEBUG("FRAMECUTTER: Constructing...");
@@ -37,6 +37,10 @@ FrameCutter::FrameCutter( const int maxInputSize, const int frameSize, const int
   setHopSize(hopSize, false);
 
   LOUDIA_DEBUG("FRAMECUTTER: Set the hop size...");
+
+  setFirstSamplePosition(firstSamplePosition, false);
+
+  LOUDIA_DEBUG("FRAMECUTTER: Set first sample position...");
 
   setup();
 }
@@ -54,9 +58,9 @@ void FrameCutter::setup(){
   _buffer.resize(bufferSize);
   _buffer.setConstant(_defaultValue);
   
-  _indexWriter = 0;
-  _availableToWrite = _frameSize;
-  _availableToRead = 0;
+  _indexWriter = _firstSamplePosition;
+  _availableToWrite = _frameSize - _firstSamplePosition;
+  _availableToRead = _firstSamplePosition;
 
   // TODO: check if this is the right way to know the maxFrameCount
   _maxFrameCount = _maxInputSize / hopSize() + 1;
