@@ -33,6 +33,8 @@ import_array();
 #include <Eigen/Core>
 #include <Eigen/Array>
 
+#include "AudioLoader.h"
+#include "FrameCutter.h"
 #include "Filter.h"
 #include "DCT.h"
 #include "Window.h"
@@ -77,6 +79,8 @@ import_array();
 
 %include "typemaps.i"
 
+%include "AudioLoader.h"
+%include "FrameCutter.h"
 %include "Filter.h"
 %include "DCT.h"
 %include "Window.h"

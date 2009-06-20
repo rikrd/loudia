@@ -40,7 +40,7 @@ def configure(conf):
         conf.check_cfg(package='samplerate', uselib_store='SAMPLERATE', mandatory=True)
 
         if conf.env['option_debug']:
-                conf.env.append_value('CXXFLAGS', '-Wall  -O3 -fPIC -msse2 -DLOUDIA_DEBUG')
+                conf.env.append_value('CXXFLAGS', '-Wall  -O3 -fPIC -msse2')
         else:
                 conf.env.append_value('CXXFLAGS', '-O3 -fPIC -msse2 -DNDEBUG')
                 
@@ -58,7 +58,7 @@ def build(bld):
                 uselib = 'FFTW3 FFMPEG SAMPLERATE',
                 target = LIBNAME,
                 includes = '. ../externals',
-                export_inc_dirs = '.',
+                export_incdirs = '.',
                 name         = LIBNAME,
                 vnum         = LIBVERSION
         )
