@@ -63,17 +63,16 @@ void VoiceActivityDetection::setup(){
 }
 
 void VoiceActivityDetection::process(const MatrixXR& frames, MatrixXR* vad){
-  const int cols = frames.cols();
   const int rows = frames.rows();
   
   vad->resize(rows, 1);
 
   for (int i=0; i < rows; i++){
     // compute barkbands
-    _barkBands.process(frames, &_bands);
+    _barkBands.process(frames.row(0), &_bands);
 
     // copy frame into memory
-    _memory.row(_currentMemoryPos) = _bands;
+    _memory.row(_currentMemoryPos) = _bands.row(0);
 
     _currentMemoryPos = (_currentMemoryPos + 1) % _memorySize;
 
