@@ -25,11 +25,12 @@ def configure(conf):
 def build(bld):
         obj = bld.new_task_gen(
                 features = 'cxx cshlib pyext',
+                uselib = 'EIGEN',
                 source = 'loudia.i',
                 target = '_loudia',
-                swig_flags = '-c++ -python -Wall -w509 -I../../externals -I..',
-                swig_includes = '.. ../../externals',
-                includes = '.. ../../externals',
+                swig_flags = '-c++ -python -Wall -w509 -I..',
+                swig_includes = '..',
+                includes = '..',
                 name         = 'pyloudia',
                 want_libtool = 1,
                 vnum         = '0.1',

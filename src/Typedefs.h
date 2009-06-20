@@ -49,6 +49,10 @@ typedef Eigen::Matrix< Integer, Eigen::Dynamic, 1 > ColXI;
 typedef Eigen::Matrix< Real, Eigen::Dynamic, 1 > ColXR;
 typedef Eigen::Matrix< Complex, Eigen::Dynamic, 1 > ColXC;
 
+typedef ColXI VectorXI;
+typedef ColXR VectorXR;
+typedef ColXC VectorXC;
+
 // Types for matrix values
 typedef Eigen::Matrix< Integer, Eigen::Dynamic, Eigen::Dynamic > MatrixXI;
 typedef Eigen::Matrix< Real, Eigen::Dynamic, Eigen::Dynamic > MatrixXR;
