@@ -58,7 +58,7 @@ def build(bld):
                 uselib = 'FFTW3 FFMPEG SAMPLERATE',
                 target = LIBNAME,
                 includes = '. ../externals',
-                export_inc_dirs = '.',
+                export_incdirs = '.',
                 name         = LIBNAME,
                 vnum         = LIBVERSION
         )
