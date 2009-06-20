@@ -34,7 +34,8 @@ AudioLoader::AudioLoader( const std::string& filename, const int frameSize, int 
   _sampleNumber(0),
   _audioBuffer(0),
   _audioPacketData(0),
-  _finished(false)
+  _finished(false),
+  _sizeRead(0)
 {
   LOUDIA_DEBUG("AUDIOLOADER: Constructing...");
 
@@ -76,9 +77,9 @@ void AudioLoader::setup(){
 
   // Create buffer for input audio data (decoded)
   //_bufferSize = (_inputFrameSize * _channelCount * 3) / 2;
-  _bufferSize = _inputFrameSize;// + FF_INPUT_BUFFER_PADDINGSIZE;
+  _bufferSize = _inputFrameSize;
   delete [] _audioBuffer;
-  _audioBuffer = new sample_type[_bufferSize + FF_INPUT_BUFFER_PADDING_SIZE];
+  _audioBuffer = (sample_type*)av_malloc(_bufferSize + FF_INPUT_BUFFER_PADDING_SIZE);
   _audioBufferSize = 0;
   _audioBufferIndex = 0;
 
@@ -137,7 +138,7 @@ void AudioLoader::process(sample_type *audioLR){
     if(_audioBufferIndex >= _audioBufferSize) {
       /* We have already sent all our data; get more */
       audioSize = decodePacket(_audioBuffer,
-                                _inputFrameSize * sizeof(sample_type));
+                               _inputFrameSize * sizeof(sample_type));
 
       if(audioSize < 0) {
         /* If error, output silence */
@@ -227,9 +228,13 @@ void AudioLoader::closeFile(){
   }
 }
 
+float AudioLoader::progress() const {
+  return (Real)_sizeRead / (Real)_formatContext->duration;
+}
 
 bool AudioLoader::nextPacket(){
   while(av_read_frame(_formatContext, &_packet) >= 0) {
+    _sizeRead += _packet.duration;
     // Is this a packet from the audio stream?
     if( _packet.stream_index == _audioStream ) {
       // We found another packet corresponding to the stream
@@ -256,9 +261,11 @@ int AudioLoader::decodePacket(sample_type* _audioBuffer, int _bufferSize){
   for(;;) {
     while(_audioPacketSize > 0) {
       dataSize = _bufferSize;
+      
+      decodedSize = avcodec_decode_audio2(_audioCodecContext,
+                                          _audioBuffer, &dataSize,
+                                          _audioPacketData, _audioPacketSize);
 
-      decodedSize = avcodec_decode_audio2(_audioCodecContext, _audioBuffer, &dataSize,
-                                   _audioPacketData, _audioPacketSize);
       if(decodedSize < 0) {
 	/* if error, skip frame */
         LOUDIA_WARNING("FFMPEG decoding error. Skipping frame.");
@@ -281,7 +288,7 @@ int AudioLoader::decodePacket(sample_type* _audioBuffer, int _bufferSize){
     }
 
     av_free_packet(&_packet);
-
+    
     _finished = !nextPacket();
     if (_finished) {
       // We have finished
