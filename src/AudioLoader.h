@@ -78,6 +78,8 @@ private:
 
   int _channel;
 
+  int _sizeRead;
+
   void loadFile();
   void closeFile();
 
@@ -117,6 +119,7 @@ public:
   void setChannel( int channel, const bool callSetup = true ) { _channel = channel; if ( callSetup ) setup(); };
   int channel() const { return _channel; };  
 
+  float progress() const;
   bool finished() const { return _finished; };
 };
 
