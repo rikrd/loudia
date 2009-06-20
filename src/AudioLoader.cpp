@@ -229,12 +229,17 @@ void AudioLoader::closeFile(){
 }
 
 float AudioLoader::progress() const {
-  return (Real)_sizeRead / (Real)_formatContext->duration;
+  // TODO: check if there is a more correct way
+  Real fileSize = _formatContext->file_size;
+  if (fileSize == 0) return -1;
+  
+  return (Real)_sizeRead / fileSize;
 }
 
 bool AudioLoader::nextPacket(){
   while(av_read_frame(_formatContext, &_packet) >= 0) {
-    _sizeRead += _packet.duration;
+    _sizeRead += _packet.size;
+
     // Is this a packet from the audio stream?
     if( _packet.stream_index == _audioStream ) {
       // We found another packet corresponding to the stream
@@ -244,9 +249,10 @@ bool AudioLoader::nextPacket(){
       // This packet does not correspond to the stream
       av_free_packet(&_packet);
     }
-
+    
   }
 
+  _sizeRead = _formatContext->file_size;
   // There were no packets left
   return false;
 }
