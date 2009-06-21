@@ -79,6 +79,7 @@ private:
   int _channel;
 
   int _sizeRead;
+  int _currentTime;
 
   void loadFile();
   void closeFile();
@@ -119,7 +120,10 @@ public:
   void setChannel( int channel, const bool callSetup = true ) { _channel = channel; if ( callSetup ) setup(); };
   int channel() const { return _channel; };  
 
-  float progress() const;
+  Real progress() const;
+  Real currentTime() const;
+  void seek( Real time );
+  
   bool finished() const { return _finished; };
 };
 

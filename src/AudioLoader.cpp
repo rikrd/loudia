@@ -212,6 +212,8 @@ void AudioLoader::loadFile(){
     LOUDIA_ERROR("AUDIOLOADER: Unable to load codec!");
     return;
   }
+
+  _currentTime = 0;
 }
 
 void AudioLoader::closeFile(){
@@ -228,7 +230,14 @@ void AudioLoader::closeFile(){
   }
 }
 
-float AudioLoader::progress() const {
+void AudioLoader::seek( Real time ) {
+  AVStream *stream = _formatContext->streams[_audioStream];
+  int64_t pts = av_rescale((int64_t)time, stream->time_base.den, stream->time_base.num);
+  if ( av_seek_frame(_formatContext, _audioStream, pts, AVSEEK_FLAG_ANY & AVSEEK_FLAG_BACKWARD) < 0 )
+    LOUDIA_WARNING("AUDIOLOADER: Unable to seek.");
+}
+
+Real AudioLoader::progress() const {
   // TODO: check if there is a more correct way
   Real fileSize = _formatContext->file_size;
   if (fileSize == 0) return -1;
@@ -236,12 +245,18 @@ float AudioLoader::progress() const {
   return (Real)_sizeRead / fileSize;
 }
 
+Real AudioLoader::currentTime() const {
+  AVStream *stream = _formatContext->streams[_audioStream];  
+  return _currentTime * stream->time_base.num / stream->time_base.den;
+}
+
 bool AudioLoader::nextPacket(){
   while(av_read_frame(_formatContext, &_packet) >= 0) {
-    _sizeRead += _packet.size;
-
     // Is this a packet from the audio stream?
     if( _packet.stream_index == _audioStream ) {
+      _sizeRead = _packet.pos;
+      _currentTime = _packet.pts;
+      
       // We found another packet corresponding to the stream
       _packetNumber++;
       return true;
@@ -253,6 +268,7 @@ bool AudioLoader::nextPacket(){
   }
 
   _sizeRead = _formatContext->file_size;
+  
   // There were no packets left
   return false;
 }
