@@ -21,7 +21,7 @@
 #include <iostream>
 using namespace std;
 
-AudioLoader::AudioLoader( const std::string& filename, const int frameSize, int channel ) :
+AudioLoader::AudioLoader( const std::string& filename, const int frameSize, int channel, Real loadDuration ) :
   _inputFrameSize(AVCODEC_MAX_AUDIO_FRAME_SIZE),
   _formatContext(0),
   _audioCodecContext(0),
@@ -29,9 +29,6 @@ AudioLoader::AudioLoader( const std::string& filename, const int frameSize, int 
   _sampleRate(0),
   _channelCount(0),
   _buffer(0),
-  _packetNumber(0),
-  _frameNumber(0),
-  _sampleNumber(0),
   _audioBuffer(0),
   _audioPacketData(0),
   _finished(false),
@@ -49,11 +46,15 @@ AudioLoader::AudioLoader( const std::string& filename, const int frameSize, int 
 
   setFrameSize(frameSize, false);
 
-  LOUDIA_DEBUG("AUDIOLOADER: Set the framesize...");
+  LOUDIA_DEBUG("AUDIOLOADER: Set the frame size...");
 
   setChannel(channel, false);
 
   LOUDIA_DEBUG("AUDIOLOADER: Set the channel...");
+
+  setLoadDuration(loadDuration, false);
+
+  LOUDIA_DEBUG("AUDIOLOADER: Set the load size...");
 
   // If the filename has been passed then we setup
   if ( _filename != "" ){
@@ -71,6 +72,15 @@ void AudioLoader::setup(){
   closeFile();
   loadFile();
 
+  // Set the load duration in timebase
+  if ( _loadDuration < 0 ) {
+    _loadDurationInTimeBase = -1;
+  } else {
+    AVStream *stream = _formatContext->streams[_audioStream];
+    _loadDurationInTimeBase = av_rescale(_loadDuration, stream->time_base.den, stream->time_base.num);
+  }
+
+    
   // Create buffer for output audio data
   delete [] _buffer;
   _buffer = new sample_type[_frameSize * _channelCount];
@@ -161,7 +171,6 @@ void AudioLoader::process(sample_type *audioLR){
     len -= len1;
     stream += len1/sizeof(sample_type);
     _audioBufferIndex += len1;
-    _sampleNumber += len1/sizeof(sample_type);
   }
 }
 
@@ -214,6 +223,7 @@ void AudioLoader::loadFile(){
   }
 
   _currentTime = 0;
+  _loadedDuration = 0;
 }
 
 void AudioLoader::closeFile(){
@@ -231,13 +241,19 @@ void AudioLoader::closeFile(){
 }
 
 void AudioLoader::seek( Real time ) {
+  if (_audioCodecContext == 0) {
+    LOUDIA_ERROR("The algorithm must be set up before hand calling setup().");
+  }
+
   AVStream *stream = _formatContext->streams[_audioStream];
   int64_t pts = av_rescale((int64_t)time, stream->time_base.den, stream->time_base.num);
   if ( av_seek_frame(_formatContext, _audioStream, pts, AVSEEK_FLAG_ANY & AVSEEK_FLAG_BACKWARD) < 0 )
     LOUDIA_WARNING("AUDIOLOADER: Unable to seek.");
+
+  _loadedDuration = 0;
 }
 
-Real AudioLoader::progress() const {
+Real AudioLoader::fileProgress() const {
   // TODO: check if there is a more correct way
   Real fileSize = _formatContext->file_size;
   if (fileSize == 0) return -1;
@@ -245,21 +261,42 @@ Real AudioLoader::progress() const {
   return (Real)_sizeRead / fileSize;
 }
 
-Real AudioLoader::currentTime() const {
+Real AudioLoader::loadProgress() const {
+  if (_audioCodecContext == 0) return 0;
+
   AVStream *stream = _formatContext->streams[_audioStream];  
+
+  Real totalDuration;
+  
+  Real currentDuration = (Real)_loadedDuration * stream->time_base.num / stream->time_base.den;
+  
+  if (_loadDurationInTimeBase < 0) {
+    totalDuration = (Real)stream->duration * stream->time_base.num / stream->time_base.den;
+  }else{
+    totalDuration = (Real)_loadDurationInTimeBase * stream->time_base.num / stream->time_base.den;
+  }
+
+  return currentDuration / totalDuration;
+
+}
+
+Real AudioLoader::currentTime() const {
+  if (_audioCodecContext == 0) return 0;
+
+  AVStream *stream = _formatContext->streams[_audioStream];  
+  
   return _currentTime * stream->time_base.num / stream->time_base.den;
 }
 
-bool AudioLoader::nextPacket(){
-  while(av_read_frame(_formatContext, &_packet) >= 0) {
+bool AudioLoader::nextPacket(){  
+  while(av_read_frame(_formatContext, &_packet) >= 0) {    
     // Is this a packet from the audio stream?
-    if( _packet.stream_index == _audioStream ) {
+    if( _packet.stream_index == _audioStream && ((_loadDurationInTimeBase < 0) || (_loadedDuration < _loadDurationInTimeBase)) ) {
       _sizeRead = _packet.pos;
       _currentTime = _packet.pts;
-      
-      // We found another packet corresponding to the stream
-      _packetNumber++;
+      _loadedDuration += _packet.duration;
       return true;
+      
     } else {
       // This packet does not correspond to the stream
       av_free_packet(&_packet);
@@ -294,8 +331,6 @@ int AudioLoader::decodePacket(sample_type* _audioBuffer, int _bufferSize){
 	_audioPacketSize = 0;
 	break;
       }
-
-      _frameNumber += decodedSize/sizeof(sample_type);
 
       _audioPacketData += decodedSize;
       _audioPacketSize -= decodedSize;

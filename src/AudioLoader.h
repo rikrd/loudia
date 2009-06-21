@@ -62,10 +62,6 @@ private:
   
   sample_type *_buffer;
 
-  int _packetNumber;
-  int _frameNumber;
-  int _sampleNumber;
-
   int _bufferSize;
   sample_type* _audioBuffer;
   unsigned int _audioBufferSize;
@@ -78,9 +74,13 @@ private:
 
   int _channel;
 
-  int _sizeRead;
-  int _currentTime;
-
+  int64_t _sizeRead;
+  int64_t _currentTime;
+  
+  Real _loadDuration;
+  int64_t _loadDurationInTimeBase;
+  int64_t _loadedDuration;
+  
   void loadFile();
   void closeFile();
 
@@ -98,7 +98,7 @@ private:
 
 public:
   //Audio loader class
-  AudioLoader(const std::string& filename = "", const int frameSize = 1024, int channel = ALL);
+  AudioLoader(const std::string& filename = "", const int frameSize = 1024, int channel = ALL, Real loadTime = -1.0);
   ~AudioLoader();
 
   // Prepare a frame for output (a frame can be filled by a fraction, one or several packets)
@@ -120,7 +120,11 @@ public:
   void setChannel( int channel, const bool callSetup = true ) { _channel = channel; if ( callSetup ) setup(); };
   int channel() const { return _channel; };  
 
-  Real progress() const;
+  void setLoadDuration( Real duration, const bool callSetup = true ) { _loadDuration = duration; if ( callSetup ) setup(); };
+  Real loadDuration() const { return _loadDuration; };
+
+  Real loadProgress() const;
+  Real fileProgress() const;
   Real currentTime() const;
   void seek( Real time );
   
