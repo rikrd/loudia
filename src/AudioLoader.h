@@ -126,6 +126,8 @@ public:
   Real loadProgress() const;
   Real fileProgress() const;
   Real currentTime() const;
+  Real totalTime() const;
+
   void seek( Real time );
   
   bool finished() const { return _finished; };

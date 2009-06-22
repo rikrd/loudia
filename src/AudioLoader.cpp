@@ -121,6 +121,7 @@ void AudioLoader::process(MatrixXR *audio){
 
   case MIX:
     audio->resize(_frameSize, 1);
+    audio->setZero();
     for (int i=0, j=0; i < _frameSize; i++, j+=_channelCount) {
       for (int k=0; k < _channelCount; k++){
         (*audio)(i, 0) += scale(_buffer[j+k]) / (Real)_channelCount;
@@ -131,7 +132,7 @@ void AudioLoader::process(MatrixXR *audio){
   default:
     audio->resize(_frameSize, 1);
     for (int i=0, j=0; i < _frameSize; i++, j+=_channelCount) {
-      (*audio)(i, 0) += scale(_buffer[j+_channel]);
+      (*audio)(i, 0) = scale(_buffer[j+_channel]);
     }
     break;
   }
@@ -288,6 +289,14 @@ Real AudioLoader::currentTime() const {
   return _currentTime * stream->time_base.num / stream->time_base.den;
 }
 
+Real AudioLoader::totalTime() const {
+  if (_audioCodecContext == 0) return 0;
+
+  AVStream *stream = _formatContext->streams[_audioStream];  
+  
+  return stream->duration * stream->time_base.num / stream->time_base.den;
+}
+
 bool AudioLoader::nextPacket(){  
   while(av_read_frame(_formatContext, &_packet) >= 0) {    
     // Is this a packet from the audio stream?
@@ -303,8 +312,6 @@ bool AudioLoader::nextPacket(){
     }
     
   }
-
-  _sizeRead = _formatContext->file_size;
   
   // There were no packets left
   return false;
