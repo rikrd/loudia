@@ -123,7 +123,7 @@ void SubtitleLoader::process(MatrixXR *samples){
     samples->col(0).segment(beginInFrame, endInFrame - beginInFrame).setOnes();
     
     // The current subtitle is before the current frame
-    if ((end * _sampleRate) <= (_streamIndex + _frameSize)) {
+    if (end <= (_streamIndex + _frameSize)) {
       _subtitleIndex++;
     } else {
       break;
