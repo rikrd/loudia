@@ -17,7 +17,9 @@ def set_options(opt):
 def configure(conf):
 	conf.check_tool('compiler_cxx')
         conf.check_cfg(atleast_pkgconfig_version='0.0.0')
-        conf.check_cfg(package='fftw3', uselib_store='FFTW3', errmsg='FFTW not found. No FFT support.')
+        conf.check_cfg(package='fftw3 fftw3f fftw3l', uselib_store='FFTW3', errmsg='FFTW not found. No FFT support.')
+
+        conf.env.append_value('LINKFLAGS_FFTW3', '-lfftw3 -lfftw3f -lfftw3l')
 
         """
 	conf.check_cc(fragment='''extern "C" {
@@ -38,8 +40,11 @@ def configure(conf):
         """
 
         conf.env.append_value('LINKFLAGS_BOOSTREGEX', '-lboost_regex')
+        
+        conf.env.append_value('LINKFLAGS_FFMPEG', '-lavcodec -lavformat')
 
         conf.check_cfg(package='samplerate', uselib_store='SAMPLERATE', mandatory=True)
+        conf.env.append_value('LINKFLAGS_SAMPLERATE', '-lsamplerate')
 
         conf.env.append_value('CPPPATH_EIGEN', '/home/rmarxer/dev/eigen2')
         
@@ -47,8 +52,8 @@ def configure(conf):
                 conf.env.append_value('CXXFLAGS', '-Wall  -O3 -fPIC -msse2')
         else:
                 conf.env.append_value('CXXFLAGS', '-O3 -fPIC -msse2 -DNDEBUG')
-                
-        conf.env.append_value('LINKFLAGS', '-lfftw3f -lsamplerate -lavcodec -lavformat')
+
+        conf.env.append_value('LINKFLAGS', '-lm')
         
         if not conf.env['option_no_python_bindings']:
                 conf.sub_config('swig')

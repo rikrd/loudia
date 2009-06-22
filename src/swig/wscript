@@ -25,7 +25,7 @@ def configure(conf):
 def build(bld):
         obj = bld.new_task_gen(
                 features = 'cxx cshlib pyext',
-                uselib = 'EIGEN',
+                uselib = 'FFTW3 FFMPEG SAMPLERATE EIGEN BOOSTREGEX',
                 source = 'loudia.i',
                 target = '_loudia',
                 swig_flags = '-c++ -python -Wall -w509 -I..',
