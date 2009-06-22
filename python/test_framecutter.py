@@ -9,7 +9,7 @@ frameSize = 5
 hopSize = 3
 
 # Loudia's solution # --------------------------------- #
-window = loudia.FrameCutter(inputSize, frameSize, hopSize, 9999)
+window = loudia.FrameCutter(inputSize, frameSize, hopSize, 5)
 
 inputFrames = 5
 streamFrames = scipy.arange(inputFrames*inputSize).reshape((inputFrames, inputSize)).T

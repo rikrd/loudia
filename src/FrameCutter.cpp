@@ -58,6 +58,10 @@ void FrameCutter::setup(){
   _buffer.resize(bufferSize);
   _buffer.setConstant(_defaultValue);
   
+  if ((_firstSamplePosition < 0) || (_firstSamplePosition > _frameSize - 1)) {
+    LOUDIA_ERROR("FRAMECUTTER: The first sample position must be set between 0 and frameSize-1.");
+  }
+  
   _indexWriter = _firstSamplePosition;
   _availableToWrite = _frameSize - _firstSamplePosition;
   _availableToRead = _firstSamplePosition;
