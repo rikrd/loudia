@@ -33,6 +33,7 @@ import_array();
 #include <Eigen/Core>
 #include <Eigen/Array>
 
+#include "SubtitleLoader.h"
 #include "AudioLoader.h"
 #include "FrameCutter.h"
 #include "Filter.h"
@@ -79,6 +80,7 @@ import_array();
 
 %include "typemaps.i"
 
+%include "SubtitleLoader.h"
 %include "AudioLoader.h"
 %include "FrameCutter.h"
 %include "Filter.h"

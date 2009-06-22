@@ -36,7 +36,9 @@ def configure(conf):
                       okmsg= 'ok',
                       errmsg='FFMPEG not found. No audio loading support.')
         """
-        
+
+        conf.env.append_value('LINKFLAGS_BOOSTREGEX', '-lboost_regex')
+
         conf.check_cfg(package='samplerate', uselib_store='SAMPLERATE', mandatory=True)
 
         conf.env.append_value('CPPPATH_EIGEN', '/home/rmarxer/dev/eigen2')
@@ -57,7 +59,7 @@ def configure(conf):
 def build(bld):
         obj = bld.new_task_gen(
                 features = 'cxx cshlib',
-                uselib = 'FFTW3 FFMPEG SAMPLERATE EIGEN',
+                uselib = 'FFTW3 FFMPEG SAMPLERATE EIGEN BOOSTREGEX',
                 target = LIBNAME,
                 export_incdirs = '.',
                 includes = '.',
