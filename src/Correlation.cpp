@@ -26,6 +26,22 @@
 using namespace std;
 using namespace Eigen;
 
+Correlation::Correlation()
+{
+  LOUDIA_DEBUG("CORRELATION: Construction inputSizeA: " << inputSizeA
+        << " inputSizeB: " << inputSizeB
+        << " minLag: " << minLag
+        << " maxLag: " << maxLag);
+
+  setInputSizeA( 1024, false );
+  setInputSizeB( 1024, false );
+  setMinLag( -std::numeric_limits<int>::max(), false );
+  setMaxLag( std::numeric_limits<int>::max(), false );
+  setUseFft( (_maxLag - _minLag) > 128, false );
+
+  setup();
+}
+
 Correlation::Correlation(int inputSizeA, int inputSizeB, int maxLag, int minLag)
 {
   LOUDIA_DEBUG("CORRELATION: Construction inputSizeA: " << inputSizeA
