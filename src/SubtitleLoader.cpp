@@ -103,7 +103,9 @@ void SubtitleLoader::process(MatrixXR *samples){
       _finished = true;
       return;
     }
-    
+
+    // TODO: here the sampleRate may be rounded and thus the stream will 
+    // fall out of sync
     int begin = (_timestamps[_subtitleIndex][0] - _offset) * _sampleRate;
     int end = (_timestamps[_subtitleIndex][1] - _offset) * _sampleRate;
     
@@ -123,7 +125,8 @@ void SubtitleLoader::process(MatrixXR *samples){
     samples->col(0).segment(beginInFrame, endInFrame - beginInFrame).setOnes();
     
     // The current subtitle is before the current frame
-    if (end <= (_streamIndex + _frameSize)) {
+    if (end < _streamIndex) {
+      //cout << endl << "Passing the timestamp: " << _timestamps[_subtitleIndex][0] << "-" << _timestamps[_subtitleIndex][1] << " (" << begin << "-" << end << ") " << " since streamIndex=" << _streamIndex << " and frameSize=" << _frameSize << " and sampleRate=" << _sampleRate << endl;
       _subtitleIndex++;
     } else {
       break;
