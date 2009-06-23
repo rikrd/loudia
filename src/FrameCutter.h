@@ -134,7 +134,8 @@ public:
 
   void setFirstSamplePosition( int position, const bool callSetup = true ) { _firstSamplePosition = position; if ( callSetup ) setup(); };
   int firstSamplePosition() const { return _firstSamplePosition; };  
-
+  
+  int maxFrameCount() const;
 };
 
 #endif //#ifndef FRAMECUTTER_H

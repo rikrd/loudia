@@ -67,7 +67,7 @@ void FrameCutter::setup(){
   _availableToRead = _firstSamplePosition;
 
   // TODO: check if this is the right way to know the maxFrameCount
-  _maxFrameCount = _maxInputSize / hopSize() + 1;
+  _maxFrameCount = maxFrameCount();
 
   _row = VectorXR::Zero(_frameSize);
 }
@@ -142,4 +142,8 @@ void FrameCutter::reset(){
   _indexWriter = 0;
   _availableToWrite = _frameSize;
   _availableToRead = 0;
+}
+
+int FrameCutter::maxFrameCount() const {
+  return _maxInputSize / hopSize() + 1; 
 }
