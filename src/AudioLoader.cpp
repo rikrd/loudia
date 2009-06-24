@@ -119,7 +119,7 @@ void AudioLoader::process(MatrixXR *audio){
     
     break;
 
-  case MIX:
+  case MONOMIX:
     audio->resize(_frameSize, 1);
     audio->setZero();
     for (int i=0, j=0; i < _frameSize; i++, j+=_channelCount) {
