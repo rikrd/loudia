@@ -310,7 +310,7 @@
 %typemap(argout) 
          Real* {
 
-  $result = SWIG_Python_AppendOutput($result, Py_BuildValue("f", $1));
+  $result = SWIG_Python_AppendOutput($result, Py_BuildValue("f", *$1));
 }
 
 
@@ -324,5 +324,5 @@
 %typemap(argout) 
          int* {
 
-  $result = SWIG_Python_AppendOutput($result, Py_BuildValue("i", $1));
+  $result = SWIG_Python_AppendOutput($result, Py_BuildValue("i", *$1));
 }

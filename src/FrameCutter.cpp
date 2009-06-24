@@ -72,7 +72,7 @@ void FrameCutter::setup(){
   _row = VectorXR::Zero(_frameSize);
 }
 
-int FrameCutter::process(const MatrixXR& stream, MatrixXR *frames){
+void FrameCutter::process(const MatrixXR& stream, MatrixXR *frames, int *produced){
   if (stream.cols() != 1) {
     LOUDIA_ERROR("FRAMECUTTER: This algorithm only accepts single channel streams.");
   }
@@ -106,8 +106,8 @@ int FrameCutter::process(const MatrixXR& stream, MatrixXR *frames){
     }
   }
   
-  //(*produced) = framesIndex;
-  return framesIndex;
+  (*produced) = framesIndex;
+  return;
 }
 
 int FrameCutter::read(VectorXR* frame, int release){
