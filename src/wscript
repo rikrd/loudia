@@ -3,6 +3,7 @@
 # Ricard Marxer 2008
 
 import Options
+import os, os.path
 
 LIBNAME = 'loudia'
 LIBVERSION = '0.1-dev'
@@ -12,7 +13,10 @@ def set_options(opt):
 
         opt.sub_options('swig')
         opt.sub_options('tests')
-	
+
+def pkgconf(lib, what = '--cflags'):
+        return os.popen('pkg-config %s %s' % (lib, what)).read().strip()
+
 
 def configure(conf):
 	conf.check_tool('compiler_cxx')
@@ -39,14 +43,19 @@ def configure(conf):
                       errmsg='FFMPEG not found. No audio loading support.')
         """
 
-        conf.env.append_value('LINKFLAGS_BOOSTREGEX', '-lboost_regex')
+        if os.path.exists('/usr/lib/libboost_regex-mt.so'):
+                conf.env.append_value('LINKFLAGS_BOOSTREGEX', '-lboost_regex-mt')
+        else:
+                conf.env.append_value('LINKFLAGS_BOOSTREGEX', '-lboost_regex')
         
-        conf.env.append_value('LINKFLAGS_FFMPEG', '-lavcodec -lavformat')
+        conf.env.append_value('CPPFLAGS_FFMPEG', pkgconf('libavcodec'))
+        conf.env.append_value('LINKFLAGS_FFMPEG', pkgconf('libavcodec', '--libs'))
+        conf.env.append_value('LINKFLAGS_FFMPEG', pkgconf('libavformat', '--libs'))
 
         conf.check_cfg(package='samplerate', uselib_store='SAMPLERATE', mandatory=True)
         conf.env.append_value('LINKFLAGS_SAMPLERATE', '-lsamplerate')
 
-        conf.env.append_value('CPPPATH_EIGEN', '/home/rmarxer/dev/eigen2')
+        conf.env.append_value('CPPPATH_EIGEN', os.environ['CPPPATH_EIGEN'])
         
         if conf.env['option_debug']:
                 conf.env.append_value('CXXFLAGS', '-Wall  -O3 -fPIC -msse2')
