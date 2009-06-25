@@ -85,7 +85,7 @@ public:
      Note that if the output matrix is not of the required size it will be resized, 
      reallocating a new memory space if necessary.
   */  
-  int process(const MatrixXR& stream, MatrixXR* frames);
+  void process(const MatrixXR& stream, MatrixXR* frames, int* produced);
   
   void setup();
   void reset();

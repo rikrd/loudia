@@ -42,8 +42,10 @@ public:
      @sa channel
   */
   enum Channel {    
-    ALL                   = -1 /**< Hold the value until the next sample */,
-    MIX                   = -2 /**< Fastest cardinal sine method */
+    ALL                   = -1 /**< All the cahnnels available */,
+    MONOMIX               = -2 /**< Mono mix of all the channels */,
+    LEFT                  =  0 /**< First channel in the stream (left) */,
+    RIGHT                 =  1 /**< Second channel in the stream (right) */
   };
   
 private:

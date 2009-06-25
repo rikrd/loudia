@@ -9,7 +9,7 @@ frameSize = 5
 hopSize = 3
 
 # Loudia's solution # --------------------------------- #
-window = loudia.FrameCutter(inputSize, frameSize, hopSize, 5)
+window = loudia.FrameCutter(inputSize, frameSize, hopSize, 0)
 
 inputFrames = 5
 streamFrames = scipy.arange(inputFrames*inputSize).reshape((inputFrames, inputSize)).T
@@ -20,7 +20,7 @@ frames = []
 for i in range(inputFrames):
     streamFrame = streamFrames[:, i]
     streamFrame = streamFrame.reshape((inputSize, 1))
-    produced, newFrames = window.process(streamFrame)
+    newFrames, produced = window.process(streamFrame)
 
     frames += list(newFrames[:produced, :])
 
