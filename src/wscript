@@ -43,11 +43,6 @@ def configure(conf):
                       errmsg='FFMPEG not found. No audio loading support.')
         """
 
-        if os.path.exists('/usr/lib/libboost_regex-mt.so'):
-                conf.env.append_value('LINKFLAGS_BOOSTREGEX', '-lboost_regex-mt')
-        else:
-                conf.env.append_value('LINKFLAGS_BOOSTREGEX', '-lboost_regex')
-        
         conf.env.append_value('CPPFLAGS_FFMPEG', pkgconf('libavcodec'))
         conf.env.append_value('LINKFLAGS_FFMPEG', pkgconf('libavcodec', '--libs'))
         conf.env.append_value('LINKFLAGS_FFMPEG', pkgconf('libavformat', '--libs'))
@@ -73,7 +68,7 @@ def configure(conf):
 def build(bld):
         obj = bld.new_task_gen(
                 features = 'cxx cshlib',
-                uselib = 'FFTW3 FFMPEG SAMPLERATE EIGEN BOOSTREGEX',
+                uselib = 'FFTW3 FFMPEG SAMPLERATE EIGEN',
                 target = LIBNAME,
                 export_incdirs = '.',
                 includes = '.',
