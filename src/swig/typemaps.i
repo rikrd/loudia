@@ -20,6 +20,15 @@
 
 %apply float { Real };
 
+%exception {
+  try {
+    $action
+  } catch (LoudiaException e) {
+    PyErr_SetString(PyExc_RuntimeError, e.what());
+    return NULL;
+  }
+}
+
 %typecheck(SWIG_TYPECHECK_INTEGER)
 	   int, short, long,
  	   unsigned int, unsigned short, unsigned long,
