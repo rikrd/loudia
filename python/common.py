@@ -59,8 +59,29 @@ def draw_onsets(onsets):
         pylab.axvspan( xmin = onsetLeft, xmax = onsetRight, facecolor = 'green', linewidth = 0, alpha = 0.25)
         pylab.axvline( x = onsetCenter, color = 'black', linewidth = 1.1)
 
+def get_framer_audio_native(filename, size, hop):
+    loader = loudia.AudioLoader()
+    loader.setFilename(filename)
+    loader.setChannel(loudia.AudioLoader.MONOMIX)
+    
+    framer = loudia.FrameCutter()
+    framer.setFrameSize(size)
+    framer.setHopSize(hop)
+    
+    stream = framer_audio_native(loader, framer)
+    
+    return stream, loader.sampleRate(), loader.sampleRate()*loader.totalTime(), loader.channelCount(), loader
 
-def get_framer_audio(filename, size, hop):
+def framer_audio_native(loader, framer):
+    while not loader.isFinished():
+        print "\rLoaded: %.3f %%" % (loader.loadProgress() * 100.0,)
+        samples = loader.process()
+        frames, produced = framer.process(samples)
+        for row in range(produced):
+            yield frames[row:row+1, :]
+
+
+def get_framer_audio_audiolab(filename, size, hop):
     from scikits import audiolab
     
     loader = audiolab.Sndfile(filename)
@@ -68,11 +89,11 @@ def get_framer_audio(filename, size, hop):
     nframes = loader.nframes
     nchannels = loader.channels
 
-    framer = framer_audio(loader, size, hop)
+    framer = framer_audio_audiolab(loader, size, hop)
     
     return framer, sr, nframes, nchannels, loader
 
-def framer_audio(loader, size, hop):
+def framer_audio_audiolab(loader, size, hop):
     result = []
     cursor = 0L
 
@@ -96,6 +117,8 @@ def framer_audio(loader, size, hop):
         
         yield samples.mean(axis = 1).T
         cursor += hop
+
+get_framer_audio = get_framer_audio_native
 
 def framer_array(arr, size, hop):
     result = []
