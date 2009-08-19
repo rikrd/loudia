@@ -4,6 +4,7 @@ import loudia
 import scipy
 import pylab
 import os
+import sys
 
 def plot_freqz(b, a, w = None, npoints = None, title = '', db = False, createFigure = True, label = ''):
     # Create the omega array if necessary
@@ -74,12 +75,13 @@ def get_framer_audio_native(filename, size, hop):
 
 def framer_audio_native(loader, framer):
     while not loader.isFinished():
-        print "\rLoaded: %.3f %%" % (loader.loadProgress() * 100.0,)
+        print "\rProgressing... %5.1f %%" % (loader.loadProgress() * 100.0,),
+        sys.stdout.flush()
         samples = loader.process()
         frames, produced = framer.process(samples)
         for row in range(produced):
             yield frames[row:row+1, :]
-
+        
 
 def get_framer_audio_audiolab(filename, size, hop):
     from scikits import audiolab
