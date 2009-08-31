@@ -14,7 +14,7 @@ rtol = 1e-5
 
 filename = sys.argv[1]
 
-frameSize = 1024 
+frameSize = 1024
 frameStep = 1024
 
 stream, sampleRate, nframes, nchannels, loader = get_framer_audio(filename, frameSize, frameStep)
@@ -23,13 +23,18 @@ stream, sampleRate, nframes, nchannels, loader = get_framer_audio(filename, fram
 loader = loudia.AudioLoader()
 loader.setFilename(filename, False)
 loader.setFrameSize(frameSize, False)
-loader.setChannel(loudia.AudioLoader.MIX, False)
+loader.setChannel(loudia.AudioLoader.MONOMIX, False)
 loader.setup()
 
 if interactivePlotting:
     pylab.ion()
-    
-for audiolabFrame in stream[:10]:
+
+frameCount = 0
+for audiolabFrame in stream:
+    if frameCount > 10:
+        break
+    frameCount += 1
+
     loudiaFrame = loader.process()[:, 0]
 
     if interactivePlotting:
@@ -39,7 +44,7 @@ for audiolabFrame in stream[:10]:
         pylab.subplot(212)
         pylab.gca().clear()
         pylab.plot(audiolabFrame)
-    
+
     print scipy.allclose(loudiaFrame, audiolabFrame, atol = atol, rtol = rtol)
 
 if interactivePlotting:

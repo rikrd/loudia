@@ -5,6 +5,7 @@ import scipy
 import pylab
 import os
 import sys
+import math
 
 def plot_freqz(b, a, w = None, npoints = None, title = '', db = False, createFigure = True, label = ''):
     # Create the omega array if necessary
@@ -25,7 +26,7 @@ def plot_freqz(b, a, w = None, npoints = None, title = '', db = False, createFig
     import pylab
     if createFigure:
         pylab.figure()
-        
+
     pylab.subplot(2,1,1)
     pylab.plot(w, mag, label = label)
     pylab.title('%s \n Magnitude of the Frequency Response' % title)
@@ -38,7 +39,7 @@ def get_onsets(filename, hop, sampleRate, onsetError = 50.0):
     # Get the onsets
     annotation = os.path.splitext(filename)[0] + '.onset_annotated'
     onsets = []
-    
+
     if os.path.isfile(annotation):
         onsetsTimes = [float(o) for o in open(annotation, 'r').readlines()]
         onsetsCenter = [int(o * sampleRate / hop) for o in onsetsTimes]
@@ -50,11 +51,11 @@ def get_onsets(filename, hop, sampleRate, onsetError = 50.0):
 
     else:
         return None
-    
+
 def draw_onsets(onsets):
     if not onsets:
         return
-    
+
     # Draw the onsets
     for onsetLeft, onsetCenter, onsetRight in onsets:
         pylab.axvspan( xmin = onsetLeft, xmax = onsetRight, facecolor = 'green', linewidth = 0, alpha = 0.25)
@@ -64,14 +65,14 @@ def get_framer_audio_native(filename, size, hop):
     loader = loudia.AudioLoader()
     loader.setFilename(filename)
     loader.setChannel(loudia.AudioLoader.MONOMIX)
-    
+
     framer = loudia.FrameCutter()
     framer.setFrameSize(size)
     framer.setHopSize(hop)
-    
+
     stream = framer_audio_native(loader, framer)
-    
-    return stream, loader.sampleRate(), loader.sampleRate()*loader.totalTime(), loader.channelCount(), loader
+
+    return stream, loader.sampleRate(), math.ceil(loader.totalTime() * loader.sampleRate() * hop), loader.channelCount(), loader
 
 def framer_audio_native(loader, framer):
     while not loader.isFinished():
@@ -81,19 +82,19 @@ def framer_audio_native(loader, framer):
         frames, produced = framer.process(samples)
         for row in range(produced):
             yield frames[row:row+1, :]
-        
+
 
 def get_framer_audio_audiolab(filename, size, hop):
     from scikits import audiolab
-    
+
     loader = audiolab.Sndfile(filename)
     sr = loader.samplerate
     nframes = loader.nframes
     nchannels = loader.channels
 
     framer = framer_audio_audiolab(loader, size, hop)
-    
-    return framer, sr, nframes, nchannels, loader
+
+    return framer, sr, math.ceil(nframes / hop), nchannels, loader
 
 def framer_audio_audiolab(loader, size, hop):
     result = []
@@ -102,7 +103,7 @@ def framer_audio_audiolab(loader, size, hop):
     nchannels = loader.channels
     nframes = loader.nframes
     samples = scipy.zeros((size, nchannels))
-    
+
     while cursor < nframes:
         nframes_read = min(size, nframes-cursor)
 
@@ -112,11 +113,11 @@ def framer_audio_audiolab(loader, size, hop):
             samples[:nframes_read, 0] = loader.read_frames(nframes_read)
         else:
             samples[:nframes_read, :] = loader.read_frames(nframes_read)[::]
-        
+
         # fill in empty
         if nframes_read < size:
             samples[nframes_read:, :] = 0.0
-        
+
         yield samples.mean(axis = 1).T
         cursor += hop
 
@@ -128,11 +129,11 @@ def framer_array(arr, size, hop):
 
     nframes = arr.shape[0]
     samples = scipy.zeros((size, arr.shape[1]))
-    
+
     while cursor < nframes:
         nframes_read = min(size, nframes-cursor)
         samples[:nframes_read, :] = arr[cursor:cursor+nframes_read, :]
-        
+
         # fill in empty
         if nframes_read < size:
             samples[nframes_read:, :] = 0.0
@@ -144,7 +145,7 @@ def overlap_add(frames, size, hop):
     nframes = len(frames)
 
     arrsize = size + hop * (nframes - 1)
-    
+
     arr = scipy.zeros((arrsize, frames[0].shape[1]))
 
     for cur, frame in enumerate(frames):

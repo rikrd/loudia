@@ -13,13 +13,12 @@ filename = sys.argv[1]
 onsetError = 50.0
 
 # SampleRate of the file
-frameSize = 1024 
+frameSize = 1024
 frameStep = 256
 
 fftSize = 2048 * 2
 plotSize = fftSize / 4
 
-bandwidth = 4 * fftSize/frameSize
 analysisLimit = scipy.inf
 
 stream, sampleRate, nframes, nchannels, loader = get_framer_audio(filename, frameSize, frameStep)
@@ -37,10 +36,10 @@ for frame in stream:
     spec =  loudia.magToDb( abs( fft ) )
 
     cog = odfcog.process( fft )
-    
+
     specs.append( spec[0, :plotSize] )
     cogs.append( cog[0, 0] )
-    
+
 
 specs = scipy.array( specs )
 frameCount = specs.shape[0] - 1
@@ -62,7 +61,7 @@ pylab.subplot(2, 1, 1)
 pylab.imshow( scipy.flipud(specs.T), aspect = 'auto' )
 
 draw_onsets( onsets )
-    
+
 pylab.title( 'Spectrogram' )
 ax = pylab.gca()
 
@@ -94,5 +93,5 @@ ax.set_yticklabels([])
 ax.set_xlim([0, frameCount - 1])
 
 pylab.subplots_adjust(left = 0.05, right = 0.95, bottom = 0.05, top = 0.95, hspace=0.6)
-        
+
 pylab.show()

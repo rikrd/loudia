@@ -1,20 +1,20 @@
-/*                                                         
+/*
 ** Copyright (C) 2008, 2009 Ricard Marxer <email@ricardmarxer.com>
-**                                                                  
+**
 ** This program is free software; you can redistribute it and/or modify
 ** it under the terms of the GNU General Public License as published by
-** the Free Software Foundation; either version 3 of the License, or   
-** (at your option) any later version.                                 
-**                                                                     
-** This program is distributed in the hope that it will be useful,     
-** but WITHOUT ANY WARRANTY; without even the implied warranty of      
-** MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the       
-** GNU General Public License for more details.                        
-**                                                                     
-** You should have received a copy of the GNU General Public License   
-** along with this program; if not, write to the Free Software         
+** the Free Software Foundation; either version 3 of the License, or
+** (at your option) any later version.
+**
+** This program is distributed in the hope that it will be useful,
+** but WITHOUT ANY WARRANTY; without even the implied warranty of
+** MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+** GNU General Public License for more details.
+**
+** You should have received a copy of the GNU General Public License
+** along with this program; if not, write to the Free Software
 ** Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
-*/                                                                          
+*/
 
 #include "AudioLoader.h"
 
@@ -80,7 +80,7 @@ void AudioLoader::setup(){
     _loadDurationInTimeBase = av_rescale(_loadDuration, stream->time_base.den, stream->time_base.num);
   }
 
-    
+
   // Create buffer for output audio data
   delete [] _buffer;
   _buffer = new sample_type[_frameSize * _channelCount];
@@ -106,9 +106,9 @@ void AudioLoader::setup(){
 
 void AudioLoader::process(MatrixXR *audio){
   process(_buffer);
-  
+
   switch (_channel) {
-  case ALL:  
+  case ALL:
     audio->resize(_frameSize, _channelCount);
 
     for (int i=0, j=0; i < _frameSize; i++, j+=_channelCount) {
@@ -116,7 +116,7 @@ void AudioLoader::process(MatrixXR *audio){
         (*audio)(i, k) = scale(_buffer[j+k]);
       }
     }
-    
+
     break;
 
   case MONOMIX:
@@ -126,7 +126,7 @@ void AudioLoader::process(MatrixXR *audio){
       for (int k=0; k < _channelCount; k++){
         (*audio)(i, 0) += scale(_buffer[j+k]) / (Real)_channelCount;
       }
-    }    
+    }
     break;
 
   default:
@@ -136,7 +136,7 @@ void AudioLoader::process(MatrixXR *audio){
     }
     break;
   }
-  
+
 }
 
 void AudioLoader::process(sample_type *audioLR){
@@ -258,19 +258,19 @@ Real AudioLoader::fileProgress() const {
   // TODO: check if there is a more correct way
   Real fileSize = _formatContext->file_size;
   if (fileSize == 0) return -1;
-  
+
   return (Real)_sizeRead / fileSize;
 }
 
 Real AudioLoader::loadProgress() const {
   if (_audioCodecContext == 0) return 0;
 
-  AVStream *stream = _formatContext->streams[_audioStream];  
+  AVStream *stream = _formatContext->streams[_audioStream];
 
   Real totalDuration;
-  
+
   Real currentDuration = (Real)_loadedDuration * stream->time_base.num / stream->time_base.den;
-  
+
   if (_loadDurationInTimeBase < 0) {
     totalDuration = (Real)stream->duration * stream->time_base.num / stream->time_base.den;
   }else{
@@ -284,35 +284,35 @@ Real AudioLoader::loadProgress() const {
 Real AudioLoader::currentTime() const {
   if (_audioCodecContext == 0) return 0;
 
-  AVStream *stream = _formatContext->streams[_audioStream];  
-  
+  AVStream *stream = _formatContext->streams[_audioStream];
+
   return _currentTime * stream->time_base.num / stream->time_base.den;
 }
 
 Real AudioLoader::totalTime() const {
   if (_audioCodecContext == 0) return 0;
 
-  AVStream *stream = _formatContext->streams[_audioStream];  
-  
-  return stream->duration * stream->time_base.num / stream->time_base.den;
+  AVStream *stream = _formatContext->streams[_audioStream];
+
+  return (Real)stream->duration * (Real)stream->time_base.num / (Real)stream->time_base.den;
 }
 
-bool AudioLoader::nextPacket(){  
-  while(av_read_frame(_formatContext, &_packet) >= 0) {    
+bool AudioLoader::nextPacket(){
+  while(av_read_frame(_formatContext, &_packet) >= 0) {
     // Is this a packet from the audio stream?
     if( _packet.stream_index == _audioStream && ((_loadDurationInTimeBase < 0) || (_loadedDuration < _loadDurationInTimeBase)) ) {
       _sizeRead = _packet.pos;
       _currentTime = _packet.pts;
       _loadedDuration += _packet.duration;
       return true;
-      
+
     } else {
       // This packet does not correspond to the stream
       av_free_packet(&_packet);
     }
-    
+
   }
-  
+
   // There were no packets left
   return false;
 }
@@ -327,7 +327,7 @@ int AudioLoader::decodePacket(sample_type* _audioBuffer, int _bufferSize){
   for(;;) {
     while(_audioPacketSize > 0) {
       dataSize = _bufferSize;
-      
+
       decodedSize = avcodec_decode_audio2(_audioCodecContext,
                                           _audioBuffer, &dataSize,
                                           _audioPacketData, _audioPacketSize);
