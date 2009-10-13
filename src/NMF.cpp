@@ -80,9 +80,8 @@ void NMF::process(const MatrixXR& v, MatrixXR* w, MatrixXR* h) {
     _xOverWH = v.transpose().cwise() / ((w->transpose() * h->transpose()).cwise() + _epsilon );
 
     // Multiplicative update rules of W and H by (Lee and Seung 2001)
-    VectorXR hColSum = (*h).colwise().sum();
-    (*w).transpose().cwise() *= (_xOverWH * (*h)).cwise() / ColXR::Ones(cols) * hColSum;
-    (*h).transpose().cwise() *= ((*w) * _xOverWH).cwise() / (w->transpose().colwise().sum().transpose() * MatrixXR::Ones(1, rows));
+    (*w).transpose().cwise() *= (_xOverWH * (*h)).cwise() / ColXR::Ones(cols) * (*h).colwise().sum();
+    (*h).transpose().cwise() *= ((*w) * _xOverWH).cwise() / (w->transpose().colwise().sum().transpose() * RowXR::Ones(rows));
 
     // Renormalize so rows of H have constant energy
     _norms = (*h).colwise().norm();
