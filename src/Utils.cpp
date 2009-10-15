@@ -17,6 +17,9 @@
 */
 
 #include "Utils.h"
+#include <Eigen/LU>
+#include <Eigen/QR>
+#include <Eigen/SVD>
 
 /**
  * Given a matrix of polynomes (one per column)
@@ -508,9 +511,45 @@ int nextPowerOf2(Real a, int factor){
 
 
 Real gaussian(Real x, Real mu, Real fi){
-  return exp(- pow((x - mu), 2.0) / (2.0 * pow(fi, 2.0))) / (fi * sqrt(2.0 * M_PI));
+  return exp(- square(x - mu) / (2.0 * square(fi))) / (fi * sqrt(2.0 * M_PI));
 }
 
 void gaussian(Real x, MatrixXR mu, MatrixXR fi, MatrixXR* result){
   (*result) = (((-mu).cwise() + x).cwise().square().cwise() / (2.0 * fi.cwise().square())).cwise().exp().cwise() / (sqrt(2.0 * M_PI) * fi);
+}
+
+/*
+// QR method
+void pseudoInverse(const MatrixXR& a, MatrixXR* result) {
+  Eigen::ColPivotingHouseholderQR<MatrixXR> qr = a.colPivotingHouseholderQr();
+
+  if (a.cols() < a.rows()) {
+    if (qr.rank() < a.cols()) {
+      // Not full rank
+      a.computeInverse(result);
+    }
+
+    // Full column rank
+    (*result) = (qr.matrixQR().adjoint() * qr.matrixQR()).inverse() * a.adjoint();
+  } else {
+    if (qr.rank() < a.rows()) {
+      // Not full rank
+      a.computeInverse(result);
+    }
+
+    // Full row rank
+    (*result) =  a.adjoint() * (qr.matrixQR() * qr.matrixQR().adjoint()).inverse();
+  }
+}
+*/
+
+// SVD method
+void pseudoInverse(const MatrixXR& a, MatrixXR* result, Real epsilon) {
+  Eigen::SVD<MatrixXR> svd = a.svd();
+
+  // As done in Matlab:
+  // http://en.wikipedia.org/wiki/Moore-Penrose_pseudoinverse
+  Real tolerance = epsilon * max(a.cols(), a.rows()) * svd.singularValues().cwise().abs().maxCoeff();
+
+  (*result) = svd.matrixV() * (svd.singularValues().cwise() > tolerance).select(svd.singularValues().cwise().inverse(), 0).asDiagonal() * svd.matrixU().adjoint();
 }

@@ -76,3 +76,18 @@ print 'nextPowerOf2(0): ', loudia.nextPowerOf2(0) == 2
 print 'nextPowerOf2(0, 3): ', loudia.nextPowerOf2(0, 3) == 16
 print 'nextPowerOf2(94): ', loudia.nextPowerOf2(94) == 128
 print 'nextPowerOf2(94, 1): ', loudia.nextPowerOf2(94, 1) == 256
+
+# Test the pseudoInverse
+a = scipy.array([[1., 2., 3.],
+                 [4., 5., 6.],
+                 [7., 8., 9.]])
+
+b = loudia.pseudoInverse(a)
+
+exp = scipy.array([[-23./36., -1./6., 11./36.],
+                   [-1./18., 0, 1./18.],
+                   [19./36., 1./6., -7./36.]])
+
+
+print 'pseudoInverse:', scipy.allclose(b, exp, 1e-4, 1e-5)
+

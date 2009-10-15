@@ -69,4 +69,9 @@ typedef Eigen::Matrix< double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor, 
 typedef Eigen::Matrix< std::complex< float >, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor, Eigen::Dynamic, Eigen::Dynamic > MatrixXcfscipy;
 typedef Eigen::Matrix< std::complex< double >, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor, Eigen::Dynamic, Eigen::Dynamic > MatrixXcdscipy;
 
+template <typename T>
+inline T square(const T& val) {
+  return val*val;
+}
+
 #endif // TYPEDEFS_H
