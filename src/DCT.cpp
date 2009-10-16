@@ -128,7 +128,7 @@ void DCT::process(const MatrixXR& input, MatrixXR* dctCoeffs){
   (*dctCoeffs).resize(input.rows(), _dctSize);
 
   for ( int i = 0 ; i < input.rows(); i++) {
-    (*dctCoeffs).row(i) = input.row(i) * _dctMatrix.block(0, 0, input.rows(), _dctSize);
+    (*dctCoeffs).row(i) = input.row(i) * _dctMatrix.block(0, 0, input.cols(), _dctSize);
   }
 }
 

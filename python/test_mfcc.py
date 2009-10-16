@@ -9,9 +9,6 @@ sampleRate = 44100
 spectralLength = 1024
 nCoeffs = 13
 
-lowFreqN = lowFreq / sampleRate
-highFreqN = highFreq / sampleRate
-
 minSpectrum = 1e-10
 power = 1
 
