@@ -17,7 +17,7 @@ frameStep = 2048
 
 fftSize = 8192
 
-plotSize = fftSize / 4
+plotSize = fftSize / 8
 
 stream, sampleRate, nframes, nchannels, loader = get_framer_audio(filename, frameSize, frameStep)
 

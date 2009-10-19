@@ -63,13 +63,15 @@ void PitchInverseProblem::setup(){
   _peakInterp.setup();
 
   // Define the range that will be used
-  _lowBin = (int)(_lowFrequency / _sampleRate * _fftSize);
-  _highBin = std::min((int)(_highFrequency / _sampleRate * _fftSize), _halfSize);
+  _lowCutFrequency = 90;
+  _highCutFrequency = 3000;
+  _lowBin = (int)(_lowCutFrequency / _sampleRate * _fftSize);
+  _highBin = std::min((int)(_highCutFrequency / _sampleRate * _fftSize), _halfSize);
   _range = _highBin - _lowBin;
 
   int frequencyCount = -1 ? _range : _frequencyCandidateCount;
 
-  _regularisation = 2.0;
+  _regularisation = 1.0;
 
   // Params taken from Klapuri ISMIR 2006
   _alpha = 27; // 27 Hz
@@ -93,7 +95,7 @@ void PitchInverseProblem::setup(){
         Real a = harmonicWeight(f, _lowFrequency, _highFrequency, harmonicIndex);
         Real fi = harmonicSpread(f, _lowFrequency, _highFrequency, harmonicIndex);
 
-        _projectionMatrix(row, col) += a * gaussian(row+_lowBin, mu, fi);
+        _projectionMatrix(row, col) += a * gaussian(row+0.5+_lowBin, mu, fi);
       }
     }
   }
