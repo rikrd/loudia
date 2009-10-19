@@ -15,7 +15,7 @@ filename = sys.argv[1]
 frameSize = 8192 
 frameStep = 2048
 
-fftSize = 8192
+fftSize = 8192*2
 
 plotSize = fftSize / 8
 
@@ -26,12 +26,24 @@ peakBandwidth = 4
 peakCandidateCount = 4
 numMaxPitches = 1
 numHarmonics = 10
-numCandidates = 300
+numCandidates = 200
 
-windower = loudia.Window( frameSize, loudia.Window.HAMMING )
+windower = loudia.Window( frameSize,
+                          loudia.Window.BLACKMANHARRIS )
+
 ffter = loudia.FFT( fftSize )
-whitening = loudia.SpectralWhitening(fftSize, 100.0, 4000.0, sampleRate)
-pitchInverseProblem = loudia.PitchInverseProblem(fftSize, 100, 4000, sampleRate, numMaxPitches, numHarmonics, numCandidates, peakBandwidth)
+
+whitening = loudia.SpectralWhitening(fftSize,
+                                     100.0, 4100.0,
+                                     sampleRate)
+
+pitchInverseProblem = loudia.PitchInverseProblem(fftSize,
+                                                 200.0, 4000.0,
+                                                 sampleRate,
+                                                 numMaxPitches,
+                                                 numHarmonics,
+                                                 numCandidates,
+                                                 peakBandwidth)
 
 specs = []
 wspecs = []
@@ -82,9 +94,12 @@ saliencies = scipy.array( saliencies )[:, 0, :]
 freqss = scipy.array( freqss )[:,0,:]
 frameCount = specs.shape[0] - 1
 
-if plot:
+#import scipy.signal
+#print saliencies.shape
+#saliencies = scipy.signal.lfilter(scipy.array([1.0/n]*int(n)), scipy.array([1.0]), saliencies, axis=0)
 
-    #pitches[ saliencies < 0.001] = scipy.NaN
+if plot:
+    pitches[ saliencies < 26] = scipy.NaN
 
     # Get the onsets
     annotation = os.path.splitext(filename)[0] + '.onset_annotated'

@@ -194,12 +194,13 @@ void PitchInverseProblem::process(const MatrixXR& spectrum, MatrixXR* pitches, M
 
   LOUDIA_DEBUG("PITCHINVERSEPROBLEM: Interpolate peaks");
   
+  MatrixXR salienciesInterp;
   _peakInterp.process((*freqs), (*pitches), (*saliencies),
-                      pitches, saliencies);
+                      pitches, &salienciesInterp);
 
   LOUDIA_DEBUG("PITCHINVERSEPROBLEM: Setting the pitches");
   
-  (*pitches) = (((_highFrequency - _lowFrequency) / _frequencyCandidateCount) * (*pitches)).cwise() + _lowFrequency;
+  (*pitches) = (((_highFrequency - _lowFrequency) / (_frequencyCandidateCount-1)) * (*pitches)).cwise() + _lowFrequency;
   
 }
 
