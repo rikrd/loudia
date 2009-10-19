@@ -56,15 +56,18 @@ void PitchInverseProblem::setup(){
 
   _halfSize = ( _fftSize / 2 ) + 1;
 
-
   _peak.setPeakCount( _pitchCount, false );
   _peak.setSortMethod( PeakDetection::BYMAGNITUDE, false );
   _peak.setup();
 
   _peakInterp.setup();
 
-  
-  int frequencyCount = -1 ? _halfSize : _frequencyCandidateCount;
+  // Define the range that will be used
+  _lowBin = (int)(_lowFrequency / _sampleRate * _fftSize);
+  _highBin = std::min((int)(_highFrequency / _sampleRate * _fftSize), _halfSize);
+  _range = _highBin - _lowBin;
+
+  int frequencyCount = -1 ? _range : _frequencyCandidateCount;
 
   _regularisation = 2.0;
 
@@ -76,7 +79,7 @@ void PitchInverseProblem::setup(){
   MatrixXR freqs;
   range(_lowFrequency, _highFrequency, frequencyCount, &freqs);
 
-  _projectionMatrix.resize(_halfSize, freqs.cols());  // We add one that will be the noise component
+  _projectionMatrix.resize(_range, freqs.cols());  // We add one that will be the noise component
   _projectionMatrix.setZero();
 
   LOUDIA_DEBUG("PITCHINVERSEPROBLEM: Setting up the projection matrix...");
@@ -90,7 +93,7 @@ void PitchInverseProblem::setup(){
         Real a = harmonicWeight(f, _lowFrequency, _highFrequency, harmonicIndex);
         Real fi = harmonicSpread(f, _lowFrequency, _highFrequency, harmonicIndex);
 
-        _projectionMatrix(row, col) += a * gaussian(row, mu, fi);
+        _projectionMatrix(row, col) += a * gaussian(row+_lowBin, mu, fi);
       }
     }
   }
@@ -118,13 +121,13 @@ void PitchInverseProblem::setup(){
   */
 
   MatrixXR sourceWeight = MatrixXR::Identity( frequencyCount, frequencyCount );
-  MatrixXR targetWeight = MatrixXR::Identity( _halfSize, _halfSize );
+  MatrixXR targetWeight = MatrixXR::Identity( _range, _range );
 
   MatrixXR invSourceWeight = ( sourceWeight ).inverse();
 
   LOUDIA_DEBUG("PITCHINVERSEPROBLEM: Setting up the inversion...");
   // A = W^{-1} K^t [ K W^{-1} K^t + \lambda * I_N ]^{+}
-  _inverseProjectionMatrix = invSourceWeight * _projectionMatrix.transpose() * ( (_projectionMatrix * invSourceWeight * _projectionMatrix.transpose()) + (_regularisation * MatrixXR::Identity( _halfSize, _halfSize )) ).inverse();
+  _inverseProjectionMatrix = invSourceWeight * _projectionMatrix.transpose() * ( (_projectionMatrix * invSourceWeight * _projectionMatrix.transpose()) + (_regularisation * MatrixXR::Identity( _range, _range )) ).inverse();
 
   LOUDIA_DEBUG("PITCHINVERSEPROBLEM: Setting up the peak detector and interpolator...");
   _peak.setup();
@@ -179,7 +182,7 @@ void PitchInverseProblem::process(const MatrixXR& spectrum, MatrixXR* pitches, M
     LOUDIA_DEBUG("PITCHINVERSEPROBLEM: Matrix multiplication");
     LOUDIA_DEBUG("PITCHINVERSEPROBLEM: _inverseProjectionMatrix: " << _inverseProjectionMatrix.rows() << ", " << _inverseProjectionMatrix.cols() );
     LOUDIA_DEBUG("PITCHINVERSEPROBLEM: spectrum: " << spectrum.rows() << ", " << spectrum.cols() );
-    (*freqs).row( row ) = _inverseProjectionMatrix * spectrum.row( row ).transpose();
+    (*freqs).row( row ) = _inverseProjectionMatrix * spectrum.row( row ).segment(_lowBin, _range).transpose();
   }
 
   LOUDIA_DEBUG("PITCHINVERSEPROBLEM: Find peaks");

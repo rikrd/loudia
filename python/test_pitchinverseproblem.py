@@ -12,10 +12,10 @@ plot = True
 
 filename = sys.argv[1]
 
-frameSize = 4096 
-frameStep = 1024
+frameSize = 8192 
+frameStep = 2048
 
-fftSize = 4096
+fftSize = 8192
 
 plotSize = fftSize / 4
 
@@ -24,14 +24,14 @@ stream, sampleRate, nframes, nchannels, loader = get_framer_audio(filename, fram
 
 peakBandwidth = 4
 peakCandidateCount = 4
-numMaxPitches = 2
+numMaxPitches = 1
 numHarmonics = 10
 numCandidates = 300
 
 windower = loudia.Window( frameSize, loudia.Window.HAMMING )
 ffter = loudia.FFT( fftSize )
-whitening = loudia.SpectralWhitening(fftSize, 50.0, 2100.0, sampleRate)
-pitchInverseProblem = loudia.PitchInverseProblem(fftSize, 50, 2100, sampleRate, numMaxPitches, numHarmonics, numCandidates, peakBandwidth)
+whitening = loudia.SpectralWhitening(fftSize, 100.0, 4000.0, sampleRate)
+pitchInverseProblem = loudia.PitchInverseProblem(fftSize, 100, 4000, sampleRate, numMaxPitches, numHarmonics, numCandidates, peakBandwidth)
 
 specs = []
 wspecs = []

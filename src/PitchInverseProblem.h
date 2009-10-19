@@ -40,6 +40,10 @@ protected:
 
   Real _sampleRate;
 
+  int _lowBin;
+  int _highBin;
+  int _range;
+
   Real _tMin;
   Real _tMax;
   Real _alpha;
