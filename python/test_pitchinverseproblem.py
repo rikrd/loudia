@@ -15,18 +15,18 @@ filename = sys.argv[1]
 frameSize = 8192 
 frameStep = 2048
 
-fftSize = 8192*2
+fftSize = 8192
 
 plotSize = fftSize / 8
 
 stream, sampleRate, nframes, nchannels, loader = get_framer_audio(filename, frameSize, frameStep)
 
 
-peakBandwidth = 4
+peakBandwidth = 3
 peakCandidateCount = 4
 numMaxPitches = 1
-numHarmonics = 10
-numCandidates = 200
+numHarmonics = 80
+numCandidates = 300
 
 windower = loudia.Window( frameSize,
                           loudia.Window.BLACKMANHARRIS )
@@ -38,7 +38,7 @@ whitening = loudia.SpectralWhitening(fftSize,
                                      sampleRate)
 
 pitchInverseProblem = loudia.PitchInverseProblem(fftSize,
-                                                 200.0, 4000.0,
+                                                 50.0, 2000.0,
                                                  sampleRate,
                                                  numMaxPitches,
                                                  numHarmonics,
@@ -60,10 +60,11 @@ if interactivePlot:
 
 for frame in stream:
     samples = frame
-    fft = ffter.process( windower.process( frame ) )[0, :plotSize]
-    spec =  loudia.magToDb( abs( fft ) )[0, :plotSize]
+    fft = ffter.process( windower.process( frame ) )
+    spec =  loudia.magToDb( abs( fft ) )
     
     wspec = whitening.process( spec )
+    #wspec = spec
     pitch, saliency, freqs = pitchInverseProblem.process( wspec )
     
     if interactivePlot:
@@ -77,8 +78,8 @@ for frame in stream:
         #pylab.hold(True)
         #pylab.stem( pitch/sampleRate*fftSize, saliency )
         
-    specs.append( spec )
-    wspecs.append( wspec )
+    specs.append( spec[0,:plotSize] )
+    wspecs.append( wspec[0,:plotSize] )
     pitches.append( pitch )
     saliencies.append( saliency )
     freqss.append( freqs )
@@ -99,7 +100,7 @@ frameCount = specs.shape[0] - 1
 #saliencies = scipy.signal.lfilter(scipy.array([1.0/n]*int(n)), scipy.array([1.0]), saliencies, axis=0)
 
 if plot:
-    pitches[ saliencies < 26] = scipy.NaN
+    pitches[ saliencies < 35] = scipy.NaN
 
     # Get the onsets
     annotation = os.path.splitext(filename)[0] + '.onset_annotated'

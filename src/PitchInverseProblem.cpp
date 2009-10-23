@@ -158,8 +158,8 @@ void PitchInverseProblem::harmonicSpread(MatrixXR f, Real fMin, Real fMax, int h
 
 Real PitchInverseProblem::harmonicWeight(Real f, Real fMin, Real fMax, int harmonicIndex){
   //return ((_sampleRate / tLow) + _alpha) / ((harmonicIndex * _sampleRate / tUp) + _beta);
-  return ((harmonicIndex * f) + _beta) / ((harmonicIndex * f) + _alpha);
-  //return 1.0;
+  //return ((harmonicIndex * f) + _beta) / ((harmonicIndex * f) + _alpha);
+  return 1.0;
 }
 
 Real PitchInverseProblem::harmonicPosition(Real f, Real fMin, Real fMax, int harmonicIndex){
