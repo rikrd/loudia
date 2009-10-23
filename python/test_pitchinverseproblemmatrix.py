@@ -3,7 +3,6 @@
 import loudia
 import pylab
 
-plotFreqs = [0, 1, 2, 3, 4]
 frameSize = 8192 
 frameStep = 2048
 
@@ -11,11 +10,11 @@ fftSize = 8192
 
 plotSize = fftSize / 8
 
-peakBandwidth = 4
+peakBandwidth = 2
 peakCandidateCount = 4
 numMaxPitches = 1
 numHarmonics = 10
-numCandidates = 30
+numCandidates = 300
 
 sampleRate = 44100
 
@@ -28,24 +27,32 @@ pitchInverseProblem = loudia.PitchInverseProblem(fftSize,
                                                  peakBandwidth)
 a = pitchInverseProblem.projectionMatrix()
 
+nBins = 10
+plotBins = map(lambda x: x/float(nBins)*a.shape[0], range(nBins))
+
+nFreqs = 4
+plotFreqs = map(lambda x: x/float(nFreqs)*a.shape[1], range(nFreqs))
+
 print "Projection matrix: ", a.shape
 
 pylab.figure()
-for i in plotFreqs:
+for i in plotBins:
     if i >= a.shape[0]:
         continue
     
-    pylab.plot(a[i,:])
+    pylab.plot(a[i,:], label="bin: %d" % i)
     
-pylab.title("Rows: (Harmonic trains)")
+pylab.title("Rows: (Pitch likelihood given a bin)")
+pylab.legend()
 
 pylab.figure()
-for i in range(a.shape[1]):
+for i in plotFreqs:
     if i >= a.shape[1]:
         continue
-    pylab.plot(a[:,i])
+    pylab.plot(a[:,i], label="freq: %d" % i)
 
-pylab.title("Cols: (Pitch likelihood given a bin)")
+pylab.title("Cols: (Harmonic trains)")
+pylab.legend()
 
 pylab.figure()
 npoints = 1000
