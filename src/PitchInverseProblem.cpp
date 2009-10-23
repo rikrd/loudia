@@ -63,13 +63,16 @@ void PitchInverseProblem::setup(){
   _peakInterp.setup();
 
   // Define the range that will be used
-  _lowCutFrequency = 90;
+  _lowCutFrequency = 0;
   _highCutFrequency = 3000;
   _lowBin = (int)(_lowCutFrequency / _sampleRate * _fftSize);
   _highBin = std::min((int)(_highCutFrequency / _sampleRate * _fftSize), _halfSize);
   _range = _highBin - _lowBin;
 
-  int frequencyCount = -1 ? _range : _frequencyCandidateCount;
+  int frequencyCount = _frequencyCandidateCount;
+  if (frequencyCount <= 0) {
+    frequencyCount = _range;
+  }
 
   _regularisation = 1.0;
 
