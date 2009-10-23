@@ -10,7 +10,7 @@ fftSize = 8192
 
 plotSize = fftSize / 8
 
-peakBandwidth = 2
+peakBandwidth = 3
 peakCandidateCount = 4
 numMaxPitches = 1
 numHarmonics = 10
@@ -54,18 +54,18 @@ for i in plotFreqs:
 pylab.title("Cols: (Harmonic trains)")
 pylab.legend()
 
-pylab.figure()
-npoints = 1000
-w = pylab.linspace(-100., 100., npoints)
+## pylab.figure()
+## npoints = 1000
+## w = pylab.linspace(-100., 100., npoints)
 
-y = pylab.zeros((1, npoints))
-for i, x in enumerate(w):
-    y[0, i] = loudia.gaussian(x, 0.0, 8.0)
+## y = pylab.zeros((1, npoints))
+## for i, x in enumerate(w):
+##     y[0, i] = loudia.gaussian(x, 0.0, 8.0)
 
 
-w = pylab.array(w, dtype = 'f4')
-w.resize((1, npoints))
+## w = pylab.array(w, dtype = 'f4')
+## w.resize((1, npoints))
 
-pylab.plot(w[0,:], y[0,:])
+## pylab.plot(w[0,:], y[0,:])
 
 pylab.show()
