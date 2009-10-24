@@ -10,10 +10,10 @@ fftSize = 8192
 
 plotSize = fftSize / 8
 
-peakBandwidth = 3
+peakBandwidth = 5
 peakCandidateCount = 4
 numMaxPitches = 1
-numHarmonics = 10
+numHarmonics = 80
 numCandidates = 300
 
 sampleRate = 44100
@@ -27,11 +27,17 @@ pitchInverseProblem = loudia.PitchInverseProblem(fftSize,
                                                  peakBandwidth)
 a = pitchInverseProblem.projectionMatrix()
 
+pylab.figure()
+pylab.plot(a.sum(axis = 1))
+
+pylab.figure()
+pylab.plot(a.sum(axis = 0))
+
 nBins = 10
 plotBins = map(lambda x: x/float(nBins)*a.shape[0], range(nBins))
 
-nFreqs = 4
-plotFreqs = map(lambda x: x/float(nFreqs)*a.shape[1], range(nFreqs))
+nFreqs = 10
+plotFreqs = range(nFreqs)#map(lambda x: x/float(nFreqs)*a.shape[1], range(nFreqs))
 
 print "Projection matrix: ", a.shape
 

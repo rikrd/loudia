@@ -7,7 +7,7 @@ import os, sys, wave
 import scipy
 
 
-interactivePlot = False
+interactivePlot = True
 plot = True
 
 filename = sys.argv[1]
@@ -22,11 +22,11 @@ plotSize = fftSize / 8
 stream, sampleRate, nframes, nchannels, loader = get_framer_audio(filename, frameSize, frameStep)
 
 
-peakBandwidth = 3
+peakBandwidth = 4
 peakCandidateCount = 4
 numMaxPitches = 1
 numHarmonics = 80
-numCandidates = 300
+numCandidates = 200
 
 windower = loudia.Window( frameSize,
                           loudia.Window.BLACKMANHARRIS )
@@ -45,19 +45,23 @@ pitchInverseProblem = loudia.PitchInverseProblem(fftSize,
                                                  numCandidates,
                                                  peakBandwidth)
 
+a = pitchInverseProblem.projectionMatrix()
+
 specs = []
 wspecs = []
 pitches = []
 saliencies = []
 freqss = []
 
+frameNumber = 500
+
 if interactivePlot:
     pylab.ion()
     pylab.figure()
-    pylab.title('Interactive plot of the FFT vs LPC frequency response')
+    pylab.title('Interactive plot of the frequency likelihood')
     pylab.gca().set_ylim([-100, 40])
     pylab.gca().set_autoscale_on(False)
-
+    
 for frame in stream:
     samples = frame
     fft = ffter.process( windower.process( frame ) )
@@ -66,17 +70,24 @@ for frame in stream:
     wspec = whitening.process( spec )
     #wspec = spec
     pitch, saliency, freqs = pitchInverseProblem.process( wspec )
+
+    frameNumber -= 1
     
     if interactivePlot:
-        pylab.subplot(211)
-        pylab.hold(False)
-        pylab.plot( wspec[0, :plotSize] )
-
-        pylab.subplot(212)
-        pylab.hold(False)
-        pylab.plot(freqs[0,:plotSize], label = 'Noise Suppressed Spectrum')
-        #pylab.hold(True)
-        #pylab.stem( pitch/sampleRate*fftSize, saliency )
+        if frameNumber == 0:
+            maxFreq = freqs[0,:].argmax()
+            
+            pylab.subplot(211)
+            pylab.hold(True)
+            pylab.plot( wspec[0, :plotSize] )
+            pylab.plot(400*a[:, maxFreq])
+            
+            pylab.subplot(212)
+            pylab.hold(False)
+            pylab.plot(freqs[0,:plotSize], label = 'Noise Suppressed Spectrum')
+            #pylab.hold(True)
+            #pylab.stem( pitch/sampleRate*fftSize, saliency )
+            #pylab.show()
         
     specs.append( spec[0,:plotSize] )
     wspecs.append( wspec[0,:plotSize] )
@@ -100,7 +111,7 @@ frameCount = specs.shape[0] - 1
 #saliencies = scipy.signal.lfilter(scipy.array([1.0/n]*int(n)), scipy.array([1.0]), saliencies, axis=0)
 
 if plot:
-    pitches[ saliencies < 35] = scipy.NaN
+    pitches[ saliencies < 20] = scipy.NaN
 
     # Get the onsets
     annotation = os.path.splitext(filename)[0] + '.onset_annotated'
