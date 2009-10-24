@@ -74,7 +74,7 @@ void PitchInverseProblem::setup(){
     frequencyCount = _range;
   }
 
-  _regularisation = 1.0;
+  _regularisation = 3.0;
 
   // Params taken from Klapuri ISMIR 2006
   _alpha = 27; // 27 Hz
@@ -125,14 +125,46 @@ void PitchInverseProblem::setup(){
   }
   */
 
-  MatrixXR sourceWeight = MatrixXR::Identity( frequencyCount, frequencyCount );
-  MatrixXR targetWeight = MatrixXR::Identity( _range, _range );
 
-  MatrixXR invSourceWeight = ( sourceWeight ).inverse();
+  /*                                                                                                   
+  // Use the LU inverse                                                                                
+   MatrixXR sourceWeight = MatrixXR::Identity( frequencyCount, frequencyCount );                        
+   MatrixXR targetWeight = MatrixXR::Identity( _range, _range );                                        
+                                                                                                        
+   // Since the source weights is a diagonal matrix, the inverse is the inverse of the diagonal         
+   MatrixXR invSourceWeight = sourceWeight;                                                             
+   invSourceWeight.diagonal() = invSourceWeight.diagonal().cwise().inverse();                           
+   LOUDIA_DEBUG("PITCHINVERSEPROBLEM: Setting up the inversion...");                                    
+   // A = W^{-1} K^t [ K W^{-1} K^t + \lambda * I_N ]^{+}                                               
+   _inverseProjectionMatrix = invSourceWeight * _projectionMatrix.transpose() * ( (_projectionMatrix * invSourceWeight * _pro
+   */                                                                                                                        
+                                                                                                                             
+   /*                                                                                                                        
+   // Use the pseudioInverse                                                                                                 
+   MatrixXR sourceWeight = MatrixXR::Identity( frequencyCount, frequencyCount );                                             
+   MatrixXR targetWeight = MatrixXR::Identity( _halfSize, _halfSize );                                                       
+                                                                                                                             
+   // Since the source weights is a diagonal matrix, the inverse is the inverse of the diagonal                              
+   MatrixXR invSourceWeight = sourceWeight;                                                                                  
+   invSourceWeight.diagonal() = invSourceWeight.diagonal().cwise().inverse();                                                
+                                                                                                                             
+   LOUDIA_DEBUG("PITCHINVERSEPROBLEM: Setting up the inversion...");                                                         
+   // A = W^{-1} K^t [ K W^{-1} K^t + \lambda * I_N ]^{+}                                                                    
+   MatrixXR temp = (_projectionMatrix * invSourceWeight * _projectionMatrix.transpose());                                    
+   temp.diagonal().cwise() += _regularisation;                                                                               
+   MatrixXR pseudioInv;                                                                                                      
+   pseudoInverse( temp, &pseudioInv );
+   _inverseProjectionMatrix = invSourceWeight * _projectionMatrix.transpose() * pseudioInv;
+   */
 
-  LOUDIA_DEBUG("PITCHINVERSEPROBLEM: Setting up the inversion...");
-  // A = W^{-1} K^t [ K W^{-1} K^t + \lambda * I_N ]^{+}
-  _inverseProjectionMatrix = invSourceWeight * _projectionMatrix.transpose() * ( (_projectionMatrix * invSourceWeight * _projectionMatrix.transpose()) + (_regularisation * MatrixXR::Identity( _range, _range )) ).inverse();
+   // Don't use sourceWeights
+   LOUDIA_DEBUG("PITCHINVERSEPROBLEM: Setting up the inversion...");
+   // A = K^t [ K K^t + \lambda * I_N ]^{+}
+   MatrixXR temp = (_projectionMatrix * _projectionMatrix.transpose());
+   temp.diagonal().cwise() += _regularisation;
+   MatrixXR pseudioInv;
+   pseudoInverse( temp, &pseudioInv );
+   _inverseProjectionMatrix = _projectionMatrix.transpose() * pseudioInv;
 
   LOUDIA_DEBUG("PITCHINVERSEPROBLEM: Setting up the peak detector and interpolator...");
   _peak.setup();
@@ -149,7 +181,7 @@ void PitchInverseProblem::harmonicWeight(MatrixXR f, Real fMin, Real fMax, int h
 }
 
 void PitchInverseProblem::harmonicPosition(MatrixXR f, Real fMin, Real fMax, int harmonicIndex, MatrixXR* result){
-  (*result) = (harmonicIndex * f * sqrt(1.0 + (pow(harmonicIndex, 2.0) - 1.0) * _inharmonicity)) * (Real)_fftSize / (2.0 * (Real)_sampleRate);
+  (*result) = (harmonicIndex * f * sqrt(1.0 + (pow(harmonicIndex, 2.0) - 1.0) * _inharmonicity)) * (Real)_fftSize / ((Real)_sampleRate);
 }
 
 void PitchInverseProblem::harmonicSpread(MatrixXR f, Real fMin, Real fMax, int harmonicIndex, MatrixXR* result){
@@ -157,13 +189,14 @@ void PitchInverseProblem::harmonicSpread(MatrixXR f, Real fMin, Real fMax, int h
 }
 
 Real PitchInverseProblem::harmonicWeight(Real f, Real fMin, Real fMax, int harmonicIndex){
-  //return ((_sampleRate / tLow) + _alpha) / ((harmonicIndex * _sampleRate / tUp) + _beta);
-  //return ((harmonicIndex * f) + _beta) / ((harmonicIndex * f) + _alpha);
-  return 1.0;
+  //return ((_sampleRate * fMin) + _alpha) / ((harmonicIndex * _sampleRate * fMax) + _beta);
+  return ((harmonicIndex * f) + _beta) / ((harmonicIndex * f) + _alpha);
+  //return _sampleRate / f / harmonicIndex;
+  //return 1.0;
 }
 
 Real PitchInverseProblem::harmonicPosition(Real f, Real fMin, Real fMax, int harmonicIndex){
-  return (harmonicIndex * f * sqrt(1.0 + (pow(harmonicIndex, 2.0) - 1.0) * _inharmonicity)) * (Real)_fftSize / (2.0 * (Real)_sampleRate);
+  return (harmonicIndex * f * sqrt(1.0 + (pow(harmonicIndex, 2.0) - 1.0) * _inharmonicity)) * (Real)_fftSize / ((Real)_sampleRate);
 }
 
 Real PitchInverseProblem::harmonicSpread(Real f, Real fMin, Real fMax, int harmonicIndex){
