@@ -53,7 +53,7 @@ def configure(conf):
         conf.env.append_value('CPPPATH_EIGEN', os.environ['CPPPATH_EIGEN'])
 
         if conf.env['option_debug']:
-                conf.env.append_value('CXXFLAGS', '-Wall  -O3 -fPIC -msse2')
+                conf.env.append_value('CXXFLAGS', '-Wall  -O3 -fPIC -msse2 -g')
         else:
                 conf.env.append_value('CXXFLAGS', '-O3 -fPIC -msse2 -DNDEBUG')
 
