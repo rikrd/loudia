@@ -12,10 +12,12 @@ plot = True
 
 filename = sys.argv[1]
 
-frameSize = 8192 
+frameSize = 4096 
 frameStep = 2048
 
 fftSize = 8192
+
+saliencyThreshold = 20
 
 plotSize = fftSize / 8
 
@@ -53,7 +55,7 @@ pitches = []
 saliencies = []
 freqss = []
 
-frameNumber = 500
+frameNumber = 200
 
 if interactivePlot:
     pylab.ion()
@@ -69,7 +71,7 @@ for frame in stream:
     
     wspec = whitening.process( spec )
     #wspec = spec
-    pitch, saliency, freqs = pitchInverseProblem.process( wspec )
+    pitch, saliency, freqs = pitchInverseProblem.process( spec )
 
     frameNumber -= 1
     
@@ -79,8 +81,8 @@ for frame in stream:
             
             pylab.subplot(211)
             pylab.hold(True)
-            pylab.plot( wspec[0, :plotSize] )
-            pylab.plot(400*a[:, maxFreq])
+            pylab.plot( spec[0, :plotSize] )
+            pylab.plot(loudia.magToDb(a)[:, maxFreq] + 40)
             
             pylab.subplot(212)
             pylab.hold(False)
@@ -111,7 +113,7 @@ frameCount = specs.shape[0] - 1
 #saliencies = scipy.signal.lfilter(scipy.array([1.0/n]*int(n)), scipy.array([1.0]), saliencies, axis=0)
 
 if plot:
-    pitches[ saliencies < 20] = scipy.NaN
+    pitches[ saliencies < saliencyThreshold ] = scipy.NaN
 
     # Get the onsets
     annotation = os.path.splitext(filename)[0] + '.onset_annotated'
