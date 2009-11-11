@@ -77,20 +77,20 @@ void PeakCOG::process(const MatrixXC& fft, const MatrixXR& peakPos, MatrixXR* pe
       // Find the start and end of the peak by finding valleys
       int start = peakPos(row, i);
       for (; start > 0; start-- ) {
-        if (_spectrumAbs2Deriv(row, start) * _spectrumAbs2Deriv(row, start-1) < -2) {
+        if (_spectrumAbs2Deriv(row, start) * _spectrumAbs2Deriv(row, start-1) < 0) {
           break;
         }
       }
 
       int end = peakPos(row, i);
       for (; end < _spectrumAbs2Deriv.cols()-1; end++ ) {
-        if (_spectrumAbs2Deriv(row, end) * _spectrumAbs2Deriv(row, end+1) < -2) {
+        if (_spectrumAbs2Deriv(row, end) * _spectrumAbs2Deriv(row, end+1) < 0) {
           break;
         }
       }
 
       // Calculate the actual center of gravity of the peak
-      if ( (end - start) > 0) {
+      if ( (end - start) >= 3) {
         (*peakCog)(row, i) = ((-_spectrumArgDeriv).block(row, start, 1, end-start).cwise() * _spectrumAbs2.block(row, start, 1, end-start)).sum() / _spectrumAbs2.block(row, start, 1, end-start).sum();
       }
 
