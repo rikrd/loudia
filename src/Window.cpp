@@ -127,7 +127,7 @@ MatrixXR Window::blackmanType(int length, Real a0, Real a1, Real a2, Real a3){
     result(0, i) = a0 \
                    - a1 * cos(2.0 * (Real)i * pi_length_1) \
                    + a2 * cos(4.0 * (Real)i * pi_length_1) \
-                   + a3 * cos(6.0 * (Real)i * pi_length_1);
+                   - a3 * cos(6.0 * (Real)i * pi_length_1);
   }
 
   return result;
