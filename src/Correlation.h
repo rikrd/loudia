@@ -92,9 +92,9 @@ public:
      @param minLag minimum lag to be calculated
      @param useFft determines whether or not to use the FFT method
   */
-  Correlation();
+  //Correlation();
   Correlation(int inputSizeA, int inputSizeB, int maxLag, int minLag, bool useFft);
-  Correlation(int inputSizeA, int inputSizeB, int maxLag = std::numeric_limits<int>::max(), int minLag = -std::numeric_limits<int>::max());
+  Correlation(int inputSizeA = 1024, int inputSizeB = 1024, int maxLag = std::numeric_limits<int>::max(), int minLag = -std::numeric_limits<int>::max());
   
   /**
      Destroys the Correlation algorithm and frees its resources.

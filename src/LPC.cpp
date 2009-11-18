@@ -115,14 +115,14 @@ void LPC::process(const MatrixXR& frame, MatrixXR* lpcCoeffs, MatrixXR* reflecti
       gamma = _acorr(row, i);
 
       // Use the Eigen reverse()      
-      if ( i >= 2) {
-        gamma += ((*lpcCoeffs).row(row).segment(1, i-1) * _acorr.row(row).segment(1, i-1).transpose().reverse())(0,0);
-      }
+//       if ( i >= 2) {
+//         gamma += ((*lpcCoeffs).row(row).segment(1, i-1) * _acorr.row(row).segment(1, i-1).transpose().reverse())(0,0);
+//       }
       
       // instead of manually walking it in reverse order
-      //for (int j = 1; j <= i-1; ++j) {
-      //  gamma += (*lpcCoeffs)(row, j) * _acorr(row, i-j);  
-      //}
+      for (int j = 1; j <= i-1; ++j) {
+       gamma += (*lpcCoeffs)(row, j) * _acorr(row, i-j);  
+      }
       
       // Get the reflection coefficient
       (*reflectionCoeffs)(row, i-1) = - gamma / (*error)(row, 0);

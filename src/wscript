@@ -53,10 +53,17 @@ def configure(conf):
         conf.env.append_value('CPPPATH_EIGEN', os.environ['CPPPATH_EIGEN'])
 
         if conf.env['option_debug']:
-                conf.env.append_value('CXXFLAGS', '-Wall  -O3 -fPIC -msse2')
+                conf.env.append_value('CXXFLAGS', '-g')
+                conf.env.append_value('CXXFLAGS','-fno-inline')
+                conf.env.append_value('CXXFLAGS','-W')
+                conf.env.append_value('CXXFLAGS','-Wall')
         else:
-                conf.env.append_value('CXXFLAGS', '-O3 -fPIC -msse2 -DNDEBUG')
-
+                conf.env.append_value('CXXFLAGS', '-O4')
+                conf.env.append_value('CXXFLAGS','-fPIC')
+                conf.env.append_value('CXXFLAGS','-W')
+                conf.env.append_value('CXXFLAGS','-Wall')
+                conf.env.append_value('CXXFLAGS','-msse2')
+                conf.env.append_value('CXXFLAGS','-DNDEBUG')
         conf.env.append_value('LINKFLAGS', '-lm')
 
         if not conf.env['option_no_python_bindings']:

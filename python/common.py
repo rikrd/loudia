@@ -71,8 +71,9 @@ def get_framer_audio_native(filename, size, hop):
     framer.setHopSize(hop)
 
     stream = framer_audio_native(loader, framer)
-
-    return stream, loader.sampleRate(), math.ceil(loader.totalTime() * loader.sampleRate() * hop), loader.channelCount(), loader
+    print loader.totalTime,hop,loader.sampleRate()
+    #return stream, loader.sampleRate(), math.ceil(loader.totalTime() * loader.sampleRate() * hop), loader.channelCount(), loader
+    return stream, loader.sampleRate(), math.ceil(loader.totalTime()/hop * loader.sampleRate()), loader.channelCount(), loader
 
 def framer_audio_native(loader, framer):
     while not loader.isFinished():

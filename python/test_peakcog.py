@@ -25,11 +25,12 @@ sinenoise = sine + (scipy.random.random(signalSize) - 0.5)
 
 # Loudia's solution # --------------------------------- #
 bandwidth = 8 * fftSize / frameSize
-peakCount = 4
+peakCount = 1024
 window = loudia.Window(frameSize, loudia.Window.BLACKMANHARRIS)
 fft = loudia.FFT(fftSize)
-peaks = loudia.PeakDetectionComplex(peakCount, bandwidth)
+peaks = loudia.PeakDetectionComplex()
 cogs = loudia.PeakCOG(fftSize, bandwidth)
+print peaks.peakCount()
 
 peakCogs = []
 peakPos = []
@@ -49,7 +50,7 @@ for i in range((signalSize - frameSize)/frameStep):
         pylab.clf()
         pylab.hold(True)
         pylab.plot(abs(r_sine_fft[0,:]))
-        pylab.stem(r_sine_peakpos[0,:], abs(r_sine_fft[0,:])[r_sine_peakpos[0,:]])
+        pylab.stem(r_sine_peakpos[0,:], r_sine_peakmag[0,:]) #abs(r_sine_fft[0,:])[map(int, r_sine_peakpos[0,:])])
         
         pylab.hold(False)
         
@@ -61,7 +62,7 @@ if plotInteractive:
     
 peakCogs = scipy.array(peakCogs)
 peakPos = scipy.array(peakPos)
-print peakPos[:10,:]
+#print peakPos[:10,:]
 
 pylab.figure()
 pylab.plot(peakCogs)
