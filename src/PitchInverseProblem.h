@@ -40,6 +40,15 @@ protected:
 
   Real _sampleRate;
 
+  // Crop points of the frequency spectrum
+  // In order to reduce the size of the inverse
+  // projection matrix
+  Real _lowCutFrequency;
+  Real _highCutFrequency;
+  int _lowBin;
+  int _highBin;
+  int _range;
+
   Real _tMin;
   Real _tMax;
   Real _alpha;

@@ -73,11 +73,11 @@ void MFCC::setup(){
 void MFCC::process(const MatrixXR& spectrum, MatrixXR* mfccCoeffs){
   (*mfccCoeffs).resize(spectrum.rows(), _coefficientCount);
   
-  for ( int i = 0; i < spectrum.rows(); i++) {  
+  for ( int i = 0; i < spectrum.rows(); i++) {
     LOUDIA_DEBUG("MFCC: Processing Melbands");
     // Process the mel bands on the power of the spectrum
     _melbands.process(spectrum.row(i).cwise().square(), &_bands);
-    
+        
     LOUDIA_DEBUG("MFCC: Processing Log of bands");
     // Apply a power to the log mel amplitudes as in: http://en.wikipedia.org/wiki/Mel_frequency_cepstral_coefficient
     // V. Tyagi and C. Wellekens

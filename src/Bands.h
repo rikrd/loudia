@@ -1,25 +1,24 @@
-/*                                                         
+/*
 ** Copyright (C) 2008, 2009 Ricard Marxer <email@ricardmarxer.com>
-**                                                                  
+**
 ** This program is free software; you can redistribute it and/or modify
 ** it under the terms of the GNU General Public License as published by
-** the Free Software Foundation; either version 3 of the License, or   
-** (at your option) any later version.                                 
-**                                                                     
-** This program is distributed in the hope that it will be useful,     
-** but WITHOUT ANY WARRANTY; without even the implied warranty of      
-** MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the       
-** GNU General Public License for more details.                        
-**                                                                     
-** You should have received a copy of the GNU General Public License   
-** along with this program; if not, write to the Free Software         
+** the Free Software Foundation; either version 3 of the License, or
+** (at your option) any later version.
+**
+** This program is distributed in the hope that it will be useful,
+** but WITHOUT ANY WARRANTY; without even the implied warranty of
+** MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+** GNU General Public License for more details.
+**
+** You should have received a copy of the GNU General Public License
+** along with this program; if not, write to the Free Software
 ** Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
-*/                                                                          
+*/
 
 #ifndef BANDS_H
 #define BANDS_H
 
-#include <Eigen/StdVector>
 #include <vector>
 
 #include "Typedefs.h"
@@ -34,9 +33,9 @@
   * The value of a band corresponds to the sum of the values of the input array in the band's
   * positions multiplied with the band's weights.
   *
-  * In this implementation the positions of a given band are defined by the index of the first 
+  * In this implementation the positions of a given band are defined by the index of the first
   * array cell of the band and the size of the weights array.
-  * The full configuration of the bands algorithm is defined using a single column matrix for the 
+  * The full configuration of the bands algorithm is defined using a single column matrix for the
   * starts of the bands and a vector of single row matrices for the weights each band.
   *
   * Note that the number of rows of the starts matrix and the size of the vector of weights must
@@ -59,14 +58,14 @@ public:
      Constructs a Bands object with a single band covering the entire array.
   */
   Bands();
-  
+
   /**
      Constructs a Bands object with the specified @a starts and @a
      weights setting.
-     
+
      @param starts single column matrix of Integers that determine the
      first array cell of each band.
-     
+
      @param weights vector of single row matrices of Reals that determine the
      values of the weights of each band.
   */
@@ -79,14 +78,14 @@ public:
 
   /**
      Calculates the bands of @a frames using the specified starts and weights properties.
-     
+
      @param frames matrix of Real values.
-     
+
      @param bands pointer to a matrix of Real values for the output.  The matrix should
      have the same number of rows as @a frames and as many columns as the number of bands
-     (rows in the starts matrix and elements in the weights vector). 
+     (rows in the starts matrix and elements in the weights vector).
 
-     Note that if the output matrix is not of the required size it will be resized, 
+     Note that if the output matrix is not of the required size it will be resized,
      reallocating a new memory space if necessary.
   */
   void process(const MatrixXR&  frames, MatrixXR* bands);
@@ -96,14 +95,14 @@ public:
 
   /**
      Return the vector of weights.
-     
+
      @sa starts, bandWeights, setStartsWeights
   */
   std::vector<MatrixXR> weights() const;
 
   /**
      Return in @a bandWeights the weights of the band given by the index @a band.
-     
+
      @sa weights
   */
   void bandWeights(int band, MatrixXR* bandWeights) const;

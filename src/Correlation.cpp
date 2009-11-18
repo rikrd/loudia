@@ -31,11 +31,6 @@ Correlation::Correlation()
 {
   int inputSizeA = 1024;
   int inputSizeB = 1024;
-  LOUDIA_DEBUG("CORRELATION: Construction inputSizeA: " << inputSizeA
-        << " inputSizeB: " << inputSizeB
-        << " minLag: " << minLag
-        << " maxLag: " << maxLag);
-
   setInputSizeA( inputSizeA, false );
   setInputSizeB( inputSizeB, false );
   setMinLag( -std::numeric_limits<int>::max(), false );
@@ -48,9 +43,9 @@ Correlation::Correlation()
 Correlation::Correlation(int inputSizeA, int inputSizeB, int maxLag, int minLag)
 {
   LOUDIA_DEBUG("CORRELATION: Construction inputSizeA: " << inputSizeA
-        << " inputSizeB: " << inputSizeB
-        << " minLag: " << minLag
-        << " maxLag: " << maxLag);
+               << " inputSizeB: " << inputSizeB
+               << " minLag: " << minLag
+               << " maxLag: " << maxLag);
 
   setInputSizeA( inputSizeA, false );
   setInputSizeB( inputSizeB, false );
@@ -65,10 +60,10 @@ Correlation::Correlation(int inputSizeA, int inputSizeB, int maxLag, int minLag)
 Correlation::Correlation(int inputSizeA, int inputSizeB, int maxLag, int minLag, bool useFft)
 {
   LOUDIA_DEBUG("CORRELATION: Construction inputSizeA: " << inputSizeA
-        << " inputSizeB: " << inputSizeB
-        << " minLag: " << minLag
-        << " maxLag: " << maxLag
-        << " useFft: " << useFft);
+               << " inputSizeB: " << inputSizeB
+               << " minLag: " << minLag
+               << " maxLag: " << maxLag
+               << " useFft: " << useFft);
   
   setInputSizeA( inputSizeA, false );
   setInputSizeB( inputSizeB, false );

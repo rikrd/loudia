@@ -70,10 +70,8 @@ def get_framer_audio_native(filename, size, hop):
     framer.setFrameSize(size)
     framer.setHopSize(hop)
 
-    stream = framer_audio_native(loader, framer)
-    print loader.totalTime,hop,loader.sampleRate()
-    #return stream, loader.sampleRate(), math.ceil(loader.totalTime() * loader.sampleRate() * hop), loader.channelCount(), loader
-    return stream, loader.sampleRate(), math.ceil(loader.totalTime()/hop * loader.sampleRate()), loader.channelCount(), loader
+    stream = framer_audio_native(loader, framer)  
+    return stream, loader.sampleRate(), int(math.ceil(loader.totalTime() * loader.sampleRate() / hop)), loader.channelCount(), loader
 
 def framer_audio_native(loader, framer):
     while not loader.isFinished():
@@ -95,7 +93,7 @@ def get_framer_audio_audiolab(filename, size, hop):
 
     framer = framer_audio_audiolab(loader, size, hop)
 
-    return framer, sr, math.ceil(nframes / hop), nchannels, loader
+    return framer, sr, int(math.ceil(float(nframes) / hop)), nchannels, loader
 
 def framer_audio_audiolab(loader, size, hop):
     result = []

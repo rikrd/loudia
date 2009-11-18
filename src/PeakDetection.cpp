@@ -155,7 +155,7 @@ void PeakDetection::process(const MatrixXR& frames,
     int candidateCount = (int)peaks.size();
     if( _candidateCount > 0 ) {
       candidateCount = min(candidateCount, _candidateCount);
-      std::sort(peaks.begin(), peaks.begin() + candidateCount, byMagnitude);
+      std::sort(peaks.begin(), peaks.end(), byMagnitude);
     }
     
     // Sort the candidates using position or magnitude
