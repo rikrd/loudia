@@ -57,4 +57,10 @@ while cursor < (sampleCount - frameSize):
     pAbs, pAng = process(framePast)
     p2Abs, p2Ang = process(framePast2)
 
+    # Perform the unwrapping of the three frames
+
+    # Perform the phase prediction and compare to the 3rd frame
+
+    # The prediction error will be the inverse of the sinusoidity
+
     cursor += hopSize
