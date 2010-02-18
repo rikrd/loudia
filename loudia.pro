@@ -2,8 +2,10 @@ CONFIG -= qt \
     gui \
     core
 TEMPLATE = lib
-QMAKE_CXX = ccache g++
-QMAKE_CC = ccache gcc
+QMAKE_CXX = ccache \
+    g++
+QMAKE_CC = ccache \
+    gcc
 HEADERS += src/Window.h \
     src/VoiceActivityDetection.h \
     src/Utils.h \
@@ -110,9 +112,9 @@ SOURCES += src/Window.cpp \
     src/AudioLoader.cpp \
     src/AOK.cpp
 LIBS += -lfftw3f \
-        -lavcodec \
-        -lavutil \
-        -lavformat \
-        -lsamplerate
+    -lavcodec \
+    -lavutil \
+    -lavformat \
+    -lsamplerate
 INCLUDEPATH += ../eigen2 \
     src
