@@ -27,14 +27,14 @@
 using namespace std;
 using namespace Eigen;
 
-struct peak{
+struct peakComplex{
   Real pos;
   Real mag;
   Real phase;
-  peak(const peak& other) 
+  peakComplex(const peakComplex& other)
     :pos(other.pos), mag(other.mag), phase(other.phase) { }
 
-  peak& operator=(const peak& other) {
+  peakComplex& operator=(const peakComplex& other) {
     pos = other.pos;
     mag = other.mag;
     phase = other.phase;
@@ -42,22 +42,22 @@ struct peak{
     return *this;
   }
 
-  peak(Real pos, Real mag, Real phase)
+  peakComplex(Real pos, Real mag, Real phase)
     :pos(pos), mag(mag), phase(phase) { }
   
   // A peak is smaller (first in the list)
   // if it's magnitude is larger
-  bool operator <(peak const& other) const {
+  bool operator <(peakComplex const& other) const {
     return mag > other.mag;
   }
 };
 
 struct byMagnitudeComp{
-  bool operator() (const peak& i, const peak& j) const { return ( i.mag > j.mag ); }
+  bool operator() (const peakComplex& i, const peakComplex& j) const { return ( i.mag > j.mag ); }
 } byMagnitudeComplex;
 
 struct byPositionComp{
-  bool operator() (const peak& i, const peak& j) const { return ( i.pos < j.pos ); }
+  bool operator() (const peakComplex& i, const peakComplex& j) const { return ( i.pos < j.pos ); }
 } byPositionComplex;
 
 PeakDetectionComplex::PeakDetectionComplex(int peakCount, SortMethod sortMethod, int minimumPeakWidth, int candidateCount, Real minimumPeakContrast)
@@ -120,7 +120,7 @@ void PeakDetectionComplex::process(const MatrixXC& frames,
 
   const int _halfPeakWidth = _minimumPeakWidth / 2;
   
-  vector<peak> peakVector;
+  vector<peakComplex> peakVector;
   peakVector.reserve( cols );
   int detectedCount;
   
@@ -148,7 +148,7 @@ void PeakDetectionComplex::process(const MatrixXC& frames,
         // If the contrast is bigger than what minimumPeakContrast says, then select as peak
         if ( (maxVal - minVal) >= _minimumPeakContrast ) {
 
-          peakVector.push_back( peak(j, _magnitudes(i, j), _phases(i, j)) );
+          peakVector.push_back( peakComplex(j, _magnitudes(i, j), _phases(i, j)) );
           detectedCount ++;
 
         }

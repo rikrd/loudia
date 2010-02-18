@@ -102,7 +102,7 @@ void SpectralWhitening::process(const MatrixXR& spectrum, MatrixXR* result){
   }
 
   // Apply compression weihgts
-  (*result) = spectrum.cwise() * _compressionWeights;
+  (*result) = spectrum.cwise() * _compressionWeights.block(0, 0, spectrum.rows(), spectrum.cols());
 }
 
 void SpectralWhitening::reset(){

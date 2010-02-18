@@ -56,7 +56,6 @@
    <value key="ToolChain" type="int">0</value>
    <value key="addQDumper" type=""></value>
    <value key="buildConfiguration" type="int">2</value>
-   <value key="buildDirectory" type="QString">/mnt/extra/dev/loudia</value>
   </valuemap>
  </data>
  <data>
@@ -73,48 +72,42 @@
   <valuemap type="QVariantMap">
    <value key="ProjectExplorer.BuildConfiguration.DisplayName" type="QString">Debug</value>
    <valuelist key="abstractProcess.Environment" type="QVariantList">
-    <value type="QString">CC=ccache g++</value>
-    <value type="QString">CONFIG=Debug</value>
-    <value type="QString">CPPPATH_EIGEN=/mnt/extra/dev/eigen2</value>
-    <value type="QString">CUPS_SERVER=\printserver</value>
-    <value type="QString">CXX=ccache g++</value>
-    <value type="QString">DBUS_SESSION_BUS_ADDRESS=unix:abstract=/tmp/dbus-f2u86zuPBt,guid=5100738ffc1d0dd96a1496e04ae8768f</value>
-    <value type="QString">DESKTOP_SESSION=default</value>
+    <value type="QString">DBUS_SESSION_BUS_ADDRESS=unix:abstract=/tmp/dbus-SrvG3eSjSy,guid=cca835916052a9fc76b236e24afaa3d4</value>
+    <value type="QString">DESKTOP_SESSION=kde</value>
     <value type="QString">DISPLAY=:0.0</value>
     <value type="QString">DM_CONTROL=/var/run/xdmctl</value>
     <value type="QString">GS_LIB=/home/rmarxer/.fonts</value>
-    <value type="QString">GTK2_RC_FILES=/etc/gtk-2.0/gtkrc:/home/rmarxer/.gtkrc-2.0:/home/rmarxer/.gtkrc-2.0-kde4:/home/rmarxer/.kde/share/config/gtkrc-2.0</value>
+    <value type="QString">GTK2_RC_FILES=/etc/gtk-2.0/gtkrc:/home/rmarxer/.gtkrc-2.0:/home/rmarxer/.gtkrc-2.0-kde:/home/rmarxer/.kde/share/config/gtkrc-2.0</value>
+    <value type="QString">GTK_MODULES=canberra-gtk-module</value>
     <value type="QString">GTK_RC_FILES=/etc/gtk/gtkrc:/home/rmarxer/.gtkrc::/home/rmarxer/.kde/share/config/gtkrc</value>
     <value type="QString">HOME=/home/rmarxer</value>
     <value type="QString">KDE_FULL_SESSION=true</value>
     <value type="QString">KDE_MULTIHEAD=false</value>
     <value type="QString">KDE_SESSION_UID=1000</value>
     <value type="QString">KDE_SESSION_VERSION=4</value>
-    <value type="QString">LANG=en_US.utf8</value>
-    <value type="QString">LANGUAGE=en_US:en</value>
-    <value type="QString">LD_LIBRARY_PATH=/home/rmarxer/qtcreator-1.2.92/lib/qtcreator:</value>
+    <value type="QString">LANG=en_US.UTF-8</value>
+    <value type="QString">LD_LIBRARY_PATH=/home/rmarxer/qtcreator-1.2.94/lib/qtcreator:</value>
     <value type="QString">LOGNAME=rmarxer</value>
-    <value type="QString">PATH=/usr/bin:.:/usr/local/bin:/usr/bin:/bin:/usr/games:/opt/jdk1.5.0_06/bin:/home/rmarxer/bin/fbm.2004-11-10/bin.i686:/usr/local/bin:/home/rmarxer/dev/emerge/src/bin:/home/rmarxer/dev/vericast/vericast-generic-67</value>
-    <value type="QString">PROCESSING_PATH=/mnt/extra/apps/processing-1.0.3</value>
-    <value type="QString">PS1=\n\[\e[34;1m\]\u@\h:\w\$ \[\e[0m\]</value>
-    <value type="QString">PWD=/home/rmarxer</value>
-    <value type="QString">PYTHONPATH=:/home/rmarxer/dev/emcap/emcap-src/playground/Billabio2/src:/home/rmarxer/.local/lib/python2.5/site-packages:/home/rmarxer/dev/emerge/src</value>
+    <value type="QString">PATH=/usr/bin:/usr/local/bin:/usr/bin:/bin:/usr/games</value>
+    <value type="QString">PWD=/home/rmarxer/Documents</value>
     <value type="QString">QTDIR=/usr/share/qt4</value>
     <value type="QString">QT_PLUGIN_PATH=/home/rmarxer/.kde/lib/kde4/plugins/:/usr/lib/kde4/plugins/</value>
-    <value type="QString">SESSION_MANAGER=local/rikrdinho:@/tmp/.ICE-unix/2501,unix/rikrdinho:/tmp/.ICE-unix/2501</value>
+    <value type="QString">SESSION_MANAGER=local/mtg110:@/tmp/.ICE-unix/2783,unix/mtg110:/tmp/.ICE-unix/2783</value>
     <value type="QString">SHELL=/bin/bash</value>
-    <value type="QString">SHLVL=0</value>
-    <value type="QString">SSH_AGENT_PID=2450</value>
-    <value type="QString">SSH_AUTH_SOCK=/tmp/ssh-dwyWiO2360/agent.2360</value>
+    <value type="QString">SHLVL=1</value>
+    <value type="QString">SSH_AGENT_PID=2721</value>
+    <value type="QString">SSH_AUTH_SOCK=/tmp/ssh-iVQwUK2568/agent.2568</value>
     <value type="QString">USER=rmarxer</value>
     <value type="QString">WINDOWPATH=7</value>
-    <value type="QString">XCURSOR_THEME=oxy-zion</value>
+    <value type="QString">XCURSOR_THEME=oxy-white</value>
     <value type="QString">XDG_DATA_DIRS=/usr/share:/usr/share:/usr/local/share</value>
-    <value type="QString">XDG_SESSION_COOKIE=7fe2c497005b9d93bb7d084449b5790e-1256748685.529173-53287054</value>
+    <value type="QString">XDG_SESSION_COOKIE=ea73a19aff31757348d962564921b47a-1257939923.447874-1987763213</value>
     <value type="QString">XDM_MANAGED=method=classic</value>
+    <value type="QString">ftp_proxy=http://proxy.upf.edu:8080/</value>
+    <value type="QString">http_proxy=http://proxy.upf.edu:8080/</value>
    </valuelist>
    <valuelist key="abstractProcess.arguments" type="QVariantList">
-    <value type="QString">/mnt/extra/dev/loudia/loudia.pro</value>
+    <value type="QString">/home/rmarxer/dev/loudia/loudia.pro</value>
     <value type="QString">-spec</value>
     <value type="QString">linux-g++</value>
     <value type="QString">-r</value>
@@ -122,7 +115,7 @@
    </valuelist>
    <value key="abstractProcess.command" type="QString">/usr/bin/qmake-qt4</value>
    <value key="abstractProcess.enabled" type="bool">false</value>
-   <value key="abstractProcess.workingDirectory" type="QString">/mnt/extra/dev/loudia</value>
+   <value key="abstractProcess.workingDirectory" type="QString">/home/rmarxer/dev/loudia</value>
   </valuemap>
  </data>
  <data>
@@ -130,45 +123,39 @@
   <valuemap type="QVariantMap">
    <value key="ProjectExplorer.BuildConfiguration.DisplayName" type="QString">Debug</value>
    <valuelist key="abstractProcess.Environment" type="QVariantList">
-    <value type="QString">CC=ccache g++</value>
-    <value type="QString">CONFIG=Debug</value>
-    <value type="QString">CPPPATH_EIGEN=/mnt/extra/dev/eigen2</value>
-    <value type="QString">CUPS_SERVER=\printserver</value>
-    <value type="QString">CXX=ccache g++</value>
-    <value type="QString">DBUS_SESSION_BUS_ADDRESS=unix:abstract=/tmp/dbus-f2u86zuPBt,guid=5100738ffc1d0dd96a1496e04ae8768f</value>
-    <value type="QString">DESKTOP_SESSION=default</value>
+    <value type="QString">DBUS_SESSION_BUS_ADDRESS=unix:abstract=/tmp/dbus-SrvG3eSjSy,guid=cca835916052a9fc76b236e24afaa3d4</value>
+    <value type="QString">DESKTOP_SESSION=kde</value>
     <value type="QString">DISPLAY=:0.0</value>
     <value type="QString">DM_CONTROL=/var/run/xdmctl</value>
     <value type="QString">GS_LIB=/home/rmarxer/.fonts</value>
-    <value type="QString">GTK2_RC_FILES=/etc/gtk-2.0/gtkrc:/home/rmarxer/.gtkrc-2.0:/home/rmarxer/.gtkrc-2.0-kde4:/home/rmarxer/.kde/share/config/gtkrc-2.0</value>
+    <value type="QString">GTK2_RC_FILES=/etc/gtk-2.0/gtkrc:/home/rmarxer/.gtkrc-2.0:/home/rmarxer/.gtkrc-2.0-kde:/home/rmarxer/.kde/share/config/gtkrc-2.0</value>
+    <value type="QString">GTK_MODULES=canberra-gtk-module</value>
     <value type="QString">GTK_RC_FILES=/etc/gtk/gtkrc:/home/rmarxer/.gtkrc::/home/rmarxer/.kde/share/config/gtkrc</value>
     <value type="QString">HOME=/home/rmarxer</value>
     <value type="QString">KDE_FULL_SESSION=true</value>
     <value type="QString">KDE_MULTIHEAD=false</value>
     <value type="QString">KDE_SESSION_UID=1000</value>
     <value type="QString">KDE_SESSION_VERSION=4</value>
-    <value type="QString">LANG=en_US.utf8</value>
-    <value type="QString">LANGUAGE=en_US:en</value>
-    <value type="QString">LD_LIBRARY_PATH=/home/rmarxer/qtcreator-1.2.92/lib/qtcreator:</value>
+    <value type="QString">LANG=en_US.UTF-8</value>
+    <value type="QString">LD_LIBRARY_PATH=/home/rmarxer/qtcreator-1.2.94/lib/qtcreator:</value>
     <value type="QString">LOGNAME=rmarxer</value>
-    <value type="QString">PATH=/usr/bin:.:/usr/local/bin:/usr/bin:/bin:/usr/games:/opt/jdk1.5.0_06/bin:/home/rmarxer/bin/fbm.2004-11-10/bin.i686:/usr/local/bin:/home/rmarxer/dev/emerge/src/bin:/home/rmarxer/dev/vericast/vericast-generic-67</value>
-    <value type="QString">PROCESSING_PATH=/mnt/extra/apps/processing-1.0.3</value>
-    <value type="QString">PS1=\n\[\e[34;1m\]\u@\h:\w\$ \[\e[0m\]</value>
-    <value type="QString">PWD=/home/rmarxer</value>
-    <value type="QString">PYTHONPATH=:/home/rmarxer/dev/emcap/emcap-src/playground/Billabio2/src:/home/rmarxer/.local/lib/python2.5/site-packages:/home/rmarxer/dev/emerge/src</value>
+    <value type="QString">PATH=/usr/bin:/usr/local/bin:/usr/bin:/bin:/usr/games</value>
+    <value type="QString">PWD=/home/rmarxer/Documents</value>
     <value type="QString">QTDIR=/usr/share/qt4</value>
     <value type="QString">QT_PLUGIN_PATH=/home/rmarxer/.kde/lib/kde4/plugins/:/usr/lib/kde4/plugins/</value>
-    <value type="QString">SESSION_MANAGER=local/rikrdinho:@/tmp/.ICE-unix/2501,unix/rikrdinho:/tmp/.ICE-unix/2501</value>
+    <value type="QString">SESSION_MANAGER=local/mtg110:@/tmp/.ICE-unix/2783,unix/mtg110:/tmp/.ICE-unix/2783</value>
     <value type="QString">SHELL=/bin/bash</value>
-    <value type="QString">SHLVL=0</value>
-    <value type="QString">SSH_AGENT_PID=2450</value>
-    <value type="QString">SSH_AUTH_SOCK=/tmp/ssh-dwyWiO2360/agent.2360</value>
+    <value type="QString">SHLVL=1</value>
+    <value type="QString">SSH_AGENT_PID=2721</value>
+    <value type="QString">SSH_AUTH_SOCK=/tmp/ssh-iVQwUK2568/agent.2568</value>
     <value type="QString">USER=rmarxer</value>
     <value type="QString">WINDOWPATH=7</value>
-    <value type="QString">XCURSOR_THEME=oxy-zion</value>
+    <value type="QString">XCURSOR_THEME=oxy-white</value>
     <value type="QString">XDG_DATA_DIRS=/usr/share:/usr/share:/usr/local/share</value>
-    <value type="QString">XDG_SESSION_COOKIE=7fe2c497005b9d93bb7d084449b5790e-1256748685.529173-53287054</value>
+    <value type="QString">XDG_SESSION_COOKIE=ea73a19aff31757348d962564921b47a-1257939923.447874-1987763213</value>
     <value type="QString">XDM_MANAGED=method=classic</value>
+    <value type="QString">ftp_proxy=http://proxy.upf.edu:8080/</value>
+    <value type="QString">http_proxy=http://proxy.upf.edu:8080/</value>
    </valuelist>
    <value key="abstractProcess.IgnoreReturnValue" type="bool">false</value>
    <valuelist key="abstractProcess.arguments" type="QVariantList">
@@ -176,7 +163,7 @@
    </valuelist>
    <value key="abstractProcess.command" type="QString">/usr/bin/make</value>
    <value key="abstractProcess.enabled" type="bool">true</value>
-   <value key="abstractProcess.workingDirectory" type="QString">/mnt/extra/dev/loudia</value>
+   <value key="abstractProcess.workingDirectory" type="QString">/home/rmarxer/dev/loudia</value>
   </valuemap>
  </data>
  <data>
@@ -184,45 +171,39 @@
   <valuemap type="QVariantMap">
    <value key="ProjectExplorer.BuildConfiguration.DisplayName" type="QString">Debug</value>
    <valuelist key="abstractProcess.Environment" type="QVariantList">
-    <value type="QString">CC=ccache g++</value>
-    <value type="QString">CONFIG=Debug</value>
-    <value type="QString">CPPPATH_EIGEN=/mnt/extra/dev/eigen2</value>
-    <value type="QString">CUPS_SERVER=\printserver</value>
-    <value type="QString">CXX=ccache g++</value>
-    <value type="QString">DBUS_SESSION_BUS_ADDRESS=unix:abstract=/tmp/dbus-hiWGHZwUHw,guid=333c5a452474cbf71dd28c294ae817a7</value>
-    <value type="QString">DESKTOP_SESSION=default</value>
+    <value type="QString">DBUS_SESSION_BUS_ADDRESS=unix:abstract=/tmp/dbus-SrvG3eSjSy,guid=cca835916052a9fc76b236e24afaa3d4</value>
+    <value type="QString">DESKTOP_SESSION=kde</value>
     <value type="QString">DISPLAY=:0.0</value>
     <value type="QString">DM_CONTROL=/var/run/xdmctl</value>
     <value type="QString">GS_LIB=/home/rmarxer/.fonts</value>
-    <value type="QString">GTK2_RC_FILES=/etc/gtk-2.0/gtkrc:/home/rmarxer/.gtkrc-2.0:/home/rmarxer/.gtkrc-2.0-kde4:/home/rmarxer/.kde/share/config/gtkrc-2.0</value>
+    <value type="QString">GTK2_RC_FILES=/etc/gtk-2.0/gtkrc:/home/rmarxer/.gtkrc-2.0:/home/rmarxer/.gtkrc-2.0-kde:/home/rmarxer/.kde/share/config/gtkrc-2.0</value>
+    <value type="QString">GTK_MODULES=canberra-gtk-module</value>
     <value type="QString">GTK_RC_FILES=/etc/gtk/gtkrc:/home/rmarxer/.gtkrc::/home/rmarxer/.kde/share/config/gtkrc</value>
     <value type="QString">HOME=/home/rmarxer</value>
     <value type="QString">KDE_FULL_SESSION=true</value>
     <value type="QString">KDE_MULTIHEAD=false</value>
     <value type="QString">KDE_SESSION_UID=1000</value>
     <value type="QString">KDE_SESSION_VERSION=4</value>
-    <value type="QString">LANG=en_US.utf8</value>
-    <value type="QString">LANGUAGE=en_US:en</value>
-    <value type="QString">LD_LIBRARY_PATH=/home/rmarxer/qtcreator-1.2.92/lib/qtcreator:</value>
+    <value type="QString">LANG=en_US.UTF-8</value>
+    <value type="QString">LD_LIBRARY_PATH=/home/rmarxer/qtcreator-1.2.94/lib/qtcreator:</value>
     <value type="QString">LOGNAME=rmarxer</value>
-    <value type="QString">PATH=/usr/bin:.:/usr/local/bin:/usr/bin:/bin:/usr/games:/opt/jdk1.5.0_06/bin:/home/rmarxer/bin/fbm.2004-11-10/bin.i686:/usr/local/bin:/home/rmarxer/dev/emerge/src/bin:/home/rmarxer/dev/vericast/vericast-generic-67</value>
-    <value type="QString">PROCESSING_PATH=/mnt/extra/apps/processing-1.0.3</value>
-    <value type="QString">PS1=\n\[\e[34;1m\]\u@\h:\w\$ \[\e[0m\]</value>
-    <value type="QString">PWD=/home/rmarxer</value>
-    <value type="QString">PYTHONPATH=:/home/rmarxer/dev/emcap/emcap-src/playground/Billabio2/src:/home/rmarxer/.local/lib/python2.5/site-packages:/home/rmarxer/dev/emerge/src</value>
+    <value type="QString">PATH=/usr/bin:/usr/local/bin:/usr/bin:/bin:/usr/games</value>
+    <value type="QString">PWD=/home/rmarxer/Documents</value>
     <value type="QString">QTDIR=/usr/share/qt4</value>
     <value type="QString">QT_PLUGIN_PATH=/home/rmarxer/.kde/lib/kde4/plugins/:/usr/lib/kde4/plugins/</value>
-    <value type="QString">SESSION_MANAGER=local/rikrdinho:@/tmp/.ICE-unix/2454,unix/rikrdinho:/tmp/.ICE-unix/2454</value>
+    <value type="QString">SESSION_MANAGER=local/mtg110:@/tmp/.ICE-unix/2783,unix/mtg110:/tmp/.ICE-unix/2783</value>
     <value type="QString">SHELL=/bin/bash</value>
-    <value type="QString">SHLVL=0</value>
-    <value type="QString">SSH_AGENT_PID=2356</value>
-    <value type="QString">SSH_AUTH_SOCK=/tmp/ssh-ePfCue2243/agent.2243</value>
+    <value type="QString">SHLVL=1</value>
+    <value type="QString">SSH_AGENT_PID=2721</value>
+    <value type="QString">SSH_AUTH_SOCK=/tmp/ssh-iVQwUK2568/agent.2568</value>
     <value type="QString">USER=rmarxer</value>
     <value type="QString">WINDOWPATH=7</value>
-    <value type="QString">XCURSOR_THEME=oxy-zion</value>
+    <value type="QString">XCURSOR_THEME=oxy-white</value>
     <value type="QString">XDG_DATA_DIRS=/usr/share:/usr/share:/usr/local/share</value>
-    <value type="QString">XDG_SESSION_COOKIE=7fe2c497005b9d93bb7d084449b5790e-1256724388.584305-280902282</value>
+    <value type="QString">XDG_SESSION_COOKIE=ea73a19aff31757348d962564921b47a-1257939923.447874-1987763213</value>
     <value type="QString">XDM_MANAGED=method=classic</value>
+    <value type="QString">ftp_proxy=http://proxy.upf.edu:8080/</value>
+    <value type="QString">http_proxy=http://proxy.upf.edu:8080/</value>
    </valuelist>
    <value key="abstractProcess.IgnoreReturnValue" type="bool">true</value>
    <valuelist key="abstractProcess.arguments" type="QVariantList">
@@ -231,7 +212,7 @@
    </valuelist>
    <value key="abstractProcess.command" type="QString">/usr/bin/make</value>
    <value key="abstractProcess.enabled" type="bool">true</value>
-   <value key="abstractProcess.workingDirectory" type="QString">/mnt/extra/dev/loudia</value>
+   <value key="abstractProcess.workingDirectory" type="QString">/home/rmarxer/dev/loudia</value>
    <value key="cleanConfig" type="bool">true</value>
    <valuelist key="makeargs" type="QVariantList">
     <value type="QString">clean</value>
