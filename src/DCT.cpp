@@ -25,140 +25,149 @@ using namespace std;
 using namespace Eigen;
 
 DCT::DCT(int inputSize, int dctSize, bool scale, DCTType dctType) :
-  _scale( scale )
+        _scale( scale )
 {
-  LOUDIA_DEBUG("DCT: Construction inputSize: " << inputSize
-        << ", dctSize: " << dctSize
-        << ", dctType: " << dctType);
+    LOUDIA_DEBUG("DCT: Construction inputSize: " << inputSize
+                 << ", dctSize: " << dctSize
+                 << ", dctType: " << dctType);
 
-  if (inputSize < dctSize) {
-    // TODO: Throw an exception since dctSize is the number of coefficients to output and it cannot output more
-    return;
-  }
+    if (inputSize < dctSize) {
+        // TODO: Throw an exception since dctSize is the number of coefficients to output and it cannot output more
+        return;
+    }
 
-  setInputSize( inputSize, false );
-  setDctSize( dctSize, false );
-  setDctType( dctType, false );
+    setInputSize( inputSize, false );
+    setDctSize( dctSize, false );
+    setDctType( dctType, false );
 
-  setup();
+    setup();
 }
 
 DCT::~DCT(){}
 
 void DCT::setup(){
-  // Prepare the buffers
-  LOUDIA_DEBUG("DCT: Setting up...");
-  _dctMatrix.resize(_inputSize, _inputSize);
+    // Prepare the buffers
+    LOUDIA_DEBUG("DCT: Setting up...");
+    _dctMatrix.resize(_inputSize, _inputSize);
 
 
-  switch(_dctType) {
-  case I:
-    type1Matrix( &_dctMatrix );
-    break;
+    switch(_dctType) {
+    case I:
+        type1Matrix( &_dctMatrix );
+        break;
 
-  case II:
-    type2Matrix( &_dctMatrix );
-    break;
+    case II:
+        type2Matrix( &_dctMatrix );
+        break;
 
-  case III:
-    // Throw ImplementationError not implemented yet
-    break;
+    case III:
+        // Throw ImplementationError not implemented yet
+        break;
 
-  case IV:
-    // Throw ImplementationError not implemented yet
-    break;
+    case IV:
+        // Throw ImplementationError not implemented yet
+        break;
 
-  case OCTAVE:
-    typeOctaveMatrix( &_dctMatrix );
-    break;
+    case OCTAVE:
+        typeOctaveMatrix( &_dctMatrix );
+        break;
 
-  }
+    }
 
 
-  reset();
-  LOUDIA_DEBUG("DCT: Finished setup.");
+    reset();
+    LOUDIA_DEBUG("DCT: Finished setup.");
 }
 
 void DCT::type1Matrix(MatrixXR* dctMatrix) {
-  int size = (*dctMatrix).rows();
+    int size = (*dctMatrix).rows();
 
-  Real norm = 1.0;
-  if ( _scale ) norm = sqrt(Real(2.0)/Real(size - 1));
+    Real norm = 1.0;
+    if ( _scale ) norm = sqrt(Real(2.0)/Real(size - 1));
 
-  for(int i=0; i < size; i++){
-    (*dctMatrix)(i, size - 1) = norm * 0.5 * pow((Real)-1, (Real)i);
-    for(int j=1; j < size-1; j++){
-      (*dctMatrix)(i,j) = norm * cos(Real(j * i) * M_PI / Real(size - 1));
+    for(int i=0; i < size; i++){
+        (*dctMatrix)(i, size - 1) = norm * 0.5 * pow((Real)-1, (Real)i);
+        for(int j=1; j < size-1; j++){
+            (*dctMatrix)(i,j) = norm * cos(Real(j * i) * M_PI / Real(size - 1));
+        }
     }
-  }
 
-  (*dctMatrix).col(0).setConstant(norm * 0.5);
+    (*dctMatrix).col(0).setConstant(norm * 0.5);
 
 }
 
 void DCT::type2Matrix(MatrixXR* dctMatrix) {
-  int size = (*dctMatrix).rows();
+    int size = (*dctMatrix).rows();
 
-  Real norm = 1.0;
-  if ( _scale ) norm = sqrt(Real(2.0)/Real(size));
-
-  for(int i=0; i < size; i++){
-    for(int j=0; j < size; j++){
-      (*dctMatrix)(i,j) = norm * cos(Real(j) * M_PI / Real(size) * (Real(i) + 0.5));
+    // In MATLAB the first column is scaled differently
+    Real norm0 = 1.0;
+    Real norm = 1.0;
+    if ( _scale ) {
+        norm0 = sqrt(Real(1.0)/Real(size));
+        norm = sqrt(Real(2.0)/Real(size));
     }
-  }
+
+    for(int i=0; i < size; i++){
+        for(int j=0; j < size; j++){
+            if (j==0) {
+                (*dctMatrix)(i,j) = norm0 * cos(Real(j) * M_PI / Real(size) * (Real(i) + 0.5));
+            } else {
+                (*dctMatrix)(i,j) = norm * cos(Real(j) * M_PI / Real(size) * (Real(i) + 0.5));
+            }
+        }
+    }
 }
 
 void DCT::typeOctaveMatrix(MatrixXR* dctMatrix) {
-  int size = (*dctMatrix).rows();
+    int size = (*dctMatrix).rows();
 
-  Real norm = 1.0;
-  if ( _scale ) norm = sqrt(2.0/Real(size));
+    Real norm = 1.0;
+    if ( _scale ) norm = sqrt(2.0/Real(size));
 
-  for(int i=0; i < size; i++){
-    for(int j=1; j < size; j++){
-      (*dctMatrix)(i,j) = norm * cos(Real(j) * M_PI / Real(2 * size) * (Real(2 * i - 1)));
+    for(int i=0; i < size; i++){
+        for(int j=1; j < size; j++){
+            (*dctMatrix)(i,j) = norm * cos(Real(j) * M_PI / Real(2 * size) * (Real(2 * i - 1)));
+        }
     }
-  }
 
-  (*dctMatrix).col(0).setConstant( norm * sqrt(0.5) );
+    (*dctMatrix).col(0).setConstant( norm * sqrt(0.5) );
 }
 
 void DCT::process(const MatrixXR& input, MatrixXR* dctCoeffs){
-  (*dctCoeffs).resize(input.rows(), _dctSize);
+    (*dctCoeffs).resize(input.rows(), _dctSize);
 
-  for ( int i = 0 ; i < input.rows(); i++) {
-    (*dctCoeffs).row(i) = input.row(i) * _dctMatrix.block(0, 0, input.cols(), _dctSize);
-  }
+    for ( int i = 0 ; i < input.rows(); i++) {
+        (*dctCoeffs).row(i) = input.row(i) * _dctMatrix.block(0, 0, input.cols(), _dctSize);
+    }
 }
 
 void DCT::reset(){
-  // Initial values
+    // Initial values
 }
 
 DCT::DCTType DCT::dctType() const{
-  return _dctType;
+    return _dctType;
 }
 
 void DCT::setDctType( DCTType type, bool callSetup ) {
-  _dctType = type;
-  if ( callSetup ) setup();
+    _dctType = type;
+    if ( callSetup ) setup();
 }
 
 int DCT::inputSize() const{
-  return _inputSize;
+    return _inputSize;
 }
 
 void DCT::setInputSize( int size, bool callSetup ) {
-  _inputSize = size;
-  if ( callSetup ) setup();
+    _inputSize = size;
+    if ( callSetup ) setup();
 }
 
 int DCT::dctSize() const{
-  return _dctSize;
+    return _dctSize;
 }
 
 void DCT::setDctSize( int size, bool callSetup ) {
-  _dctSize = size;
-  if ( callSetup ) setup();
+    _dctSize = size;
+    if ( callSetup ) setup();
 }
