@@ -2,7 +2,7 @@
 # encoding: utf-8
 # Ricard Marxer 2008
 
-import os
+import os, sys
 
 def set_options(opt):
 	opt.tool_options('compiler_cxx')
