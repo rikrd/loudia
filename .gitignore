@@ -1,5 +1,9 @@
 *.pyc
+*.o
 .*
+**/#*#
+Makefile*
+libloudia*
 build
 papers
 doc/html
