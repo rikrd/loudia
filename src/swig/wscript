@@ -7,7 +7,7 @@ import os
 def set_options(opt):
 	opt.tool_options('compiler_cxx')
        	opt.tool_options('python')
-	
+
 
 def configure(conf):
 	conf.check_tool('compiler_cxx python')
@@ -21,7 +21,7 @@ def configure(conf):
         except Configure.ConfigurationError:
                 print "(module ''numpy'' not found, but we ignore it)"
 
-        
+
 def build(bld):
         obj = bld.new_task_gen(
                 features = 'cxx cshlib pyext',
@@ -36,6 +36,11 @@ def build(bld):
                 vnum         = '0.1',
                 uselib_local = 'loudia'
         )
+
+        # fix for waf/python2.6 install paths
+        major, minor, _, _, _ = sys.version_info
+        if major >= 2 and minor >= 6:
+                bld.env['PYTHONDIR'] = bld.env['PYTHONDIR'].replace('site-packages', 'dist-packages')
 
         bld.env['PYTHONDIR'] = os.path.join(bld.env['PYTHONDIR'], 'loudia')
         bld.install_as('${PYTHONDIR}/__init__.py', 'loudia.py')
