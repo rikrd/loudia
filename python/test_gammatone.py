@@ -26,12 +26,12 @@ def freqs_b_by_freqs(numFilters, lowFreq, highFreq, c, d, order = 1):
     minBW = d
     vec = scipy.arange(numFilters, 0, -1)
     freqs = -(EarQ*minBW) + scipy.exp(vec*(-scipy.log(highFreq + EarQ*minBW) + scipy.log(lowFreq + EarQ*minBW))/numFilters) * (highFreq + EarQ*minBW);
-    
+
     ERB = scipy.power((scipy.power((freqs/EarQ), order) + scipy.power(minBW, order)), (1.0 / order))
     B = 1.019 * 2.0 * scipy.pi * ERB
-    
+
     return (freqs, B)
-    
+
 def filter_coeffs_gammatone(freqs, B, sampleRate):
     T = 1 / float(sampleRate)
     A0 = T
@@ -39,19 +39,19 @@ def filter_coeffs_gammatone(freqs, B, sampleRate):
     B0 = 1.0
     B1 = -2.0 * scipy.cos(2.0 * freqs * scipy.pi * T) / scipy.exp(B * T)
     B2 = scipy.exp(-2.0 * B * T)
-    
+
     A11 = -(2.0 * T * scipy.cos(2.0 * freqs * scipy.pi * T) / scipy.exp(B * T) + 2.0 * \
             scipy.sqrt(3+2.0**1.5) * T * scipy.sin(2.0 * freqs * scipy.pi * T) /  scipy.exp(B * T))/2.0
-    
+
     A12 = -(2.0 * T * scipy.cos(2.0 * freqs * scipy.pi * T) / scipy.exp(B * T) - 2.0 * \
             scipy.sqrt(3+2.0**1.5) * T * scipy.sin(2.0 * freqs * scipy.pi * T) /  scipy.exp(B * T))/2.0
-    
+
     A13 = -(2.0 * T * scipy.cos(2.0 * freqs * scipy.pi * T) / scipy.exp(B * T) + 2.0 * \
             scipy.sqrt(3-2.0**1.5) * T * scipy.sin(2.0 * freqs * scipy.pi * T) /  scipy.exp(B * T))/2.0
-    
+
     A14 = -(2.0 * T * scipy.cos(2.0 * freqs * scipy.pi * T) / scipy.exp(B * T) - 2.0 * \
             scipy.sqrt(3-2.0**1.5) * T * scipy.sin(2.0 * freqs * scipy.pi * T) /  scipy.exp(B * T))/2.0
-    
+
     gain = abs((-2.0 * scipy.exp(4 * 1j * freqs * scipy.pi * T) * T + \
                 2.0 * scipy.exp(-(B * T) + 2.0 * 1j * freqs * scipy.pi * T) * T * \
                 (scipy.cos(2.0 * freqs * scipy.pi * T) - scipy.sqrt(3 - 2.0**(3/2.0)) *  \
@@ -68,11 +68,11 @@ def filter_coeffs_gammatone(freqs, B, sampleRate):
                 (scipy.cos(2.0 * freqs * scipy.pi * T) + scipy.sqrt(3 + 2.0**(3/2.0)) * scipy.sin(2.0 * freqs * scipy.pi * T)))  /  \
                (-2.0  /  scipy.exp(2.0 * B * T) - 2.0 * scipy.exp(4 * 1j * freqs * scipy.pi * T) +  \
                 2.0 * (1 + scipy.exp(4 * 1j * freqs * scipy.pi * T)) / scipy.exp(B * T))**4)
-    
+
     allfilts = scipy.ones(len(freqs))
     fcoefs = (A0 * allfilts, A11, A12, A13, A14, A2 * allfilts, B0 * allfilts, B1, B2, gain)
     return fcoefs
-        
+
 freqs, B = freqs_b_by_freqs(numFilters, lowFreq, highFreq, c, d)
 (B0, B11, B12, B13, B14, B2, A0, A1, A2, gain) = filter_coeffs_gammatone(freqs, B, sampleRate)
 # -------------------------------------------------------- #
@@ -101,14 +101,20 @@ d = d1 * d2 * d3 * d4
 import pylab
 
 subplots = 2 if plotAngle else 1;
-    
+
 
 pylab.subplot(subplots,1,1)
 if plotColor:
-    pylab.plot(w[npoints/2:], abs(d[npoints/2:,:]))
+    pylab.plot(w[npoints/2:], loudia.magToDb(abs(d[npoints/2:,:])))
 else:
-    pylab.plot(w[npoints/2:], abs(d[npoints/2:,:]), c = 'black')
-    
+    pylab.plot(w[npoints/2:], loudia.magToDb(abs(d[npoints/2:,:])), c = 'black')
+
+pylab.hold(True)
+
+suma = abs(d[npoints/2:,:]).sum(axis=1)
+suma.resize((suma.shape[0], 1))
+pylab.plot(w[npoints/2:], loudia.magToDb(suma), c = 'red')
+
 ax = pylab.gca()
 
 # Show half of the spectrum
@@ -130,8 +136,8 @@ if plotAngle:
     else:
         pylab.plot(w[npoints/2:], scipy.angle(d[npoints/2:,:]), c = 'black')
     pylab.title('Angle of the Frequency Response')
-    
+
     pylab.gca().set_xlim([0, scipy.pi])
-    
+
 pylab.show()
 
