@@ -34,7 +34,7 @@ using namespace Eigen;
 
 SpectralODF::SpectralODF(int fftSize, ODFMethod odfMethod) :
   SpectralODFBase(),
-  _odf( NULL )
+  _odf( 0 )
 {
   setFftSize( fftSize, false );
   setOdfMethod( odfMethod, false );
@@ -43,12 +43,14 @@ SpectralODF::SpectralODF(int fftSize, ODFMethod odfMethod) :
 }
 
 SpectralODF::~SpectralODF() {
-  if ( _odf ) delete _odf;  
+  delete _odf;
+  _odf = 0;
 }
 
 void SpectralODF::setup() {
 
-  if ( _odf ) delete _odf;
+  delete _odf;
+  _odf = 0;
 
   switch( _odfMethod ) {
 
@@ -94,10 +96,14 @@ void SpectralODF::setup() {
 }
 
 void SpectralODF::process(const MatrixXC& fft, MatrixXR* odfValue) {
+  if (!_odf) return;
+  
   _odf->process(fft, odfValue);
 }
 
 void SpectralODF::reset() {
+  if (!_odf) return;
+  
   _odf->reset();
 }
 

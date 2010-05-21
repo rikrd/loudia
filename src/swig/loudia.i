@@ -77,6 +77,7 @@ import_array();
 #include "PitchACF.h"
 #include "PitchInverseProblem.h"
 #include "VoiceActivityDetection.h"
+#include "OnsetComplex.h"
 
 #include "MelScales.h"
 #include "Utils.h"
@@ -123,6 +124,7 @@ import_array();
 %include "PitchACF.h"
 %include "PitchInverseProblem.h"
 %include "VoiceActivityDetection.h"
+%include "OnsetComplex.h"
 
 %include "MelScales.h"
 %include "Utils.h"

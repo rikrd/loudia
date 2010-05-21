@@ -63,7 +63,7 @@ void BarkBands::setup(){
   
   std::vector<MatrixXR> weights;
   for (int i = 0; i < startBins.rows() - 1; i++) {
-    MatrixXR bandWeights = MatrixXR::Ones(startBins[i+1] - startBins[i], 1);
+    MatrixXR bandWeights = MatrixXR::Ones(startBins(i+1) - startBins(i), 1);
     weights.push_back(bandWeights);
   }
 
