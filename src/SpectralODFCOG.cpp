@@ -68,7 +68,7 @@ void SpectralODFCOG::process(const MatrixXC& fft, MatrixXR* odfValue) {
 
   _peakCoger.process(fft, _peakPos, &_cog);
 
-  (*odfValue) = _cog.cwise().clipUnder().rowwise().sum();
+  (*odfValue) = _cog.array().clipUnder().rowwise().sum();
   
   LOUDIA_DEBUG("SPECTRALODFCOG: Finished Processing");
 }

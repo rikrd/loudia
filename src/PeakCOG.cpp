@@ -60,7 +60,7 @@ void PeakCOG::process(const MatrixXC& fft, const MatrixXR& peakPos, MatrixXR* pe
   _spectrumAbs2 = fft.block(0, 0, rows, halfCols).cwise().abs2();
   LOUDIA_DEBUG("PEAKCOG: Spectrum resized rows: " << rows << " halfCols: " << halfCols);
 
-  unwrap(fft.block(0, 0, rows, halfCols).cwise().angle(), &_spectrumArg);
+  unwrap(fft.block(0, 0, rows, halfCols).array().angle(), &_spectrumArg);
   derivate(_spectrumArg, &_spectrumArgDeriv);
 
   derivate(_spectrumAbs2, &_spectrumAbs2Deriv);

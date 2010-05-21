@@ -105,7 +105,7 @@ void SpectralNoiseSuppression::process(const MatrixXR& spectrum, MatrixXR* noise
   
   //DEBUG("SPECTRALNOISESUPPRESSION: Suppress spectral noise.");
   // Suppress spectral noise
-  (*result) = ((*result) - (*noise)).cwise().clipUnder();
+  (*result) = ((*result) - (*noise)).array().clipUnder();
 }
 
 void SpectralNoiseSuppression::reset(){

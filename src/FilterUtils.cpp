@@ -532,7 +532,7 @@ void lowPassToLowPass(const MatrixXC& b, const MatrixXC& a, Real freq, MatrixXC*
   MatrixXR pwo;
   range(maxsize-1, -1, maxsize, rows, &pwo);
   
-  pwo = pwo.cwise().expN( freq );
+  pwo = pwo.array().expN( freq );
   
   int start1 = max(bsize - asize, 0);
   int start2 = max(asize - bsize, 0);
@@ -565,10 +565,10 @@ void lowPassToHighPass(const MatrixXC& b, const MatrixXC& a, Real freq, MatrixXC
   MatrixXR pwo;
   range(0, maxsize, maxsize, rows, &pwo);
   
-  pwo = pwo.cwise().expN( freq );
+  pwo = pwo.array().expN( freq );
   
-  (*aout) = (*aout).cwise() * pwo;
-  (*bout) = (*bout).cwise() * pwo;
+  (*aout) = (*aout).array() * pwo.array();
+  (*bout) = (*bout).array() * pwo.array();
   
   normalize((*bout), (*aout));
 }

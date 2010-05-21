@@ -1,61 +1,72 @@
 #ifndef CWISEADDONS_H
 #define CWISEADDONS_H
 
-inline const EIGEN_CWISE_UNOP_RETURN_TYPE(ei_scalar_angle_op)
+EIGEN_STRONG_INLINE const CwiseUnaryOp<ei_scalar_angle_op<Scalar>, Derived>
 angle() const
-{ 
-  return _expression(); 
+{
+  return derived();
 }
 
-inline const EIGEN_CWISE_UNOP_RETURN_TYPE(ei_scalar_ceil_op)
+EIGEN_STRONG_INLINE const CwiseUnaryOp<ei_scalar_sgn_op<Scalar>, Derived>
+sgn() const
+{
+  return derived();
+}
+
+EIGEN_STRONG_INLINE const CwiseUnaryOp<ei_scalar_ceil_op<Scalar>, Derived>
 ceil() const
-{ 
-  return _expression(); 
+{
+  return derived();
 }
 
-inline const EIGEN_CWISE_UNOP_RETURN_TYPE(ei_scalar_floor_op)
+EIGEN_STRONG_INLINE const CwiseUnaryOp<ei_scalar_floor_op<Scalar>, Derived>
 floor() const
-{ 
-  return _expression(); 
+{
+  return derived();
 }
 
-inline const EIGEN_CWISE_UNOP_RETURN_TYPE(ei_scalar_isnan_op)
+EIGEN_STRONG_INLINE const CwiseUnaryOp<ei_scalar_isnan_op<Scalar>, Derived>
 isnan() const
-{ 
-  return _expression(); 
+{
+  return derived();
 }
 
-inline const EIGEN_CWISE_UNOP_RETURN_TYPE(ei_scalar_mod_n_op)
+EIGEN_STRONG_INLINE const CwiseUnaryOp<ei_scalar_mod_n_op<Scalar>, Derived>
 modN(const Scalar& divisor) const
 {
-  return EIGEN_CWISE_UNOP_RETURN_TYPE(ei_scalar_mod_n_op)(_expression(), ei_scalar_mod_n_op<Scalar>(divisor));
+  return CwiseUnaryOp<ei_scalar_mod_n_op<Scalar>,Derived>
+          (derived(), ei_scalar_mod_n_op<Scalar>(divisor));
 }
 
 
-inline const EIGEN_CWISE_UNOP_RETURN_TYPE(ei_scalar_exp_n_op)
+EIGEN_STRONG_INLINE const CwiseUnaryOp<ei_scalar_exp_n_op<Scalar>, Derived>
 expN(const Scalar& base) const
 {
-  return EIGEN_CWISE_UNOP_RETURN_TYPE(ei_scalar_exp_n_op)(_expression(), ei_scalar_exp_n_op<Scalar>(base));
+  return CwiseUnaryOp<ei_scalar_exp_n_op<Scalar>,Derived>
+          (derived(), ei_scalar_exp_n_op<Scalar>(base));
 }
 
 
-inline const EIGEN_CWISE_UNOP_RETURN_TYPE(ei_scalar_log_n_op)
+EIGEN_STRONG_INLINE const CwiseUnaryOp<ei_scalar_log_n_op<Scalar>, Derived>
 logN(const Scalar& base) const
 {
-  return EIGEN_CWISE_UNOP_RETURN_TYPE(ei_scalar_log_n_op)(_expression(), ei_scalar_log_n_op<Scalar>(base));
+  return CwiseUnaryOp<ei_scalar_log_n_op<Scalar>,Derived>
+          (derived(), ei_scalar_log_n_op<Scalar>(base));
 }
 
 
-inline const EIGEN_CWISE_UNOP_RETURN_TYPE(ei_scalar_clip_under_op)
+EIGEN_STRONG_INLINE const CwiseUnaryOp<ei_scalar_clip_under_op<Scalar>, Derived>
 clipUnder(const Scalar& under = 0) const
 {
-  return EIGEN_CWISE_UNOP_RETURN_TYPE(ei_scalar_clip_under_op)(_expression(), ei_scalar_clip_under_op<Scalar>(under));
+  return CwiseUnaryOp<ei_scalar_clip_under_op<Scalar>,Derived>
+          (derived(), ei_scalar_clip_under_op<Scalar>(under));
 }
 
-inline const EIGEN_CWISE_UNOP_RETURN_TYPE(ei_scalar_clip_op)
+EIGEN_STRONG_INLINE const CwiseUnaryOp<ei_scalar_clip_op<Scalar>, Derived>
 clip(const Scalar& under, const Scalar& over) const
 {
-  return EIGEN_CWISE_UNOP_RETURN_TYPE(ei_scalar_clip_op)(_expression(), ei_scalar_clip_op<Scalar>(under, over));
+  return CwiseUnaryOp<ei_scalar_clip_op<Scalar>,Derived>
+          (derived(), ei_scalar_clip_op<Scalar>(under, over));
 }
 
 #endif // CWISEADDONS_H

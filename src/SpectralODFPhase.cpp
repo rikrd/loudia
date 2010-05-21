@@ -63,7 +63,7 @@ void SpectralODFPhase::process(const MatrixXC& fft, MatrixXR* odfValue) {
 
   (*odfValue).resize(rows - 2, 1);
   
-  _unwrap.process(fft.cwise().angle(), &_unwrappedAngle);
+  _unwrap.process(fft.array().angle(), &_unwrappedAngle);
 
   LOUDIA_DEBUG("SPECTRALODFPHASE: Processing unwrapped");
   

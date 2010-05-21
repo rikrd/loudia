@@ -116,5 +116,5 @@ LIBS += -lfftw3f \
     -lavutil \
     -lavformat \
     -lsamplerate
-INCLUDEPATH += ../eigen2 \
+INCLUDEPATH += ../eigen \
     src

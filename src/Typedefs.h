@@ -20,8 +20,10 @@
 #ifndef TYPEDEFS_H
 #define TYPEDEFS_H
 
+#define EIGEN2_SUPPORT
+
 #define EIGEN_MATRIXBASE_PLUGIN "MatrixBaseAddons.h"
-#define EIGEN_CWISE_PLUGIN "CwiseAddons.h"
+#define EIGEN_ARRAYBASE_PLUGIN "CwiseAddons.h"
 #define EIGEN_FUNCTORS_PLUGIN "FunctorsAddons.h"
 
 //#define EIGEN_DEFAULT_TO_ROW_MAJOR
@@ -30,7 +32,6 @@
 
 #include <cmath>
 #include <Eigen/Core>
-#include <Eigen/Array>
 
 // Types for scalar values
 typedef int Integer;

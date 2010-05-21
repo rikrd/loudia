@@ -109,8 +109,8 @@ void PeakDetectionComplex::process(const MatrixXC& frames,
   (*peakPhases).resize(rows, _peakCount);
   (*peakPhases).setConstant(-1);
 
-  _magnitudes = frames.cwise().abs();
-  _phases = frames.cwise().angle();
+  _magnitudes = frames.array().abs();
+  _phases = frames.array().angle();
 
   int maxRow;
   int maxCol;

@@ -142,8 +142,8 @@ void SpectralReassignment::process(const MatrixXR& frames,
   LOUDIA_DEBUG("SPECTRALREASSIGNMENT: Processing: creating the freq reassignment operation...");
   (*reassignFreq) = _freq + ((_fftDeriv.cwise() * (*fft).conjugate()).cwise() / _fftAbs2.cast<Complex>()).imag();
   
-  (*reassignTime) = ((*reassignTime).cwise().isnan()).select(0, (*reassignTime));
-  (*reassignFreq) = ((*reassignFreq).cwise().isnan()).select(0, (*reassignFreq));
+  (*reassignTime) = ((*reassignTime).array().isnan()).matrix().select(0, (*reassignTime));
+  (*reassignFreq) = ((*reassignFreq).array().isnan()).matrix().select(0, (*reassignFreq));
   
   // Reassign the spectrum values
   // TODO: put this into a function and do it right

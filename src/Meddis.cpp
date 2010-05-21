@@ -80,11 +80,11 @@ void Meddis::process(const MatrixXR& samples, MatrixXR* output){
   for (int i = 0; i < samples.rows(); ++i) {
     row = samples.row(i);
   
-    limitedSt = (row.cwise() + A).cwise().clipUnder();
+    limitedSt = (row.cwise() + A).array().clipUnder();
 
-    kt = (limitedSt * gdt).cwise() / (limitedSt.cwise() + B);
+    kt = (limitedSt * gdt).array() / (limitedSt.array() + B);
 
-    replenish = ydt * ((-q).cwise() + M).cwise().clipUnder();
+    replenish = ydt * ((-q).cwise() + M).array().clipUnder();
     eject = kt.cwise() * q;
     loss = ldt * c;
     reuptake = rdt * c;
@@ -99,7 +99,7 @@ void Meddis::process(const MatrixXR& samples, MatrixXR* output){
     (*output).row(i) = h * c;
     
     if(_substractSpont){
-      (*output).row(i) = ((*output).row(i) - spont.row(0)).cwise().clipUnder(0.0);
+      (*output).row(i) = ((*output).row(i) - spont.row(0)).array().clipUnder(0.0);
     }
   } // for each row
 }
