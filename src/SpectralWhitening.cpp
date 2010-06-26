@@ -86,7 +86,7 @@ void SpectralWhitening::process(const MatrixXR& spectrum, MatrixXR* result){
   // Interpolate the region before the first frequency center
   int col = 0;
   for (; col < _centers(0, 0); col++ ) {
-    _compressionWeights.col( col ) = (Real)col * _bandEnergy.col(1) / _centers(0, 0);
+    _compressionWeights.col( col ) = ((Real)col * (_bandEnergy.col(0).cwise() - 1.0) / _centers(0, 0)).cwise() + 1.0;
   }
 
   // Interpolate the region between the first and last frequency centers
@@ -98,7 +98,7 @@ void SpectralWhitening::process(const MatrixXR& spectrum, MatrixXR* result){
 
   // Interpolate the region after the last frequency center
   for (; col < _halfSize; col++ ) {
-      _compressionWeights.col(col) = (((Real)col - _centers(_bandCount - 1, 0)) * ( -_bandEnergy.col(_bandCount - 1)) / (_halfSize - _centers(_bandCount - 1, 0))) + _bandEnergy.col(_bandCount - 1);
+      _compressionWeights.col(col) = (((Real)col - _centers(_bandCount - 1, 0)) * ( (-_bandEnergy).col(_bandCount - 1).cwise() + 1.0) / (_halfSize - _centers(_bandCount - 1, 0))) + _bandEnergy.col(_bandCount - 1);
   }
 
   // Apply compression weihgts
