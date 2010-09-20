@@ -41,15 +41,15 @@
      <value key="Qt4ProjectManager.MakeStep.MakeCommand" type="QString"></value>
     </valuemap>
     <value key="ProjectExplorer.BuildConfiguration.CleanStepsCount" type="int">1</value>
+    <value key="ProjectExplorer.BuildConfiguration.ClearSystemEnvironment" type="bool">false</value>
+    <valuelist key="ProjectExplorer.BuildConfiguration.UserEnvironmentChanges" type="QVariantList"/>
     <value key="ProjectExplorer.ProjectConfiguration.DisplayName" type="QString">Debug</value>
     <value key="ProjectExplorer.ProjectConfiguration.Id" type="QString">Qt4ProjectManager.Qt4BuildConfiguration</value>
     <value key="Qt4ProjectManager.Qt4BuildConfiguration.BuildConfiguration" type="int">2</value>
     <value key="Qt4ProjectManager.Qt4BuildConfiguration.BuildDirectory" type="QString">/home/rmarxer/dev/loudia</value>
-    <value key="Qt4ProjectManager.Qt4BuildConfiguration.ClearSystemEnvironment" type="bool">false</value>
     <value key="Qt4ProjectManager.Qt4BuildConfiguration.QtVersionId" type="int">2</value>
     <value key="Qt4ProjectManager.Qt4BuildConfiguration.ToolChain" type="int">0</value>
     <value key="Qt4ProjectManager.Qt4BuildConfiguration.UseShadowBuild" type="bool">false</value>
-    <valuelist key="Qt4ProjectManager.Qt4BuildConfiguration.UserEnvironmentChanges" type="QVariantList"/>
    </valuemap>
    <valuemap key="ProjectExplorer.Target.BuildConfiguration.1" type="QVariantMap">
     <valuemap key="ProjectExplorer.BuildConfiguration.BuildStep.0" type="QVariantMap">
@@ -73,15 +73,15 @@
      <value key="Qt4ProjectManager.MakeStep.MakeCommand" type="QString"></value>
     </valuemap>
     <value key="ProjectExplorer.BuildConfiguration.CleanStepsCount" type="int">1</value>
+    <value key="ProjectExplorer.BuildConfiguration.ClearSystemEnvironment" type="bool">false</value>
+    <valuelist key="ProjectExplorer.BuildConfiguration.UserEnvironmentChanges" type="QVariantList"/>
     <value key="ProjectExplorer.ProjectConfiguration.DisplayName" type="QString">Release</value>
     <value key="ProjectExplorer.ProjectConfiguration.Id" type="QString">Qt4ProjectManager.Qt4BuildConfiguration</value>
     <value key="Qt4ProjectManager.Qt4BuildConfiguration.BuildConfiguration" type="int">0</value>
     <value key="Qt4ProjectManager.Qt4BuildConfiguration.BuildDirectory" type="QString"></value>
-    <value key="Qt4ProjectManager.Qt4BuildConfiguration.ClearSystemEnvironment" type="bool">false</value>
     <value key="Qt4ProjectManager.Qt4BuildConfiguration.QtVersionId" type="int">2</value>
     <value key="Qt4ProjectManager.Qt4BuildConfiguration.ToolChain" type="int">0</value>
     <value key="Qt4ProjectManager.Qt4BuildConfiguration.UseShadowBuild" type="bool">false</value>
-    <valuelist key="Qt4ProjectManager.Qt4BuildConfiguration.UserEnvironmentChanges" type="QVariantList"/>
    </valuemap>
    <value key="ProjectExplorer.Target.BuildConfigurationCount" type="int">2</value>
    <valuemap key="ProjectExplorer.Target.RunConfiguration.0" type="QVariantMap">
@@ -105,6 +105,6 @@
  </data>
  <data>
   <variable>ProjectExplorer.Project.Updater.FileVersion</variable>
-  <value type="int">2</value>
+  <value type="int">4</value>
  </data>
 </qtcreator>

@@ -1,10 +1,11 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
 
 import loudia
 import scipy
 import pylab
 
-plot = False
+plot = True
 
 d = loudia.NMF(8, 2, 100, 1e-7)
 
