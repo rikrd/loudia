@@ -64,7 +64,7 @@ void SpectralODFCOG::process(const MatrixXC& fft, MatrixXR* odfValue) {
 
   LOUDIA_DEBUG("SPECTRALODFCOG: Processing the peaks");
 
-  _peaker.process(fft.cwise().abs(), &_peakPos, &_peakMag);
+  _peaker.process(fft.array().abs(), &_peakStarts, &_peakPos, &_peakEnds, &_peakMag);
 
   _peakCoger.process(fft, _peakPos, &_cog);
 

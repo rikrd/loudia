@@ -38,7 +38,9 @@ protected:
   MatrixXR _spectrumArg;
   MatrixXR _spectrumArgDeriv;
 
+  MatrixXR _peakStarts;
   MatrixXR _peakPos;
+  MatrixXR _peakEnds;
   MatrixXR _peakMag;
 
   MatrixXR _cog;

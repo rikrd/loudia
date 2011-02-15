@@ -76,7 +76,7 @@ void MFCC::process(const MatrixXR& spectrum, MatrixXR* mfccCoeffs){
   for ( int i = 0; i < spectrum.rows(); i++) {
     LOUDIA_DEBUG("MFCC: Processing Melbands");
     // Process the mel bands on the power of the spectrum
-    _melbands.process(spectrum.row(i).cwise().square(), &_bands);
+    _melbands.process(spectrum.row(i).array().square(), &_bands);
         
     LOUDIA_DEBUG("MFCC: Processing Log of bands");
     // Apply a power to the log mel amplitudes as in: http://en.wikipedia.org/wiki/Mel_frequency_cepstral_coefficient
@@ -84,8 +84,8 @@ void MFCC::process(const MatrixXR& spectrum, MatrixXR* mfccCoeffs){
     // On desensitizing the Mel-Cepstrum to spurious spectral components for Robust Speech Recognition
     // in Acoustics, Speech, and Signal Processing, 2005. Proceedings. 
     // IEEE International Conference on, vol. 1, 2005, pp. 529–532.
-    _bands = (_bands.cwise() + _minSpectrum).cwise().log() / log(10.0);
-    _bands = _bands.cwise().pow(_power);
+    _bands = (_bands.array() + _minSpectrum).log() / log(10.0);
+    _bands = _bands.array().pow(_power);
     
     LOUDIA_DEBUG("MFCC: Processing DCT");
     // Process the DCT

@@ -61,7 +61,7 @@ void PeakInterpolation::process(const MatrixXR& input,
   (*peakPositionsInterp).resize(input.rows(), peakPositions.cols());
   (*peakMagnitudesInterp).resize(input.rows(), peakPositions.cols());
   
-  _magnitudes = input.cwise().abs();
+  _magnitudes = input.array().abs();
   
   for ( int row = 0 ; row < _magnitudes.rows(); row++ ) {
   

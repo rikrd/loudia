@@ -80,12 +80,12 @@ void Meddis::process(const MatrixXR& samples, MatrixXR* output){
   for (int i = 0; i < samples.rows(); ++i) {
     row = samples.row(i);
   
-    limitedSt = (row.cwise() + A).array().clipUnder();
+    limitedSt = (row.array() + A).clipUnder();
 
     kt = (limitedSt * gdt).array() / (limitedSt.array() + B);
 
-    replenish = ydt * ((-q).cwise() + M).array().clipUnder();
-    eject = kt.cwise() * q;
+    replenish = ydt * ((-q).array() + M).clipUnder();
+    eject = kt.array() * q.array();
     loss = ldt * c;
     reuptake = rdt * c;
     reprocess = xdt * w;
@@ -110,10 +110,10 @@ void Meddis::reset(){
 
   kt = MatrixXR::Constant(1, _channels, g * A / (A + B));
   spont = kt * (M * y);
-  spont = spont.cwise() / ( (kt*l).cwise() + (y * ( l + r )) );
+  spont = spont.array() / ( (kt*l).array() + (y * ( l + r )) );
 
   c = spont;
-  q = (c * ( l + r )).cwise() / kt;
+  q = (c * ( l + r )).array() / kt.array();
   w = c * r / x;
 }
 

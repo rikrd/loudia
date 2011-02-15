@@ -48,11 +48,11 @@ Real melToLinearStevens1937(Real melFreq) {
 }
 
 void linearToMelMatrixStevens1937(const MatrixXR& linearFreq, MatrixXR* melFreq) {
-  (*melFreq) = ((linearFreq / 700.0).cwise() + 1.0).cwise().log() * 1127.01048;
+  (*melFreq) = ((linearFreq / 700.0).array() + 1.0).log() * 1127.01048;
 }
 
 void melToLinearMatrixStevens1937(const MatrixXR& melFreq, MatrixXR* linearFreq) {
-  (*linearFreq) = ((melFreq / 1127.01048).cwise().exp().cwise() - 1.0) * 700.0;
+  (*linearFreq) = ((melFreq / 1127.01048).array().exp() - 1.0) * 700.0;
 }
 
 
@@ -65,9 +65,9 @@ Real melToLinearFant1968(Real melFreq) {
 }
 
 void linearToMelMatrixFant1968(const MatrixXR& linearFreq, MatrixXR* melFreq) {
-  (*melFreq) = (1000.0 / log(2.0)) * ((linearFreq / 1000.0).cwise() + 1.0).cwise().log();
+  (*melFreq) = (1000.0 / log(2.0)) * ((linearFreq / 1000.0).array() + 1.0).log();
 }
 
 void melToLinearMatrixFant1968(const MatrixXR& melFreq, MatrixXR* linearFreq) {
-  (*linearFreq) = 1000.0 * ((melFreq * log(2.0) / 1000.0).cwise().exp().cwise() - 1.0);
+  (*linearFreq) = 1000.0 * ((melFreq * log(2.0) / 1000.0).array().exp() - 1.0);
 }

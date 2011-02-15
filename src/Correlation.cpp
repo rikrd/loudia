@@ -111,7 +111,7 @@ void Correlation::process(const MatrixXR& inputA, const MatrixXR& inputB, Matrix
     _fft.process(inputA, &_fftA);
     _fft.process(inputB, &_fftB);
         
-    _ifft.process(_fftA.cwise() * _fftB.conjugate(), &_result);
+    _ifft.process(_fftA.array() * _fftB.conjugate().array(), &_result);
     
     // TODO: use Eigen rowwise().shift(_fftSize - 2) when it will exist
     for(int i = _minLag;  i < _maxLag; i++ ){

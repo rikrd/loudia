@@ -85,15 +85,19 @@
    </valuemap>
    <value key="ProjectExplorer.Target.BuildConfigurationCount" type="int">2</value>
    <valuemap key="ProjectExplorer.Target.RunConfiguration.0" type="QVariantMap">
-    <valuelist key="ProjectExplorer.CustomExecutableRunConfiguration.Arguments" type="QVariantList"/>
+    <valuelist key="ProjectExplorer.CustomExecutableRunConfiguration.Arguments" type="QVariantList">
+     <value type="QString">test_peakdetection.py</value>
+    </valuelist>
     <value key="ProjectExplorer.CustomExecutableRunConfiguration.BaseEnvironmentBase" type="int">2</value>
-    <value key="ProjectExplorer.CustomExecutableRunConfiguration.Executable" type="QString"></value>
+    <value key="ProjectExplorer.CustomExecutableRunConfiguration.Executable" type="QString">python</value>
     <value key="ProjectExplorer.CustomExecutableRunConfiguration.UseTerminal" type="bool">false</value>
-    <valuelist key="ProjectExplorer.CustomExecutableRunConfiguration.UserEnvironmentChanges" type="QVariantList"/>
+    <valuelist key="ProjectExplorer.CustomExecutableRunConfiguration.UserEnvironmentChanges" type="QVariantList">
+     <value type="QString">LD_LIBRARY_PATH=/home/rmarxer/dev/loudia</value>
+    </valuelist>
     <value key="ProjectExplorer.CustomExecutableRunConfiguration.UserName" type="QString"></value>
     <value key="ProjectExplorer.CustomExecutableRunConfiguration.UserSetName" type="bool">false</value>
-    <value key="ProjectExplorer.CustomExecutableRunConfiguration.WorkingDirectory" type="QString">$BUILDDIR</value>
-    <value key="ProjectExplorer.ProjectConfiguration.DisplayName" type="QString">Custom Executable</value>
+    <value key="ProjectExplorer.CustomExecutableRunConfiguration.WorkingDirectory" type="QString">/home/rmarxer/dev/loudia/python</value>
+    <value key="ProjectExplorer.ProjectConfiguration.DisplayName" type="QString">Run python</value>
     <value key="ProjectExplorer.ProjectConfiguration.Id" type="QString">ProjectExplorer.CustomExecutableRunConfiguration</value>
    </valuemap>
    <value key="ProjectExplorer.Target.RunConfigurationCount" type="int">1</value>

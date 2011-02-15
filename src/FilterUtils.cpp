@@ -30,9 +30,9 @@ void chebyshev1(int order, Real rippleDB, int channels, MatrixXC* zeros, MatrixX
 
   Real mu = 1.0 / order * log((1.0 + sqrt( 1 + eps * eps)) / eps);
 
-  MatrixXC theta = ((n * 2).cwise() - 1.0) / order * M_PI / 2.0;
+  MatrixXC theta = ((n * 2).array() - 1.0) / order * M_PI / 2.0;
 
-  (*poles) = -sinh(mu) * theta.cwise().sin() + Complex(0, 1) * cosh(mu) * theta.cwise().cos();
+  (*poles) = -sinh(mu) * theta.array().sin() + Complex(0, 1) * cosh(mu) * theta.array().cos();
 
   Complex gainComplex = 1.0;
 
@@ -66,17 +66,17 @@ void chebyshev2(int order, Real rippleDB, int channels, MatrixXC* zeros, MatrixX
     range(1, (2 * order) + 1, order, channels, &n);
   }
   
-  (*zeros) = (Complex(0,1) * ((n * M_PI) / (2.0 * order)).cwise().cos().cwise().inverse()).conjugate();
+  (*zeros) = (Complex(0,1) * ((n * M_PI) / (2.0 * order)).array().cos().inverse()).conjugate();
 
   MatrixXC rng;
   range(1, (2 * order) + 1, order, channels, &rng);
   
-  (*poles) = (Complex(0,1) * (((M_PI * rng) / (2.0*order)).cwise() + M_PI / 2.0)).cwise().exp();
+  (*poles) = (Complex(0,1) * (((M_PI * rng) / (2.0*order)).array() + M_PI / 2.0)).exp();
 
-  (*poles) = (((*poles).real().cast<Complex>() * sinh( mu )) + (Complex(0, 1) * cosh( mu ) * (*poles).imag().cast<Complex>())).cwise().inverse();
+  (*poles) = (((*poles).real().cast<Complex>() * sinh( mu )) + (Complex(0, 1) * cosh( mu ) * (*poles).imag().cast<Complex>())).array().inverse();
 
   // TODO: gain should be a vector (one gain per channel)
-  (*gain) = ((-(*poles)).rowwise().prod().cwise() / (-(*zeros)).rowwise().prod()).real().sum();
+  (*gain) = ((-(*poles)).rowwise().prod().array() / (-(*zeros)).rowwise().prod().array()).real().sum();
 }
 
 void butterworth(int order, int channels, MatrixXC* zeros, MatrixXC* poles, Real* gain) {
@@ -84,7 +84,7 @@ void butterworth(int order, int channels, MatrixXC* zeros, MatrixXC* poles, Real
   range(1, order + 1, order + 1, &n);
 
   (*zeros) = MatrixXC::Zero(channels, 1);
-  (*poles) = (((2*n).cwise() - 1) * Complex(0, 1) / (2.0 * order) * M_PI).cwise().exp() * Complex(0, 1);
+  (*poles) = (((2*n).array() - 1) * Complex(0, 1) / (2.0 * order) * M_PI).array().exp() * Complex(0, 1);
   (*gain) = 1.0;
 }
 
@@ -538,11 +538,11 @@ void lowPassToLowPass(const MatrixXC& b, const MatrixXC& a, Real freq, MatrixXC*
   int start2 = max(asize - bsize, 0);
   
   for ( int i = 0; i < bsize; i++ ) {
-    (*bout).col(i).cwise() *= pwo.col( start2 + i ).cwise().inverse() * pwo.col( start1 );
+    (*bout).col(i).array() *= pwo.col( start2 + i ).array().inverse() * pwo.col( start1 ).array();
   }
   
   for ( int i = 0; i < asize; i++ ) {
-    (*aout).col(i).cwise() *= pwo.col( start1 + i ).cwise().inverse() * pwo.col( start1 );
+    (*aout).col(i).array() *= pwo.col( start1 + i ).array().inverse() * pwo.col( start1 ).array();
   }
   
   normalize((*bout), (*aout));
@@ -673,11 +673,11 @@ void lowPassToBandStop(const MatrixXC& b, const MatrixXC& a, Real freq, Real ban
 void normalize(MatrixXC& b, MatrixXC& a) {
   
   for (int i = 0; i < b.cols(); i++ ) {
-    b.col(i).cwise() /= a.col(0);
+    b.col(i).array() /= a.col(0).array();
   }
   
   for (int i = a.cols()-1; i >= 0; i-- ) {
-    a.col(i).cwise() /= a.col(0);
+    a.col(i).array() /= a.col(0).array();
   }
 }
 

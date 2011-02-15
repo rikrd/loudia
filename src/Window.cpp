@@ -178,7 +178,7 @@ void Window::process(const FrameMatrixType& frames, WindowedMatrixType* windowed
 
   for (int i = 0; i < frames.rows(); i++){
     // Process and set
-    (*windowedFrames).row(i) = (frames.row(i).cwise() * _window).template cast<typename WindowedMatrixType::Scalar>();
+    (*windowedFrames).row(i) = (frames.row(i).array() * _window.array()).template cast<typename WindowedMatrixType::Scalar>();
   }
 
 }

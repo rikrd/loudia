@@ -20,9 +20,8 @@
 #ifndef TYPEDEFS_H
 #define TYPEDEFS_H
 
-#define EIGEN2_SUPPORT
+//#define EIGEN2_SUPPORT
 
-#define EIGEN_MATRIXBASE_PLUGIN "MatrixBaseAddons.h"
 #define EIGEN_ARRAYBASE_PLUGIN "CwiseAddons.h"
 #define EIGEN_FUNCTORS_PLUGIN "FunctorsAddons.h"
 
@@ -31,7 +30,7 @@
 #include "Debug.h"
 
 #include <cmath>
-#include <Eigen/Core>
+#include <Eigen/Dense>
 
 // Types for scalar values
 typedef int Integer;

@@ -63,14 +63,14 @@ void PitchACF::process(const MatrixXR& spectrum, MatrixXR* pitches, MatrixXR* sa
   _acorr.process(spectrum, &_acorred);
   
   _peak.process(_acorred,
-                pitches, saliencies);
+                &_starts, pitches, &_ends, saliencies);
   
   _peakInterp.process(_acorred, (*pitches), (*saliencies),
                       pitches, saliencies);
 
   (*pitches) *= 2.0 * _sampleRate / _fftSize;
   
-  (*saliencies).cwise() /= _acorred.col(0);
+  (*saliencies).array() /= _acorred.col(0).array();
 }
 
 void PitchACF::reset(){

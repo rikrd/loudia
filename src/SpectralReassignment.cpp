@@ -81,7 +81,7 @@ void SpectralReassignment::setup(){
   // Calculate and set the time weighted window
   LOUDIA_DEBUG("SPECTRALREASSIGNMENT: Calculate time weighted window...");
   MatrixXR windowInteg = _windowAlgo.window();
-  windowInteg = windowInteg.cwise() * _time.transpose();
+  windowInteg = windowInteg.array() * _time.transpose().array();
   _windowIntegAlgo.setWindow(windowInteg);
 
   // Calculate and set the time derivated window
@@ -129,18 +129,18 @@ void SpectralReassignment::process(const MatrixXR& frames,
   _fftAlgo.process(_windowDeriv, &_fftDeriv);
   
   // Create the reassignment operations
-  _fftAbs2 = (*fft).cwise().abs2();  
+  _fftAbs2 = (*fft).array().abs2();
 
   // Create the reassign operator matrix
   // TODO: check if the current timestamp is enough for a good reassignment
   // we might need for it to depend on past frames (if the reassignment of time
   // goes further than one)
   LOUDIA_DEBUG("SPECTRALREASSIGNMENT: Processing: creating the time reassignment operation...");    
-  (*reassignTime) = -((_fftInteg.cwise() * (*fft).conjugate()).cwise() / _fftAbs2.cast<Complex>()).real();
+  (*reassignTime) = -((_fftInteg.array() * (*fft).conjugate().array()) / _fftAbs2.cast<Complex>().array()).real();
     
   // TODO: Check the unity of the freq reassignment, it may need to be normalized by something
   LOUDIA_DEBUG("SPECTRALREASSIGNMENT: Processing: creating the freq reassignment operation...");
-  (*reassignFreq) = _freq + ((_fftDeriv.cwise() * (*fft).conjugate()).cwise() / _fftAbs2.cast<Complex>()).imag();
+  (*reassignFreq) = _freq.array() + ((_fftDeriv.array() * (*fft).conjugate().array()) / _fftAbs2.cast<Complex>().array()).imag();
   
   (*reassignTime) = ((*reassignTime).array().isnan()).matrix().select(0, (*reassignTime));
   (*reassignFreq) = ((*reassignFreq).array().isnan()).matrix().select(0, (*reassignFreq));

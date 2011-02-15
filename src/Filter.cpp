@@ -117,16 +117,16 @@ void Filter::process(const MatrixXR& samples, MatrixXR* output){
       //DEBUG("_b.cols(): " << _b.cols());
       //DEBUG("_a.rows(): " << _a.rows());
       //DEBUG("_a.cols(): " << _a.cols());
-      (*output).row( i ) = _z.row( 0 ) + (_b.row( 0 ).cwise() * _samples.row( i ));
+      (*output).row( i ) = _z.row( 0 ).array() + (_b.row( 0 ).array() * _samples.row( i ).array());
       
       //DEBUG("FILTER: After setting output..., output: " << (*output).row( i ));
       // Fill in middle delays
       for ( int j = 0; j < _length - 1; j++ ) {      
-        _z.row( j ) = _z.row( j + 1 ) + (_samples.row( i ).cwise() * _b.row( j + 1 )) - ((*output).row( i ).cwise() * _a.row( j + 1 ));
+        _z.row( j ) = _z.row( j + 1 ).array() + (_samples.row( i ).array() * _b.row( j + 1 ).array()) - ((*output).row( i ).array() * _a.row( j + 1 ).array());
       }
 
       // Calculate the last delay
-      _z.row( _length - 2 ) = (_samples.row( i ).cwise() * _b.row( _length - 1 )) - ((*output).row( i ).cwise() * _a.row( _length - 1 ));
+      _z.row( _length - 2 ) = (_samples.row( i ).array() * _b.row( _length - 1 ).array()) - ((*output).row( i ).array() * _a.row( _length - 1 ).array());
 
     } else {
       (*output).row( i ) = _samples.row( i ) * _b.row( 0 );
@@ -183,7 +183,7 @@ void Filter::setupCoeffs() {
   }
 
   for(int i = 0; i < _a.rows(); i++){
-    _a.row(i) = _a.row(i).cwise() / _ina.row(0);
+    _a.row(i) = _a.row(i).array() / _ina.row(0).array();
   }
 
   LOUDIA_DEBUG("FILTER: Setting the 'a' coefficients.");
@@ -210,7 +210,7 @@ void Filter::setupCoeffs() {
   }
 
   for(int i = 0; i < _b.rows(); i++){
-    _b.row(i) = _b.row(i).cwise() / _ina.row(0);
+    _b.row(i) = _b.row(i).array() / _ina.row(0).array();
   }  
   
   LOUDIA_DEBUG("FILTER: Setting the 'b' coefficients.");

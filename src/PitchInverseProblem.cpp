@@ -161,7 +161,7 @@ void PitchInverseProblem::setup(){
    LOUDIA_DEBUG("PITCHINVERSEPROBLEM: Setting up the inversion...");
    // A = K^t [ K K^t + \lambda * I_N ]^{+}
    MatrixXR temp = (_projectionMatrix * _projectionMatrix.transpose());
-   temp.diagonal().cwise() += _regularisation;
+   temp.diagonal().array() += _regularisation;
    MatrixXR pseudioInv;
    pseudoInverse( temp, &pseudioInv );
    _inverseProjectionMatrix = _projectionMatrix.transpose() * pseudioInv;
@@ -226,7 +226,7 @@ void PitchInverseProblem::process(const MatrixXR& spectrum, MatrixXR* pitches, M
   LOUDIA_DEBUG("PITCHINVERSEPROBLEM: Find peaks");
   
   _peak.process((*freqs),
-                pitches, saliencies);
+                &_starts, pitches, &_ends, saliencies);
 
   LOUDIA_DEBUG("PITCHINVERSEPROBLEM: Interpolate peaks");
   
@@ -236,7 +236,7 @@ void PitchInverseProblem::process(const MatrixXR& spectrum, MatrixXR* pitches, M
 
   LOUDIA_DEBUG("PITCHINVERSEPROBLEM: Setting the pitches");
   
-  (*pitches) = (((_highFrequency - _lowFrequency) / (_frequencyCandidateCount-1)) * (*pitches)).cwise() + _lowFrequency;
+  (*pitches) = (((_highFrequency - _lowFrequency) / (_frequencyCandidateCount-1)) * (*pitches)).array() + _lowFrequency;
   
 }
 

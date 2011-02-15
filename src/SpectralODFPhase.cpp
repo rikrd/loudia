@@ -80,10 +80,10 @@ void SpectralODFPhase::phaseDeviation(const MatrixXC& spectrum, const MatrixXR& 
   _instFreq = _phaseDiff.block(1, 0, rows - 2, cols) - _phaseDiff.block(0, 0, rows - 2, cols);
 
   if (_weighted)
-    _instFreq.cwise() *= spectrum.block(2, 0, rows - 2, cols).cwise().abs();
+    _instFreq.array() *= spectrum.block(2, 0, rows - 2, cols).array().abs();
 
   if (_normalize) {
-    (*odfValue) = _instFreq.rowwise().sum().cwise() / (cols * spectrum.block(2, 0, rows - 2, cols).cwise().abs().rowwise().sum());
+    (*odfValue) = _instFreq.rowwise().sum().array() / (cols * spectrum.block(2, 0, rows - 2, cols).array().abs().rowwise().sum());
     return;
   }
   

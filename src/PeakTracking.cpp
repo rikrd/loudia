@@ -75,7 +75,7 @@ void PeakTracking::process(const MatrixXC& fft,
       if( ! isinf( _pastTrajPositions(row, i) ) ) {
         
         int posRow, posCol;
-        Real minFreqBinChange = (currPeakPositions.row(row).cwise() - _pastTrajPositions(row, i)).cwise().abs().minCoeff(&posRow, &posCol);
+        Real minFreqBinChange = (currPeakPositions.row(row).array() - _pastTrajPositions(row, i)).abs().minCoeff(&posRow, &posCol);
         
         if ( minFreqBinChange <= _maximumFrequencyChange ) {
           // A matching peak has been found

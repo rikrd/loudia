@@ -67,6 +67,9 @@ protected:
 
   MatrixXR _acorred;
 
+  MatrixXR _starts;
+  MatrixXR _ends;
+
 public:
   /**
      Constructs an autocorrelation based pitch estimation function 
