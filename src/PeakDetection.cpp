@@ -55,7 +55,7 @@ PeakDetection::~PeakDetection() {
 void PeakDetection::setup(){
     // Prepare the buffers
     LOUDIA_DEBUG("PEAKDETECTION: Setting up...");
-
+    
     reset();
 
     LOUDIA_DEBUG("PEAKDETECTION: Finished set up...");
@@ -159,6 +159,10 @@ void PeakDetection::process(const MatrixXR& frames,
     const int rows = frames.rows();
     const int cols = frames.cols();
 
+    if (_peakCount < 0) {
+      _peakCount = cols / 2; 
+    }
+    
     LOUDIA_DEBUG("PEAKDETECTION: Processing, frames.shape: (" << rows << ", " << cols << ")");
 
     (*peakStarts).resize(rows, _peakCount);

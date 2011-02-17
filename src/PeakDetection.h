@@ -129,7 +129,7 @@ public:
   /**
      Constructs a peak detection object with the given @a peakCount, @a sort method, @a minimumPeakWidth, @a candidateCount and @a minimumPeakContrast parameters given.
   */
-  PeakDetection(int peakCount = 1024 / 3, SortMethod sort = BYMAGNITUDE, int minimumPeakWidth = 3, int candidateCount = -1, Real minimumPeakContrast = 0);
+  PeakDetection(int peakCount = -1, SortMethod sort = BYMAGNITUDE, int minimumPeakWidth = 3, int candidateCount = -1, Real minimumPeakContrast = 0);
 
   /**
      Destroys the algorithm and frees its resources.
