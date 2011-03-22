@@ -130,9 +130,10 @@ void AudioLoader::process(MatrixXR *audio){
     break;
 
   default:
+    const int channel = _channel%_channelCount;
     audio->resize(_frameSize, 1);
     for (int i=0, j=0; i < _frameSize; i++, j+=_channelCount) {
-      (*audio)(i, 0) = scale(_buffer[j+(_channel%_channelCount)]);
+      (*audio)(i, 0) = scale(_buffer[j+channel]);
     }
     break;
   }
