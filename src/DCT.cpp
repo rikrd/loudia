@@ -176,6 +176,6 @@ int DCT::dctSize() const{
     return _dctSize;
 }
 
-void DCT::setDctSize( int size, bool callSetup ) {
+void DCT::setDctSize( int size, bool /*callSetup*/ ) {
     _dctSize = size;
 }

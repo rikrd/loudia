@@ -54,9 +54,9 @@ typedef ColXR VectorXR;
 typedef ColXC VectorXC;
 
 // Types for matrix values
-typedef Eigen::Matrix< Integer, Eigen::Dynamic, Eigen::Dynamic > MatrixXI;
-typedef Eigen::Matrix< Real, Eigen::Dynamic, Eigen::Dynamic > MatrixXR;
-typedef Eigen::Matrix< Complex, Eigen::Dynamic, Eigen::Dynamic > MatrixXC;
+typedef Eigen::Matrix< Integer, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor, Eigen::Dynamic, Eigen::Dynamic > MatrixXI;
+typedef Eigen::Matrix< Real, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor, Eigen::Dynamic, Eigen::Dynamic > MatrixXR;
+typedef Eigen::Matrix< Complex, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor, Eigen::Dynamic, Eigen::Dynamic > MatrixXC;
 
 // Types for mapping Scipy matrices (these are RowMajor)
 typedef Eigen::Matrix< Integer, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor, Eigen::Dynamic, Eigen::Dynamic > MatrixXIscipy;

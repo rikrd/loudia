@@ -66,7 +66,7 @@ void PitchSaliency::setup(){
   LOUDIA_DEBUG("PITCHSALIENCY: Finished setup.");
 }
 
-Real PitchSaliency::harmonicWeight(Real period, Real tLow, Real tUp, int harmonicIndex){
+Real PitchSaliency::harmonicWeight(Real /*period*/, Real tLow, Real tUp, int harmonicIndex){
   return ((_sampleRate / tLow) + _alpha) / ((harmonicIndex * _sampleRate / tUp) + _beta);
 }
 

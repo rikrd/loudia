@@ -124,7 +124,7 @@ int FrameCutter::read(VectorXR* frame, int release){
 }
 
 int FrameCutter::write(const VectorXR& stream){
-  int consumed = min(min(_availableToWrite, _frameSize - _indexWriter), stream.size());
+  int consumed = min(min(_availableToWrite, _frameSize - _indexWriter), (int)stream.size());
   if ( consumed <= 0 ) return 0;
 
   _buffer.segment(_indexWriter, consumed) = stream.segment(0, consumed);

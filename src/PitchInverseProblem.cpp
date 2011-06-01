@@ -180,26 +180,26 @@ void PitchInverseProblem::harmonicWeight(MatrixXR f, Real fMin, Real fMax, int h
   (*result) = MatrixXR::Constant(f.rows(), f.cols(), (fMax + _alpha) / ((harmonicIndex * fMin) + _beta));
 }
 
-void PitchInverseProblem::harmonicPosition(MatrixXR f, Real fMin, Real fMax, int harmonicIndex, MatrixXR* result){
+void PitchInverseProblem::harmonicPosition(MatrixXR f, Real /*fMin*/, Real /*fMax*/, int harmonicIndex, MatrixXR* result){
   (*result) = (harmonicIndex * f * sqrt(1.0 + (pow(harmonicIndex, 2.0) - 1.0) * _inharmonicity)) * (Real)_fftSize / ((Real)_sampleRate);
 }
 
-void PitchInverseProblem::harmonicSpread(MatrixXR f, Real fMin, Real fMax, int harmonicIndex, MatrixXR* result){
+void PitchInverseProblem::harmonicSpread(MatrixXR f, Real /*fMin*/, Real /*fMax*/, int /*harmonicIndex*/, MatrixXR* result){
   (*result) = MatrixXR::Constant(f.rows(), f.cols(), _peakWidth);
 }
 
-Real PitchInverseProblem::harmonicWeight(Real f, Real fMin, Real fMax, int harmonicIndex){
+Real PitchInverseProblem::harmonicWeight(Real f, Real /*fMin*/, Real /*fMax*/, int harmonicIndex){
   //return ((_sampleRate * fMin) + _alpha) / ((harmonicIndex * _sampleRate * fMax) + _beta);
   return ((harmonicIndex * f) + _beta) / ((harmonicIndex * f) + _alpha);
   //return _sampleRate / f / harmonicIndex;
   //return 1.0;
 }
 
-Real PitchInverseProblem::harmonicPosition(Real f, Real fMin, Real fMax, int harmonicIndex){
+Real PitchInverseProblem::harmonicPosition(Real f, Real /*fMin*/, Real /*fMax*/, int harmonicIndex){
   return (harmonicIndex * f * sqrt(1.0 + (pow(harmonicIndex, 2.0) - 1.0) * _inharmonicity)) * (Real)_fftSize / ((Real)_sampleRate);
 }
 
-Real PitchInverseProblem::harmonicSpread(Real f, Real fMin, Real fMax, int harmonicIndex){
+Real PitchInverseProblem::harmonicSpread(Real /*f*/, Real /*fMin*/, Real /*fMax*/, int /*harmonicIndex*/){
   // TODO: change this by a spread function which might or might not change with the position
   //       or other things such as the chirp rate or inharmonicity error
   return _peakWidth;
