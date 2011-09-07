@@ -106,7 +106,7 @@
     }
     
     // require one or two dimensions
-    npy_intp dims[] = {1, 2};
+    int dims[] = {1, 2};
     require_dimensions_n(in_array, dims, 2);
 
     // get the dimensions
@@ -184,7 +184,7 @@
     }
     
     // require one or two dimensions
-    npy_intp dims[] = {1, 2};
+    int dims[] = {1, 2};
     require_dimensions_n(in_array, dims, 2);
 
     // get the dimensions
