@@ -9,7 +9,7 @@ LIBNAME = 'loudia'
 LIBVERSION = '0.1-dev'
 
 def set_options(opt):
-	opt.tool_options('compiler_cxx')
+        opt.tool_options('compiler_cxx')
 
         opt.sub_options('swig')
         opt.sub_options('tests')
@@ -19,14 +19,14 @@ def pkgconf(lib, what = '--cflags'):
 
 
 def configure(conf):
-	conf.check_tool('compiler_cxx')
+        conf.check_tool('compiler_cxx')
         conf.check_cfg(atleast_pkgconfig_version='0.0.0')
         conf.check_cfg(package='fftw3 fftw3f fftw3l', uselib_store='FFTW3', errmsg='FFTW not found. No FFT support.')
 
         conf.env.append_value('LINKFLAGS_FFTW3', '-lfftw3 -lfftw3f -lfftw3l')
 
         """
-	conf.check_cc(fragment='''extern "C" {
+        conf.check_cc(fragment='''extern "C" {
         #ifndef __STDC_CONSTANT_MACROS
         #define __STDC_CONSTANT_MACROS
         #endif
@@ -58,7 +58,7 @@ def configure(conf):
                 conf.env.append_value('CXXFLAGS','-W')
                 conf.env.append_value('CXXFLAGS','-Wall')
         else:
-                conf.env.append_value('CXXFLAGS', '-O4')
+                conf.env.append_value('CXXFLAGS', '-O3')
                 conf.env.append_value('CXXFLAGS','-fPIC')
                 conf.env.append_value('CXXFLAGS','-W')
                 conf.env.append_value('CXXFLAGS','-Wall')
@@ -83,7 +83,7 @@ def build(bld):
                 vnum         = LIBVERSION
         )
 
-	obj.find_sources_in_dirs('.', exts=['.cpp'])
+        obj.find_sources_in_dirs('.', exts=['.cpp'])
 
         if not bld.env['option_no_python_bindings']:
                 bld.add_subdirs('swig')

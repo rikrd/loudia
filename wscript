@@ -17,8 +17,8 @@ def set_options(opt):
         opt.add_option('--debug', action='store_true', default=False, help='Compile in debug mode')
         opt.add_option('--no-python-bindings', action='store_true', default=False, help='Generate and compile the Python bindings')
         opt.add_option('--cpptests', action='store_true', default=False, help='Compile C++ tests.')
-	opt.add_option('--doc', action='store_true', default=False, help='Generate the documentation')
-	opt.add_option('--old-ffmpeg', action='store_true', default=False, help='Use this option if the ffmpeg headers are in "/usr/lib/include/ffmpeg"')
+        opt.add_option('--doc', action='store_true', default=False, help='Generate the documentation')
+        opt.add_option('--old-ffmpeg', action='store_true', default=False, help='Use this option if the ffmpeg headers are in "/usr/lib/include/ffmpeg"')
 
 def configure(conf):
         import Options
