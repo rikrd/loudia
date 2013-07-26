@@ -21,6 +21,7 @@
 
 #include "Typedefs.h"
 #include "Debug.h"
+#include <iostream>
 
 class SpectralODFBase {
 protected:
@@ -35,7 +36,7 @@ public:
   
   virtual void process(const MatrixXC& fft, MatrixXR* odfValue) = 0;
   
-  virtual ~SpectralODFBase() {};
+  virtual ~SpectralODFBase() { };
 
   /**
      Returns the size of the FFT that has been performed for the input.

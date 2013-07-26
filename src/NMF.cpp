@@ -71,23 +71,23 @@ void NMF::process(const MatrixXR& v, MatrixXR* w, MatrixXR* h) {
   // Initializing W and H
   // TODO: initialize with a Normal distribution
   (*w).setRandom();
-  (*w) = (*w).cwise().abs();
+  (*w) = (*w).array().abs();
 
   (*h).setRandom();
-  (*h) = (*h).cwise().abs();
+  (*h) = (*h).array().abs();
 
   for (int iter = 0; iter < _iterationCount; iter ++) {
-    _xOverWH = v.transpose().cwise() / ((w->transpose() * h->transpose()).cwise() + _epsilon );
+    _xOverWH = v.transpose().array() / ((w->transpose() * h->transpose()).array() + _epsilon );
 
     // Multiplicative update rules of W and H by (Lee and Seung 2001)
-    (*w).transpose().cwise() *= (_xOverWH * (*h)).cwise() / ColXR::Ones(cols) * (*h).colwise().sum();
-    (*h).transpose().cwise() *= ((*w) * _xOverWH).cwise() / (w->transpose().colwise().sum().transpose() * RowXR::Ones(rows));
+    (*w).transpose().array() *= (_xOverWH * (*h)).array() / (ColXR::Ones(cols) * (*h).colwise().sum()).array();
+    (*h).transpose().array() *= ((*w) * _xOverWH).array() / (w->transpose().colwise().sum().transpose() * RowXR::Ones(rows)).array();
 
     // Renormalize so rows of H have constant energy
     _norms = (*h).colwise().norm();
 
-    (*w).transpose().cwise() *= MatrixXR::Ones(cols, 1) * _norms;
-    (*h).transpose().cwise() /= _norms.transpose() * MatrixXR::Ones(1, rows);
+    (*w).transpose().array() *= (MatrixXR::Ones(cols, 1) * _norms).array();
+    (*h).transpose().array() /= (_norms.transpose() * MatrixXR::Ones(1, rows)).array();
   }
 
   LOUDIA_DEBUG("NMF: Finished Processing");

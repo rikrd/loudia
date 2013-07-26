@@ -132,10 +132,10 @@ void MelBands::setup(){
   //centersLinear *= stepSpectrum;
   
   // start bins of filters
-  MatrixXI startBins = startsLinear.cwise().ceil().cast<Integer>();
+  MatrixXI startBins = startsLinear.array().ceil().cast<Integer>();
 
   // stop bins of filters
-  MatrixXI stopBins = stopsLinear.cwise().ceil().cast<Integer>();
+  MatrixXI stopBins = stopsLinear.array().ceil().cast<Integer>();
 
   std::vector<MatrixXR> weights;
   

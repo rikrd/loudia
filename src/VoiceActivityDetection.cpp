@@ -80,7 +80,7 @@ void VoiceActivityDetection::process(const MatrixXR& frames, MatrixXR* vad){
     RowXR LTSE = _memory.colwise().maxCoeff();
     RowXR noise = _memory.colwise().sum() / _memorySize;
 
-    (*vad)(i,0) = log10((LTSE.cwise().square().cwise() / noise.cwise().square()).sum());
+    (*vad)(i,0) = log10((LTSE.array().square() / noise.array().square()).sum());
   }
 }
 

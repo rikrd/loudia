@@ -62,11 +62,11 @@ void SpectralODFComplex::process(const MatrixXC& fft, MatrixXR* odfValue) {
 
   (*odfValue).resize(rows - 2, 1);
 
-  _unwrap.process(fft.cwise().angle(), &_unwrappedAngle);
+  _unwrap.process(fft.array().angle(), &_unwrappedAngle);
 
   LOUDIA_DEBUG("SPECTRALODFCOMPLEX: Processing unwrapped");
   
-  spectralDistanceEuclidean(fft, fft.cwise().abs(), _unwrappedAngle, odfValue);
+  spectralDistanceEuclidean(fft, fft.array().abs(), _unwrappedAngle, odfValue);
   
   LOUDIA_DEBUG("SPECTRALODFCOMPLEX: Finished Processing");
 }
@@ -80,10 +80,10 @@ void SpectralODFComplex::spectralDistanceEuclidean(const MatrixXC& spectrum, con
 
   polar(spectrumAbs.block(1, 0, rows - 2, cols), 2.0 * spectrumArg.block(1, 0, rows - 2, cols) - spectrumArg.block(0, 0, rows - 2, cols), &_spectrumPredict);
   
-  _predictionError = (_spectrumPredict - spectrum.block(0, 0, rows - 2, cols)).cwise().abs();
+  _predictionError = (_spectrumPredict - spectrum.block(0, 0, rows - 2, cols)).array().abs();
 
   if (_rectified) {
-    _predictionError = (_spectrumPredict.cwise().abs().cwise() <= spectrum.block(0, 0, rows - 2, cols).cwise().abs()).select(_predictionError, 0.0);
+    _predictionError = (_spectrumPredict.array().abs() <= spectrum.block(0, 0, rows - 2, cols).array().abs()).select(_predictionError, 0.0);
   }
   
   //_predictionError.col(0) = 0.0;

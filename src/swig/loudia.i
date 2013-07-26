@@ -18,6 +18,13 @@
 ** Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */
 
+%begin %{
+#ifndef __STDC_CONSTANT_MACROS
+#define __STDC_CONSTANT_MACROS
+#endif
+%}
+
+
 %{
 #define SWIG_FILE_WITH_INIT
 %}
@@ -31,7 +38,6 @@ import_array();
 
 %{
 #include <Eigen/Core>
-#include <Eigen/Array>
 
 #include "AudioLoader.h"
 #include "FrameCutter.h"
@@ -71,6 +77,7 @@ import_array();
 #include "PitchACF.h"
 #include "PitchInverseProblem.h"
 #include "VoiceActivityDetection.h"
+#include "OnsetComplex.h"
 
 #include "MelScales.h"
 #include "Utils.h"
@@ -117,6 +124,7 @@ import_array();
 %include "PitchACF.h"
 %include "PitchInverseProblem.h"
 %include "VoiceActivityDetection.h"
+%include "OnsetComplex.h"
 
 %include "MelScales.h"
 %include "Utils.h"

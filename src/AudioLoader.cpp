@@ -130,9 +130,10 @@ void AudioLoader::process(MatrixXR *audio){
     break;
 
   default:
+    const int channel = _channel%_channelCount;
     audio->resize(_frameSize, 1);
     for (int i=0, j=0; i < _frameSize; i++, j+=_channelCount) {
-      (*audio)(i, 0) = scale(_buffer[j+_channel]);
+      (*audio)(i, 0) = scale(_buffer[j+channel]);
     }
     break;
   }
@@ -191,7 +192,11 @@ void AudioLoader::loadFile(){
   // Look for an audio stream
   _audioStream = -1;
   for (int i=0; i < (int)_formatContext->nb_streams; i++) {
+#if LIBAVCODEC_VERSION_INT >= AV_VERSION_INT(52, 64, 0)
+    if (_formatContext->streams[i]->codec->codec_type == AVMEDIA_TYPE_AUDIO) {
+#else
     if (_formatContext->streams[i]->codec->codec_type == CODEC_TYPE_AUDIO) {
+#endif
       _audioStream = i;
       break;
     }
@@ -327,24 +332,36 @@ int AudioLoader::decodePacket(sample_type* _audioBuffer, int _bufferSize){
   for(;;) {
     while(_audioPacketSize > 0) {
       dataSize = _bufferSize;
+#if LIBAVCODEC_VERSION_INT >= AV_VERSION_INT(52, 64, 0)
+      AVPacket avpkt;
+      av_init_packet(&avpkt);
+      avpkt.data = _audioPacketData;
+      avpkt.size = _audioPacketSize;
+      decodedSize = avcodec_decode_audio3(_audioCodecContext,
+                                   _audioBuffer, &dataSize,
+                                   &avpkt);
+#else
 
       decodedSize = avcodec_decode_audio2(_audioCodecContext,
-                                          _audioBuffer, &dataSize,
-                                          _audioPacketData, _audioPacketSize);
+                                   _audioBuffer, &dataSize,
+                                   _audioPacketData, _audioPacketSize);
+
+
+#endif
 
       if(decodedSize < 0) {
-	/* if error, skip frame */
+      /* if error, skip frame */
         LOUDIA_WARNING("FFMPEG decoding error. Skipping frame.");
-	_audioPacketSize = 0;
-	break;
+        _audioPacketSize = 0;
+        break;
       }
 
       _audioPacketData += decodedSize;
       _audioPacketSize -= decodedSize;
 
       if(dataSize <= 0) {
-	/* No data yet, get more frames */
-	continue;
+        /* No data yet, get more frames */
+        continue;
       }
 
       /* We have data, return it and come back for more later */

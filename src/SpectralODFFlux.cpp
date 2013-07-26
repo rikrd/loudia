@@ -63,11 +63,11 @@ void SpectralODFFlux::process(const MatrixXC& fft, MatrixXR* odfValue) {
   
   LOUDIA_DEBUG("SPECTRALODFFLUX: Spectrum resized rows: " << rows );
     
-  _spectrumAbs = fft.cwise().abs();
+  _spectrumAbs = fft.array().abs();
   
   (*odfValue) = (_spectrumAbs.block(1, 0, rows - 1, cols) \
                  - _spectrumAbs.block(0, 0, rows - 1, cols) \
-                 ).cwise().clipUnder().rowwise().sum() / cols;
+                 ).array().clipUnder().rowwise().sum() / cols;
   
   LOUDIA_DEBUG("SPECTRALODFFLUX: Finished Processing");
 }

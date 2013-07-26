@@ -23,6 +23,7 @@
 #include "Debug.h"
 
 #include <limits>
+#include <vector>
 
 /**
   * @class PeakDetection
@@ -78,11 +79,57 @@ protected:
   // Internal variables
   MatrixXR _magnitudes;
 
+  struct peak{
+      Real start;
+      Real mid;
+      Real end;
+      Real mag;
+      peak(const peak& other)
+          :start(other.start)
+          ,mid(other.mid)
+          ,end(other.end)
+          ,mag(other.mag)
+      { }
+
+      peak& operator=(const peak& other) {
+          start = other.start;
+          mid = other.mid;
+          end = other.end;
+          mag = other.mag;
+
+          return *this;
+      }
+
+      peak(Real start, Real mid, Real end, Real mag)
+          :start(start)
+          ,mid(mid)
+          ,end(end)
+          ,mag(mag)
+      { }
+
+      // A peak is smaller (first in the list)
+      // if it's magnitude is larger
+      bool operator <(peak const& other) const {
+          return mag > other.mag;
+      }
+  };
+
+  struct byMagnitude{
+      bool operator() (const peak& i, const peak& j) const { return ( i.mag > j.mag ); }
+  } byMagnitude;
+
+  struct byPosition{
+      bool operator() (const peak& i, const peak& j) const { return ( i.mid < j.mid ); }
+  } byPosition;
+
+  void findPeaksOld(const VectorXR& a, std::vector<peak>& peaks) const;
+  void findPeaks(const VectorXR& a, std::vector<peak>& peaks) const;
+
 public:
   /**
      Constructs a peak detection object with the given @a peakCount, @a sort method, @a minimumPeakWidth, @a candidateCount and @a minimumPeakContrast parameters given.
   */
-  PeakDetection(int peakCount = 1024 / 3, SortMethod sort = BYMAGNITUDE, int minimumPeakWidth = 3, int candidateCount = -1, Real minimumPeakContrast = 0);
+  PeakDetection(int peakCount = -1, SortMethod sort = BYMAGNITUDE, int minimumPeakWidth = 3, int candidateCount = -1, Real minimumPeakContrast = 0);
 
   /**
      Destroys the algorithm and frees its resources.
@@ -113,8 +160,8 @@ public:
      reallocating a new memory space if necessary.
   */
   void process(const MatrixXR& frames,
-               MatrixXR* peakPositions, MatrixXR* peakMagnitudes);
-
+               MatrixXR* peakStarts, MatrixXR* peakPositions, MatrixXR* peakEnds,
+               MatrixXR* peakMagnitudes);
   /**
      Returns the maximum number of peaks to be detected by the algorithm.
      

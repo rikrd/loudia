@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
 
 import loudia
 import scipy
@@ -51,6 +52,55 @@ def get_onsets(filename, hop, sampleRate, onsetError = 50.0):
 
     else:
         return None
+
+def detectPeaks(a, tol = 0):
+  a = scipy.array(a)
+  
+  minIn = 0
+  minVal = scipy.inf
+
+  maxIn = 0
+  maxVal = -scipy.inf
+
+  INCREASING = 0
+  DECREASING = 1
+
+  state = INCREASING
+
+  peaks = []
+  i = 0
+  while i<a.shape[0]:
+    if state == INCREASING:
+      diffMax = a[i] - maxVal
+      if diffMax > 0:
+        maxIn = i
+        maxVal = a[i]
+        
+      elif -diffMax > tol:
+        state = DECREASING
+        peaks.append((minIn, maxIn, maxVal))
+        minIn = i
+        minVal = a[i]
+      
+    elif state == DECREASING:
+      diffMin = a[i] - minVal
+      
+      if diffMin < 0:
+        minIn = i
+        minVal = a[i]
+        
+      elif diffMin > tol:
+        state = INCREASING
+        maxIn = i
+        maxVal = a[i]
+
+        
+    i += 1
+    
+  if state == INCREASING:
+    peaks.append((minIn, maxIn, maxVal))
+    
+  return peaks
 
 def draw_onsets(onsets):
     if not onsets:

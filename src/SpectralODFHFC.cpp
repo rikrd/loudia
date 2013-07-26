@@ -60,7 +60,7 @@ void SpectralODFHFC::process(const MatrixXC& fft, MatrixXR* odfValue) {
 
   (*odfValue).resize(rows, 1);
   
-  _spectrumAbs = fft.cwise().abs();  
+  _spectrumAbs = fft.array().abs();
 
   for (int row = 0; row < rows; row ++) {
     (*odfValue).row(row) = _spectrumAbs.row(row) * _freqBin.block(0, 0, 1, cols).transpose() / cols;

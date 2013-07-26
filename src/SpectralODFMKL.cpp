@@ -63,11 +63,11 @@ void SpectralODFMKL::process(const MatrixXC& fft, MatrixXR* odfValue) {
 
   LOUDIA_DEBUG("SPECTRALODFMKL: Spectrum resized rows: " << rows);
   
-  _spectrumAbs = fft.cwise().abs();
+  _spectrumAbs = fft.array().abs();
 
-  (*odfValue) = (_spectrumAbs.block(1, 0, rows-1, cols).cwise() \
-                 * (_spectrumAbs.block(1, 0, rows-1, cols).cwise() \
-                    / (_spectrumAbs.block(0, 0, rows-1, cols).cwise().clipUnder(_minSpectrum))).cwise().clipUnder(_minSpectrum).cwise().logN(2.0)).rowwise().sum() / cols;
+  (*odfValue) = (_spectrumAbs.block(1, 0, rows-1, cols).array() \
+                 * (_spectrumAbs.block(1, 0, rows-1, cols).array() \
+                    / (_spectrumAbs.block(0, 0, rows-1, cols).array().clipUnder(_minSpectrum))).array().clipUnder(_minSpectrum).logN(2.0)).rowwise().sum() / cols;
   
   LOUDIA_DEBUG("SPECTRALODFMKL: Finished Processing");
 }

@@ -62,8 +62,8 @@ void PeakInterpolationComplex::process(const MatrixXC& input,
   (*peakMagnitudesInterp).resize(input.rows(), peakPositions.cols());
   (*peakPhasesInterp).resize(input.rows(), peakPositions.cols());
   
-  _magnitudes = input.cwise().abs();
-  unwrap(input.cwise().angle(), &_phases);
+  _magnitudes = input.array().abs();
+  unwrap(input.array().angle(), &_phases);
   
   for ( int row = 0 ; row < _magnitudes.rows(); row++ ) {
   
@@ -123,7 +123,7 @@ void PeakInterpolationComplex::process(const MatrixXC& input,
   }
 
   // Calculate the princarg() of the phase: remap to (-pi pi]
-  (*peakPhasesInterp) = ((*peakPhasesInterp).cwise() != -1).select(((*peakPhasesInterp).cwise() + M_PI).cwise().modN(-2.0 * M_PI).cwise() + M_PI, (*peakPhasesInterp));
+  (*peakPhasesInterp) = ((*peakPhasesInterp).array() != -1).select(((*peakPhasesInterp).array() + M_PI).array().modN(-2.0 * M_PI) + M_PI, (*peakPhasesInterp));
   
   LOUDIA_DEBUG("PEAKINTERPOLATIONCOMPLEX: Finished Processing");
 }

@@ -60,8 +60,8 @@ void Unwrap::process(const MatrixXR& input, MatrixXR* unwrapped){
 
   _diff << MatrixXR::Zero(1, cols), input.block(0, 0, rows-1, cols) - input.block(1, 0, rows-1, cols);
   
-  _upsteps = (_diff.cwise() > M_PI).cast<Real>();
-  _downsteps = (_diff.cwise() < -M_PI).cast<Real>();
+  _upsteps = (_diff.array() > M_PI).cast<Real>();
+  _downsteps = (_diff.array() < -M_PI).cast<Real>();
 
   rowCumsum(&_upsteps);
   rowCumsum(&_downsteps);

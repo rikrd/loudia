@@ -117,7 +117,7 @@ void Autocorrelation::process(const MatrixXR& frames, MatrixXR* autocorrelation)
   if ( _useFft ) {
     _fft.process(frames, &_tempFft);
     
-    _tempFft.cwise() *= _tempFft.conjugate();
+    _tempFft.array() *= _tempFft.conjugate().array();
     
     _ifft.process(_tempFft, &_temp);
 

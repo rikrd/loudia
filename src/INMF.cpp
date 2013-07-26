@@ -81,7 +81,7 @@ void INMF::process(const MatrixXR& v, MatrixXR* w, MatrixXR* h) {
   // Initializing h
   // TODO: initialize with a Normal distribution
   (*h).setRandom();
-  (*h) = (*h).cwise().abs();
+  (*h) = (*h).array().abs();
 
   LOUDIA_DEBUG("INMF: Begin rows");
   for (int row = 0; row < rows; row++ ) {
@@ -113,7 +113,7 @@ void INMF::process(const MatrixXR& v, MatrixXR* w, MatrixXR* h) {
       cout << "v: " << v.rows() << " , " << v.cols() << endl;
       cout << "---------------" << endl;
       */
-      (*h).row( row ).cwise() *= (((*w) * v.row(row).transpose()).cwise() / ((((*w) * (*w).transpose()) * (*h).row( row ).transpose()).cwise() + _eps)).transpose();
+      (*h).row( row ).array() *= (((*w) * v.row(row).transpose()).array() / ((((*w) * (*w).transpose()) * (*h).row( row ).transpose()).array() + _eps)).transpose();
 
       //DEBUG("INMF: Update W");
       // Eq. 13 in Bucak 2008
@@ -130,7 +130,7 @@ void INMF::process(const MatrixXR& v, MatrixXR* w, MatrixXR* h) {
       cout << (_newCoeff * ((*h).row( row ).transpose() * (*h).row( row ))) << endl;
       cout << "**********" << endl;
       */
-      (*w).cwise() *= ((_VH + (_newCoeff * v.row( row ).transpose() * (*h).row( row ))).cwise() / (((*w).transpose() * (_HH + _newCoeff * (*h).row( row ).transpose() * (*h).row( row ))).cwise() + _eps)).transpose();
+      (*w).array() *= ((_VH + (_newCoeff * v.row( row ).transpose() * (*h).row( row ))).array() / (((*w).transpose() * (_HH + _newCoeff * (*h).row( row ).transpose() * (*h).row( row ))).array() + _eps)).transpose();
     }
 
     LOUDIA_DEBUG("INMF: Shift and update H");
@@ -161,11 +161,11 @@ void INMF::reset() {
   // Initial W, H and V
   // TODO: initialize with a Normal distribution
   _W.setRandom();
-  _W = _W.cwise().abs();
+  _W = _W.array().abs();
 
   _H.setRandom();
-  _H = _H.cwise().abs();
+  _H = _H.array().abs();
 
   _V.setRandom();  
-  _V = _V.cwise().abs();
+  _V = _V.array().abs();
 }

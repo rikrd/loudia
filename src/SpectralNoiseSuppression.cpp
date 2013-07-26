@@ -89,12 +89,12 @@ void SpectralNoiseSuppression::process(const MatrixXR& spectrum, MatrixXR* noise
 
   //DEBUG("SPECTRALNOISESUPPRESSION: Calculate wrapped magnitude.");
   // Calculate the wrapped magnitude of the spectrum
-  _g = (1.0 / (_k1 - _k0 + 1.0) * spectrum.block(0, _k0, rows, _k1 - _k0).cwise().pow(1.0/3.0).rowwise().sum()).cwise().cube();
+  _g = (1.0 / (_k1 - _k0 + 1.0) * spectrum.block(0, _k0, rows, _k1 - _k0).array().pow(1.0/3.0).rowwise().sum()).array().cube();
 
   //cout << (_g) << endl;
   
   for ( int i = 0; i < cols; i++ ) {
-    (*result).col(i) = (((*result).col(i).cwise() * _g.cwise().inverse()).cwise() + 1.0).cwise().log();
+    (*result).col(i) = (((*result).col(i).array() * _g.array().inverse()) + 1.0).log();
   }
   
   //cout << (*result) << endl;
@@ -105,7 +105,7 @@ void SpectralNoiseSuppression::process(const MatrixXR& spectrum, MatrixXR* noise
   
   //DEBUG("SPECTRALNOISESUPPRESSION: Suppress spectral noise.");
   // Suppress spectral noise
-  (*result) = ((*result) - (*noise)).cwise().clipUnder();
+  (*result) = ((*result) - (*noise)).array().clipUnder();
 }
 
 void SpectralNoiseSuppression::reset(){

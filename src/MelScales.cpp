@@ -29,13 +29,13 @@ Real melToLinearGreenwood1990(Real melFreq) {
 void linearToMelMatrixGreenwood1990(const MatrixXR& linearFreq, MatrixXR* melFreq) {
   LOUDIA_DEBUG("MELBANDS: Scaling (Greenwood 1990) linearFreq: " << linearFreq);
 
-  (*melFreq) = ((linearFreq / 165.4).cwise() + 1.0).cwise().logN(10) / 2.1;
+  (*melFreq) = ((linearFreq / 165.4).array() + 1.0).logN(10) / 2.1;
 }
 
 void melToLinearMatrixGreenwood1990(const MatrixXR& melFreq, MatrixXR* linearFreq) {
   LOUDIA_DEBUG("MELBANDS: Scaling (Greenwood 1990) melFreq: " << melFreq);
 
-  (*linearFreq) = 165.4 * ((melFreq * 2.1).cwise().expN(10.0).cwise() - 1.0);
+  (*linearFreq) = 165.4 * ((melFreq * 2.1).array().expN(10.0) - 1.0);
 }
 
 
@@ -48,11 +48,11 @@ Real melToLinearStevens1937(Real melFreq) {
 }
 
 void linearToMelMatrixStevens1937(const MatrixXR& linearFreq, MatrixXR* melFreq) {
-  (*melFreq) = ((linearFreq / 700.0).cwise() + 1.0).cwise().log() * 1127.01048;
+  (*melFreq) = ((linearFreq / 700.0).array() + 1.0).log() * 1127.01048;
 }
 
 void melToLinearMatrixStevens1937(const MatrixXR& melFreq, MatrixXR* linearFreq) {
-  (*linearFreq) = ((melFreq / 1127.01048).cwise().exp().cwise() - 1.0) * 700.0;
+  (*linearFreq) = ((melFreq / 1127.01048).array().exp() - 1.0) * 700.0;
 }
 
 
@@ -65,9 +65,9 @@ Real melToLinearFant1968(Real melFreq) {
 }
 
 void linearToMelMatrixFant1968(const MatrixXR& linearFreq, MatrixXR* melFreq) {
-  (*melFreq) = (1000.0 / log(2.0)) * ((linearFreq / 1000.0).cwise() + 1.0).cwise().log();
+  (*melFreq) = (1000.0 / log(2.0)) * ((linearFreq / 1000.0).array() + 1.0).log();
 }
 
 void melToLinearMatrixFant1968(const MatrixXR& melFreq, MatrixXR* linearFreq) {
-  (*linearFreq) = 1000.0 * ((melFreq * log(2.0) / 1000.0).cwise().exp().cwise() - 1.0);
+  (*linearFreq) = 1000.0 * ((melFreq * log(2.0) / 1000.0).array().exp() - 1.0);
 }

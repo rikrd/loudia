@@ -48,8 +48,8 @@ DCT::~DCT(){}
 void DCT::setup(){
     // Prepare the buffers
     LOUDIA_DEBUG("DCT: Setting up...");
+    
     _dctMatrix.resize(_inputSize, _inputSize);
-
 
     switch(_dctType) {
     case I:
@@ -150,7 +150,12 @@ DCT::DCTType DCT::dctType() const{
 }
 
 void DCT::setDctType( DCTType type, bool callSetup ) {
+    if (type == _dctType) {
+      return;
+    }
+  
     _dctType = type;
+    
     if ( callSetup ) setup();
 }
 
@@ -159,6 +164,10 @@ int DCT::inputSize() const{
 }
 
 void DCT::setInputSize( int size, bool callSetup ) {
+    if (size == _inputSize) {
+      return;
+    }
+    
     _inputSize = size;
     if ( callSetup ) setup();
 }
@@ -167,7 +176,6 @@ int DCT::dctSize() const{
     return _dctSize;
 }
 
-void DCT::setDctSize( int size, bool callSetup ) {
+void DCT::setDctSize( int size, bool /*callSetup*/ ) {
     _dctSize = size;
-    if ( callSetup ) setup();
 }

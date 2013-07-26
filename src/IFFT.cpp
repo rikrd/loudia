@@ -29,7 +29,7 @@ IFFT::IFFT(int fftSize, bool zeroPhase) :
   _out( NULL ),
   _fftplan( NULL )
 {
-  LOUDIA_DEBUG("IFFT: Constructor fftSize: " << fftSize 
+  LOUDIA_DEBUG("IFFT: Constructor fftSize: " << fftSize
         << ", zeroPhase: " << zeroPhase);
 
   setFftSize( fftSize, false );
@@ -104,8 +104,8 @@ void IFFT::process(const MatrixXC& ffts, MatrixXR* frames){
     // Take the data from _out
     if(_zeroPhase){
 
-      int half_plus = (int)ceil((Real)_halfSize / 2.0);
-      int half_minus = (int)floor((Real)_halfSize / 2.0);
+      int half_plus = (int)ceil((Real)_fftSize / 2.0);
+      int half_minus = (int)floor((Real)_fftSize / 2.0);
       
       // Take second half of the frame from the beginning 
       (*frames).row(i).block(0, half_minus, 1, half_plus) = Eigen::Map<MatrixXR>(_out, 1, _fftSize).block(0, 0, 1, half_plus) / _fftSize;

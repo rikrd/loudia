@@ -59,6 +59,9 @@ protected:
   MatrixXR _projectionMatrix;
   MatrixXR _inverseProjectionMatrix;
 
+  MatrixXR _starts;
+  MatrixXR _ends;
+
   PeakDetection _peak;
   PeakInterpolation _peakInterp;
 

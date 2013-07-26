@@ -57,10 +57,10 @@ void PeakCOG::process(const MatrixXC& fft, const MatrixXR& peakPos, MatrixXR* pe
   const int peakCount = peakPos.cols();
 
   LOUDIA_DEBUG("PEAKCOG: fft.shape " << fft.rows() << "," << fft.cols());
-  _spectrumAbs2 = fft.block(0, 0, rows, halfCols).cwise().abs2();
+  _spectrumAbs2 = fft.block(0, 0, rows, halfCols).array().abs2();
   LOUDIA_DEBUG("PEAKCOG: Spectrum resized rows: " << rows << " halfCols: " << halfCols);
 
-  unwrap(fft.block(0, 0, rows, halfCols).cwise().angle(), &_spectrumArg);
+  unwrap(fft.block(0, 0, rows, halfCols).array().angle(), &_spectrumArg);
   derivate(_spectrumArg, &_spectrumArgDeriv);
 
   derivate(_spectrumAbs2, &_spectrumAbs2Deriv);
@@ -94,7 +94,7 @@ void PeakCOG::process(const MatrixXC& fft, const MatrixXR& peakPos, MatrixXR* pe
 
       // Calculate the actual center of gravity of the peak
       if ( (end - start) >= 3) {
-        (*peakCog)(row, i) = ((-_spectrumArgDeriv).block(row, start, 1, end-start).cwise() * _spectrumAbs2.block(row, start, 1, end-start)).sum() / _spectrumAbs2.block(row, start, 1, end-start).sum();
+        (*peakCog)(row, i) = ((-_spectrumArgDeriv).block(row, start, 1, end-start).array() * _spectrumAbs2.block(row, start, 1, end-start).array()).sum() / _spectrumAbs2.block(row, start, 1, end-start).sum();
       }
 
     }

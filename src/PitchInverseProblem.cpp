@@ -161,7 +161,7 @@ void PitchInverseProblem::setup(){
    LOUDIA_DEBUG("PITCHINVERSEPROBLEM: Setting up the inversion...");
    // A = K^t [ K K^t + \lambda * I_N ]^{+}
    MatrixXR temp = (_projectionMatrix * _projectionMatrix.transpose());
-   temp.diagonal().cwise() += _regularisation;
+   temp.diagonal().array() += _regularisation;
    MatrixXR pseudioInv;
    pseudoInverse( temp, &pseudioInv );
    _inverseProjectionMatrix = _projectionMatrix.transpose() * pseudioInv;
@@ -180,26 +180,26 @@ void PitchInverseProblem::harmonicWeight(MatrixXR f, Real fMin, Real fMax, int h
   (*result) = MatrixXR::Constant(f.rows(), f.cols(), (fMax + _alpha) / ((harmonicIndex * fMin) + _beta));
 }
 
-void PitchInverseProblem::harmonicPosition(MatrixXR f, Real fMin, Real fMax, int harmonicIndex, MatrixXR* result){
+void PitchInverseProblem::harmonicPosition(MatrixXR f, Real /*fMin*/, Real /*fMax*/, int harmonicIndex, MatrixXR* result){
   (*result) = (harmonicIndex * f * sqrt(1.0 + (pow(harmonicIndex, 2.0) - 1.0) * _inharmonicity)) * (Real)_fftSize / ((Real)_sampleRate);
 }
 
-void PitchInverseProblem::harmonicSpread(MatrixXR f, Real fMin, Real fMax, int harmonicIndex, MatrixXR* result){
+void PitchInverseProblem::harmonicSpread(MatrixXR f, Real /*fMin*/, Real /*fMax*/, int /*harmonicIndex*/, MatrixXR* result){
   (*result) = MatrixXR::Constant(f.rows(), f.cols(), _peakWidth);
 }
 
-Real PitchInverseProblem::harmonicWeight(Real f, Real fMin, Real fMax, int harmonicIndex){
+Real PitchInverseProblem::harmonicWeight(Real f, Real /*fMin*/, Real /*fMax*/, int harmonicIndex){
   //return ((_sampleRate * fMin) + _alpha) / ((harmonicIndex * _sampleRate * fMax) + _beta);
   return ((harmonicIndex * f) + _beta) / ((harmonicIndex * f) + _alpha);
   //return _sampleRate / f / harmonicIndex;
   //return 1.0;
 }
 
-Real PitchInverseProblem::harmonicPosition(Real f, Real fMin, Real fMax, int harmonicIndex){
+Real PitchInverseProblem::harmonicPosition(Real f, Real /*fMin*/, Real /*fMax*/, int harmonicIndex){
   return (harmonicIndex * f * sqrt(1.0 + (pow(harmonicIndex, 2.0) - 1.0) * _inharmonicity)) * (Real)_fftSize / ((Real)_sampleRate);
 }
 
-Real PitchInverseProblem::harmonicSpread(Real f, Real fMin, Real fMax, int harmonicIndex){
+Real PitchInverseProblem::harmonicSpread(Real /*f*/, Real /*fMin*/, Real /*fMax*/, int /*harmonicIndex*/){
   // TODO: change this by a spread function which might or might not change with the position
   //       or other things such as the chirp rate or inharmonicity error
   return _peakWidth;
@@ -226,7 +226,7 @@ void PitchInverseProblem::process(const MatrixXR& spectrum, MatrixXR* pitches, M
   LOUDIA_DEBUG("PITCHINVERSEPROBLEM: Find peaks");
   
   _peak.process((*freqs),
-                pitches, saliencies);
+                &_starts, pitches, &_ends, saliencies);
 
   LOUDIA_DEBUG("PITCHINVERSEPROBLEM: Interpolate peaks");
   
@@ -236,7 +236,7 @@ void PitchInverseProblem::process(const MatrixXR& spectrum, MatrixXR* pitches, M
 
   LOUDIA_DEBUG("PITCHINVERSEPROBLEM: Setting the pitches");
   
-  (*pitches) = (((_highFrequency - _lowFrequency) / (_frequencyCandidateCount-1)) * (*pitches)).cwise() + _lowFrequency;
+  (*pitches) = (((_highFrequency - _lowFrequency) / (_frequencyCandidateCount-1)) * (*pitches)).array() + _lowFrequency;
   
 }
 
