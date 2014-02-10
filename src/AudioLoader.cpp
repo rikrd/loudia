@@ -18,6 +18,7 @@
 
 #include "AudioLoader.h"
 
+#include <libavformat/avio.h>
 #include <iostream>
 using namespace std;
 
@@ -178,7 +179,7 @@ void AudioLoader::process(sample_type *audioLR){
 
 void AudioLoader::loadFile(){
   // Open file
-  if (av_open_input_file(&_formatContext, _filename.c_str(), NULL, 0, NULL)!=0) {
+  if (avformat_open_input(&_formatContext, _filename.c_str(), NULL, NULL)!=0) {
     LOUDIA_ERROR("AUDIOLOADER: Could not open file \"" << _filename << "\".  Please set an existing filename using setFilename().");
     return; // Couldn't open file
   }
@@ -261,7 +262,7 @@ void AudioLoader::seek( Real time ) {
 
 Real AudioLoader::fileProgress() const {
   // TODO: check if there is a more correct way
-  Real fileSize = _formatContext->file_size;
+  Real fileSize = avio_size(_formatContext->pb);
   if (fileSize == 0) return -1;
 
   return (Real)_sizeRead / fileSize;
