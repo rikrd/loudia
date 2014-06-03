@@ -25,7 +25,7 @@ def configure(conf):
         conf.check_cfg(package='fftw3 fftw3f fftw3l', uselib_store='FFTW3', args=['--cflags', '--libs'], errmsg='FFTW not found. No FFT support.')
         conf.check_cfg(package='samplerate', uselib_store='SAMPLERATE', args=['--cflags', '--libs'], mandatory=True)
         conf.check_cfg(package='eigen3', uselib_store='EIGEN', args=['--cflags', '--libs'], mandatory=True)
-
+        
         if conf.env['option_debug']:
                 conf.env.append_value('CXXFLAGS', '-g')
                 conf.env.append_value('CXXFLAGS','-fno-inline')

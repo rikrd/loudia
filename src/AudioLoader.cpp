@@ -19,7 +19,6 @@
 #include "AudioLoader.h"
 
 #include <iostream>
-#include <libavutil/mathematics.h>
 
 using namespace std;
 
@@ -80,8 +79,8 @@ void AudioLoader::setup(){
   if ( _loadDuration < 0 ) {
     _loadDurationInTimeBase = -1;
   } else {
-    //AVStream *stream = _formatContext->streams[_audioStream];
-    //_loadDurationInTimeBase = av_rescale(_loadDuration, stream->time_base.den, stream->time_base.num);
+    AVStream *stream = _formatContext->streams[_audioStream];
+    _loadDurationInTimeBase = av_rescale(_loadDuration, stream->time_base.den, stream->time_base.num);
   }
 
 
@@ -255,10 +254,10 @@ void AudioLoader::seek( Real time ) {
     LOUDIA_ERROR("The algorithm must be set up before hand calling setup().");
   }
 
-  //AVStream *stream = _formatContext->streams[_audioStream];
-  //int64_t pts = av_rescale((int64_t)time, stream->time_base.den, stream->time_base.num);
-  //if ( av_seek_frame(_formatContext, _audioStream, pts, AVSEEK_FLAG_ANY & AVSEEK_FLAG_BACKWARD) < 0 )
-  //  LOUDIA_WARNING("AUDIOLOADER: Unable to seek.");
+  AVStream *stream = _formatContext->streams[_audioStream];
+  int64_t pts = av_rescale((int64_t)time, stream->time_base.den, stream->time_base.num);
+  if ( av_seek_frame(_formatContext, _audioStream, pts, AVSEEK_FLAG_ANY & AVSEEK_FLAG_BACKWARD) < 0 )
+    LOUDIA_WARNING("AUDIOLOADER: Unable to seek.");
 
   _loadedDuration = 0;
 }
