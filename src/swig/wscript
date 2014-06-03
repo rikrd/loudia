@@ -38,7 +38,7 @@ def build(bld):
         name         = 'pyloudia',
         want_libtool = 1,
         vnum         = '1.0.0',
-        uselib_local = 'loudia'
+        use = 'loudia'
         )
 
     # fix for waf/python2.6 install paths

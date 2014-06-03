@@ -48,13 +48,14 @@ def configure(conf):
 def build(bld):
         bld(features = 'cxx cxxshlib',
             uselib = 'FFTW3 FFMPEG SAMPLERATE EIGEN',
+            source = bld.path.ant_glob('*.cpp'),
             target = LIBNAME,
             export_incdirs = '.',
             includes = '.',
             name         = LIBNAME,
             vnum         = LIBVERSION)
 
-        bld.path.ant_glob('**/*.cpp') 
+        #bld.path.ant_glob('**/*.cpp') 
         #obj.find_sources_in_dirs('.', exts=['.cpp'])
 
         if not bld.env['option_no_python_bindings']:
