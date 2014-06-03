@@ -8,7 +8,6 @@ def options(opt):
     opt.load('compiler_cxx')
     opt.load('python')
 
-
 def configure(conf):
     conf.load('compiler_cxx python')
     conf.check_python_version((2,4,2))
@@ -22,11 +21,12 @@ def configure(conf):
     if conf.check_swig_version() < (1, 2, 27):
         conf.fatal('this swig version is too old')
 
-        try:
-            conf.check_python_module('numpy')
-        except Configure.ConfigurationError:
-            print "(module ''numpy'' not found, but we ignore it)"
+    conf.check_python_module('numpy')
+    conf.load('numpy')
 
+    import numpy
+    conf.env.append_value('CXXFLAGS', ['-I' + numpy.get_include()])
+    
 
 def build(bld):
     bld(features = 'cxx cxxshlib pyext',

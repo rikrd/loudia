@@ -21,7 +21,7 @@ def pkgconf(lib, what = '--cflags'):
 def configure(conf):
         conf.load('compiler_cxx')
         conf.check_cfg(atleast_pkgconfig_version='0.0.0')
-        conf.check_cfg(package='libavformat libavcodec libavresample', uselib_store='FFMPEG', args=['--cflags', '--libs'])
+        conf.check_cfg(package='libavformat libavcodec libavresample libavutil', uselib_store='FFMPEG', args=['--cflags', '--libs'])
         conf.check_cfg(package='fftw3 fftw3f fftw3l', uselib_store='FFTW3', args=['--cflags', '--libs'], errmsg='FFTW not found. No FFT support.')
         conf.check_cfg(package='samplerate', uselib_store='SAMPLERATE', args=['--cflags', '--libs'], mandatory=True)
         conf.check_cfg(package='eigen3', uselib_store='EIGEN', args=['--cflags', '--libs'], mandatory=True)
