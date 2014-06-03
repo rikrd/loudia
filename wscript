@@ -10,9 +10,9 @@ VERSION = '0.1-dev'
 srcdir = '.'
 blddir = 'build'
 
-def set_options(opt):
-        opt.sub_options('src')
-        opt.sub_options('doc')
+def options(opt):
+        opt.recurse('src')
+        opt.recurse('doc')
 
         opt.add_option('--debug', action='store_true', default=False, help='Compile in debug mode')
         opt.add_option('--no-python-bindings', action='store_true', default=False, help='Generate and compile the Python bindings')
@@ -21,22 +21,23 @@ def set_options(opt):
         opt.add_option('--old-ffmpeg', action='store_true', default=False, help='Use this option if the ffmpeg headers are in "/usr/lib/include/ffmpeg"')
 
 def configure(conf):
-        import Options
+        from waflib import Options
+        
         conf.env['option_doc'] = Options.options.doc
         conf.env['option_debug'] = Options.options.debug
         conf.env['option_no_python_bindings'] = Options.options.no_python_bindings
         conf.env['option_cpptests'] = Options.options.cpptests
         conf.env['option_old_ffmpeg'] = Options.options.old_ffmpeg
 
-        conf.sub_config('src')
+        conf.recurse('src')
 
         if conf.env['option_doc']:
-                conf.sub_config('doc')
+                conf.recurse('doc')
 
 
 def build(bld):
-        bld.add_subdirs('src')
+        bld.recurse('src')
 
         if bld.env['option_doc']:
-                bld.add_subdirs('doc')
+                bld.recurse('doc')
 
