@@ -18,7 +18,6 @@ def options(opt):
         opt.add_option('--no-python-bindings', action='store_true', default=False, help='Generate and compile the Python bindings')
         opt.add_option('--cpptests', action='store_true', default=False, help='Compile C++ tests.')
         opt.add_option('--doc', action='store_true', default=False, help='Generate the documentation')
-        opt.add_option('--old-ffmpeg', action='store_true', default=False, help='Use this option if the ffmpeg headers are in "/usr/lib/include/ffmpeg"')
 
 def configure(conf):
         from waflib import Options
@@ -27,7 +26,6 @@ def configure(conf):
         conf.env['option_debug'] = Options.options.debug
         conf.env['option_no_python_bindings'] = Options.options.no_python_bindings
         conf.env['option_cpptests'] = Options.options.cpptests
-        conf.env['option_old_ffmpeg'] = Options.options.old_ffmpeg
 
         conf.recurse('src')
 

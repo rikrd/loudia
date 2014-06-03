@@ -38,6 +38,7 @@ def configure(conf):
                 conf.env.append_value('CXXFLAGS','-Wall')
                 conf.env.append_value('CXXFLAGS','-msse2')
                 conf.env.append_value('CXXFLAGS','-DNDEBUG')
+
         conf.env.append_value('LINKFLAGS', '-lm')
 
         if not conf.env['option_no_python_bindings']:
@@ -53,19 +54,13 @@ def build(bld):
             target = LIBNAME,
             export_incdirs = '.',
             includes = '.',
-            name         = LIBNAME,
-            vnum         = LIBVERSION)
-
-        #bld.path.ant_glob('**/*.cpp') 
-        #obj.find_sources_in_dirs('.', exts=['.cpp'])
+            name = LIBNAME,
+            vnum = LIBVERSION)
 
         if not bld.env['option_no_python_bindings']:
                 bld.recurse('swig')
 
         if bld.env['option_cpptests']:
                 bld.recurse('tests')
-
-        if bld.env['option_old_ffmpeg']:
-                bld.env.append_value('CPPFLAGS', '-DLOUDIA_OLD_FFMPEG')
 
         bld.install_files('${PREFIX}/include/loudia', bld.path.ant_glob('*.h'))
