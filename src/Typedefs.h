@@ -30,7 +30,7 @@
 #include "Debug.h"
 
 #include <cmath>
-#include <Eigen/Dense>
+#include <Eigen/Eigen>
 
 // Types for scalar values
 typedef int Integer;

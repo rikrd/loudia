@@ -18,12 +18,14 @@
 
 #include "AudioLoader.h"
 
-#include <libavformat/avio.h>
 #include <iostream>
+
 using namespace std;
 
+#define MAX_AUDIO_FRAME_SIZE 192000
+
 AudioLoader::AudioLoader( const std::string& filename, const int frameSize, int channel, Real loadDuration ) :
-  _inputFrameSize(AVCODEC_MAX_AUDIO_FRAME_SIZE),
+  _inputFrameSize(MAX_AUDIO_FRAME_SIZE),
   _formatContext(0),
   _audioCodecContext(0),
   _audioStream(-1),
@@ -185,7 +187,7 @@ void AudioLoader::loadFile(){
   }
 
   // Retrieve stream information
-  if (av_find_stream_info(_formatContext)<0) {
+  if (avformat_find_stream_info(_formatContext, NULL)<0) {
     LOUDIA_ERROR("AUDIOLOADER: Could not find stream information in file!");
     return; // Couldn't find stream information
   }
@@ -224,7 +226,7 @@ void AudioLoader::loadFile(){
   }
 
   // Load the decoder
-  if (avcodec_open(_audioCodecContext, _aCodec) < 0 ) {
+  if (avcodec_open2(_audioCodecContext, _aCodec, NULL) < 0 ) {
     LOUDIA_ERROR("AUDIOLOADER: Unable to load codec!");
     return;
   }
@@ -242,7 +244,7 @@ void AudioLoader::closeFile(){
 
   if (_formatContext) {
     // Close the video file
-    av_close_input_file(_formatContext);
+    avformat_close_input(&_formatContext);
     _formatContext = 0;
   }
 }
@@ -262,7 +264,9 @@ void AudioLoader::seek( Real time ) {
 
 Real AudioLoader::fileProgress() const {
   // TODO: check if there is a more correct way
-  Real fileSize = avio_size(_formatContext->pb);
+    
+  Real fileSize = _formatContext->pb ? avio_size(_formatContext->pb) : -1;
+  
   if (fileSize == 0) return -1;
 
   return (Real)_sizeRead / fileSize;
@@ -321,6 +325,52 @@ bool AudioLoader::nextPacket(){
 
   // There were no packets left
   return false;
+}
+
+int avcodec_decode_audio3(AVCodecContext *avctx, int16_t *samples,
+                          int *frame_size_ptr,
+                          AVPacket *avpkt)
+{
+    AVFrame frame;
+    int ret, got_frame = 0;
+
+    if (avctx->get_buffer != avcodec_default_get_buffer) {
+        av_log(avctx, AV_LOG_ERROR, "Custom get_buffer() for use with"
+               "avcodec_decode_audio3() detected. Overriding with avcodec_default_get_buffer\n");
+        av_log(avctx, AV_LOG_ERROR, "Please port your application to "
+               "avcodec_decode_audio4()\n");
+        avctx->get_buffer = avcodec_default_get_buffer;
+        avctx->release_buffer = avcodec_default_release_buffer;
+    }
+
+    ret = avcodec_decode_audio4(avctx, &frame, &got_frame, avpkt);
+
+    if (ret >= 0 && got_frame) {
+        int ch, plane_size;
+        int planar = av_sample_fmt_is_planar(avctx->sample_fmt);
+        int data_size = av_samples_get_buffer_size(&plane_size, avctx->channels,
+                                                   frame.nb_samples,
+                                                   avctx->sample_fmt, 1);
+        if (*frame_size_ptr < data_size) {
+            av_log(avctx, AV_LOG_ERROR, "output buffer size is too small for "
+                   "the current frame (%d < %d)\n", *frame_size_ptr, data_size);
+            return AVERROR(EINVAL);
+        }
+
+        memcpy(samples, frame.extended_data[0], plane_size);
+
+        if (planar && avctx->channels > 1) {
+            uint8_t *out = ((uint8_t *)samples) + plane_size;
+            for (ch = 1; ch < avctx->channels; ch++) {
+                memcpy(out, frame.extended_data[ch], plane_size);
+                out += plane_size;
+            }
+        }
+        *frame_size_ptr = data_size;
+    } else {
+        *frame_size_ptr = 0;
+    }
+    return ret;
 }
 
 int AudioLoader::decodePacket(sample_type* _audioBuffer, int _bufferSize){

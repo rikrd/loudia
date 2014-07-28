@@ -2,14 +2,14 @@
 # encoding: utf-8
 # Ricard Marxer 2008
 
-def set_options(opt):
-	opt.tool_options('g++')
+def options(opt):
+	opt.load('g++')
 
 def configure(conf):
-	conf.check_tool('g++')
+	conf.load('g++')
         
 def build(bld):
-        obj = bld.new_task_gen(
+        bld(
                 features = ['cxx', 'cprogram'],
                 uselib = 'fftw3',
                 source = 'test_addon.cpp',

@@ -38,6 +38,9 @@ extern "C" {
 #else
 #include <libavcodec/avcodec.h>
 #include <libavformat/avformat.h>
+#include <libavresample/avresample.h>
+#include <libavutil/opt.h>
+#include <libavutil/mathematics.h>
 #endif
 }
 

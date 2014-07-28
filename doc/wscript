@@ -2,14 +2,14 @@
 # encoding: utf-8
 # Ricard Marxer 2008
 
-def set_options(opt):
-        pass
+def options(opt):
+    pass
 
 def configure(conf):
-	conf.check_tool('g++')
-	conf.check_tool('doxygen', tooldir='doc')
+    conf.load('g++')
+    conf.load('doxygen', tooldir='doc')
 
 def build(bld):
-	obj = bld.new_task_gen(features = 'doxygen',
+    obj = bld.new_task_gen(features = 'doxygen',
                                doxyfile = 'Doxyfile',
                                doxy_tar = 'docs.tar.bz2')
