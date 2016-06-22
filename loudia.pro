@@ -1,11 +1,10 @@
 CONFIG -= qt \
     gui \
-    core
+    core \
+    no-pkg-config
 TEMPLATE = lib
-QMAKE_CXX = ccache \
-    g++
-QMAKE_CC = ccache \
-    gcc
+QMAKE_CXX = g++
+QMAKE_CC = gcc
 HEADERS += src/Window.h \
     src/VoiceActivityDetection.h \
     src/Utils.h \
@@ -116,5 +115,7 @@ LIBS += -lfftw3f \
     -lavutil \
     -lavformat \
     -lsamplerate
-INCLUDEPATH += ../eigen \
-    src
+INCLUDEPATH += src \
+    /usr/local/include/eigen3
+PKGCONFIG += fftw
+LIBS += -L/usr/local/lib

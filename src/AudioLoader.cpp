@@ -334,15 +334,6 @@ int avcodec_decode_audio3(AVCodecContext *avctx, int16_t *samples,
     AVFrame frame;
     int ret, got_frame = 0;
 
-    if (avctx->get_buffer != avcodec_default_get_buffer) {
-        av_log(avctx, AV_LOG_ERROR, "Custom get_buffer() for use with"
-               "avcodec_decode_audio3() detected. Overriding with avcodec_default_get_buffer\n");
-        av_log(avctx, AV_LOG_ERROR, "Please port your application to "
-               "avcodec_decode_audio4()\n");
-        avctx->get_buffer = avcodec_default_get_buffer;
-        avctx->release_buffer = avcodec_default_release_buffer;
-    }
-
     ret = avcodec_decode_audio4(avctx, &frame, &got_frame, avpkt);
 
     if (ret >= 0 && got_frame) {
